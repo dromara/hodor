@@ -28,7 +28,7 @@ public class HodorException extends RuntimeException {
     private static final long serialVersionUID = 8068509879445395353L;
 
     /**
-     * Instantiates a new Soul exception.
+     * Instantiates a new Hodor exception.
      *
      * @param e the e
      */
@@ -37,7 +37,7 @@ public class HodorException extends RuntimeException {
     }
 
     /**
-     * Instantiates a new Soul exception.
+     * Instantiates a new Hodor exception.
      *
      * @param message the message
      */
@@ -46,7 +46,7 @@ public class HodorException extends RuntimeException {
     }
 
     /**
-     * Instantiates a new Soul exception.
+     * Instantiates a new Hodor exception.
      *
      * @param message   the message
      * @param throwable the throwable

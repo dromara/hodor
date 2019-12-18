@@ -187,7 +187,7 @@ public class ExtensionLoader<T> {
     }
 
     /**
-     * Load files under SOUL_DIRECTORY.
+     * Load files under HODOR_DIRECTORY.
      */
     private void loadDirectory(Map<String, Class<?>> classes) {
         String fileName = SOUL_DIRECTORY + clazz.getName();
