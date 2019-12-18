@@ -16,26 +16,26 @@
  *
  */
 
-package org.dromara.hodor.admin;
+package org.dromara.hodor.common.distuptor;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * The type Hodor admin application.
+ * The interface Queue consumer factory.
  *
  * @author xiaoyu
  */
-@SpringBootApplication
-public class HodorAdminApplication {
+public interface QueueConsumerFactory<T> {
+    /**
+     * 创建一个对象.
+     *
+     * @return 返回一个对象 ;
+     */
+    QueueConsumerExecutor<T> create();
 
     /**
-     * Main Entrance.
+     * 获取一个可以标识的fixName.
      *
-     * @param args startup arguments
+     * @return the string
      */
-    public static void main(final String[] args) {
-        SpringApplication.run(HodorAdminApplication.class, args);
-    }
+    String fixName();
 }
-

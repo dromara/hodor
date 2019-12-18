@@ -16,26 +16,36 @@
  *
  */
 
-package org.dromara.hodor.admin;
+package org.dromara.hodor.common.distuptor;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * The type Hodor admin application.
+ * The type Queue consumer executor.
  *
- * @author xiaoyu
+ * @param <T> the type parameter
+ * @author sixh chebin
  */
-@SpringBootApplication
-public class HodorAdminApplication {
+public abstract class QueueConsumerExecutor<T> implements Runnable {
+    /**
+     * 数据处理.
+     */
+    private T data;
 
     /**
-     * Main Entrance.
+     * 获取数据.
      *
-     * @param args startup arguments
+     * @return 数据 ；
      */
-    public static void main(final String[] args) {
-        SpringApplication.run(HodorAdminApplication.class, args);
+    public T getData() {
+        return data;
+    }
+
+    /**
+     * 设置一个数据.
+     *
+     * @param data data;
+     */
+    public void setData(T data) {
+        this.data = data;
     }
 }
-

@@ -16,26 +16,47 @@
  *
  */
 
-package org.dromara.hodor.admin;
+package org.dromara.hodor.common.distuptor;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.lmax.disruptor.RingBuffer;
+
+import java.util.function.Consumer;
+
 
 /**
- * The type Hodor admin application.
- *
+ * The type Queue provider.
  * @author xiaoyu
  */
-@SpringBootApplication
-public class HodorAdminApplication {
+public class QueueProvider<T> {
 
     /**
-     * Main Entrance.
-     *
-     * @param args startup arguments
+     * 缓冲区.
      */
-    public static void main(final String[] args) {
-        SpringApplication.run(HodorAdminApplication.class, args);
+    private final RingBuffer<QueueEvent<T>> ringBuffer;
+
+
+    /**
+     * 构造器.
+     *
+     * @param ringBuffer 缓冲区；
+     */
+    QueueProvider(final RingBuffer<QueueEvent<T>> ringBuffer) {
+        this.ringBuffer = ringBuffer;
+    }
+
+    /**
+     * 放入一个数据.
+     *
+     * @param function 数据处理信息；
+     */
+    public void onData(final Consumer<QueueEvent<T>> function) {
+        long position = ringBuffer.next();
+        try {
+            QueueEvent<T> dx = ringBuffer.get(position);
+            function.accept(dx);
+            ringBuffer.publish(position);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 }
-

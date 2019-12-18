@@ -16,26 +16,19 @@
  *
  */
 
-package org.dromara.hodor.admin;
+package org.dromara.hodor.common.distuptor;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.lmax.disruptor.EventFactory;
 
 /**
- * The type Hodor admin application.
+ * The type Queue event factory.
  *
  * @author xiaoyu
  */
-@SpringBootApplication
-public class HodorAdminApplication {
+public class QueueEventFactory<T> implements EventFactory<QueueEvent<T>> {
 
-    /**
-     * Main Entrance.
-     *
-     * @param args startup arguments
-     */
-    public static void main(final String[] args) {
-        SpringApplication.run(HodorAdminApplication.class, args);
+    @Override
+    public QueueEvent<T> newInstance() {
+        return new QueueEvent<>();
     }
 }
-

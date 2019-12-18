@@ -16,26 +16,37 @@
  *
  */
 
-package org.dromara.hodor.admin;
+package org.dromara.hodor.common.distuptor;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.io.Serializable;
 
 /**
- * The type Hodor admin application.
+ * The type Queue event.
  *
+ * @param <T> the type parameter
  * @author xiaoyu
  */
-@SpringBootApplication
-public class HodorAdminApplication {
+public class QueueEvent<T> implements Serializable {
+    /**
+     * The T.
+     */
+    private T data;
 
     /**
-     * Main Entrance.
+     * Gets data.
      *
-     * @param args startup arguments
+     * @return the data
      */
-    public static void main(final String[] args) {
-        SpringApplication.run(HodorAdminApplication.class, args);
+    public T getData() {
+        return data;
+    }
+
+    /**
+     * Sets data.
+     *
+     * @param data the data
+     */
+    public void setData(T data) {
+        this.data = data;
     }
 }
-

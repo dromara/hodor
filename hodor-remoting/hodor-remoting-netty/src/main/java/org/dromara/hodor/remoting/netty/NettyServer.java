@@ -62,20 +62,6 @@ public class NettyServer extends AbstractNetServer {
         init();
     }
 
-    private void init() {
-        this.serverHandler = new NettyServerHandler(getAttribute(), this);
-        this.bootstrap = new ServerBootstrap();
-        if (useEpoll()) {
-            this.bossGroup = new EpollEventLoopGroup(1, HodorThreadFactory.create("netty-epoll-ServerBoss", false));
-            this.workerGroup = new EpollEventLoopGroup(getIoThreads(), HodorThreadFactory.create("netty-epoll-ServerWork", false));
-            serverSocketChannelClass = EpollServerSocketChannel.class;
-        } else {
-            this.bossGroup = new NioEventLoopGroup(1, HodorThreadFactory.create("netty-nio-ServerBoss", false));
-            this.workerGroup = new NioEventLoopGroup(getIoThreads(), HodorThreadFactory.create("netty-nio-ServerWork", false));
-            serverSocketChannelClass = NioServerSocketChannel.class;
-        }
-    }
-
     @Override
     public void bind() {
         this.bootstrap.group(bossGroup, workerGroup)
@@ -92,7 +78,6 @@ public class NettyServer extends AbstractNetServer {
         this.channel = new NettyChannel(channel);
     }
 
-
     @Override
     protected void close() {
         if (channel != null) {
@@ -101,6 +86,20 @@ public class NettyServer extends AbstractNetServer {
         if (bootstrap != null) {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
+        }
+    }
+
+    private void init() {
+        this.serverHandler = new NettyServerHandler(getAttribute(), this);
+        this.bootstrap = new ServerBootstrap();
+        if (useEpoll()) {
+            this.bossGroup = new EpollEventLoopGroup(1, HodorThreadFactory.create("netty-epoll-ServerBoss", false));
+            this.workerGroup = new EpollEventLoopGroup(getIoThreads(), HodorThreadFactory.create("netty-epoll-ServerWork", false));
+            serverSocketChannelClass = EpollServerSocketChannel.class;
+        } else {
+            this.bossGroup = new NioEventLoopGroup(1, HodorThreadFactory.create("netty-nio-ServerBoss", false));
+            this.workerGroup = new NioEventLoopGroup(getIoThreads(), HodorThreadFactory.create("netty-nio-ServerWork", false));
+            serverSocketChannelClass = NioServerSocketChannel.class;
         }
     }
 
