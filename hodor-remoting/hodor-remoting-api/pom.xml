@@ -11,5 +11,10 @@
 
     <artifactId>hodor-remoting-api</artifactId>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>org.dromara</groupId>
+            <artifactId>hodor-common</artifactId>
+        </dependency>
+    </dependencies>
 </project>

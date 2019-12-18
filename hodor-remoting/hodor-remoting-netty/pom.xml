@@ -12,4 +12,16 @@
     <artifactId>hodor-remoting-netty</artifactId>
 
 
+    <dependencies>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.dromara</groupId>
+            <artifactId>hodor-remoting-api</artifactId>
+        </dependency>
+    </dependencies>
+
+
 </project>

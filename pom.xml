@@ -78,6 +78,18 @@
             </dependency>
 
             <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>hodor-remoting-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>hodor-remoting-netty</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct-processor</artifactId>
                 <version>${mapstruct.version}</version>
