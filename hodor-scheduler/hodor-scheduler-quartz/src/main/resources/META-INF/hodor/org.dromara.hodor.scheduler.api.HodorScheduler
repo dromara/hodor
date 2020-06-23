@@ -1,0 +1,1 @@
+scheduler=org.dromara.hodor.scheduler.quartz.QuartzScheduler
