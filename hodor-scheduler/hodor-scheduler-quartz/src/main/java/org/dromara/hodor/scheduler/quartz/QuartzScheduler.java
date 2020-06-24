@@ -7,7 +7,7 @@ import org.dromara.hodor.scheduler.api.HodorScheduler;
  *  implements scheduler by quartz
  *
  * @author tomgs
- * @version 2020/6/24 1.0 
+ * @since 2020/6/24 1.0
  */
 @Join
 public class QuartzScheduler implements HodorScheduler {
