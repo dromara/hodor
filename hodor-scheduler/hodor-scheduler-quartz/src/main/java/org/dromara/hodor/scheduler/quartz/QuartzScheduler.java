@@ -6,11 +6,11 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.dromara.hodor.common.extension.Join;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.scheduler.api.HodorScheduler;
-import org.dromara.hodor.scheduler.api.JobTypeManager;
+import org.dromara.hodor.scheduler.api.JobExecutor;
+import org.dromara.hodor.scheduler.api.JobExecutorTypeManager;
 import org.dromara.hodor.scheduler.api.config.SchedulerConfig;
 import org.dromara.hodor.scheduler.api.exception.HodorSchedulerException;
 import org.quartz.CronScheduleBuilder;
-import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
@@ -49,8 +49,7 @@ public class QuartzScheduler implements HodorScheduler {
     @Override
     public void config(SchedulerConfig config) {
         try {
-            Properties result = getBaseProperties(config);
-            this.factory.initialize(result);
+            this.factory.initialize(getBaseProperties(config));
             this.scheduler = factory.getScheduler();
             this.schedulerName = config.getSchedulerName();
         } catch (SchedulerException e) {
@@ -105,27 +104,22 @@ public class QuartzScheduler implements HodorScheduler {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void addJob(JobInfo jobInfo) {
-        Class<? extends Job> jobClass = (Class<? extends Job>) JobTypeManager.INSTANCE.getJobClass(jobInfo.getType());
-        JobDetail jobDetail = JobBuilder.newJob(jobClass)
+        JobDetail jobDetail = JobBuilder.newJob(HodorJob.class)
             .withIdentity(jobInfo.getJobName(), jobInfo.getGroupName())
             .setJobData(new JobDataMap(jobInfo.getJobData()))
             .build();
-        // 添加job data
-        // jobDetail.getJobDataMap().put("", "");
-    /*Trigger trigger = TriggerBuilder.newTrigger().withIdentity(jobInfo.getJobName(), jobInfo.getGroupName())
-        .withSchedule(SimpleScheduleBuilder.repeatSecondlyForever(3))
-        .withPriority(jobInfo.getPriority().getValue())
-        .build();*/
 
-        Trigger trigger = TriggerBuilder.newTrigger().withIdentity(jobInfo.getJobName(), jobInfo.getGroupName())
-            .withSchedule(CronScheduleBuilder.cronSchedule(jobInfo.getCron()).withMisfireHandlingInstructionDoNothing())
-            .withPriority(jobInfo.getPriority().getValue())
-            .forJob(jobDetail)
-            .build();
+        JobExecutor jobExecutor = JobExecutorTypeManager.INSTANCE.getJobExecutor(jobInfo.getType());
+        jobDetail.getJobDataMap().put("jobExecutor", jobExecutor);
 
-        //scheduler.addJob(jobDetail, true);
+        Trigger trigger = TriggerBuilder.newTrigger()
+                .withIdentity(jobInfo.getJobName(), jobInfo.getGroupName())
+                .withSchedule(CronScheduleBuilder.cronSchedule(jobInfo.getCron()).withMisfireHandlingInstructionDoNothing())
+                .withPriority(jobInfo.getPriority().getValue())
+                .forJob(jobDetail)
+                .build();
+
         try {
             scheduler.scheduleJob(jobDetail, trigger);
         } catch (SchedulerException e) {
