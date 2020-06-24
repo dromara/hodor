@@ -75,6 +75,12 @@
 
             <dependency>
                 <groupId>org.dromara</groupId>
+                <artifactId>hodor-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara</groupId>
                 <artifactId>hodor-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -88,6 +94,18 @@
             <dependency>
                 <groupId>org.dromara</groupId>
                 <artifactId>hodor-remoting-netty</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>hodor-scheduler-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>hodor-scehduler-quartz</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

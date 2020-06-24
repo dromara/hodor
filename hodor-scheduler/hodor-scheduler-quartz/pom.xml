@@ -14,10 +14,12 @@
         <dependency>
             <groupId>org.dromara</groupId>
             <artifactId>hodor-scheduler-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
+    </dependency>
+
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
         </dependency>
     </dependencies>
-
 
 </project>
