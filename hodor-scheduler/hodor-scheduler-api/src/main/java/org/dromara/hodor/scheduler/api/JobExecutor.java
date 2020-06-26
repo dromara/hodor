@@ -6,6 +6,6 @@ package org.dromara.hodor.scheduler.api;
  */
 public interface JobExecutor {
 
-    void execute(HodorSchedulerContext context);
+    void execute(HodorJobExecutionContext context);
 
 }

@@ -1,6 +1,6 @@
 package org.dromara.hodor.scheduler.api.executor;
 
-import org.dromara.hodor.scheduler.api.HodorSchedulerContext;
+import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 
 /**
  *  
@@ -11,7 +11,7 @@ import org.dromara.hodor.scheduler.api.HodorSchedulerContext;
 public class TimeJobExecutor extends AbstractJobExecutor {
 
     @Override
-    public void process(HodorSchedulerContext context) {
+    public void process(HodorJobExecutionContext context) {
 
     }
 

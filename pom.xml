@@ -99,6 +99,18 @@
 
             <dependency>
                 <groupId>org.dromara</groupId>
+                <artifactId>hodor-register-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>hodor-register-zookeeper</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara</groupId>
                 <artifactId>hodor-scheduler-api</artifactId>
                 <version>${project.version}</version>
             </dependency>

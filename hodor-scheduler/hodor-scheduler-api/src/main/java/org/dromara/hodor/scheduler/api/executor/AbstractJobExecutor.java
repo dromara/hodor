@@ -1,6 +1,6 @@
 package org.dromara.hodor.scheduler.api.executor;
 
-import org.dromara.hodor.scheduler.api.HodorSchedulerContext;
+import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.scheduler.api.JobExecutor;
 
 /**
@@ -12,7 +12,7 @@ import org.dromara.hodor.scheduler.api.JobExecutor;
 public abstract class AbstractJobExecutor implements JobExecutor {
 
     @Override
-    public void execute(HodorSchedulerContext context) {
+    public void execute(HodorJobExecutionContext context) {
         try {
             // 生成任务调度id
             // 生成调度开始时间
@@ -23,6 +23,6 @@ public abstract class AbstractJobExecutor implements JobExecutor {
         }
     }
 
-    public abstract void process(HodorSchedulerContext context);
+    public abstract void process(HodorJobExecutionContext context);
 
 }

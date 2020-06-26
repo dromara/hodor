@@ -10,6 +10,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>hodor-register-zookeeper</artifactId>
+    <dependencies>
 
+        <dependency>
+            <groupId>org.dromara</groupId>
+            <artifactId>hodor-register-api</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

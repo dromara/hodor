@@ -1,8 +1,5 @@
 package org.dromara.hodor.scheduler.quartz;
 
-import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.locks.ReentrantLock;
 import org.dromara.hodor.common.extension.Join;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.scheduler.api.HodorScheduler;
@@ -10,17 +7,12 @@ import org.dromara.hodor.scheduler.api.JobExecutor;
 import org.dromara.hodor.scheduler.api.JobExecutorTypeManager;
 import org.dromara.hodor.scheduler.api.config.SchedulerConfig;
 import org.dromara.hodor.scheduler.api.exception.HodorSchedulerException;
-import org.quartz.CronScheduleBuilder;
-import org.quartz.JobBuilder;
-import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
-import org.quartz.TriggerKey;
+import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
+
+import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  *  implements scheduler by quartz
@@ -106,12 +98,12 @@ public class QuartzScheduler implements HodorScheduler {
     @Override
     public void addJob(JobInfo jobInfo) {
         JobDetail jobDetail = JobBuilder.newJob(HodorJob.class)
-            .withIdentity(jobInfo.getJobName(), jobInfo.getGroupName())
-            .setJobData(new JobDataMap(jobInfo.getJobData()))
-            .build();
-
+                .withIdentity(jobInfo.getJobName(), jobInfo.getGroupName())
+                .requestRecovery(true)
+                .build();
         JobExecutor jobExecutor = JobExecutorTypeManager.INSTANCE.getJobExecutor(jobInfo.getType());
         jobDetail.getJobDataMap().put("jobExecutor", jobExecutor);
+        jobDetail.getJobDataMap().put("jobInfo", jobInfo);
 
         Trigger trigger = TriggerBuilder.newTrigger()
                 .withIdentity(jobInfo.getJobName(), jobInfo.getGroupName())
