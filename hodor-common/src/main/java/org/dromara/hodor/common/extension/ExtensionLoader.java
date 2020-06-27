@@ -16,6 +16,7 @@
 
 package org.dromara.hodor.common.extension;
 
+import java.lang.reflect.Constructor;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,8 @@ public class ExtensionLoader<T> {
 
     private final Class<T> clazz;
 
+    private final Class<?> argClass;
+
     private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>();
 
     private final Holder<Map<String, String>> cachedClassesMap = new Holder<>();
@@ -62,8 +65,9 @@ public class ExtensionLoader<T> {
      *
      * @param clazz the clazz.
      */
-    private ExtensionLoader(Class<T> clazz) {
+    private ExtensionLoader(Class<T> clazz, Class<?> argClass) {
         this.clazz = clazz;
+        this.argClass = argClass;
         if (clazz != ExtensionFactory.class) {
             ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getExtensionClasses();
         }
@@ -76,7 +80,7 @@ public class ExtensionLoader<T> {
      * @param clazz the clazz
      * @return the extension loader.
      */
-    public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> clazz) {
+    public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> clazz, Class<?> argClass) {
         if (clazz == null) {
             throw new NullPointerException("extension clazz is null");
         }
@@ -84,14 +88,18 @@ public class ExtensionLoader<T> {
             throw new IllegalArgumentException("extension clazz (" + clazz + "is not interface!");
         }
         if (!clazz.isAnnotationPresent(SPI.class)) {
-            throw new IllegalArgumentException("extension clazz (" + clazz + "without @" + SPI.class + "Annotation");
+            throw new IllegalArgumentException("extension clazz (" + clazz + " without @" + SPI.class + " Annotation");
         }
         ExtensionLoader<T> extensionLoader = (ExtensionLoader<T>) LOADERS.get(clazz);
         if (extensionLoader != null) {
             return extensionLoader;
         }
-        LOADERS.putIfAbsent(clazz, new ExtensionLoader<>(clazz));
+        LOADERS.putIfAbsent(clazz, new ExtensionLoader<>(clazz, argClass));
         return (ExtensionLoader<T>) LOADERS.get(clazz);
+    }
+
+    public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> clazz) {
+        return getExtensionLoader(clazz, null);
     }
 
     /**
@@ -140,6 +148,33 @@ public class ExtensionLoader<T> {
         }
     }
 
+    public T getProtoJoin(String name, Object...args) {
+        Class<?> aClass = getExtensionClasses().get(name);
+        if (aClass == null) {
+            throw new IllegalArgumentException("name is error");
+        }
+        try {
+            if (argClass != null && getConstructor(aClass, argClass) != null) {
+                Constructor<?> constructor = getConstructor(aClass, argClass);
+                return (T) constructor.newInstance(args);
+            }
+            Object instance = aClass.newInstance();
+            return (T) instance;
+        } catch (Exception e) {
+            throw new IllegalStateException("Extension instance(name: " + name + ", class: " +
+                aClass + ")  could not be instantiated: " + e.getMessage(), e);
+        }
+    }
+
+    private static Constructor<?> getConstructor(Class<?> c, Class<?>... args) {
+        try {
+            Constructor<?> cons = c.getConstructor(args);
+            return cons;
+        } catch (NoSuchMethodException e) {
+            return null;
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private T createExtension(String name) {
         Class<?> aClass = getExtensionClasses().get(name);
@@ -153,7 +188,7 @@ public class ExtensionLoader<T> {
                 o = joinInstances.get(aClass);
             } catch (Exception e) {
                 throw new IllegalStateException("Extension instance(name: " + name + ", class: " +
-                                                aClass + ")  could not be instantiated: " + e.getMessage(), e);
+                    aClass + ")  could not be instantiated: " + e.getMessage(), e);
             }
         }
         return (T) o;
@@ -194,7 +229,7 @@ public class ExtensionLoader<T> {
         try {
             ClassLoader classLoader = ExtensionLoader.class.getClassLoader();
             Enumeration<URL> urls = classLoader != null ? classLoader.getResources(fileName)
-                    : ClassLoader.getSystemResources(fileName);
+                : ClassLoader.getSystemResources(fileName);
             if (urls != null) {
                 while (urls.hasMoreElements()) {
                     URL url = urls.nextElement();

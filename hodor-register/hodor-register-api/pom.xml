@@ -11,5 +11,11 @@
 
     <artifactId>hodor-register-api</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.dromara</groupId>
+            <artifactId>hodor-common</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>
