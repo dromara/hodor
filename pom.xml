@@ -63,6 +63,7 @@
         <okhttp.version>3.7.0</okhttp.version>
         <mapstruct.version>1.2.0.Final</mapstruct.version>
         <curator.version>2.13.0</curator.version>
+        <quartz.version>2.3.0</quartz.version>
     </properties>
 
     <dependencyManagement>
@@ -118,7 +119,7 @@
 
             <dependency>
                 <groupId>org.dromara</groupId>
-                <artifactId>hodor-scehduler-quartz</artifactId>
+                <artifactId>hodor-scheduler-quartz</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -212,6 +213,11 @@
                 <version>${curator.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.quartz-scheduler</groupId>
+                <artifactId>quartz</artifactId>
+                <version>${quartz.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
