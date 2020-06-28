@@ -24,7 +24,7 @@ public class HodorServerInit implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         // start hodor server
         // start remoting server
         remoteService.start();
