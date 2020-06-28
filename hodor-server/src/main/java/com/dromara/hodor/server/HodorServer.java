@@ -1,6 +1,7 @@
 package com.dromara.hodor.server;
 
 import javax.annotation.PostConstruct;
+import org.dromara.hodor.remoting.api.NetServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -18,9 +19,11 @@ public class HodorServer {
     }
 
     @PostConstruct
-    public void run(){
+    public void run() {
         // start hodor server
-
+        // start remoting server
+        //NetServer netServer =
+        // register service
     }
 
 }

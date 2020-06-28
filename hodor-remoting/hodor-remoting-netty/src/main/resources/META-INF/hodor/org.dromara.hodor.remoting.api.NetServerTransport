@@ -1,1 +1,1 @@
-netty=org.dromara.hodor.remoting.netty.NettyServerTransport
+transport=org.dromara.hodor.remoting.netty.NettyServerTransport
