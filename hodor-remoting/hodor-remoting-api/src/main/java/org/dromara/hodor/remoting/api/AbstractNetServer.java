@@ -94,11 +94,6 @@ public abstract class AbstractNetServer implements NetServer, HodorChannelHandle
     }
 
     /**
-     * Close.
-     */
-    protected abstract void close();
-
-    /**
      * Gets host.
      *
      * @return the host

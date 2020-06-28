@@ -1,7 +1,6 @@
 package com.dromara.hodor.server;
 
 import javax.annotation.PostConstruct;
-import org.dromara.hodor.remoting.api.NetServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

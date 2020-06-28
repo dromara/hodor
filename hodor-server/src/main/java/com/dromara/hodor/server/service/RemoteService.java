@@ -1,6 +1,7 @@
 package com.dromara.hodor.server.service;
 
 import com.dromara.hodor.server.component.LifecycleComponent;
+import java.util.Properties;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.remoting.api.Attribute;
 import org.dromara.hodor.remoting.api.NetServer;
@@ -14,13 +15,12 @@ import org.dromara.hodor.remoting.api.NetServerTransport;
  */
 public class RemoteService implements LifecycleComponent {
 
-    private final NetServerTransport netServerTransport;
-    private final Attribute attribute;
     private final NetServer netServer;
 
-    public RemoteService() {
-        this.netServerTransport = ExtensionLoader.getExtensionLoader(NetServerTransport.class).getDefaultJoin();
-        this.attribute = new Attribute();
+    public RemoteService(Properties properties) {
+        NetServerTransport netServerTransport = ExtensionLoader.getExtensionLoader(NetServerTransport.class).getDefaultJoin();
+        Attribute attribute = new Attribute();
+        attribute.putAll(properties);
         this.netServer = netServerTransport.bind(attribute, null);
     }
 
@@ -31,7 +31,7 @@ public class RemoteService implements LifecycleComponent {
 
     @Override
     public void stop() {
-        //netServer.close();
+        netServer.close();
     }
 
 }
