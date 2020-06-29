@@ -1,0 +1,46 @@
+{
+  "groups": [
+    {
+      "name": "hodor",
+      "type": "com.dromara.hodor.server.config.HodorServerProperties",
+      "sourceType": "com.dromara.hodor.server.config.HodorServerProperties"
+    },
+    {
+      "name": "hodor.net-server",
+      "type": "com.dromara.hodor.server.config.HodorServerProperties$NetServerProperties",
+      "sourceType": "com.dromara.hodor.server.config.HodorServerProperties"
+    },
+    {
+      "name": "hodor.registry",
+      "type": "com.dromara.hodor.server.config.HodorServerProperties$RegistryProperties",
+      "sourceType": "com.dromara.hodor.server.config.HodorServerProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "hodor.net-server.host",
+      "type": "java.lang.String",
+      "sourceType": "com.dromara.hodor.server.config.HodorServerProperties$NetServerProperties",
+      "description": "hodor net server host config"
+    },
+    {
+      "name": "hodor.net-server.port",
+      "type": "java.lang.Integer",
+      "sourceType": "com.dromara.hodor.server.config.HodorServerProperties$NetServerProperties",
+      "description": "hodor net server port config"
+    },
+    {
+      "name": "hodor.registry.namespace",
+      "type": "java.lang.String",
+      "sourceType": "com.dromara.hodor.server.config.HodorServerProperties$RegistryProperties",
+      "description": "hodor registry server namespace config"
+    },
+    {
+      "name": "hodor.registry.servers",
+      "type": "java.lang.String",
+      "sourceType": "com.dromara.hodor.server.config.HodorServerProperties$RegistryProperties",
+      "description": "hodor registry server servers config"
+    }
+  ],
+  "hints": []
+}

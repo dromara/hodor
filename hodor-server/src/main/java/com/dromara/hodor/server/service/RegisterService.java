@@ -33,4 +33,8 @@ public class RegisterService implements LifecycleComponent {
         registryCenter.close();
     }
 
+    public RegistryCenter getRegistryCenter() {
+        return registryCenter;
+    }
+
 }

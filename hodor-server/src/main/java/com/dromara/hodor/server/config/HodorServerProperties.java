@@ -1,34 +1,49 @@
 package com.dromara.hodor.server.config;
 
-import lombok.Getter;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 /**
- *  
+ *  hodor server properties
  *
  * @author tomgs
  * @version 2020/6/29 1.0 
  */
-@Configuration
+@Data
 @ConfigurationProperties(prefix = "hodor")
+@EnableConfigurationProperties({HodorServerProperties.class})
 public class HodorServerProperties {
 
-    @Value("${hodor.net-server.host}")
-    @Getter
-    private String netServerHost;
+    private NetServerProperties netServer;
+    private RegistryProperties registry;
 
-    @Value("${hodor.net-server.port}")
-    @Getter
-    private Integer netServerPort;
+    public String getRegistryServers() {
+        return registry.getServers();
+    }
 
-    @Value("${hodor.reg.servers}")
-    @Getter
-    private String registryServers;
+    public String getRegistryNamespace() {
+        return registry.getNamespace();
+    }
 
-    @Value("${hodor.reg.namespace}")
-    @Getter
-    private String registryNamespace;
+    public String getNetServerHost() {
+        return netServer.getHost();
+    }
+
+    public Integer getNetServerPort() {
+        return netServer.getPort();
+    }
+
+    @Data
+    static class NetServerProperties {
+        private String host;
+        private Integer port;
+    }
+
+    @Data
+    static class RegistryProperties {
+        private String servers;
+        private String namespace;
+    }
 
 }

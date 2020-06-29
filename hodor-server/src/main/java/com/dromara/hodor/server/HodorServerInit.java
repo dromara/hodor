@@ -1,5 +1,6 @@
 package com.dromara.hodor.server;
 
+import com.dromara.hodor.server.service.HodorService;
 import com.dromara.hodor.server.service.RegisterService;
 import com.dromara.hodor.server.service.RemoteService;
 import lombok.extern.slf4j.Slf4j;
@@ -7,7 +8,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
 /**
- *  
+ *  hodor server init
  *
  * @author tomgs
  * @version 2020/6/29 1.0 
@@ -17,10 +18,12 @@ public class HodorServerInit implements ApplicationRunner {
 
     private final RemoteService remoteService;
     private final RegisterService registerService;
+    private final HodorService hodorService;
 
-    public HodorServerInit(final RemoteService remoteService, final RegisterService registerService) {
+    public HodorServerInit(final RemoteService remoteService, final RegisterService registerService, HodorService hodorService) {
         this.remoteService = remoteService;
         this.registerService = registerService;
+        this.hodorService = hodorService;
     }
 
     @Override
@@ -29,13 +32,15 @@ public class HodorServerInit implements ApplicationRunner {
         // start remoting server
         remoteService.start();
         registerService.start();
+        hodorService.start();
         // register service
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             // log something in here.
             // stop service
             try {
-                remoteService.stop();
+                hodorService.stop();
                 registerService.stop();
+                remoteService.stop();
             } catch (Exception e) {
                 log.error("Error where shutting down remote service.", e);
             }
