@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.recipes.cache.TreeCache;
+import org.apache.curator.framework.recipes.leader.LeaderLatch;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.utils.CloseableUtils;
 import org.apache.curator.utils.ZKPaths;
@@ -20,6 +21,7 @@ import org.apache.zookeeper.ZooKeeper;
 import org.dromara.hodor.common.extension.Join;
 import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;
+import org.dromara.hodor.register.api.LeaderExecutionCallback;
 import org.dromara.hodor.register.api.RegistryCenter;
 import org.dromara.hodor.register.api.RegistryConfig;
 import org.dromara.hodor.register.api.exception.RegistryException;
@@ -38,7 +40,7 @@ public class ZookeeperRegistryCenter implements RegistryCenter {
     private final Map<String, TreeCache> caches = new ConcurrentHashMap<>();
 
     @Override
-    public void init(RegistryConfig config) {
+    public void init(final RegistryConfig config) {
         log.info("zookeeper registry center init, server list is {}.", config.getServers());
         // TODO: 这里配置先简单处理
         client = CuratorFrameworkFactory.builder()
@@ -72,7 +74,7 @@ public class ZookeeperRegistryCenter implements RegistryCenter {
     }
 
     @Override
-    public boolean checkExists(String key) {
+    public boolean checkExists(final String key) {
         try {
             return null != client.checkExists().forPath(key);
         } catch (Exception e) {
@@ -82,7 +84,7 @@ public class ZookeeperRegistryCenter implements RegistryCenter {
     }
 
     @Override
-    public String get(String key) {
+    public String get(final String key) {
         try {
             return new String(client.getData().forPath(key), StandardCharsets.UTF_8);
         } catch (Exception e) {
@@ -92,7 +94,7 @@ public class ZookeeperRegistryCenter implements RegistryCenter {
     }
 
     @Override
-    public List<String> getChildren(String key) {
+    public List<String> getChildren(final String key) {
         try {
             return client.getChildren().forPath(key);
         } catch (Exception e) {
@@ -102,7 +104,7 @@ public class ZookeeperRegistryCenter implements RegistryCenter {
     }
 
     @Override
-    public void createPersistent(String key, String value) {
+    public void createPersistent(final String key, final String value) {
         try {
             if (value == null) {
                 makeDirs(key);
@@ -119,7 +121,7 @@ public class ZookeeperRegistryCenter implements RegistryCenter {
     }
 
     @Override
-    public void createEphemeral(String key, String value) {
+    public void createEphemeral(final String key, final String value) {
         try {
             if (checkExists(key)) {
                 client.delete().deletingChildrenIfNeeded().forPath(key);
@@ -131,7 +133,7 @@ public class ZookeeperRegistryCenter implements RegistryCenter {
     }
 
     @Override
-    public void createEphemeralSequential(String key, String value) {
+    public void createEphemeralSequential(final String key, final String value) {
         try {
             client.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL_SEQUENTIAL).forPath(key);
         } catch (final Exception e) {
@@ -140,12 +142,12 @@ public class ZookeeperRegistryCenter implements RegistryCenter {
     }
 
     @Override
-    public String makePath(String parent, String firstChild, String... restChildren) {
+    public String makePath(final String parent, final String firstChild, final String... restChildren) {
         return ZKPaths.makePath(parent, firstChild, restChildren);
     }
 
     @Override
-    public void makeDirs(String path) {
+    public void makeDirs(final String path) {
         try {
             ZooKeeper zkClient = client.getZookeeperClient().getZooKeeper();
             ZKPaths.mkdirs(zkClient, path);
@@ -155,7 +157,7 @@ public class ZookeeperRegistryCenter implements RegistryCenter {
     }
 
     @Override
-    public void update(String key, String value) {
+    public void update(final String key, final String value) {
         try {
             client.inTransaction().check().forPath(key).and().setData().forPath(key, value.getBytes(Charsets.UTF_8)).and().commit();
         } catch (final Exception e) {
@@ -164,7 +166,7 @@ public class ZookeeperRegistryCenter implements RegistryCenter {
     }
 
     @Override
-    public void remove(String key) {
+    public void remove(final String key) {
         try {
             if (checkExists(key)) {
                 client.delete().deletingChildrenIfNeeded().forPath(key);
@@ -175,7 +177,7 @@ public class ZookeeperRegistryCenter implements RegistryCenter {
     }
 
     @Override
-    public void addDataCacheListener(String path, DataChangeListener listener) {
+    public void addDataCacheListener(final String path, final DataChangeListener listener) {
         TreeCache cache = TreeCache.newBuilder(client, path).build();
         try {
             cache.start();
@@ -194,6 +196,17 @@ public class ZookeeperRegistryCenter implements RegistryCenter {
             listener.dataChanged(changeEvent);
         });
         caches.put(path, cache);
+    }
+
+    @Override
+    public void executeInLeader(final String latchPath, final LeaderExecutionCallback callback) {
+        try (LeaderLatch latch = new LeaderLatch(client, latchPath)) {
+            latch.start();
+            latch.await();
+            callback.execute();
+        } catch (final Exception ex) {
+            RegExceptionHandler.handleException(ex);
+        }
     }
 
 }
