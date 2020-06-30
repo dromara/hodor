@@ -11,5 +11,7 @@
 
     <artifactId>hodor-core</artifactId>
 
+    <dependencies>
 
+    </dependencies>
 </project>

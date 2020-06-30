@@ -2,6 +2,7 @@ package com.dromara.hodor.server.config;
 
 import com.dromara.hodor.server.HodorServerInit;
 import com.dromara.hodor.server.service.HodorService;
+import com.dromara.hodor.server.service.LeaderService;
 import com.dromara.hodor.server.service.RegisterService;
 import com.dromara.hodor.server.service.RemoteService;
 import org.springframework.context.annotation.Bean;
@@ -31,8 +32,13 @@ public class HodorServerConfig {
     }
 
     @Bean
+    public LeaderService leaderService() {
+        return new LeaderService();
+    }
+
+    @Bean
     public HodorService hodorService() {
-        return new HodorService(registerService());
+        return new HodorService(leaderService());
     }
 
     @Bean

@@ -1,9 +1,7 @@
 package org.dromara.hodor.register.api;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * 注册中心配置
@@ -12,7 +10,6 @@ import lombok.Setter;
  * @since 2020/06/28
  */
 @Getter
-@Setter
 @Builder
 public class RegistryConfig {
     /**
