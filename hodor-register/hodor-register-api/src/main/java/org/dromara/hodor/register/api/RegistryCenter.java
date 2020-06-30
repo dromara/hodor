@@ -45,4 +45,6 @@ public interface RegistryCenter {
 
     void addDataCacheListener(String path, DataChangeListener listener);
 
+    void executeInLeader(String latchPath, LeaderExecutionCallback callback);
+
 }
