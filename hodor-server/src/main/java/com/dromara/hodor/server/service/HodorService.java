@@ -1,7 +1,6 @@
 package com.dromara.hodor.server.service;
 
 import com.dromara.hodor.server.component.LifecycleComponent;
-import org.dromara.hodor.register.api.RegistryCenter;
 
 /**
  * hodor service
@@ -11,15 +10,17 @@ import org.dromara.hodor.register.api.RegistryCenter;
  */
 public class HodorService implements LifecycleComponent {
 
-    private final RegistryCenter registryCenter;
+    private LeaderService leaderService;
 
-    public HodorService(RegisterService registerService) {
-        this.registryCenter = registerService.getRegistryCenter();
+    public HodorService(LeaderService leaderService) {
+        this.leaderService = leaderService;
     }
 
     @Override
     public void start() {
+        //init data
         //select leader
+        leaderService.electLeader();
         //job assign
     }
 
