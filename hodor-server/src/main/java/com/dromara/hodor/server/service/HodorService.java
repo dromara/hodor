@@ -19,8 +19,12 @@ public class HodorService implements LifecycleComponent {
     @Override
     public void start() {
         //init data
+
         //select leader
-        leaderService.electLeader();
+        leaderService.electLeader(() -> {
+            // to be leader after logic write here
+            System.out.println("---------");
+        });
         //job assign
     }
 

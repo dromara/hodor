@@ -33,7 +33,7 @@ public class HodorServerConfig {
 
     @Bean
     public LeaderService leaderService() {
-        return new LeaderService();
+        return new LeaderService(registerService());
     }
 
     @Bean

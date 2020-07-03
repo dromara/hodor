@@ -49,6 +49,7 @@
         <mysql.version>8.0.11</mysql.version>
         <druid.version>1.0.29</druid.version>
         <commons-lang3.version>3.3.2</commons-lang3.version>
+        <commons-io.version>2.5</commons-io.version>
         <guava.version>21.0</guava.version>
         <commons-collections4.version>4.1</commons-collections4.version>
         <reactor-spring.version>1.0.1.RELEASE</reactor-spring.version>
@@ -181,6 +182,12 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
             </dependency>
 
             <dependency>
