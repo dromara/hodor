@@ -10,7 +10,7 @@ import com.dromara.hodor.server.component.LifecycleComponent;
  */
 public class HodorService implements LifecycleComponent {
 
-    private LeaderService leaderService;
+    private final LeaderService leaderService;
 
     public HodorService(LeaderService leaderService) {
         this.leaderService = leaderService;

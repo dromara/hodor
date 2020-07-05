@@ -14,8 +14,8 @@ import org.dromara.hodor.register.api.RegistryConfig;
  */
 public class RegisterService implements LifecycleComponent {
 
-    private RegistryCenter registryCenter;
-    private HodorServerProperties properties;
+    private final RegistryCenter registryCenter;
+    private final HodorServerProperties properties;
 
     public RegisterService(final HodorServerProperties properties) {
         this.properties = properties;
