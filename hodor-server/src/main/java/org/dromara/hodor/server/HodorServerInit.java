@@ -1,11 +1,12 @@
-package com.dromara.hodor.server;
+package org.dromara.hodor.server;
 
-import com.dromara.hodor.server.service.HodorService;
-import com.dromara.hodor.server.service.RegisterService;
-import com.dromara.hodor.server.service.RemoteService;
+import org.dromara.hodor.server.service.HodorService;
+import org.dromara.hodor.server.service.RegisterService;
+import org.dromara.hodor.server.service.RemoteService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.stereotype.Component;
 
 /**
  *  hodor server init
@@ -14,6 +15,7 @@ import org.springframework.boot.ApplicationRunner;
  * @version 2020/6/29 1.0 
  */
 @Slf4j
+@Component
 public class HodorServerInit implements ApplicationRunner {
 
     private final RemoteService remoteService;

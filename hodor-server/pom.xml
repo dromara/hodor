@@ -24,6 +24,12 @@
         <dependency>
             <groupId>org.dromara</groupId>
             <artifactId>hodor-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.dromara</groupId>

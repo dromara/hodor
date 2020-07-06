@@ -1,8 +1,9 @@
-package com.dromara.hodor.server.config;
+package org.dromara.hodor.server.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 /**
  *  hodor server properties
@@ -11,8 +12,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
  * @version 2020/6/29 1.0 
  */
 @Data
+@Configuration
 @ConfigurationProperties(prefix = "hodor")
-@EnableConfigurationProperties({HodorServerProperties.class})
+//@EnableConfigurationProperties({HodorServerProperties.class})
 public class HodorServerProperties {
 
     private NetServerProperties netServer;

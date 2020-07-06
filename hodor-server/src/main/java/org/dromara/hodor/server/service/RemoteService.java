@@ -1,12 +1,13 @@
-package com.dromara.hodor.server.service;
+package org.dromara.hodor.server.service;
 
-import com.dromara.hodor.server.component.LifecycleComponent;
-import com.dromara.hodor.server.config.HodorServerProperties;
+import org.dromara.hodor.server.component.LifecycleComponent;
+import org.dromara.hodor.server.config.HodorServerProperties;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.remoting.api.Attribute;
 import org.dromara.hodor.remoting.api.NetServer;
 import org.dromara.hodor.remoting.api.NetServerTransport;
 import org.dromara.hodor.remoting.api.RemotingConst;
+import org.springframework.stereotype.Service;
 
 /**
  * hodor remote service
@@ -14,6 +15,7 @@ import org.dromara.hodor.remoting.api.RemotingConst;
  * @author tomgs
  * @since 2020/6/28
  */
+@Service
 public class RemoteService implements LifecycleComponent {
 
     private final NetServer netServer;

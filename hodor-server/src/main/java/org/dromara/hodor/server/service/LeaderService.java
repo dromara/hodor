@@ -1,9 +1,10 @@
-package com.dromara.hodor.server.service;
+package org.dromara.hodor.server.service;
 
 import org.dromara.hodor.common.utils.LocalHost;
 import org.dromara.hodor.register.api.LeaderExecutionCallback;
 import org.dromara.hodor.register.api.RegistryCenter;
 import org.dromara.hodor.register.api.node.LeaderNode;
+import org.springframework.stereotype.Service;
 
 /**
  * leader service
@@ -11,6 +12,7 @@ import org.dromara.hodor.register.api.node.LeaderNode;
  * @author tomgs
  * @since 2020/6/30
  */
+@Service
 public class LeaderService {
 
     private final RegistryCenter registryCenter;

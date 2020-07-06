@@ -13,7 +13,7 @@ public interface JobInfoService {
      *
      * @return 可分配任务数量
      */
-    Long queryAssignableJobCount();
+    Integer queryAssignableJobCount();
 
     /**
      * 获取指定位置任务的hashId
@@ -21,6 +21,6 @@ public interface JobInfoService {
      * @param offset 任务位置
      * @return hash id
      */
-    Long queryJobHashIdByOffset(Integer offset);
+    Integer queryJobHashIdByOffset(Integer offset);
 
 }
