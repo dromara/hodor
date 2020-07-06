@@ -20,7 +20,7 @@ public class HodorServerInit implements ApplicationRunner {
     private final RegisterService registerService;
     private final HodorService hodorService;
 
-    public HodorServerInit(final RemoteService remoteService, final RegisterService registerService, HodorService hodorService) {
+    public HodorServerInit(final RemoteService remoteService, final RegisterService registerService, final HodorService hodorService) {
         this.remoteService = remoteService;
         this.registerService = registerService;
         this.hodorService = hodorService;

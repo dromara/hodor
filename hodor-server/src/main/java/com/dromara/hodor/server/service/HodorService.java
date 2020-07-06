@@ -22,7 +22,7 @@ public class HodorService implements LifecycleComponent {
 
         //select leader
         leaderService.electLeader(() -> {
-            // to be leader after logic write here
+            // after to be leader write here
             System.out.println("---------");
         });
         //job assign
