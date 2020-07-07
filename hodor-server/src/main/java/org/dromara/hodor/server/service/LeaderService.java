@@ -47,4 +47,11 @@ public class LeaderService {
         return registryCenter.checkExists(LeaderNode.INSTANCE_PATH);
     }
 
+    /**
+     * 当期节点是否为主节点
+     */
+    public boolean isLeader() {
+        return !LocalHost.getIp().equals(registryCenter.get(LeaderNode.INSTANCE_PATH));
+    }
+
 }
