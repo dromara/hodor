@@ -1,14 +1,16 @@
 package org.dromara.hodor.server.service;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.dromara.hodor.common.utils.CopySets;
-import org.dromara.hodor.server.component.LifecycleComponent;
 import com.google.common.collect.Lists;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.hodor.common.exception.HodorException;
+import org.dromara.hodor.common.utils.CopySets;
 import org.dromara.hodor.common.utils.SleepUtil;
+import org.dromara.hodor.core.entity.CopySet;
+import org.dromara.hodor.core.entity.HodorMetadata;
 import org.dromara.hodor.core.service.JobInfoService;
+import org.dromara.hodor.server.component.LifecycleComponent;
 import org.springframework.stereotype.Service;
 
 /**
@@ -49,18 +51,24 @@ public class HodorService implements LifecycleComponent {
         }
         leaderService.electLeader(() -> {
             log.info("to be leader.");
+            final HodorMetadata metadata = new HodorMetadata();
             // after to be leader write here
             List<String> currRunningNodes = registerService.getRunningNodes();
             if (CollectionUtils.isEmpty(currRunningNodes)) {
                 throw new HodorException("running node count is 0.");
             }
-            List<List<String>> copySets = CopySets.buildCopySets(currRunningNodes, replicaCount, scatterWidth);
-            int setsNum = Math.max(copySets.size(), currRunningNodes.size());
+
+            List<List<String>> copySetIps = CopySets.buildCopySets(currRunningNodes, replicaCount, scatterWidth);
+            int setsNum = Math.max(copySetIps.size(), currRunningNodes.size());
             // distribution copySet
+            List<CopySet> copySets = Lists.newArrayList();
             for (int i = 0; i < setsNum; i++) {
-                int setsIndex = setsNum % copySets.size();
-                List<String> copySet = copySets.get(setsIndex);
-                registerService.createCopySet(i, copySet);
+                int setsIndex = setsNum % copySetIps.size();
+                List<String> copySetIp = copySetIps.get(setsIndex);
+                CopySet copySet = new CopySet();
+                copySet.setId(setsIndex);
+                copySet.setServers(copySetIp);
+                copySets.add(copySet);
             }
 
             // get metadata and update
@@ -71,9 +79,35 @@ public class HodorService implements LifecycleComponent {
                 Integer index = jobInfoService.queryJobHashIdByOffset(offset * i);
                 interval.add(index);
             }
+            for (int i = 0; i < interval.size() - 1; i++) {
+                CopySet copySet = copySets.get(i);
+                copySet.setDataInterval(Lists.newArrayList(interval.get(i), interval.get(i + 1)));
+                copySet.setLeader(selectLeaderCopySet(copySet));
+            }
 
+            metadata.setNodes(currRunningNodes);
+            metadata.setInterval(interval);
+            metadata.setCopysets(copySets);
+            registerService.createMetadata(metadata);
         });
         //job assign
+    }
+
+    private String selectLeaderCopySet(CopySet copySet) {
+        List<String> servers = copySet.getServers();
+        // copy set leader election.
+        servers.sort(Comparable::compareTo);
+        for (String leader : servers) {
+            if (!isLeader(leader)) {
+                return leader;
+            }
+        }
+
+        return servers.get(0);
+    }
+
+    private boolean isLeader(String leader) {
+        return false;
     }
 
     @Override

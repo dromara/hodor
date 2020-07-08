@@ -1,8 +1,11 @@
 package org.dromara.hodor.server.service;
 
+import cn.hutool.json.JSONObject;
 import com.google.common.collect.Lists;
 import java.util.List;
 import org.dromara.hodor.common.extension.ExtensionLoader;
+import org.dromara.hodor.core.entity.CopySet;
+import org.dromara.hodor.core.entity.HodorMetadata;
 import org.dromara.hodor.register.api.RegistryCenter;
 import org.dromara.hodor.register.api.RegistryConfig;
 import org.dromara.hodor.register.api.node.ServerNode;
@@ -63,11 +66,17 @@ public class RegisterService implements LifecycleComponent {
         return Lists.newArrayList();
     }
 
-    public void createCopySet(int id, List<String> copySets) {
-        String serversPath = registryCenter.makePath(ServerNode.COPY_SETS_PATH, String.valueOf(id), "servers");
-        for (String copySet : copySets) {
-            registryCenter.createEphemeral(serversPath, copySet);
+    public void createCopySet(CopySet copySet) {
+        String serversPath = registryCenter.makePath(ServerNode.COPY_SETS_PATH, String.valueOf(copySet.getId()), "servers");
+        for (String server : copySet.getServers()) {
+            registryCenter.createEphemeral(serversPath, server);
         }
     }
 
+    public void createMetadata(HodorMetadata metadata) {
+        registryCenter.createPersistent(ServerNode.METADATA_PATH, new JSONObject(metadata).toString());
+        for (CopySet copyset : metadata.getCopysets()) {
+            createCopySet(copyset);
+        }
+    }
 }
