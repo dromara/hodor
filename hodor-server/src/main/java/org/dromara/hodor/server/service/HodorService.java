@@ -87,7 +87,7 @@ public class HodorService implements LifecycleComponent {
 
             metadata.setNodes(currRunningNodes);
             metadata.setInterval(interval);
-            metadata.setCopysets(copySets);
+            metadata.setCopySets(copySets);
             registerService.createMetadata(metadata);
         });
         //job assign
