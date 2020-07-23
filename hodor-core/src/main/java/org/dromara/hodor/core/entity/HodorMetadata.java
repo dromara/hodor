@@ -1,6 +1,7 @@
 package org.dromara.hodor.core.entity;
 
 import java.util.List;
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -8,6 +9,7 @@ import lombok.Data;
  * @since 2020/7/7
  */
 @Data
+@Builder
 public class HodorMetadata {
 
     private List<String> nodes;

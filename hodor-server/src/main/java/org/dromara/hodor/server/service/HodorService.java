@@ -1,7 +1,9 @@
 package org.dromara.hodor.server.service;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import java.util.List;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.hodor.common.exception.HodorException;
@@ -11,6 +13,8 @@ import org.dromara.hodor.core.entity.CopySet;
 import org.dromara.hodor.core.entity.HodorMetadata;
 import org.dromara.hodor.core.service.JobInfoService;
 import org.dromara.hodor.server.component.LifecycleComponent;
+import org.dromara.hodor.server.listener.MetadataChangeListener;
+import org.dromara.hodor.server.listener.ServerNodeChangeListener;
 import org.springframework.stereotype.Service;
 
 /**
@@ -29,6 +33,7 @@ public class HodorService implements LifecycleComponent {
     private final Integer leastNodeCount;
     private final Integer replicaCount;
     private final Integer scatterWidth;
+    private final Set<String> leaderCopySet;
 
     public HodorService(final LeaderService leaderService, final RegisterService registerService, final JobInfoService jobInfoService) {
         this.leaderService = leaderService;
@@ -37,12 +42,13 @@ public class HodorService implements LifecycleComponent {
         this.replicaCount = 3;
         this.leastNodeCount = 3;
         this.scatterWidth = 2;
+        this.leaderCopySet = Sets.newConcurrentHashSet();
     }
 
     @Override
     public void start() {
         //init data
-
+        registerService.registryMetadataListener(new MetadataChangeListener());
         //select leader
         Integer currRunningNodeCount = registerService.getRunningNodeCount();
         while (currRunningNodeCount < leastNodeCount) {
@@ -51,7 +57,7 @@ public class HodorService implements LifecycleComponent {
         }
         leaderService.electLeader(() -> {
             log.info("to be leader.");
-            final HodorMetadata metadata = new HodorMetadata();
+            registerService.registryServerNodeListener(new ServerNodeChangeListener());
             // after to be leader write here
             List<String> currRunningNodes = registerService.getRunningNodes();
             if (CollectionUtils.isEmpty(currRunningNodes)) {
@@ -79,15 +85,21 @@ public class HodorService implements LifecycleComponent {
                 Integer index = jobInfoService.queryJobHashIdByOffset(offset * i);
                 interval.add(index);
             }
-            for (int i = 0; i < interval.size() - 1; i++) {
+            for (int i = 0; i < interval.size(); i++) {
                 CopySet copySet = copySets.get(i);
-                copySet.setDataInterval(Lists.newArrayList(interval.get(i), interval.get(i + 1)));
+                if (i == interval.size() - 1) {
+                    copySet.setDataInterval(Lists.newArrayList(interval.get(i)));
+                } else {
+                    copySet.setDataInterval(Lists.newArrayList(interval.get(i), interval.get(i + 1)));
+                }
                 copySet.setLeader(selectLeaderCopySet(copySet));
             }
 
-            metadata.setNodes(currRunningNodes);
-            metadata.setInterval(interval);
-            metadata.setCopySets(copySets);
+            final HodorMetadata metadata = HodorMetadata.builder()
+                .nodes(currRunningNodes)
+                .interval(interval)
+                .copySets(copySets)
+                .build();
             registerService.createMetadata(metadata);
         });
         //job assign
@@ -98,21 +110,22 @@ public class HodorService implements LifecycleComponent {
         // copy set leader election.
         servers.sort(Comparable::compareTo);
         for (String leader : servers) {
-            if (!isLeader(leader)) {
+            if (!isCopySetLeader(leader)) {
+                leaderCopySet.add(leader);
                 return leader;
             }
         }
-
+        // default copy sets leader
         return servers.get(0);
     }
 
-    private boolean isLeader(String leader) {
-        return false;
+    private boolean isCopySetLeader(String leader) {
+        return leaderCopySet.contains(leader);
     }
 
     @Override
     public void stop() {
-
+        leaderCopySet.clear();
     }
 
 }
