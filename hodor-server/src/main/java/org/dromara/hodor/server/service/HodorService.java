@@ -4,11 +4,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.hodor.common.exception.HodorException;
 import org.dromara.hodor.common.utils.CopySets;
-import org.dromara.hodor.common.utils.SleepUtil;
+import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.core.entity.CopySet;
 import org.dromara.hodor.core.entity.HodorMetadata;
 import org.dromara.hodor.core.service.JobInfoService;
@@ -52,7 +53,7 @@ public class HodorService implements LifecycleComponent {
         //select leader
         Integer currRunningNodeCount = registerService.getRunningNodeCount();
         while (currRunningNodeCount < leastNodeCount) {
-            SleepUtil.sleep(1000L);
+            ThreadUtils.sleep(TimeUnit.MILLISECONDS, 1000);
             currRunningNodeCount = registerService.getRunningNodeCount();
         }
         leaderService.electLeader(() -> {
