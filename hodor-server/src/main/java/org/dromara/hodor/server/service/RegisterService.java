@@ -1,12 +1,11 @@
 package org.dromara.hodor.server.service;
 
-import cn.hutool.json.JSONObject;
 import com.google.common.collect.Lists;
 import java.util.List;
 import org.dromara.hodor.common.extension.ExtensionLoader;
+import org.dromara.hodor.common.utils.GsonUtils;
 import org.dromara.hodor.core.entity.CopySet;
 import org.dromara.hodor.core.entity.HodorMetadata;
-import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.RegistryCenter;
 import org.dromara.hodor.register.api.RegistryConfig;
@@ -26,10 +25,12 @@ public class RegisterService implements LifecycleComponent {
 
     private final RegistryCenter registryCenter;
     private final HodorServerProperties properties;
+    private final GsonUtils gsonUtils;
 
     public RegisterService(final HodorServerProperties properties) {
         this.properties = properties;
         this.registryCenter = ExtensionLoader.getExtensionLoader(RegistryCenter.class).getDefaultJoin();
+        this.gsonUtils = GsonUtils.getInstance();
     }
 
     @Override
@@ -58,10 +59,6 @@ public class RegisterService implements LifecycleComponent {
 
         // init data
 
-        // add listener
-        registryCenter.addDataCacheListener(ServerNode.MASTER_PATH, event -> {
-
-        });
     }
 
     public Integer getRunningNodeCount() {
@@ -81,7 +78,7 @@ public class RegisterService implements LifecycleComponent {
     }
 
     public void createMetadata(HodorMetadata metadata) {
-        registryCenter.createPersistent(ServerNode.METADATA_PATH, new JSONObject(metadata).toString());
+        registryCenter.createPersistent(ServerNode.METADATA_PATH, gsonUtils.toJson(metadata));
         //for (CopySet copyset : metadata.getCopySets()) {
         //    createCopySet(copyset);
         //}
