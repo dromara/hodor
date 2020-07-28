@@ -30,8 +30,7 @@ public enum NodeServerManager {
         nodeIps.remove(nodeIp);
     }
 
-    public void removeAllNodeServer() {
+    public void clearNodeServer() {
         nodeIps.clear();
     }
-
 }

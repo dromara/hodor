@@ -96,7 +96,7 @@ public class RegisterService implements LifecycleComponent {
     }
 
     public void registryElectLeaderListener(DataChangeListener listener) {
-        registryCenter.addDataCacheListener(LeaderNode.INSTANCE_PATH, listener);
+        registryCenter.addDataCacheListener(LeaderNode.ACTIVE_PATH, listener);
     }
 
 }
