@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
 public class HodorServerProperties {
 
     private NetServerProperties netServer;
+
     private RegistryProperties registry;
 
     public String getRegistryServers() {

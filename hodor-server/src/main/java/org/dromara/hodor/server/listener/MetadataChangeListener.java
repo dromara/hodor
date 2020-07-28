@@ -13,7 +13,9 @@ public class MetadataChangeListener implements DataChangeListener {
 
     @Override
     public void dataChanged(DataChangeEvent event) {
+        if (event.getType() == DataChangeEvent.Type.NODE_ADDED) {
 
+        }
     }
 
 }

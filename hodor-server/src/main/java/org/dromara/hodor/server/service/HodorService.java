@@ -12,6 +12,7 @@ import org.dromara.hodor.common.utils.CopySets;
 import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.core.entity.CopySet;
 import org.dromara.hodor.core.entity.HodorMetadata;
+import org.dromara.hodor.core.manager.NodeServerManager;
 import org.dromara.hodor.core.service.JobInfoService;
 import org.dromara.hodor.server.component.LifecycleComponent;
 import org.dromara.hodor.server.listener.LeaderElectChangeListener;
@@ -30,12 +31,20 @@ import org.springframework.stereotype.Service;
 public class HodorService implements LifecycleComponent {
 
     private final LeaderService leaderService;
+
     private final RegisterService registerService;
+
     private final JobInfoService jobInfoService;
+
     private final Integer leastNodeCount;
+
     private final Integer replicaCount;
+
     private final Integer scatterWidth;
+
     private final Set<String> leaderCopySet;
+
+    private final NodeServerManager nodeServerManager;
 
     public HodorService(final LeaderService leaderService, final RegisterService registerService, final JobInfoService jobInfoService) {
         this.leaderService = leaderService;
@@ -45,6 +54,7 @@ public class HodorService implements LifecycleComponent {
         this.leastNodeCount = 3;
         this.scatterWidth = 2;
         this.leaderCopySet = Sets.newConcurrentHashSet();
+        this.nodeServerManager = NodeServerManager.getInstance();
     }
 
     @Override
@@ -60,7 +70,7 @@ public class HodorService implements LifecycleComponent {
         //select leader
         leaderService.electLeader(() -> {
             log.info("to be leader.");
-            registerService.registryServerNodeListener(new ServerNodeChangeListener());
+            registerService.registryServerNodeListener(new ServerNodeChangeListener(nodeServerManager));
             // after to be leader write here
             List<String> currRunningNodes = registerService.getRunningNodes();
             if (CollectionUtils.isEmpty(currRunningNodes)) {
@@ -129,6 +139,7 @@ public class HodorService implements LifecycleComponent {
     @Override
     public void stop() {
         leaderCopySet.clear();
+        nodeServerManager.removeAllNodeServer();
     }
 
 }

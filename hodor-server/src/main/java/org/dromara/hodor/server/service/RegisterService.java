@@ -25,7 +25,9 @@ import org.springframework.stereotype.Service;
 public class RegisterService implements LifecycleComponent {
 
     private final RegistryCenter registryCenter;
+
     private final HodorServerProperties properties;
+
     private final GsonUtils gsonUtils;
 
     public RegisterService(final HodorServerProperties properties) {
