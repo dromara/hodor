@@ -14,6 +14,7 @@ import org.dromara.hodor.core.entity.CopySet;
 import org.dromara.hodor.core.entity.HodorMetadata;
 import org.dromara.hodor.core.service.JobInfoService;
 import org.dromara.hodor.server.component.LifecycleComponent;
+import org.dromara.hodor.server.listener.LeaderElectChangeListener;
 import org.dromara.hodor.server.listener.MetadataChangeListener;
 import org.dromara.hodor.server.listener.ServerNodeChangeListener;
 import org.springframework.stereotype.Service;
@@ -48,14 +49,15 @@ public class HodorService implements LifecycleComponent {
 
     @Override
     public void start() {
-        //init data
-        registerService.registryMetadataListener(new MetadataChangeListener());
-        //select leader
         Integer currRunningNodeCount = registerService.getRunningNodeCount();
         while (currRunningNodeCount < leastNodeCount) {
             ThreadUtils.sleep(TimeUnit.MILLISECONDS, 1000);
             currRunningNodeCount = registerService.getRunningNodeCount();
         }
+        //init data
+        registerService.registryMetadataListener(new MetadataChangeListener());
+        registerService.registryElectLeaderListener(new LeaderElectChangeListener());
+        //select leader
         leaderService.electLeader(() -> {
             log.info("to be leader.");
             registerService.registryServerNodeListener(new ServerNodeChangeListener());

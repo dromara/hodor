@@ -9,6 +9,7 @@ import org.dromara.hodor.core.entity.HodorMetadata;
 import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.RegistryCenter;
 import org.dromara.hodor.register.api.RegistryConfig;
+import org.dromara.hodor.register.api.node.LeaderNode;
 import org.dromara.hodor.register.api.node.ServerNode;
 import org.dromara.hodor.server.component.LifecycleComponent;
 import org.dromara.hodor.server.config.HodorServerProperties;
@@ -90,6 +91,10 @@ public class RegisterService implements LifecycleComponent {
 
     public void registryServerNodeListener(DataChangeListener listener) {
         registryCenter.addDataCacheListener(ServerNode.NODES_PATH, listener);
+    }
+
+    public void registryElectLeaderListener(DataChangeListener listener) {
+        registryCenter.addDataCacheListener(LeaderNode.INSTANCE_PATH, listener);
     }
 
 }
