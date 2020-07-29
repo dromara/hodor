@@ -2,7 +2,7 @@ package org.dromara.hodor.server.listener;
 
 import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;
-import org.dromara.hodor.server.service.LeaderService;
+import org.dromara.hodor.server.service.HodorService;
 
 /**
  * leader elect change listener
@@ -12,16 +12,16 @@ import org.dromara.hodor.server.service.LeaderService;
  */
 public class LeaderElectChangeListener implements DataChangeListener {
 
-    private LeaderService leaderService;
+    private final HodorService hodorService;
 
-    public LeaderElectChangeListener(final LeaderService leaderService) {
-        this.leaderService = leaderService;
+    public LeaderElectChangeListener(final HodorService hodorService) {
+        this.hodorService = hodorService;
     }
 
     @Override
     public void dataChanged(DataChangeEvent event) {
         if (event.getType() == DataChangeEvent.Type.NODE_REMOVED) {
-            leaderService.electLeader();
+            hodorService.electLeader();
         }
     }
 
