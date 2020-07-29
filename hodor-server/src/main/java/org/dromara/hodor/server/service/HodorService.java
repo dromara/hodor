@@ -11,6 +11,7 @@ import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.core.entity.CopySet;
 import org.dromara.hodor.core.entity.HodorMetadata;
 import org.dromara.hodor.core.manager.CopySetManager;
+import org.dromara.hodor.core.manager.MetadataManager;
 import org.dromara.hodor.core.manager.NodeServerManager;
 import org.dromara.hodor.core.service.JobInfoService;
 import org.dromara.hodor.server.component.Constants;
@@ -40,12 +41,15 @@ public class HodorService implements LifecycleComponent {
 
     private final CopySetManager copySetManager;
 
+    private final MetadataManager metadataManager;
+
     public HodorService(final LeaderService leaderService, final RegisterService registerService, final JobInfoService jobInfoService) {
         this.leaderService = leaderService;
         this.registerService = registerService;
         this.jobInfoService = jobInfoService;
         this.nodeServerManager = NodeServerManager.getInstance();
         this.copySetManager = CopySetManager.getInstance();
+        this.metadataManager = MetadataManager.getInstance();
     }
 
     @Override
@@ -56,7 +60,7 @@ public class HodorService implements LifecycleComponent {
             currRunningNodeCount = registerService.getRunningNodeCount();
         }
         //init data
-        registerService.registryMetadataListener(new MetadataChangeListener());
+        registerService.registryMetadataListener(new MetadataChangeListener(metadataManager));
         registerService.registryElectLeaderListener(new LeaderElectChangeListener(this));
         //select leader
         electLeader();
