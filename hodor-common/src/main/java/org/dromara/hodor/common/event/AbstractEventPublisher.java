@@ -8,19 +8,24 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
-public abstract class AbstractEventObject<V> implements EventObject<V> {
+/**
+ * abstract event publisher
+ *
+ * @param <V>
+ */
+public abstract class AbstractEventPublisher<V> implements EventPublisher<V> {
 
     private volatile Map<String, Set<ObjectListener<V>>> listeners;
     private final ReentrantLock lock = new ReentrantLock();
 
-    public AbstractEventObject() {
-        this.attachListener();
+    public AbstractEventPublisher() {
+        this.registerListener();
     }
 
-    public abstract void attachListener();
+    public abstract void registerListener();
 
-    public void publish(V v, String eventType) {
-        notifyListeners(new ObjectEvent<>(v, eventType));
+    public void publishEvent(V v, String eventType) {
+        publishEvent(new Event<>(v, eventType));
     }
 
     public void addListener(ObjectListener<V> objectListener, String eventType) {
@@ -68,7 +73,7 @@ public abstract class AbstractEventObject<V> implements EventObject<V> {
         }
     }
 
-    public void notifyListeners(ObjectEvent<V> event) {
+    public void publishEvent(Event<V> event) {
         if (listeners == null) {
             return;
         }

@@ -7,5 +7,5 @@ import java.util.EventListener;
  */
 public interface ObjectListener<V> extends EventListener {
 
-    void onEvent(ObjectEvent<V> event);
+    void onEvent(Event<V> event);
 }

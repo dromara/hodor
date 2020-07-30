@@ -1,7 +1,7 @@
 package org.dromara.hodor.common.event;
 
 
-public class ObjectEvent<V> {
+public class Event<V> {
 
     private V value;
     private String eventType;
@@ -10,7 +10,7 @@ public class ObjectEvent<V> {
      * @param value     自定义参数
      * @param eventType 事件类型
      */
-    public ObjectEvent(V value, String eventType) {
+    public Event(V value, String eventType) {
         this.value = value;
         this.eventType = eventType;
     }
