@@ -1,8 +1,8 @@
 package org.dromara.hodor.core.manager;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Maps;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import org.dromara.hodor.core.entity.CopySet;
 
 /**
@@ -14,7 +14,7 @@ import org.dromara.hodor.core.entity.CopySet;
 public enum CopySetManager {
     INSTANCE;
 
-    private final Set<String> leaderCopySet = Sets.newConcurrentHashSet();
+    private final Map<String, CopySet> leaderCopySet = Maps.newConcurrentMap();
 
     public static CopySetManager getInstance() {
         return INSTANCE;
@@ -26,7 +26,7 @@ public enum CopySetManager {
         servers.sort(Comparable::compareTo);
         for (String leader : servers) {
             if (!isCopySetLeader(leader)) {
-                leaderCopySet.add(leader);
+                leaderCopySet.put(leader, copySet);
                 return leader;
             }
         }
@@ -35,7 +35,11 @@ public enum CopySetManager {
     }
 
     public boolean isCopySetLeader(String leader) {
-        return leaderCopySet.contains(leader);
+        return leaderCopySet.containsKey(leader);
+    }
+
+    public CopySet getCopySet(String leader) {
+        return leaderCopySet.get(leader);
     }
 
     public void clearCopySet() {
