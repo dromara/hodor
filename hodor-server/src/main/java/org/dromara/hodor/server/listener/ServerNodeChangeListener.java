@@ -24,9 +24,7 @@ public class ServerNodeChangeListener implements DataChangeListener {
         String nodeIp = event.getPath();
         if (event.getType() == DataChangeEvent.Type.NODE_ADDED) {
             manager.addNodeServer(nodeIp);
-        }
-
-        if (event.getType() == DataChangeEvent.Type.NODE_REMOVED) {
+        } else if (event.getType() == DataChangeEvent.Type.NODE_REMOVED) {
             manager.removeNodeServer(nodeIp);
         }
 

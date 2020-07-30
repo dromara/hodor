@@ -1,5 +1,8 @@
 package org.dromara.hodor.core.manager;
 
+import java.util.concurrent.locks.ReentrantLock;
+import org.dromara.hodor.core.entity.HodorMetadata;
+
 /**
  * metadata manager
  *
@@ -9,16 +12,40 @@ package org.dromara.hodor.core.manager;
 public enum MetadataManager {
     INSTANCE;
 
+    private volatile HodorMetadata metadata;
+
+    private final ReentrantLock lock = new ReentrantLock();
+
     public static MetadataManager getInstance() {
         return INSTANCE;
     }
 
-
-    public void loadData(String metadata) {
-
+    public void loadData(final HodorMetadata metadata) {
+        lock.lock();
+        try {
+            if (isEqual(this.metadata, metadata)) {
+                return;
+            }
+            this.metadata = metadata;
+        } finally {
+            lock.unlock();
+        }
     }
 
-    public void update(String metadata) {
-
+    public HodorMetadata getMetadata() {
+        return metadata;
     }
+
+    public boolean isEqual(HodorMetadata oldValue, HodorMetadata newValue) {
+        if (oldValue == null && newValue == null) {
+            return true;
+        }
+
+        if (oldValue == null) {
+            return false;
+        }
+
+        return oldValue.equals(newValue);
+    }
+
 }
