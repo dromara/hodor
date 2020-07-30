@@ -7,6 +7,7 @@ import org.dromara.hodor.common.utils.LocalHost;
 import org.dromara.hodor.core.entity.CopySet;
 import org.dromara.hodor.core.entity.HodorMetadata;
 import org.dromara.hodor.core.manager.CopySetManager;
+import org.dromara.hodor.server.service.HodorService;
 
 /**
  * job distribute listener
@@ -16,25 +17,33 @@ import org.dromara.hodor.core.manager.CopySetManager;
  */
 public class JobDistributeListener implements ObjectListener<HodorMetadata> {
 
-    private final CopySetManager copySetManager = CopySetManager.getInstance();
+    private final CopySetManager copySetManager;
+
+    private final HodorService hodorService;
+
+    public JobDistributeListener(final HodorService hodorService) {
+        this.hodorService = hodorService;
+        this.copySetManager = CopySetManager.getInstance();
+    }
 
     @Override
     public void onEvent(Event<HodorMetadata> event) {
         final HodorMetadata metadata = event.getValue();
         List<CopySet> copySets = metadata.getCopySets();
         copySets.forEach(e -> {
-            if (LocalHost.getIp().equals(e.getLeader())) {
-                // 主节点数据区间
-                List<Integer> dataInterval = e.getDataInterval();
-
-                // 备用节点数据
-                List<String> servers = e.getServers();
-                servers.forEach(server -> {
-                    CopySet slaveCopySet = copySetManager.getCopySet(server);
-                    List<Integer> slaveDataInterval = slaveCopySet.getDataInterval();
-
-                });
+            if (!LocalHost.getIp().equals(e.getLeader())) {
+                return;
             }
+            // 主节点数据区间
+            List<Integer> dataInterval = e.getDataInterval();
+            hodorService.createActiveScheduler(e.getLeader(), dataInterval);
+            // 备用节点数据
+            List<String> servers = e.getServers();
+            servers.forEach(server -> {
+                CopySet standbyCopySet = copySetManager.getCopySet(server);
+                List<Integer> standbyDataInterval = standbyCopySet.getDataInterval();
+                hodorService.createStandbyScheduler(standbyCopySet.getLeader(), standbyDataInterval);
+            });
         });
     }
 

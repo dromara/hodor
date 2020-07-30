@@ -28,6 +28,8 @@ public interface HodorScheduler {
 
     void addJob(JobInfo jobInfo);
 
+    void addJobList(List<JobInfo> jobInfoList);
+
     void resumeJob(JobInfo jobInfo);
 
     void triggerJob(JobInfo jobInfo);

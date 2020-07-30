@@ -120,6 +120,11 @@ public class QuartzScheduler implements HodorScheduler {
     }
 
     @Override
+    public void addJobList(List<JobInfo> jobInfoList) {
+        jobInfoList.forEach(this::addJob);
+    }
+
+    @Override
     public boolean deleteJob(JobInfo jobInfo) {
         try {
             if (scheduler.checkExists(JobKey.jobKey(jobInfo.getJobName(), jobInfo.getGroupName()))) {

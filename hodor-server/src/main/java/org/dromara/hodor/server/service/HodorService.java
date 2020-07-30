@@ -10,10 +10,13 @@ import org.dromara.hodor.common.utils.CopySets;
 import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.core.entity.CopySet;
 import org.dromara.hodor.core.entity.HodorMetadata;
+import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.core.manager.CopySetManager;
-import org.dromara.hodor.core.manager.MetadataManager;
 import org.dromara.hodor.core.manager.NodeServerManager;
 import org.dromara.hodor.core.service.JobInfoService;
+import org.dromara.hodor.scheduler.api.HodorScheduler;
+import org.dromara.hodor.scheduler.api.SchedulerManager;
+import org.dromara.hodor.scheduler.api.config.SchedulerConfig;
 import org.dromara.hodor.server.component.Constants;
 import org.dromara.hodor.server.component.LifecycleComponent;
 import org.dromara.hodor.server.listener.LeaderElectChangeListener;
@@ -41,7 +44,7 @@ public class HodorService implements LifecycleComponent {
 
     private final CopySetManager copySetManager;
 
-    private final MetadataManager metadataManager;
+    private final SchedulerManager schedulerManager;
 
     public HodorService(final LeaderService leaderService, final RegisterService registerService, final JobInfoService jobInfoService) {
         this.leaderService = leaderService;
@@ -49,7 +52,7 @@ public class HodorService implements LifecycleComponent {
         this.jobInfoService = jobInfoService;
         this.nodeServerManager = NodeServerManager.getInstance();
         this.copySetManager = CopySetManager.getInstance();
-        this.metadataManager = MetadataManager.getInstance();
+        this.schedulerManager = SchedulerManager.getInstance();
     }
 
     @Override
@@ -60,10 +63,17 @@ public class HodorService implements LifecycleComponent {
             currRunningNodeCount = registerService.getRunningNodeCount();
         }
         //init data
-        registerService.registryMetadataListener(new MetadataChangeListener(metadataManager));
+        registerService.registryMetadataListener(new MetadataChangeListener(this));
         registerService.registryElectLeaderListener(new LeaderElectChangeListener(this));
         //select leader
         electLeader();
+    }
+
+    @Override
+    public void stop() {
+        registerService.stop();
+        copySetManager.clearCopySet();
+        nodeServerManager.clearNodeServer();
     }
 
     public void electLeader() {
@@ -116,11 +126,30 @@ public class HodorService implements LifecycleComponent {
         });
     }
 
-    @Override
-    public void stop() {
-        registerService.stop();
-        copySetManager.clearCopySet();
-        nodeServerManager.clearNodeServer();
+    public void createActiveScheduler(String ip, List<Integer> dataInterval) {
+        HodorScheduler activeScheduler = getScheduler(ip, dataInterval);
+        schedulerManager.addActiveScheduler(activeScheduler);
+        schedulerManager.addSchedulerDataInterval(activeScheduler.getSchedulerName(), dataInterval);
+    }
+
+    public void createStandbyScheduler(String ip, List<Integer> standbyDataInterval) {
+        HodorScheduler standbyScheduler = getScheduler(ip, standbyDataInterval);
+        schedulerManager.addStandByScheduler(standbyScheduler);
+        schedulerManager.addSchedulerDataInterval(standbyScheduler.getSchedulerName(), standbyDataInterval);
+    }
+
+    public HodorScheduler getScheduler(String ip, List<Integer> dataInterval) {
+        SchedulerConfig config = SchedulerConfig.builder().schedulerName("HodorScheduler_" + ip).threadCount(8).misfireThreshold(3000).build();
+        HodorScheduler scheduler = schedulerManager.getScheduler(config.getSchedulerName());
+        if (scheduler == null) {
+            scheduler = schedulerManager.createScheduler(config);
+        }
+        List<Integer> schedulerDataInterval = schedulerManager.getSchedulerDataInterval(config.getSchedulerName());
+        if (CollectionUtils.isEmpty(schedulerDataInterval) || !CollectionUtils.isEqualCollection(schedulerDataInterval, dataInterval)) {
+            List<JobInfo> jobInfoList = jobInfoService.queryJobInfoByOffset(dataInterval.get(0), dataInterval.get(1));
+            scheduler.addJobList(jobInfoList);
+        }
+        return scheduler;
     }
 
 }

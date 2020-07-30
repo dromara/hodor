@@ -1,5 +1,6 @@
 package org.dromara.hodor.scheduler.api;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
@@ -22,13 +23,16 @@ public final class SchedulerManager {
 
     private final Map<String, HodorScheduler> standBySchedulerMap;
 
+    private final Map<String, List<Integer>> schedulerDataInterval;
+
     private final ExtensionLoader<HodorScheduler> extensionLoader;
 
     private SchedulerManager() {
-        lock = new ReentrantLock();
-        activeSchedulerMap = new ConcurrentHashMap<>();
-        standBySchedulerMap = new ConcurrentHashMap<>();
-        extensionLoader = ExtensionLoader.getExtensionLoader(HodorScheduler.class, SchedulerConfig.class);
+        this.lock = new ReentrantLock();
+        this.activeSchedulerMap = new ConcurrentHashMap<>();
+        this.standBySchedulerMap = new ConcurrentHashMap<>();
+        this.schedulerDataInterval = new ConcurrentHashMap<>();
+        this.extensionLoader = ExtensionLoader.getExtensionLoader(HodorScheduler.class, SchedulerConfig.class);
     }
 
     public static SchedulerManager getInstance() {
@@ -67,6 +71,30 @@ public final class SchedulerManager {
         } finally {
             lock.unlock();
         }
+    }
+
+    public HodorScheduler getActiveScheduler(String schedulerName) {
+        return activeSchedulerMap.get(schedulerName);
+    }
+
+    public HodorScheduler getStandbyScheduler(String schedulerName) {
+        return standBySchedulerMap.get(schedulerName);
+    }
+
+    public HodorScheduler getScheduler(String schedulerName) {
+        HodorScheduler scheduler = getActiveScheduler(schedulerName);
+        if (scheduler == null) {
+            scheduler = getStandbyScheduler(schedulerName);
+        }
+        return scheduler;
+    }
+
+    public List<Integer> getSchedulerDataInterval(String schedulerName) {
+        return schedulerDataInterval.get(schedulerName);
+    }
+
+    public void addSchedulerDataInterval(String schedulerName, List<Integer> dataInterval) {
+        schedulerDataInterval.put(schedulerName, dataInterval);
     }
 
 }
