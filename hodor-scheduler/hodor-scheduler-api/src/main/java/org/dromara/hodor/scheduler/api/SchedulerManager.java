@@ -7,16 +7,21 @@ import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.scheduler.api.config.SchedulerConfig;
 
 /**
+ * scheduler manager
+ *
  * @author tangzy
  * @since 1.0
  */
 public final class SchedulerManager {
 
-    public static final SchedulerManager INSTANCE = new SchedulerManager();
+    private static final SchedulerManager INSTANCE = new SchedulerManager();
 
     private final ReentrantLock lock;
+
     private final Map<String, HodorScheduler> activeSchedulerMap;
+
     private final Map<String, HodorScheduler> standBySchedulerMap;
+
     private final ExtensionLoader<HodorScheduler> extensionLoader;
 
     private SchedulerManager() {
@@ -24,6 +29,10 @@ public final class SchedulerManager {
         activeSchedulerMap = new ConcurrentHashMap<>();
         standBySchedulerMap = new ConcurrentHashMap<>();
         extensionLoader = ExtensionLoader.getExtensionLoader(HodorScheduler.class, SchedulerConfig.class);
+    }
+
+    public static SchedulerManager getInstance() {
+        return INSTANCE;
     }
 
     public HodorScheduler createScheduler(SchedulerConfig config) {
