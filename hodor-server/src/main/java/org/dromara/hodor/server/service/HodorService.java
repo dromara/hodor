@@ -86,16 +86,16 @@ public class HodorService implements LifecycleComponent {
                 throw new HodorException("running node count is 0.");
             }
 
-            List<List<String>> copySetIps = CopySets.buildCopySets(currRunningNodes, Constants.REPLICA_COUNT, Constants.SCATTER_WIDTH);
-            int setsNum = Math.max(copySetIps.size(), currRunningNodes.size());
+            List<List<String>> copySetNodes = CopySets.buildCopySets(currRunningNodes, Constants.REPLICA_COUNT, Constants.SCATTER_WIDTH);
+            int setsNum = Math.max(copySetNodes.size(), currRunningNodes.size());
             // distribution copySet
             List<CopySet> copySets = Lists.newArrayList();
             for (int i = 0; i < setsNum; i++) {
-                int setsIndex = setsNum % copySetIps.size();
-                List<String> copySetIp = copySetIps.get(setsIndex);
+                int setsIndex = setsNum % copySetNodes.size();
+                List<String> copySetNode = copySetNodes.get(setsIndex);
                 CopySet copySet = new CopySet();
                 copySet.setId(setsIndex);
-                copySet.setServers(copySetIp);
+                copySet.setServers(copySetNode);
                 copySets.add(copySet);
             }
 
@@ -104,8 +104,8 @@ public class HodorService implements LifecycleComponent {
             int offset = (int) Math.ceil((double) jobCount / setsNum);
             List<Integer> interval = Lists.newArrayList();
             for (int i = 0; i < setsNum; i++) {
-                Integer index = jobInfoService.queryJobHashIdByOffset(offset * i);
-                interval.add(index);
+                Integer id = jobInfoService.queryJobIdByOffset(offset * i);
+                interval.add(id);
             }
             for (int i = 0; i < interval.size(); i++) {
                 CopySet copySet = copySets.get(i);
@@ -126,20 +126,20 @@ public class HodorService implements LifecycleComponent {
         });
     }
 
-    public void createActiveScheduler(String ip, List<Integer> dataInterval) {
-        HodorScheduler activeScheduler = getScheduler(ip, dataInterval);
+    public void createActiveScheduler(String serverId, List<Integer> dataInterval) {
+        HodorScheduler activeScheduler = getScheduler(serverId, dataInterval);
         schedulerManager.addActiveScheduler(activeScheduler);
         schedulerManager.addSchedulerDataInterval(activeScheduler.getSchedulerName(), dataInterval);
     }
 
-    public void createStandbyScheduler(String ip, List<Integer> standbyDataInterval) {
-        HodorScheduler standbyScheduler = getScheduler(ip, standbyDataInterval);
+    public void createStandbyScheduler(String serverId, List<Integer> standbyDataInterval) {
+        HodorScheduler standbyScheduler = getScheduler(serverId, standbyDataInterval);
         schedulerManager.addStandByScheduler(standbyScheduler);
         schedulerManager.addSchedulerDataInterval(standbyScheduler.getSchedulerName(), standbyDataInterval);
     }
 
-    public HodorScheduler getScheduler(String ip, List<Integer> dataInterval) {
-        SchedulerConfig config = SchedulerConfig.builder().schedulerName("HodorScheduler_" + ip).threadCount(8).misfireThreshold(3000).build();
+    public HodorScheduler getScheduler(String serverId, List<Integer> dataInterval) {
+        SchedulerConfig config = SchedulerConfig.builder().schedulerName("HodorScheduler_" + serverId).threadCount(8).misfireThreshold(3000).build();
         HodorScheduler scheduler = schedulerManager.getScheduler(config.getSchedulerName());
         if (scheduler == null) {
             scheduler = schedulerManager.createScheduler(config);

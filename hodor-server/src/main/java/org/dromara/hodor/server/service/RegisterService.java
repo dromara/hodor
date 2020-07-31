@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import java.util.List;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.utils.GsonUtils;
+import org.dromara.hodor.common.utils.LocalHost;
 import org.dromara.hodor.core.entity.CopySet;
 import org.dromara.hodor.core.entity.HodorMetadata;
 import org.dromara.hodor.register.api.DataChangeListener;
@@ -30,10 +31,13 @@ public class RegisterService implements LifecycleComponent {
 
     private final GsonUtils gsonUtils;
 
+    private final String serverId;
+
     public RegisterService(final HodorServerProperties properties) {
         this.properties = properties;
         this.registryCenter = ExtensionLoader.getExtensionLoader(RegistryCenter.class).getDefaultJoin();
         this.gsonUtils = GsonUtils.getInstance();
+        this.serverId = LocalHost.getIp() + ":" + properties.getNetServerPort();
     }
 
     @Override
@@ -61,6 +65,7 @@ public class RegisterService implements LifecycleComponent {
         registryCenter.makeDirs(ServerNode.WORK_PATH);
 
         // init data
+        registryCenter.createPersistent(ServerNode.NODES_PATH, getServerId());
 
     }
 
@@ -97,6 +102,10 @@ public class RegisterService implements LifecycleComponent {
 
     public void registryElectLeaderListener(DataChangeListener listener) {
         registryCenter.addDataCacheListener(LeaderNode.ACTIVE_PATH, listener);
+    }
+
+    public String getServerId() {
+        return serverId;
     }
 
 }

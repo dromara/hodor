@@ -1,5 +1,7 @@
 package org.dromara.hodor.core.service.impl;
 
+import java.util.List;
+import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.core.service.JobInfoService;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,11 @@ public class JobInfoServiceImpl implements JobInfoService {
 
     @Override
     public Integer queryJobHashIdByOffset(Integer offset) {
+        return null;
+    }
+
+    @Override
+    public List<JobInfo> queryJobInfoByOffset(Integer start, Integer end) {
         return null;
     }
 

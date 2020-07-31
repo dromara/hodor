@@ -27,6 +27,14 @@ public interface JobInfoService {
     Integer queryJobHashIdByOffset(Integer offset);
 
     /**
+     * 获取指定位置任务的id
+     *
+     * @param offset 任务位置
+     * @return hash id
+     */
+    Integer queryJobIdByOffset(Integer offset);
+
+    /**
      * 获取指定位置数据
      *
      * @param start 起始位置
