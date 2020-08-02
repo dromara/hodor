@@ -1,4 +1,4 @@
-package org.dromara.hodor.core.entity;
+package org.dromara.hodor.core;
 
 import java.util.Map;
 import org.dromara.hodor.core.enums.Priority;

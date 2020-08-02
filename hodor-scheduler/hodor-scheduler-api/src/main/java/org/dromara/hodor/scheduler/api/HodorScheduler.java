@@ -2,7 +2,7 @@ package org.dromara.hodor.scheduler.api;
 
 import java.util.List;
 import org.dromara.hodor.common.extension.SPI;
-import org.dromara.hodor.core.entity.JobInfo;
+import org.dromara.hodor.core.JobInfo;
 import org.dromara.hodor.scheduler.api.config.SchedulerConfig;
 
 /**

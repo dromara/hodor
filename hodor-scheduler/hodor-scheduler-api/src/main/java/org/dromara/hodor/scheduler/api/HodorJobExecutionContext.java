@@ -1,7 +1,7 @@
 package org.dromara.hodor.scheduler.api;
 
 import org.dromara.hodor.common.exception.UndefinedPropertyException;
-import org.dromara.hodor.core.entity.JobInfo;
+import org.dromara.hodor.core.JobInfo;
 
 import java.util.Map;
 

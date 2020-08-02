@@ -1,7 +1,7 @@
 package org.dromara.hodor.core.service;
 
 import java.util.List;
-import org.dromara.hodor.core.entity.JobInfo;
+import org.dromara.hodor.core.JobInfo;
 
 /**
  * job service

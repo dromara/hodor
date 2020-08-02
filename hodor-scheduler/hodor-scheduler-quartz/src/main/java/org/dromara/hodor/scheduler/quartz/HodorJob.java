@@ -1,7 +1,7 @@
 package org.dromara.hodor.scheduler.quartz;
 
 import lombok.Setter;
-import org.dromara.hodor.core.entity.JobInfo;
+import org.dromara.hodor.core.JobInfo;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.scheduler.api.JobExecutor;
 import org.quartz.Job;

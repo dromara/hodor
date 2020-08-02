@@ -10,7 +10,7 @@ import org.dromara.hodor.common.utils.CopySets;
 import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.core.entity.CopySet;
 import org.dromara.hodor.core.entity.HodorMetadata;
-import org.dromara.hodor.core.entity.JobInfo;
+import org.dromara.hodor.core.JobInfo;
 import org.dromara.hodor.core.manager.CopySetManager;
 import org.dromara.hodor.core.manager.NodeServerManager;
 import org.dromara.hodor.core.service.JobInfoService;
