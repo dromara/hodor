@@ -1,0 +1,14 @@
+spring:
+   profiles:
+     active: local
+   datasource:
+     driver-class-name: com.mysql.jdbc.Driver
+     url: jdbc:mysql://localhost:3306/ease-run?useUnicode=true&characterEncoding=utf8
+     username: root
+     password: root
+
+# mybatis-plus
+mybatis-plus:
+  mapper-locations: classpath*:/mappers/*.xml
+  configuration:
+    map-underscore-to-camel-case: true

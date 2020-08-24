@@ -104,8 +104,8 @@ public class HodorService implements LifecycleComponent {
             int offset = (int) Math.ceil((double) jobCount / setsNum);
             List<Integer> interval = Lists.newArrayList();
             for (int i = 0; i < setsNum; i++) {
-                Integer id = jobInfoService.queryJobIdByOffset(offset * i);
-                interval.add(id);
+                Integer hashId = jobInfoService.queryJobHashIdByOffset(offset * i);
+                interval.add(hashId);
             }
             for (int i = 0; i < interval.size(); i++) {
                 CopySet copySet = copySets.get(i);
