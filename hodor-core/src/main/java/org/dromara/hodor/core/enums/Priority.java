@@ -1,5 +1,11 @@
 package org.dromara.hodor.core.enums;
 
+/**
+ * job priority
+ *
+ * @author tomgs
+ * @since 2020/8/26
+ */
 public enum Priority {
 
   DEFAULT(5),

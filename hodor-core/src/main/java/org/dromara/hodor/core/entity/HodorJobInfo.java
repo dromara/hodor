@@ -1,6 +1,8 @@
 package org.dromara.hodor.core.entity;
 
+import lombok.Data;
 import org.dromara.hodor.core.JobInfo;
+import org.dromara.hodor.core.enums.JobStatus;
 import org.dromara.hodor.core.enums.Priority;
 
 import java.util.Map;
@@ -11,7 +13,16 @@ import java.util.Map;
  * @author tomgs
  * @version 2020/8/2 1.0 
  */
+@Data
 public class HodorJobInfo implements JobInfo {
+
+    private Long id;
+
+    private String groupName;
+
+    private String jobName;
+
+    private JobStatus jobStatus;
 
     @Override
     public String getJobKey() {
