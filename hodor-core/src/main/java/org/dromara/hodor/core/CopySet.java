@@ -1,4 +1,4 @@
-package org.dromara.hodor.core.entity;
+package org.dromara.hodor.core;
 
 import java.util.List;
 import lombok.Data;

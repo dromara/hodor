@@ -3,7 +3,7 @@ package org.dromara.hodor.core.manager;
 import com.google.common.collect.Maps;
 import java.util.List;
 import java.util.Map;
-import org.dromara.hodor.core.entity.CopySet;
+import org.dromara.hodor.core.CopySet;
 
 /**
  * copy set manager

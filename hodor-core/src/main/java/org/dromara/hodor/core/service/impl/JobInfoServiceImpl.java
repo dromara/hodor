@@ -1,10 +1,10 @@
 package org.dromara.hodor.core.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.core.JobInfo;
 import org.dromara.hodor.core.entity.HodorJobInfo;
 import org.dromara.hodor.core.enums.JobStatus;
 import org.dromara.hodor.core.mapper.JobInfoMapper;
@@ -35,17 +35,27 @@ public class JobInfoServiceImpl implements JobInfoService {
 
     @Override
     public Integer queryJobHashIdByOffset(Integer offset) {
-        return null;
+        // select hash_id from hodor_job_info order by hash_id limit ${offset}, 1;
+        QueryWrapper<HodorJobInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("hash_id").orderByAsc("hash_id").last(String.format("limit %s, 1", offset));
+        HodorJobInfo hodorJobInfo = jobInfoMapper.selectOne(queryWrapper);
+        return hodorJobInfo == null ? -1 : hodorJobInfo.getHashId();
     }
 
     @Override
     public Integer queryJobIdByOffset(Integer offset) {
-        return null;
+        // select id from hodor_job_info order by id limit ${offset}, 1;
+        QueryWrapper<HodorJobInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("id").orderByAsc("id").last(String.format("limit %s, 1", offset));
+        HodorJobInfo hodorJobInfo = jobInfoMapper.selectOne(queryWrapper);
+        return hodorJobInfo == null ? -1 : hodorJobInfo.getId();
     }
 
     @Override
-    public List<JobInfo> queryJobInfoByOffset(Integer start, Integer end) {
-        return null;
+    public List<HodorJobInfo> queryJobInfoByHashIdOffset(Integer startHashId, Integer endHashId) {
+        return jobInfoMapper.selectList(Wrappers.<HodorJobInfo>lambdaQuery()
+            .ge(HodorJobInfo::getHashId, startHashId)
+            .lt(HodorJobInfo::getHashId, endHashId));
     }
 
 }

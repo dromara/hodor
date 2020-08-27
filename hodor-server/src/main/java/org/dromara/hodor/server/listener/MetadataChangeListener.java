@@ -3,7 +3,7 @@ package org.dromara.hodor.server.listener;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.event.AbstractEventPublisher;
 import org.dromara.hodor.common.utils.GsonUtils;
-import org.dromara.hodor.core.entity.HodorMetadata;
+import org.dromara.hodor.core.HodorMetadata;
 import org.dromara.hodor.core.manager.MetadataManager;
 import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;

@@ -1,7 +1,7 @@
 package org.dromara.hodor.core.manager;
 
 import java.util.concurrent.locks.ReentrantLock;
-import org.dromara.hodor.core.entity.HodorMetadata;
+import org.dromara.hodor.core.HodorMetadata;
 
 /**
  * metadata manager

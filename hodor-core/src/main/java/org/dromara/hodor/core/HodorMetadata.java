@@ -1,8 +1,9 @@
-package org.dromara.hodor.core.entity;
+package org.dromara.hodor.core;
 
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
+import org.dromara.hodor.core.CopySet;
 
 /**
  * @author tomgs

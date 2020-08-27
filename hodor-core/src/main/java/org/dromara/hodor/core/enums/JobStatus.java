@@ -21,7 +21,7 @@ public enum JobStatus {
     /**
      * stop running
      */
-    STOP(3);
+    STOP(2);
 
     int value;
 

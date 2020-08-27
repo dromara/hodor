@@ -8,9 +8,11 @@ package org.dromara.hodor.core.enums;
  */
 public enum Priority {
 
-  DEFAULT(5),
-  MEDIUM(10),
-  HIGHER(15);
+  DEFAULT(0),
+
+  MEDIUM(1),
+
+  HIGHER(2);
 
   private int priority;
 

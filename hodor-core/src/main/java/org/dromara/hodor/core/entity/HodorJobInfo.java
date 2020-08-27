@@ -1,62 +1,75 @@
 package org.dromara.hodor.core.entity;
 
+import java.util.Date;
 import lombok.Data;
-import org.dromara.hodor.core.JobInfo;
 import org.dromara.hodor.core.enums.JobStatus;
 import org.dromara.hodor.core.enums.Priority;
 
-import java.util.Map;
-
 /**
- *  hodor job info
+ * hodor job info
  *
  * @author tomgs
- * @version 2020/8/2 1.0 
+ * @version 2020/8/2 1.0
  */
 @Data
-public class HodorJobInfo implements JobInfo {
+public class HodorJobInfo {
 
-    private Long id;
+    private Integer id;
+
+    private Integer hashId;
 
     private String groupName;
 
     private String jobName;
 
+    private String jobCategory;
+
+    private String jobType;
+
+    private String jobPath;
+
+    private String jobCommand;
+
+    private Priority priority;
+
     private JobStatus jobStatus;
 
-    @Override
-    public String getJobKey() {
-        return null;
-    }
+    private Boolean isDependence;
 
-    @Override
-    public String getGroupName() {
-        return null;
-    }
+    private String cronExpression;
 
-    @Override
-    public String getJobName() {
-        return null;
-    }
+    private Integer shardingCount;
 
-    @Override
-    public int getType() {
-        return 0;
-    }
+    private String jobParameters;
 
-    @Override
-    public Priority getPriority() {
-        return null;
-    }
+    private String extensibleParameters;
 
-    @Override
-    public Map<String, Object> getJobData() {
-        return null;
-    }
+    private Boolean failover;
 
-    @Override
-    public String getCron() {
-        return null;
-    }
+    private Boolean misfire;
+
+    private Boolean fireNow;
+
+    private Boolean isOnce;
+
+    private Boolean isBroadcast;
+
+    private String slaveIp;
+
+    private Integer timeout;
+
+    private Date activeTime;
+
+    private Date endTime;
+
+    private Date nextExecuteTime;
+
+    private Date prevExecuteTime;
+
+    private Date createTime;
+
+    private String jobDataPath;
+
+    private String jobDesc;
 
 }

@@ -8,8 +8,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.hodor.common.exception.HodorException;
 import org.dromara.hodor.common.utils.CopySets;
 import org.dromara.hodor.common.utils.ThreadUtils;
-import org.dromara.hodor.core.entity.CopySet;
-import org.dromara.hodor.core.entity.HodorMetadata;
+import org.dromara.hodor.core.CopySet;
+import org.dromara.hodor.core.HodorMetadata;
 import org.dromara.hodor.core.JobInfo;
 import org.dromara.hodor.core.manager.CopySetManager;
 import org.dromara.hodor.core.manager.NodeServerManager;
@@ -146,7 +146,7 @@ public class HodorService implements LifecycleComponent {
         }
         List<Integer> schedulerDataInterval = schedulerManager.getSchedulerDataInterval(config.getSchedulerName());
         if (CollectionUtils.isEmpty(schedulerDataInterval) || !CollectionUtils.isEqualCollection(schedulerDataInterval, dataInterval)) {
-            List<JobInfo> jobInfoList = jobInfoService.queryJobInfoByOffset(dataInterval.get(0), dataInterval.get(1));
+            List<JobInfo> jobInfoList = jobInfoService.queryJobInfoByHashIdOffset(dataInterval.get(0), dataInterval.get(1));
             scheduler.addJobList(jobInfoList);
         }
         return scheduler;
