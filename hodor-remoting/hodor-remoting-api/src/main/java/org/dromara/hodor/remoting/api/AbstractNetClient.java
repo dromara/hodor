@@ -50,7 +50,7 @@ public class AbstractNetClient implements NetClient, HodorChannelHandler {
     }
 
     @Override
-    public void sent(HodorChannel channel, Object message) {
+    public void send(HodorChannel channel, Object message) {
 
     }
 
