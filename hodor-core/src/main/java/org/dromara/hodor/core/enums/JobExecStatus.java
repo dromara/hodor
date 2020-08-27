@@ -6,7 +6,7 @@ package org.dromara.hodor.core.enums;
  * @author tomgs
  * @since 2020/8/26
  */
-public enum JobExeStatus {
+public enum JobExecStatus {
 
     /**
      * 任务提交成功，等待运行
@@ -45,7 +45,7 @@ public enum JobExeStatus {
 
     private int status;
 
-    JobExeStatus(int status) {
+    JobExecStatus(int status) {
         this.status = status;
     }
 

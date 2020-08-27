@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class JobInfoServiceImpl implements JobInfoService {
 
-    private @NonNull JobInfoMapper jobInfoMapper;
+    private final @NonNull JobInfoMapper jobInfoMapper;
 
     @Override
     public Integer queryAssignableJobCount() {
