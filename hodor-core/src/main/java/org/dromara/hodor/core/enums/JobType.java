@@ -8,50 +8,20 @@ package org.dromara.hodor.core.enums;
  */
 public enum JobType {
 
-    PHP(0, "php"),
+    COMMON_JOB(0),
 
-    SHELL(1, "shell"),
+    TIME_JOB(1),
 
-    PYTHON(2, "python"),
-
-    JAR(3, "jar"),
-
-    JAVA(4, "java"),
-
-    COMMAND(5, "command"),
-
-    HTTP(6, "http"),
-
-    HADOOP_JAVA(7, "hadoopJava"),
-
-    HADOOP_SHELL(8, "hadoopShell"),
-
-    SPARK(9, "spark"),
-
-    FLINK(10, "flink"),
-
-    HIVE(11, "hive"),
-
-    SQOOP(12, "sqoop"),
-
-    SUPERVISOR(13, "supervisor"),
-
-    MQ(14, "mq");
+    WORKFLOW_JOB(2);
 
     private final int code;
 
-    private final String name;
-
-    JobType(int code, String typeName) {
+    JobType(int code) {
         this.code = code;
-        this.name = typeName;
     }
 
     public int getCode() {
         return code;
     }
 
-    public String getName() {
-        return name;
-    }
 }

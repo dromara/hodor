@@ -1,7 +1,7 @@
 package org.dromara.hodor.scheduler.quartz;
 
 import lombok.Setter;
-import org.dromara.hodor.core.JobInfo;
+import org.dromara.hodor.core.JobDesc;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.scheduler.api.JobExecutor;
 import org.quartz.Job;
@@ -19,11 +19,11 @@ public class HodorJob implements Job {
     private JobExecutor jobExecutor;
 
     @Setter
-    private JobInfo jobInfo;
+    private JobDesc jobDesc;
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {
-        jobExecutor.execute(new HodorJobExecutionContext(jobInfo));
+        jobExecutor.execute(new HodorJobExecutionContext(jobDesc));
     }
 
 }

@@ -1,7 +1,7 @@
 package org.dromara.hodor.scheduler.api;
 
 import org.dromara.hodor.common.exception.UndefinedPropertyException;
-import org.dromara.hodor.core.JobInfo;
+import org.dromara.hodor.core.JobDesc;
 
 import java.util.Map;
 
@@ -14,9 +14,9 @@ import java.util.Map;
 public class HodorJobExecutionContext {
 
     private final Map<String, Object> jobData;
-    private final JobInfo jobInfo;
+    private final JobDesc jobInfo;
 
-    public HodorJobExecutionContext(JobInfo jobInfo) {
+    public HodorJobExecutionContext(JobDesc jobInfo) {
         this.jobInfo = jobInfo;
         this.jobData = jobInfo.getJobData();
     }
@@ -29,7 +29,7 @@ public class HodorJobExecutionContext {
         }
     }
 
-    public JobInfo getJobInfo() {
+    public JobDesc getJobInfo() {
         return jobInfo;
     }
 

@@ -10,7 +10,7 @@ import org.dromara.hodor.common.utils.CopySets;
 import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.core.CopySet;
 import org.dromara.hodor.core.HodorMetadata;
-import org.dromara.hodor.core.JobInfo;
+import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.core.manager.CopySetManager;
 import org.dromara.hodor.core.manager.NodeServerManager;
 import org.dromara.hodor.core.service.JobInfoService;
@@ -147,7 +147,7 @@ public class HodorService implements LifecycleComponent {
         List<Integer> schedulerDataInterval = schedulerManager.getSchedulerDataInterval(config.getSchedulerName());
         if (CollectionUtils.isEmpty(schedulerDataInterval) || !CollectionUtils.isEqualCollection(schedulerDataInterval, dataInterval)) {
             List<JobInfo> jobInfoList = jobInfoService.queryJobInfoByHashIdOffset(dataInterval.get(0), dataInterval.get(1));
-            scheduler.addJobList(jobInfoList);
+            jobInfoList.forEach(scheduler::addJob);
         }
         return scheduler;
     }

@@ -1,7 +1,7 @@
 package org.dromara.hodor.core.service;
 
 import java.util.List;
-import org.dromara.hodor.core.entity.HodorJobInfo;
+import org.dromara.hodor.core.entity.JobInfo;
 
 /**
  * job service
@@ -10,6 +10,13 @@ import org.dromara.hodor.core.entity.HodorJobInfo;
  * @since 2020/6/30
  */
 public interface JobInfoService {
+
+    /**
+     * 新增任务
+     *
+     * @param jobInfo 任务信息
+     */
+    void addJob(JobInfo jobInfo);
 
     /**
      * 查询可分配任务数量
@@ -41,5 +48,5 @@ public interface JobInfoService {
      * @param endHashId 结束位置
      * @return job info list
      */
-    List<HodorJobInfo> queryJobInfoByHashIdOffset(Integer startHashId, Integer endHashId);
+    List<JobInfo> queryJobInfoByHashIdOffset(Integer startHashId, Integer endHashId);
 }
