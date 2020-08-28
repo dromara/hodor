@@ -70,7 +70,7 @@ public class RegisterService implements LifecycleComponent {
     }
 
     public Integer getRunningNodeCount() {
-        return 0;
+        return registryCenter.getChildren(ServerNode.NODES_PATH).size();
     }
 
     public List<String> getRunningNodes() {
@@ -106,6 +106,11 @@ public class RegisterService implements LifecycleComponent {
 
     public String getServerId() {
         return serverId;
+    }
+
+    public Integer getLeastNodeCount() {
+        //return properties.getClusterNodes();
+        return Integer.parseInt(System.getProperty("clusters", "1"));
     }
 
 }

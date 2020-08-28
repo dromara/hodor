@@ -6,7 +6,6 @@ import lombok.EqualsAndHashCode;
 import org.dromara.hodor.core.JobDesc;
 import org.dromara.hodor.core.enums.JobStatus;
 
-
 /**
  * hodor job info
  *

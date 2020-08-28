@@ -58,7 +58,7 @@ public class HodorService implements LifecycleComponent {
     @Override
     public void start() {
         Integer currRunningNodeCount = registerService.getRunningNodeCount();
-        while (currRunningNodeCount < Constants.LEAST_NODE_COUNT) {
+        while (currRunningNodeCount < registerService.getLeastNodeCount()) {
             ThreadUtils.sleep(TimeUnit.MILLISECONDS, 1000);
             currRunningNodeCount = registerService.getRunningNodeCount();
         }

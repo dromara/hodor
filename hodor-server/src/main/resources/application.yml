@@ -1,3 +1,9 @@
+spring:
+  application:
+    name: hodor-scheduler
+  profiles:
+    active: core
+
 hodor:
   netServer:
     host: 127.0.0.1

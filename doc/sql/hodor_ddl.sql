@@ -5,14 +5,17 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- Table structure for hodor_job_info
 -- ----------------------------
 DROP TABLE IF EXISTS `hodor_job_info`;
+DROP TABLE IF EXISTS `hodor_job_exec_detail`;
+
 CREATE TABLE `hodor_job_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '任务id',
   `hash_id` int(11) NOT NULL DEFAULT -1 COMMENT '任务hash id',
   `group_name` varchar(64) CHARACTER SET utf8 NOT NULL COMMENT '任务组名称',
   `job_name` varchar(64) CHARACTER SET utf8 NOT NULL COMMENT '任务名称',
   `job_category` varchar(64) CHARACTER SET utf8 NOT NULL DEFAULT 'default' COMMENT '任务分类',
-  `job_type` varchar(255) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '任务的类型',
+  `job_type` int(11) NOT NULL DEFAULT 0 COMMENT '任务命令类型， 0：普通类型 1：定时类型 2：工作流类型，默认0',
   `job_path` varchar(255) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '任务调用路径，Java任务即类全路径',
+  `job_command_type` varchar(255) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '任务指令类型，java,shell,python',
   `job_command` varchar(255) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '任务执行的命令，Java任务即执行的方法',
   `job_status` int(11) NOT NULL DEFAULT 0 COMMENT '任务状态0未激活 1可运行 2正在运行 3暂停',
   `is_dependence` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0:表示改job没有依赖；1：有相关依赖；',
@@ -32,16 +35,16 @@ CREATE TABLE `hodor_job_info` (
   `prev_execute_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '最近一次执行时间',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '任务创建时间',
   `end_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '任务结束时间',
-  `priority` int(11) CHARACTER SET utf8 NOT NULL DEFAULT 0 COMMENT '任务优先级，0：低，1：中，2：高；默认0',
+  `priority` int(11) NOT NULL DEFAULT 0 COMMENT '任务优先级，0：低，1：中，2：高；默认0',
   `job_data_path` varchar(255) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '任务的jar，sql文件，sh文件信息等',
   `job_desc` varchar(1024) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '任务描述 ',
+  PRIMARY KEY (`id`),
   UNIQUE INDEX `job_group_idx`(`job_name`, `group_name`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8;
 
 -- ----------------------------
 -- Table structure for hodor_job_exec_detail
 -- ----------------------------
-DROP TABLE IF EXISTS `hodor_job_exec_detail`;
 CREATE TABLE `hodor_job_exec_detail` (
   `id` int(11) NOT NULL COMMENT '任务唯一标识',
   `group_name` varchar(100) NOT NULL COMMENT '任务组名称',
