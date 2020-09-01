@@ -9,5 +9,5 @@ hodor:
     host: 127.0.0.1
     port: 8080
   registry:
-    servers: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183
-    namespace: ""
+    servers: 127.0.0.1:2181
+    namespace: "hodor"

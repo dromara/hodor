@@ -58,23 +58,23 @@ public class RegisterService implements LifecycleComponent {
 
     private void initNode() {
         // init path
-        registryCenter.makeDirs(ServerNode.METADATA_PATH);
-        registryCenter.makeDirs(ServerNode.NODES_PATH);
-        registryCenter.makeDirs(ServerNode.COPY_SETS_PATH);
-        registryCenter.makeDirs(ServerNode.MASTER_PATH);
-        registryCenter.makeDirs(ServerNode.WORK_PATH);
+        //registryCenter.makeDirs(ServerNode.METADATA_PATH);
+        //registryCenter.makeDirs(ServerNode.NODES_PATH);
+        //registryCenter.makeDirs(ServerNode.COPY_SETS_PATH);
+        //registryCenter.makeDirs(ServerNode.MASTER_PATH);
+        //registryCenter.makeDirs(ServerNode.WORK_PATH);
 
         // init data
-        registryCenter.createPersistent(ServerNode.NODES_PATH, getServerId());
+        registryCenter.createPersistent(ServerNode.getServerNodePath(getServerId()), getServerId());
 
     }
 
     public Integer getRunningNodeCount() {
-        return registryCenter.getChildren(ServerNode.NODES_PATH).size();
+        return getRunningNodes().size();
     }
 
     public List<String> getRunningNodes() {
-        return Lists.newArrayList();
+        return registryCenter.getChildren(ServerNode.NODES_PATH);
     }
 
     @Deprecated
