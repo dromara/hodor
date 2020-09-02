@@ -22,7 +22,7 @@ package org.dromara.hodor.common.utils;
  *
  * @author xiaoyu
  */
-public class StringUtils {
+public final class StringUtils extends org.apache.commons.lang3.StringUtils {
 
     private static final String FOLDER_SEPARATOR = "/";
 

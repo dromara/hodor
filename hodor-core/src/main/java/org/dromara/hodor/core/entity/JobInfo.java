@@ -1,5 +1,6 @@
 package org.dromara.hodor.core.entity;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import java.util.Date;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,6 +15,7 @@ import org.dromara.hodor.core.enums.JobStatus;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@TableName("hodor_job_info")
 public class JobInfo extends JobDesc {
 
     private JobStatus jobStatus;

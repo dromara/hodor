@@ -59,6 +59,9 @@ public class HodorService implements LifecycleComponent {
     public void start() {
         Integer currRunningNodeCount = registerService.getRunningNodeCount();
         while (currRunningNodeCount < registerService.getLeastNodeCount()) {
+
+            log.warn("waiting for the node to join the cluster ...");
+
             ThreadUtils.sleep(TimeUnit.MILLISECONDS, 1000);
             currRunningNodeCount = registerService.getRunningNodeCount();
         }
@@ -78,7 +81,7 @@ public class HodorService implements LifecycleComponent {
 
     public void electLeader() {
         leaderService.electLeader(() -> {
-            log.info("to be leader.");
+            log.info("{} to be leader.", registerService.getServerId());
             registerService.registryServerNodeListener(new ServerNodeChangeListener(nodeServerManager));
             // after to be leader write here
             List<String> currRunningNodes = registerService.getRunningNodes();
@@ -86,6 +89,7 @@ public class HodorService implements LifecycleComponent {
                 throw new HodorException("running node count is 0.");
             }
 
+            // 至少3个节点才可以使用copy set
             List<List<String>> copySetNodes = CopySets.buildCopySets(currRunningNodes, Constants.REPLICA_COUNT, Constants.SCATTER_WIDTH);
             int setsNum = Math.max(copySetNodes.size(), currRunningNodes.size());
             // distribution copySet

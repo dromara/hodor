@@ -16,6 +16,12 @@ public class CopySets {
 
     public static List<List<String>> buildCopySets(List<String> nodes, int r, int s) {
 
+        if (nodes.size() <= r) {
+            ArrayList<List<String>> result = Lists.newArrayList();
+            result.add(nodes);
+            return result;
+        }
+
         List<Set<String>> copySets = Lists.newArrayList();
         Map<String, Integer> scatterWidths = Maps.newHashMap();
         nodes.sort(Comparable::compareTo);

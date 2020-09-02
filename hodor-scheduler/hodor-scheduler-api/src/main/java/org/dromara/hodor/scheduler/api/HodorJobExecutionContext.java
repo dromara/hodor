@@ -1,6 +1,7 @@
 package org.dromara.hodor.scheduler.api;
 
 import java.util.HashMap;
+import org.dromara.hodor.common.IdGenerator;
 import org.dromara.hodor.common.exception.UndefinedPropertyException;
 import org.dromara.hodor.core.JobDesc;
 
@@ -14,10 +15,12 @@ import java.util.Map;
  */
 public class HodorJobExecutionContext {
 
+    private final long id;
     private final Map<String, Object> jobData;
     private final JobDesc jobDesc;
 
     public HodorJobExecutionContext(JobDesc jobDesc) {
+        this.id = IdGenerator.defaultGenerator().nextId();
         this.jobDesc = jobDesc;
         //this.jobData = jobDesc.getJobData();
         this.jobData = new HashMap<>();
@@ -33,6 +36,10 @@ public class HodorJobExecutionContext {
 
     public JobDesc getJobDesc() {
         return jobDesc;
+    }
+
+    public long getId() {
+        return id;
     }
 
 }

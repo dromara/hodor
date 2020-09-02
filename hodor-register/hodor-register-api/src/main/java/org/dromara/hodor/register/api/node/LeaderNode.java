@@ -8,8 +8,8 @@ package org.dromara.hodor.register.api.node;
  */
 public class LeaderNode {
 
-    public static final String ACTIVE_PATH = "/hodor/scheduler/master/active";
+    public static final String ACTIVE_PATH = "/scheduler/master/active";
 
-    public static final String LATCH_PATH = "/hodor/scheduler/latch";
+    public static final String LATCH_PATH = "/scheduler/latch";
 
 }

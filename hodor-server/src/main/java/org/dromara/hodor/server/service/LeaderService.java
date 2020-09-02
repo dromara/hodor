@@ -1,7 +1,6 @@
 package org.dromara.hodor.server.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.common.utils.LocalHost;
 import org.dromara.hodor.register.api.LeaderExecutionCallback;
 import org.dromara.hodor.register.api.RegistryCenter;
 import org.dromara.hodor.register.api.node.LeaderNode;
@@ -19,7 +18,10 @@ public class LeaderService {
 
     private final RegistryCenter registryCenter;
 
+    private final RegisterService registerService;
+
     public LeaderService(final RegisterService registerService) {
+        this.registerService = registerService;
         this.registryCenter = registerService.getRegistryCenter();
     }
 
@@ -39,7 +41,7 @@ public class LeaderService {
      * 创建主节点
      */
     public void createLeaderNode() {
-        registryCenter.createEphemeral(LeaderNode.ACTIVE_PATH, LocalHost.getIp());
+        registryCenter.createEphemeral(LeaderNode.ACTIVE_PATH, registerService.getServerId());
     }
 
     /**
@@ -53,7 +55,7 @@ public class LeaderService {
      * 当期节点是否为主节点
      */
     public boolean isLeader() {
-        return !LocalHost.getIp().equals(registryCenter.get(LeaderNode.ACTIVE_PATH));
+        return !registerService.getServerId().equals(registryCenter.get(LeaderNode.ACTIVE_PATH));
     }
 
 }

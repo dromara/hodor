@@ -10,4 +10,4 @@ hodor:
     port: 8080
   registry:
     servers: 127.0.0.1:2181
-    namespace: "hodor"
+    namespace: "hodor-test"
