@@ -9,9 +9,9 @@ import org.dromara.hodor.core.enums.Priority;
 @Data
 public class JobDesc {
 
-  private Integer id;
+  private Long id;
 
-  private Integer hashId;
+  private Long hashId;
 
   private String jobCategory;
 

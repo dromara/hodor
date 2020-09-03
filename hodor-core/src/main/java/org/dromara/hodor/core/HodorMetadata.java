@@ -13,7 +13,7 @@ import lombok.Data;
 public class HodorMetadata {
 
     private List<String> nodes;
-    private List<Integer> interval;
+    private List<Long> interval;
     private List<CopySet> copySets;
 
 }

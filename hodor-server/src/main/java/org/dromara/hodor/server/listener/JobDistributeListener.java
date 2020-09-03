@@ -31,17 +31,21 @@ public class JobDistributeListener implements ObjectListener<HodorMetadata> {
         final HodorMetadata metadata = event.getValue();
         List<CopySet> copySets = metadata.getCopySets();
         copySets.forEach(e -> {
-            if (!LocalHost.getIp().equals(e.getLeader())) {
+            if (!hodorService.getServerId().equals(e.getLeader())) {
                 return;
             }
             // 主节点数据区间
-            List<Integer> dataInterval = e.getDataInterval();
+            List<Long> dataInterval = e.getDataInterval();
             hodorService.createActiveScheduler(e.getLeader(), dataInterval);
             // 备用节点数据
             List<String> servers = e.getServers();
             servers.forEach(server -> {
+                // 排除主节点
+                if (e.getLeader().equals(server)) {
+                    return;
+                }
                 CopySet standbyCopySet = copySetManager.getCopySet(server);
-                List<Integer> standbyDataInterval = standbyCopySet.getDataInterval();
+                List<Long> standbyDataInterval = standbyCopySet.getDataInterval();
                 hodorService.createStandbyScheduler(standbyCopySet.getLeader(), standbyDataInterval);
             });
         });

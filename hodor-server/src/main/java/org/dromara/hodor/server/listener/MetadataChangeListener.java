@@ -21,14 +21,12 @@ public class MetadataChangeListener extends AbstractEventPublisher<HodorMetadata
 
     private final MetadataManager metadataManager;
 
-    private final HodorService hodorService;
-
     private final GsonUtils gsonUtils;
 
     public MetadataChangeListener(final HodorService hodorService) {
-        this.hodorService = hodorService;
         this.metadataManager = MetadataManager.getInstance();
         this.gsonUtils = GsonUtils.getInstance();
+        this.addListener(new JobDistributeListener(hodorService), EventType.JOB_DIS);
     }
 
     @Override
@@ -56,7 +54,7 @@ public class MetadataChangeListener extends AbstractEventPublisher<HodorMetadata
 
     @Override
     public void registerListener() {
-        this.addListener(new JobDistributeListener(hodorService), EventType.JOB_DIS);
+
     }
 
 }

@@ -39,7 +39,7 @@ public class JobInfoServiceImpl implements JobInfoService {
     }
 
     @Override
-    public Integer queryJobHashIdByOffset(Integer offset) {
+    public Long queryJobHashIdByOffset(Integer offset) {
         // select hash_id from hodor_job_info order by hash_id limit ${offset}, 1;
         QueryWrapper<JobInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.select("hash_id").orderByAsc("hash_id").last(String.format("limit %s, 1", offset));
@@ -48,7 +48,7 @@ public class JobInfoServiceImpl implements JobInfoService {
     }
 
     @Override
-    public Integer queryJobIdByOffset(Integer offset) {
+    public Long queryJobIdByOffset(Integer offset) {
         // select id from hodor_job_info order by id limit ${offset}, 1;
         QueryWrapper<JobInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.select("id").orderByAsc("id").last(String.format("limit %s, 1", offset));
@@ -57,7 +57,7 @@ public class JobInfoServiceImpl implements JobInfoService {
     }
 
     @Override
-    public List<JobInfo> queryJobInfoByHashIdOffset(Integer startHashId, Integer endHashId) {
+    public List<JobInfo> queryJobInfoByHashIdOffset(Long startHashId, Long endHashId) {
         return jobInfoMapper.selectList(Wrappers.<JobInfo>lambdaQuery()
             .ge(JobInfo::getHashId, startHashId)
             .lt(JobInfo::getHashId, endHashId));

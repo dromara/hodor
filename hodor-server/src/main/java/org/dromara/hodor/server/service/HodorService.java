@@ -65,11 +65,12 @@ public class HodorService implements LifecycleComponent {
             ThreadUtils.sleep(TimeUnit.MILLISECONDS, 1000);
             currRunningNodeCount = registerService.getRunningNodeCount();
         }
+        //select leader
+        electLeader();
+
         //init data
         registerService.registryMetadataListener(new MetadataChangeListener(this));
         registerService.registryElectLeaderListener(new LeaderElectChangeListener(this));
-        //select leader
-        electLeader();
     }
 
     @Override
@@ -106,15 +107,15 @@ public class HodorService implements LifecycleComponent {
             // get metadata and update
             int jobCount = jobInfoService.queryAssignableJobCount();
             int offset = (int) Math.ceil((double) jobCount / setsNum);
-            List<Integer> interval = Lists.newArrayList();
+            List<Long> interval = Lists.newArrayList();
             for (int i = 0; i < setsNum; i++) {
-                Integer hashId = jobInfoService.queryJobHashIdByOffset(offset * i);
+                Long hashId = jobInfoService.queryJobHashIdByOffset(offset * i);
                 interval.add(hashId);
             }
             for (int i = 0; i < interval.size(); i++) {
                 CopySet copySet = copySets.get(i);
-                if (i == interval.size() - 1) {
-                    copySet.setDataInterval(Lists.newArrayList(interval.get(i)));
+                if (i == interval.size() - 1) { // last one
+                    copySet.setDataInterval(Lists.newArrayList(interval.get(i), Long.MAX_VALUE));
                 } else {
                     copySet.setDataInterval(Lists.newArrayList(interval.get(i), interval.get(i + 1)));
                 }
@@ -130,30 +131,34 @@ public class HodorService implements LifecycleComponent {
         });
     }
 
-    public void createActiveScheduler(String serverId, List<Integer> dataInterval) {
+    public void createActiveScheduler(String serverId, List<Long> dataInterval) {
         HodorScheduler activeScheduler = getScheduler(serverId, dataInterval);
         schedulerManager.addActiveScheduler(activeScheduler);
         schedulerManager.addSchedulerDataInterval(activeScheduler.getSchedulerName(), dataInterval);
     }
 
-    public void createStandbyScheduler(String serverId, List<Integer> standbyDataInterval) {
+    public void createStandbyScheduler(String serverId, List<Long> standbyDataInterval) {
         HodorScheduler standbyScheduler = getScheduler(serverId, standbyDataInterval);
         schedulerManager.addStandByScheduler(standbyScheduler);
         schedulerManager.addSchedulerDataInterval(standbyScheduler.getSchedulerName(), standbyDataInterval);
     }
 
-    public HodorScheduler getScheduler(String serverId, List<Integer> dataInterval) {
+    public HodorScheduler getScheduler(String serverId, List<Long> dataInterval) {
         SchedulerConfig config = SchedulerConfig.builder().schedulerName("HodorScheduler_" + serverId).threadCount(8).misfireThreshold(3000).build();
         HodorScheduler scheduler = schedulerManager.getScheduler(config.getSchedulerName());
         if (scheduler == null) {
             scheduler = schedulerManager.createScheduler(config);
         }
-        List<Integer> schedulerDataInterval = schedulerManager.getSchedulerDataInterval(config.getSchedulerName());
+        List<Long> schedulerDataInterval = schedulerManager.getSchedulerDataInterval(config.getSchedulerName());
         if (CollectionUtils.isEmpty(schedulerDataInterval) || !CollectionUtils.isEqualCollection(schedulerDataInterval, dataInterval)) {
             List<JobInfo> jobInfoList = jobInfoService.queryJobInfoByHashIdOffset(dataInterval.get(0), dataInterval.get(1));
             jobInfoList.forEach(scheduler::addJob);
         }
         return scheduler;
+    }
+
+    public String getServerId() {
+        return registerService.getServerId();
     }
 
 }

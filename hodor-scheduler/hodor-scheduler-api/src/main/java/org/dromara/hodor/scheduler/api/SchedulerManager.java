@@ -23,7 +23,7 @@ public final class SchedulerManager {
 
     private final Map<String, HodorScheduler> standBySchedulerMap;
 
-    private final Map<String, List<Integer>> schedulerDataInterval;
+    private final Map<String, List<Long>> schedulerDataInterval;
 
     private final ExtensionLoader<HodorScheduler> extensionLoader;
 
@@ -89,11 +89,11 @@ public final class SchedulerManager {
         return scheduler;
     }
 
-    public List<Integer> getSchedulerDataInterval(String schedulerName) {
+    public List<Long> getSchedulerDataInterval(String schedulerName) {
         return schedulerDataInterval.get(schedulerName);
     }
 
-    public void addSchedulerDataInterval(String schedulerName, List<Integer> dataInterval) {
+    public void addSchedulerDataInterval(String schedulerName, List<Long> dataInterval) {
         schedulerDataInterval.put(schedulerName, dataInterval);
     }
 

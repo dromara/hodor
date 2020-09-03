@@ -8,8 +8,8 @@ DROP TABLE IF EXISTS `hodor_job_info`;
 DROP TABLE IF EXISTS `hodor_job_exec_detail`;
 
 CREATE TABLE `hodor_job_info` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '任务id',
-  `hash_id` int(11) NOT NULL DEFAULT -1 COMMENT '任务hash id',
+  `id` bigint(32) NOT NULL COMMENT '任务id',
+  `hash_id` bigint(32) NOT NULL DEFAULT -1 COMMENT '任务hash id',
   `group_name` varchar(64) CHARACTER SET utf8 NOT NULL COMMENT '任务组名称',
   `job_name` varchar(64) CHARACTER SET utf8 NOT NULL COMMENT '任务名称',
   `job_category` varchar(64) CHARACTER SET utf8 NOT NULL DEFAULT 'default' COMMENT '任务分类',
@@ -46,7 +46,7 @@ CREATE TABLE `hodor_job_info` (
 -- Table structure for hodor_job_exec_detail
 -- ----------------------------
 CREATE TABLE `hodor_job_exec_detail` (
-  `id` int(11) NOT NULL COMMENT '任务唯一标识',
+  `id` bigint(32) NOT NULL COMMENT '任务唯一标识',
   `group_name` varchar(100) NOT NULL COMMENT '任务组名称',
   `job_name` varchar(100) NOT NULL COMMENT '任务名称',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',

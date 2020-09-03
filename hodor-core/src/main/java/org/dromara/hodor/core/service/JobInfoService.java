@@ -31,7 +31,7 @@ public interface JobInfoService {
      * @param offset 任务位置
      * @return hash id
      */
-    Integer queryJobHashIdByOffset(Integer offset);
+    Long queryJobHashIdByOffset(Integer offset);
 
     /**
      * 获取指定位置任务的id
@@ -39,7 +39,7 @@ public interface JobInfoService {
      * @param offset 任务位置
      * @return hash id
      */
-    Integer queryJobIdByOffset(Integer offset);
+    Long queryJobIdByOffset(Integer offset);
 
     /**
      * 获取指定位置数据
@@ -48,5 +48,5 @@ public interface JobInfoService {
      * @param endHashId 结束位置
      * @return job info list
      */
-    List<JobInfo> queryJobInfoByHashIdOffset(Integer startHashId, Integer endHashId);
+    List<JobInfo> queryJobInfoByHashIdOffset(Long startHashId, Long endHashId);
 }
