@@ -1,18 +1,25 @@
 package org.dromara.hodor.scheduler.quartz;
 
+import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.locks.ReentrantLock;
 import org.dromara.hodor.common.extension.Join;
-import org.dromara.hodor.core.entity.JobInfo;
+import org.dromara.hodor.core.JobDesc;
 import org.dromara.hodor.scheduler.api.HodorScheduler;
 import org.dromara.hodor.scheduler.api.JobExecutor;
 import org.dromara.hodor.scheduler.api.JobExecutorTypeManager;
 import org.dromara.hodor.scheduler.api.config.SchedulerConfig;
 import org.dromara.hodor.scheduler.api.exception.HodorSchedulerException;
-import org.quartz.*;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
-
-import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  *  implements scheduler by quartz
@@ -96,19 +103,20 @@ public class QuartzScheduler implements HodorScheduler {
     }
 
     @Override
-    public void addJob(JobInfo jobInfo) {
+    public void addJob(JobDesc jobDesc) {
         JobDetail jobDetail = JobBuilder.newJob(HodorJob.class)
-                .withIdentity(jobInfo.getJobName(), jobInfo.getGroupName())
+                .withIdentity(jobDesc.getJobName(), jobDesc.getGroupName())
                 .requestRecovery(true)
                 .build();
-        JobExecutor jobExecutor = JobExecutorTypeManager.INSTANCE.getJobExecutor(jobInfo.getType());
+
+        JobExecutor jobExecutor = JobExecutorTypeManager.INSTANCE.getJobExecutor(jobDesc.getJobType());
         jobDetail.getJobDataMap().put("jobExecutor", jobExecutor);
-        jobDetail.getJobDataMap().put("jobInfo", jobInfo);
+        jobDetail.getJobDataMap().put("jobDesc", jobDesc);
 
         Trigger trigger = TriggerBuilder.newTrigger()
-                .withIdentity(jobInfo.getJobName(), jobInfo.getGroupName())
-                .withSchedule(CronScheduleBuilder.cronSchedule(jobInfo.getCron()).withMisfireHandlingInstructionDoNothing())
-                .withPriority(jobInfo.getPriority().getValue())
+                .withIdentity(jobDesc.getJobName(), jobDesc.getGroupName())
+                .withSchedule(CronScheduleBuilder.cronSchedule(jobDesc.getCronExpression()).withMisfireHandlingInstructionDoNothing())
+                .withPriority(jobDesc.getPriority().getValue())
                 .forJob(jobDetail)
                 .build();
 
@@ -120,10 +128,15 @@ public class QuartzScheduler implements HodorScheduler {
     }
 
     @Override
-    public boolean deleteJob(JobInfo jobInfo) {
+    public void addJobList(List<JobDesc> jobDescList) {
+        jobDescList.forEach(this::addJob);
+    }
+
+    @Override
+    public boolean deleteJob(JobDesc jobDesc) {
         try {
-            if (scheduler.checkExists(JobKey.jobKey(jobInfo.getJobName(), jobInfo.getGroupName()))) {
-                return scheduler.deleteJob(JobKey.jobKey(jobInfo.getJobName(), jobInfo.getGroupName()));
+            if (scheduler.checkExists(JobKey.jobKey(jobDesc.getJobName(), jobDesc.getGroupName()))) {
+                return scheduler.deleteJob(JobKey.jobKey(jobDesc.getJobName(), jobDesc.getGroupName()));
             }
             return false;
         } catch (SchedulerException e) {
@@ -132,36 +145,36 @@ public class QuartzScheduler implements HodorScheduler {
     }
 
     @Override
-    public boolean deleteJobs(List<JobInfo> jobInfoList) {
+    public boolean deleteJobs(List<JobDesc> jobDescList) {
         boolean result = true;
-        for (JobInfo jobInfo : jobInfoList) {
-            result = deleteJob(jobInfo);
+        for (JobDesc jobDesc : jobDescList) {
+            result = deleteJob(jobDesc);
         }
         return result;
     }
 
     @Override
-    public boolean checkExists(JobInfo jobInfo) {
+    public boolean checkExists(JobDesc jobDesc) {
         try {
-            return scheduler.checkExists(JobKey.jobKey(jobInfo.getJobName(), jobInfo.getGroupName()));
+            return scheduler.checkExists(JobKey.jobKey(jobDesc.getJobName(), jobDesc.getGroupName()));
         } catch (SchedulerException e) {
             throw new HodorSchedulerException(e);
         }
     }
 
     @Override
-    public void pauseJob(JobInfo jobInfo) {
+    public void pauseJob(JobDesc jobDesc) {
         try {
-            scheduler.pauseJob(JobKey.jobKey(jobInfo.getJobName(), jobInfo.getGroupName()));
+            scheduler.pauseJob(JobKey.jobKey(jobDesc.getJobName(), jobDesc.getGroupName()));
         } catch (SchedulerException e) {
             throw new HodorSchedulerException(e);
         }
     }
 
     @Override
-    public boolean isPaused(JobInfo jobInfo) {
+    public boolean isPaused(JobDesc jobDesc) {
         try {
-            return scheduler.isShutdown() && Trigger.TriggerState.PAUSED == scheduler.getTriggerState(new TriggerKey(jobInfo.getJobName(), jobInfo.getGroupName()));
+            return scheduler.isShutdown() && Trigger.TriggerState.PAUSED == scheduler.getTriggerState(new TriggerKey(jobDesc.getJobName(), jobDesc.getGroupName()));
         } catch (SchedulerException e) {
             throw new HodorSchedulerException(e);
         }
@@ -177,18 +190,18 @@ public class QuartzScheduler implements HodorScheduler {
     }
 
     @Override
-    public void resumeJob(JobInfo jobInfo) {
+    public void resumeJob(JobDesc jobDesc) {
         try {
-            scheduler.resumeJob(JobKey.jobKey(jobInfo.getJobName(), jobInfo.getGroupName()));
+            scheduler.resumeJob(JobKey.jobKey(jobDesc.getJobName(), jobDesc.getGroupName()));
         } catch (SchedulerException e) {
             throw new HodorSchedulerException(e);
         }
     }
 
     @Override
-    public void triggerJob(JobInfo jobInfo) {
+    public void triggerJob(JobDesc jobDesc) {
         try {
-            scheduler.triggerJob(JobKey.jobKey(jobInfo.getJobName(), jobInfo.getGroupName()));
+            scheduler.triggerJob(JobKey.jobKey(jobDesc.getJobName(), jobDesc.getGroupName()));
         } catch (SchedulerException e) {
             throw new HodorSchedulerException(e);
         }

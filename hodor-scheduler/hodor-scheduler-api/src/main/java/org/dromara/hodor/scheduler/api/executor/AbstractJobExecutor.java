@@ -1,7 +1,9 @@
 package org.dromara.hodor.scheduler.api.executor;
 
+import org.dromara.hodor.common.IdGenerator;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.scheduler.api.JobExecutor;
+import org.dromara.hodor.scheduler.api.exception.HodorSchedulerException;
 
 /**
  *  
@@ -20,6 +22,7 @@ public abstract class AbstractJobExecutor implements JobExecutor {
             process(context);
         } catch (Exception e) {
             // 调度处理异常
+            throw new HodorSchedulerException(e.getMessage(), e);
         }
     }
 

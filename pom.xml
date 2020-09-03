@@ -40,15 +40,17 @@
 
     <properties>
         <jdk.version>1.8</jdk.version>
-        <hutool.version>4.0.8</hutool.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <hutool.version>4.0.8</hutool.version>
         <jasypt.version>1.9.2</jasypt.version>
         <lombok.version>1.16.20</lombok.version>
         <springfox.version>2.6.1</springfox.version>
         <mybatis.starter.version>1.1.1</mybatis.starter.version>
-        <mysql.version>8.0.16</mysql.version>
+        <mybatis-plus.starter.version>3.3.2</mybatis-plus.starter.version>
+        <mysql.version>8.0.11</mysql.version>
         <druid.version>1.0.29</druid.version>
-        <commons-lang3.version>3.3.2</commons-lang3.version>
+        <commons-lang3.version>3.8</commons-lang3.version>
+        <commons-io.version>2.5</commons-io.version>
         <guava.version>21.0</guava.version>
         <commons-collections4.version>4.1</commons-collections4.version>
         <reactor-spring.version>1.0.1.RELEASE</reactor-spring.version>
@@ -62,6 +64,8 @@
         <gson.version>2.8.0</gson.version>
         <okhttp.version>3.7.0</okhttp.version>
         <mapstruct.version>1.2.0.Final</mapstruct.version>
+        <curator.version>2.13.0</curator.version>
+        <quartz.version>2.3.0</quartz.version>
     </properties>
 
     <dependencyManagement>
@@ -117,7 +121,7 @@
 
             <dependency>
                 <groupId>org.dromara</groupId>
-                <artifactId>hodor-scehduler-quartz</artifactId>
+                <artifactId>hodor-scheduler-quartz</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -158,6 +162,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.starter.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
                 <version>${mybatis.starter.version}</version>
@@ -182,6 +192,12 @@
             </dependency>
 
             <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
@@ -199,11 +215,28 @@
                 <version>${commons-dbcp.version}</version>
             </dependency>
 
-
             <dependency>
                 <groupId>com.github.pagehelper</groupId>
                 <artifactId>pagehelper</artifactId>
                 <version>${pagehelper.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-recipes</artifactId>
+                <version>${curator.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.quartz-scheduler</groupId>
+                <artifactId>quartz</artifactId>
+                <version>${quartz.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
             </dependency>
 
         </dependencies>

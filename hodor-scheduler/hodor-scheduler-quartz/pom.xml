@@ -14,7 +14,7 @@
         <dependency>
             <groupId>org.dromara</groupId>
             <artifactId>hodor-scheduler-api</artifactId>
-    </dependency>
+        </dependency>
 
         <dependency>
             <groupId>org.quartz-scheduler</groupId>

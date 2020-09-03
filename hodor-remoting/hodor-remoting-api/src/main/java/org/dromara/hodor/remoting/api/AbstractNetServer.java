@@ -74,8 +74,8 @@ public abstract class AbstractNetServer implements NetServer, HodorChannelHandle
     }
 
     @Override
-    public void sent(HodorChannel channel, Object message) {
-        handler.sent(channel, message);
+    public void send(HodorChannel channel, Object message) {
+        handler.send(channel, message);
     }
 
     @Override
@@ -92,11 +92,6 @@ public abstract class AbstractNetServer implements NetServer, HodorChannelHandle
     public void timeout(HodorChannel channel) {
         handler.timeout(channel);
     }
-
-    /**
-     * Close.
-     */
-    protected abstract void close();
 
     /**
      * Gets host.

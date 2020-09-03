@@ -26,7 +26,7 @@ import org.dromara.hodor.common.extension.SPI;
  *
  * @author xiaoyu
  */
-@SPI("netty")
+@SPI("transport")
 public interface NetServerTransport {
     /**
      * Bind net server.

@@ -30,5 +30,8 @@ public interface NetServer {
      */
     void bind();
 
-
+    /**
+     * Close.
+     */
+    void close();
 }

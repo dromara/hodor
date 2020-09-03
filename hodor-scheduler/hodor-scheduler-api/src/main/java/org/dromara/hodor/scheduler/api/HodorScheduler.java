@@ -2,7 +2,7 @@ package org.dromara.hodor.scheduler.api;
 
 import java.util.List;
 import org.dromara.hodor.common.extension.SPI;
-import org.dromara.hodor.core.entity.JobInfo;
+import org.dromara.hodor.core.JobDesc;
 import org.dromara.hodor.scheduler.api.config.SchedulerConfig;
 
 /**
@@ -26,21 +26,23 @@ public interface HodorScheduler {
 
     void startDelayed(int seconds);
 
-    void addJob(JobInfo jobInfo);
+    void addJob(JobDesc jobInfo);
 
-    void resumeJob(JobInfo jobInfo);
+    void addJobList(List<JobDesc> jobInfoList);
 
-    void triggerJob(JobInfo jobInfo);
+    void resumeJob(JobDesc jobInfo);
 
-    void pauseJob(JobInfo jobInfo);
+    void triggerJob(JobDesc jobInfo);
 
-    boolean isPaused(JobInfo jobInfo);
+    void pauseJob(JobDesc jobInfo);
 
-    boolean deleteJob(JobInfo jobInfo);
+    boolean isPaused(JobDesc jobInfo);
 
-    boolean deleteJobs(List<JobInfo> jobInfoList);
+    boolean deleteJob(JobDesc jobInfo);
 
-    boolean checkExists(JobInfo jobInfo);
+    boolean deleteJobs(List<JobDesc> jobInfoList);
+
+    boolean checkExists(JobDesc jobInfo);
 
     boolean isStarted();
 

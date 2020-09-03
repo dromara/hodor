@@ -76,7 +76,7 @@ public class NettyServerHandler extends ChannelDuplexHandler {
                       Object msg, ChannelPromise promise) throws Exception {
         super.write(ctx, msg, promise);
         HodorChannel channel = new NettyChannel(ctx.channel());
-        channelHandler.sent(channel, msg);
+        channelHandler.send(channel, msg);
     }
 
     @Override

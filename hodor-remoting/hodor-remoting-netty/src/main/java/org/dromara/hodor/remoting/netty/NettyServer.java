@@ -79,7 +79,7 @@ public class NettyServer extends AbstractNetServer {
     }
 
     @Override
-    protected void close() {
+    public void close() {
         if (channel != null) {
             channel.close();
         }

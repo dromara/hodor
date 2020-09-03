@@ -1,22 +1,35 @@
 package org.dromara.hodor.core.entity;
 
-import java.util.Map;
-import org.dromara.hodor.core.enums.Priority;
+import com.baomidou.mybatisplus.annotation.TableName;
+import java.util.Date;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.dromara.hodor.core.JobDesc;
+import org.dromara.hodor.core.enums.JobStatus;
 
-public interface JobInfo {
+/**
+ * hodor job info
+ *
+ * @author tomgs
+ * @version 2020/8/2 1.0
+ */
+@Data
+@EqualsAndHashCode(callSuper = true)
+@TableName("hodor_job_info")
+public class JobInfo extends JobDesc {
 
-  String getJobKey();
+    private JobStatus jobStatus;
 
-  String getGroupName();
+    private Date activeTime;
 
-  String getJobName();
+    private Date nextExecuteTime;
 
-  int getType();
+    private Date prevExecuteTime;
 
-  Priority getPriority();
+    private Date createTime;
 
-  Map<String, Object> getJobData();
+    private String jobDataPath;
 
-  String getCron();
+    private String jobDesc;
 
 }

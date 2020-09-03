@@ -45,7 +45,7 @@ public interface HodorChannelHandler {
      * @param channel the channel
      * @param message the message
      */
-    void sent(HodorChannel channel, Object message);
+    void send(HodorChannel channel, Object message);
 
     /**
      * Received.
