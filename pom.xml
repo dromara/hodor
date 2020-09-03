@@ -65,7 +65,7 @@
         <okhttp.version>3.7.0</okhttp.version>
         <mapstruct.version>1.2.0.Final</mapstruct.version>
         <curator.version>2.13.0</curator.version>
-        <quartz.version>2.3.0</quartz.version>
+        <quartz.version>2.3.2</quartz.version>
     </properties>
 
     <dependencyManagement>
