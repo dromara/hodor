@@ -11,9 +11,10 @@
 
     <artifactId>hodor-scheduler-api</artifactId>
     <dependencies>
+
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
+            <groupId>org.dromara</groupId>
+            <artifactId>hodor-common</artifactId>
         </dependency>
 
         <dependency>
@@ -22,9 +23,10 @@
         </dependency>
 
         <dependency>
-            <groupId>org.dromara</groupId>
-            <artifactId>hodor-common</artifactId>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
+
     </dependencies>
 
 </project>
