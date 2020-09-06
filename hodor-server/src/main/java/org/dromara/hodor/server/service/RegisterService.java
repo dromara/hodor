@@ -1,7 +1,5 @@
 package org.dromara.hodor.server.service;
 
-import com.google.common.collect.Lists;
-import java.util.List;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.utils.GsonUtils;
 import org.dromara.hodor.common.utils.LocalHost;
@@ -15,6 +13,8 @@ import org.dromara.hodor.register.api.node.ServerNode;
 import org.dromara.hodor.server.component.LifecycleComponent;
 import org.dromara.hodor.server.config.HodorServerProperties;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  *  register service

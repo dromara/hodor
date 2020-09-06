@@ -53,7 +53,7 @@ public class NettyServer extends AbstractNetServer {
 
     private HodorChannel channel;
 
-    private NettyServerHandler serverHandler;
+    private NettyChannelHandler serverHandler;
 
     private Class<? extends ServerSocketChannel> serverSocketChannelClass;
 
@@ -90,7 +90,7 @@ public class NettyServer extends AbstractNetServer {
     }
 
     private void init() {
-        this.serverHandler = new NettyServerHandler(getAttribute(), this);
+        this.serverHandler = new NettyChannelHandler(getAttribute(), this);
         this.bootstrap = new ServerBootstrap();
         if (useEpoll()) {
             this.bossGroup = new EpollEventLoopGroup(1, HodorThreadFactory.create("netty-epoll-ServerBoss", false));

@@ -32,13 +32,13 @@ import org.dromara.hodor.remoting.api.HodorChannelHandler;
  * @author xiaoyu
  */
 @ChannelHandler.Sharable
-public class NettyServerHandler extends ChannelDuplexHandler {
+public class NettyChannelHandler extends ChannelDuplexHandler {
 
     private HodorChannelHandler channelHandler;
 
     private final Attribute attribute;
 
-    public NettyServerHandler(Attribute attribute, HodorChannelHandler channelHandler) {
+    public NettyChannelHandler(Attribute attribute, HodorChannelHandler channelHandler) {
         if (attribute == null) {
             throw new IllegalArgumentException("attribute is null");
         }
