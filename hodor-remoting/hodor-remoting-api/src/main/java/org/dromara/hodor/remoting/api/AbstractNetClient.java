@@ -22,50 +22,12 @@ package org.dromara.hodor.remoting.api;
  * AbstractNetClient
  *
  * @author xiaoyu
+ * @author tomgs
  */
-public class AbstractNetClient implements NetClient, HodorChannelHandler {
+public abstract class AbstractNetClient extends AbstractNetChannelHandler implements NetClient {
 
-    /**
-     * The Channel handler.
-     */
-    private HodorChannelHandler channelHandler;
-
-    public AbstractNetClient(Attribute properties, HodorChannelHandler channelHandler) {
-        this.channelHandler = channelHandler;
+    public AbstractNetClient(final Attribute attribute, final HodorChannelHandler channelHandler) {
+        super(attribute, channelHandler);
     }
 
-    @Override
-    public void connection() {
-
-    }
-
-    @Override
-    public void connected(HodorChannel channel) {
-
-    }
-
-    @Override
-    public void disconnected(HodorChannel channel) {
-
-    }
-
-    @Override
-    public void send(HodorChannel channel, Object message) {
-
-    }
-
-    @Override
-    public void received(HodorChannel channel, Object message) {
-
-    }
-
-    @Override
-    public void exceptionCaught(HodorChannel channel, Throwable cause) {
-
-    }
-
-    @Override
-    public void timeout(HodorChannel channel) {
-
-    }
 }

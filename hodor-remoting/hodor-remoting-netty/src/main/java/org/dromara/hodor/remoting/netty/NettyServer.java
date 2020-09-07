@@ -31,6 +31,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.dromara.hodor.common.concurrent.HodorThreadFactory;
+import org.dromara.hodor.common.utils.OSInfo;
 import org.dromara.hodor.remoting.api.AbstractNetServer;
 import org.dromara.hodor.remoting.api.Attribute;
 import org.dromara.hodor.remoting.api.HodorChannel;
@@ -42,8 +43,6 @@ import org.dromara.hodor.remoting.api.HodorChannelHandler;
  * @author xiaoyu
  */
 public class NettyServer extends AbstractNetServer {
-
-    private static final String OS = System.getProperty("os.name").toLowerCase();
 
     private ServerBootstrap bootstrap;
 
@@ -104,15 +103,7 @@ public class NettyServer extends AbstractNetServer {
     }
 
     private boolean useEpoll() {
-        return Epoll.isAvailable() && isLinux() && getUseEpollNative();
+        return Epoll.isAvailable() && OSInfo.isLinux() && getUseEpollNative();
     }
 
-    /**
-     * Is linux boolean.
-     *
-     * @return the boolean
-     */
-    private static boolean isLinux() {
-        return OS.contains("linux");
-    }
 }

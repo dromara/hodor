@@ -30,6 +30,7 @@ import org.dromara.hodor.remoting.api.HodorChannelHandler;
  * NettyServerHandler.
  *
  * @author xiaoyu
+ * @author tomgs
  */
 @ChannelHandler.Sharable
 public class NettyChannelHandler extends ChannelDuplexHandler {

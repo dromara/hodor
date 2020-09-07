@@ -1,10 +1,15 @@
 package org.dromara.hodor.remoting.netty;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.AdaptiveRecvByteBufAllocator;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelOption;
+import io.netty.channel.*;
+import io.netty.channel.epoll.Epoll;
+import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollSocketChannel;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.SneakyThrows;
+import org.dromara.hodor.common.utils.OSInfo;
 import org.dromara.hodor.remoting.api.*;
 
 import java.util.concurrent.TimeUnit;
@@ -18,67 +23,45 @@ import java.util.concurrent.TimeUnit;
 public class NettyClient extends AbstractNetClient {
 
     private final Bootstrap bootstrap;
-    private final Attribute attribute;
+
     private final NettyChannelHandler channelHandler;
 
     public NettyClient(Attribute attribute, HodorChannelHandler channelHandler) {
         super(attribute, channelHandler);
-        this.attribute = attribute;
         this.bootstrap = new Bootstrap();
         this.channelHandler = new NettyChannelHandler(attribute, channelHandler);
     }
 
-    @SneakyThrows
     @Override
+    @SneakyThrows
     public void connection() {
-        String host = attribute.getProperty(RemotingConst.HOST_KEY, "0.0.0.0");
-        Integer port = attribute.getProperty(RemotingConst.PORT_KEY, 2870);
+        EventLoopGroup eventLoopGroup;
+        Class<? extends SocketChannel> socketChannelClass;
 
-        //TODO: impl
-        bootstrap.group();
+        if (useEpoll()) {
+            eventLoopGroup = new EpollEventLoopGroup();
+            socketChannelClass = EpollSocketChannel.class;
+        } else {
+            eventLoopGroup = new NioEventLoopGroup();
+            socketChannelClass = NioSocketChannel.class;
+        }
 
+        bootstrap.channel(socketChannelClass);
+        bootstrap.group(eventLoopGroup);
         bootstrap.option(ChannelOption.TCP_NODELAY, true)
-                // 如果是延时敏感型应用，建议关闭Nagle算法
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .option(ChannelOption.SO_REUSEADDR, true)
                 .option(ChannelOption.RCVBUF_ALLOCATOR, AdaptiveRecvByteBufAllocator.DEFAULT);
-
         bootstrap.handler(new NettyClientInitializer(channelHandler));
 
-        ChannelFuture future = bootstrap.connect(host, port);
+        ChannelFuture future = bootstrap.connect(getHost(), getPort());
         if (future.isSuccess()) {
             future.await(1000, TimeUnit.MILLISECONDS);
         }
     }
 
-    @Override
-    public void connected(HodorChannel channel) {
-        super.connected(channel);
-    }
-
-    @Override
-    public void disconnected(HodorChannel channel) {
-        super.disconnected(channel);
-    }
-
-    @Override
-    public void send(HodorChannel channel, Object message) {
-        super.send(channel, message);
-    }
-
-    @Override
-    public void received(HodorChannel channel, Object message) {
-        super.received(channel, message);
-    }
-
-    @Override
-    public void exceptionCaught(HodorChannel channel, Throwable cause) {
-        super.exceptionCaught(channel, cause);
-    }
-
-    @Override
-    public void timeout(HodorChannel channel) {
-        super.timeout(channel);
+    private boolean useEpoll() {
+        return Epoll.isAvailable() && OSInfo.isLinux() && getUseEpollNative();
     }
 
 }

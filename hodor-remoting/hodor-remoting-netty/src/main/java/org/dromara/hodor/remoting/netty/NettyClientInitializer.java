@@ -8,7 +8,7 @@ import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketSe
 import io.netty.handler.stream.ChunkedWriteHandler;
 
 /**
- *  
+ *  netty client initializer
  *
  * @author tomgs
  * @version 2020/9/7 1.0 
