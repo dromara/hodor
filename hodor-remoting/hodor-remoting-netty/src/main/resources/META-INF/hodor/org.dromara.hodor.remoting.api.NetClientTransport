@@ -1,0 +1,1 @@
+transport=org.dromara.hodor.remoting.netty.NettyClientTransport

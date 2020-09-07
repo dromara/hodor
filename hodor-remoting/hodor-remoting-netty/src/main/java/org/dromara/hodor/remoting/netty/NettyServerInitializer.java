@@ -33,14 +33,14 @@ import io.netty.handler.stream.ChunkedWriteHandler;
  */
 public class NettyServerInitializer extends ChannelInitializer<SocketChannel> {
 
-    private final NettyServerHandler serverHandler;
+    private final NettyChannelHandler serverHandler;
 
     /**
      * Instantiates a new Netty server initializer.
      *
      * @param serverHandler the server handler
      */
-    NettyServerInitializer(NettyServerHandler serverHandler) {
+    NettyServerInitializer(NettyChannelHandler serverHandler) {
         this.serverHandler = serverHandler;
     }
 

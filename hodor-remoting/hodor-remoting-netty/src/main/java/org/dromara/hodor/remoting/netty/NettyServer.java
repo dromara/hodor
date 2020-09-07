@@ -31,6 +31,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.dromara.hodor.common.concurrent.HodorThreadFactory;
+import org.dromara.hodor.common.utils.OSInfo;
 import org.dromara.hodor.remoting.api.AbstractNetServer;
 import org.dromara.hodor.remoting.api.Attribute;
 import org.dromara.hodor.remoting.api.HodorChannel;
@@ -43,8 +44,6 @@ import org.dromara.hodor.remoting.api.HodorChannelHandler;
  */
 public class NettyServer extends AbstractNetServer {
 
-    private static final String OS = System.getProperty("os.name").toLowerCase();
-
     private ServerBootstrap bootstrap;
 
     private EventLoopGroup bossGroup;
@@ -53,7 +52,7 @@ public class NettyServer extends AbstractNetServer {
 
     private HodorChannel channel;
 
-    private NettyServerHandler serverHandler;
+    private NettyChannelHandler serverHandler;
 
     private Class<? extends ServerSocketChannel> serverSocketChannelClass;
 
@@ -90,7 +89,7 @@ public class NettyServer extends AbstractNetServer {
     }
 
     private void init() {
-        this.serverHandler = new NettyServerHandler(getAttribute(), this);
+        this.serverHandler = new NettyChannelHandler(getAttribute(), this);
         this.bootstrap = new ServerBootstrap();
         if (useEpoll()) {
             this.bossGroup = new EpollEventLoopGroup(1, HodorThreadFactory.create("netty-epoll-ServerBoss", false));
@@ -104,15 +103,7 @@ public class NettyServer extends AbstractNetServer {
     }
 
     private boolean useEpoll() {
-        return Epoll.isAvailable() && isLinux() && getUseEpollNative();
+        return Epoll.isAvailable() && OSInfo.isLinux() && getUseEpollNative();
     }
 
-    /**
-     * Is linux boolean.
-     *
-     * @return the boolean
-     */
-    private static boolean isLinux() {
-        return OS.contains("linux");
-    }
 }

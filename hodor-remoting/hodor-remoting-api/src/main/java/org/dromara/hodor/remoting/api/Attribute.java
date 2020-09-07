@@ -38,7 +38,7 @@ public class Attribute extends Properties {
      */
     @SuppressWarnings("unchecked")
     public <T> T getProperty(String key, T def) {
-        String val = super.getProperty(key);
+        Object val = super.get(key);
         return (T) ((val == null) ? def : val);
     }
 }
