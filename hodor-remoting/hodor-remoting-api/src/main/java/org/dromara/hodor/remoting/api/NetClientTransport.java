@@ -25,5 +25,5 @@ package org.dromara.hodor.remoting.api;
  */
 public interface NetClientTransport {
 
-    public NetClient connect(Attribute attribute, HodorChannelHandler handler);
+    NetClient connect(Attribute attribute, HodorChannelHandler handler);
 }
