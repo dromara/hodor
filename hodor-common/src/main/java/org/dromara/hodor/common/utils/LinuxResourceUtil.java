@@ -31,7 +31,7 @@ public final class LinuxResourceUtil {
             return 0.0;
         }
 
-        Double value;
+        double value;
         String output = null;
         try {
             String pid = process_pid();
@@ -46,7 +46,7 @@ public final class LinuxResourceUtil {
                 }
             }
             String usedCpu = subStr.substring(0, subStr.indexOf(" "));
-            value = Double.valueOf(usedCpu);
+            value = Double.parseDouble(usedCpu);
         } catch (Exception e) {
             log.warn("Failed to get cpu usage ratio.");
             if (output != null) {
@@ -97,10 +97,10 @@ public final class LinuxResourceUtil {
         }
 
         try {
-            List<String> lines = IOUtils.readLines(new FileInputStream("/proc/meminfo"));
+            List<String> lines = IOUtils.readLines(new FileInputStream("/proc/meminfo"), Charset.defaultCharset());
             String total = lines.get(0).split("\\s+")[1];
             String free = lines.get(1).split("\\s+")[1];
-            return 1 - Double.valueOf(free) / Double.valueOf(total);
+            return 1 - Double.parseDouble(free) / Double.parseDouble(total);
         } catch (Exception ignored) {
             log.warn("failed to get total memory usage.");
         }
