@@ -31,6 +31,7 @@ public class HodorServerChannelHandler implements HodorChannelHandler {
     @Override
     public void received(HodorChannel channel, Object message) {
         log.info("{} channel received.", channel);
+        System.out.println("===>" + message);
     }
 
     @Override

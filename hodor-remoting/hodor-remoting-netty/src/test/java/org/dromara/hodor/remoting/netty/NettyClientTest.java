@@ -31,12 +31,16 @@ public class NettyClientTest {
         NetClientTransport clientTransport = ExtensionLoader.getExtensionLoader(NetClientTransport.class).getDefaultJoin();
         NetClient client = clientTransport.connect(attribute, handler);
         HodorChannelFuture future = client.connection();
+        boolean open = future.channel().isOpen();
+        future.channel().send("abc");
+
         while (!future.isDone()) {
-            TimeUnit.SECONDS.sleep(1);
+            TimeUnit.SECONDS.sleep(3);
         }
-        future.get();
 
         System.out.println("------------");
+
+        TimeUnit.SECONDS.sleep(60);
     }
 
 }

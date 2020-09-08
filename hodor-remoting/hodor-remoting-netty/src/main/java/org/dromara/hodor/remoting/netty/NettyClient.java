@@ -29,13 +29,9 @@ public class NettyClient extends AbstractNetClient {
 
     private final Bootstrap bootstrap;
 
-    private final NettyChannelHandler channelHandler;
-
     public NettyClient(final Attribute attribute, final HodorChannelHandler channelHandler) {
         super(attribute, channelHandler);
         this.bootstrap = new Bootstrap();
-        this.channelHandler = new NettyChannelHandler(attribute, channelHandler);
-
         init();
     }
 
@@ -52,6 +48,7 @@ public class NettyClient extends AbstractNetClient {
     private void init() {
         EventLoopGroup eventLoopGroup;
         Class<? extends SocketChannel> socketChannelClass;
+        NettyChannelHandler channelHandler = new NettyChannelHandler(getAttribute(), this);
 
         if (useEpoll()) {
             eventLoopGroup = new EpollEventLoopGroup();

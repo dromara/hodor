@@ -18,8 +18,7 @@ public class HodorClientChannelHandler implements HodorChannelHandler {
     @Override
     public void connected(HodorChannel channel) {
         log.info("{} channel connected.", channel);
-
-        channel.send(Unpooled.copiedBuffer("Netty rocks!", CharsetUtil.UTF_8));
+        channel.send("abc");
     }
 
     @Override
@@ -35,6 +34,7 @@ public class HodorClientChannelHandler implements HodorChannelHandler {
     @Override
     public void received(HodorChannel channel, Object message) {
         log.info("{} channel received.", channel);
+        System.out.println("=====>" + message);
     }
 
     @Override
