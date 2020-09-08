@@ -18,11 +18,14 @@
 
 package org.dromara.hodor.remoting.api;
 
+import org.dromara.hodor.common.extension.SPI;
+
 /**
  * NetClientTransport。
  *
  * @author xiaoyu
  */
+@SPI("transport")
 public interface NetClientTransport {
 
     NetClient connect(Attribute attribute, HodorChannelHandler handler);

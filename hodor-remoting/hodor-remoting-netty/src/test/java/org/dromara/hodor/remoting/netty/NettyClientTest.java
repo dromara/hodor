@@ -1,7 +1,10 @@
 package org.dromara.hodor.remoting.netty;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.remoting.api.Attribute;
+import org.dromara.hodor.remoting.api.HodorChannelFuture;
 import org.dromara.hodor.remoting.api.HodorChannelHandler;
 import org.dromara.hodor.remoting.api.NetClient;
 import org.dromara.hodor.remoting.api.NetClientTransport;
@@ -17,7 +20,7 @@ import org.junit.Test;
 public class NettyClientTest {
 
     @Test
-    public void testNettyClient() {
+    public void testNettyClient() throws InterruptedException, ExecutionException {
         Attribute attribute = new Attribute();
         attribute.put(RemotingConst.HOST_KEY, "127.0.0.1");
         attribute.put(RemotingConst.PORT_KEY, 8080);
@@ -27,7 +30,13 @@ public class NettyClientTest {
 
         NetClientTransport clientTransport = ExtensionLoader.getExtensionLoader(NetClientTransport.class).getDefaultJoin();
         NetClient client = clientTransport.connect(attribute, handler);
-        client.connection();
+        HodorChannelFuture future = client.connection();
+        while (!future.isDone()) {
+            TimeUnit.SECONDS.sleep(1);
+        }
+        future.get();
+
+        System.out.println("------------");
     }
 
 }

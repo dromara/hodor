@@ -18,6 +18,8 @@
 
 package org.dromara.hodor.remoting.api;
 
+import java.util.concurrent.ExecutionException;
+
 /**
  * HodorChannelFuture。
  *
@@ -47,5 +49,6 @@ public interface HodorChannelFuture {
      */
     Throwable cause();
 
+    Void get() throws ExecutionException, InterruptedException;
 
 }

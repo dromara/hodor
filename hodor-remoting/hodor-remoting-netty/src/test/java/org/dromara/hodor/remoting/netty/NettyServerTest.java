@@ -1,5 +1,6 @@
 package org.dromara.hodor.remoting.netty;
 
+import java.io.IOException;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.remoting.api.Attribute;
 import org.dromara.hodor.remoting.api.NetServer;
@@ -16,7 +17,7 @@ import org.junit.Test;
 public class NettyServerTest {
 
     @Test
-    public void testNettyServer() {
+    public void testNettyServer() throws IOException {
         Attribute attribute = new Attribute();
         attribute.put(RemotingConst.HOST_KEY, "127.0.0.1");
         attribute.put(RemotingConst.PORT_KEY, 8080);
@@ -27,6 +28,8 @@ public class NettyServerTest {
         NetServerTransport netServerTransport = ExtensionLoader.getExtensionLoader(NetServerTransport.class).getDefaultJoin();
         NetServer netServer = netServerTransport.bind(attribute, handler);
         netServer.bind();
+
+        System.in.read();
     }
     
 }
