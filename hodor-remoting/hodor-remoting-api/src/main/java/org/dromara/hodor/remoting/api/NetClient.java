@@ -28,5 +28,5 @@ public interface NetClient {
     /**
      * Connection.
      */
-    HodorChannelFuture connection();
+    HodorChannel connection();
 }

@@ -48,4 +48,15 @@ public class RemotingConst  {
      * The constant NET_TIMEOUT_KEY.
      */
     public static final String NET_TIMEOUT_KEY = "net_timeout";
+
+    /**
+     * The constant HTTP_PROTOCOL
+     */
+    public static final String HTTP_PROTOCOL = "http_protocol";
+
+    /**
+     * The constant TCP_PROTOCOL
+     */
+    public static final String TCP_PROTOCOL = "tcp_protocol";
+
 }

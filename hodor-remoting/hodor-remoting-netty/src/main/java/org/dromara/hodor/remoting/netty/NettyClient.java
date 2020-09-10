@@ -11,13 +11,14 @@ import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import java.util.concurrent.TimeUnit;
+import java.net.ConnectException;
 import lombok.SneakyThrows;
 import org.dromara.hodor.common.utils.OSInfo;
 import org.dromara.hodor.remoting.api.AbstractNetClient;
 import org.dromara.hodor.remoting.api.Attribute;
-import org.dromara.hodor.remoting.api.HodorChannelFuture;
+import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.HodorChannelHandler;
+import org.dromara.hodor.remoting.api.RemotingConst;
 
 /**
  *  netty client
@@ -37,18 +38,20 @@ public class NettyClient extends AbstractNetClient {
 
     @Override
     @SneakyThrows
-    public HodorChannelFuture connection() {
+    public HodorChannel connection() {
         ChannelFuture future = bootstrap.connect(getHost(), getPort());
-        if (future.isSuccess()) {
-            future.await(1000, TimeUnit.MILLISECONDS);
+        future.get();
+        if (!future.isSuccess()) {
+            throw new ConnectException(String.format("connect %s:%s failure.", getHost(), getPort()));
         }
-        return new NettyChannelFuture(future);
+        return new NettyChannel(future.channel());
     }
 
     private void init() {
         EventLoopGroup eventLoopGroup;
         Class<? extends SocketChannel> socketChannelClass;
         NettyChannelHandler channelHandler = new NettyChannelHandler(getAttribute(), this);
+        Integer connectTimeout = getAttribute().getProperty(RemotingConst.NET_TIMEOUT_KEY, 1000);
 
         if (useEpoll()) {
             eventLoopGroup = new EpollEventLoopGroup();
@@ -63,7 +66,8 @@ public class NettyClient extends AbstractNetClient {
         bootstrap.option(ChannelOption.TCP_NODELAY, true)
             .option(ChannelOption.SO_KEEPALIVE, true)
             .option(ChannelOption.SO_REUSEADDR, true)
-            .option(ChannelOption.RCVBUF_ALLOCATOR, AdaptiveRecvByteBufAllocator.DEFAULT);
+            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, connectTimeout)
+            .option(ChannelOption.RCVBUF_ALLOCATOR, new AdaptiveRecvByteBufAllocator());
         bootstrap.handler(new NettyClientInitializer(channelHandler));
     }
 

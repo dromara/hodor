@@ -21,6 +21,7 @@ public class NettyServerTest {
         Attribute attribute = new Attribute();
         attribute.put(RemotingConst.HOST_KEY, "127.0.0.1");
         attribute.put(RemotingConst.PORT_KEY, 8080);
+        attribute.put(RemotingConst.TCP_PROTOCOL, true);
 
         // handle request
         HodorServerChannelHandler handler = new HodorServerChannelHandler();

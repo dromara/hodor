@@ -1,10 +1,11 @@
 package org.dromara.hodor.remoting.netty;
 
-import java.util.concurrent.ExecutionException;
+import io.netty.buffer.Unpooled;
+import io.netty.util.CharsetUtil;
 import java.util.concurrent.TimeUnit;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.remoting.api.Attribute;
-import org.dromara.hodor.remoting.api.HodorChannelFuture;
+import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.HodorChannelHandler;
 import org.dromara.hodor.remoting.api.NetClient;
 import org.dromara.hodor.remoting.api.NetClientTransport;
@@ -20,27 +21,24 @@ import org.junit.Test;
 public class NettyClientTest {
 
     @Test
-    public void testNettyClient() throws InterruptedException, ExecutionException {
+    public void testNettyClient() throws InterruptedException {
         Attribute attribute = new Attribute();
         attribute.put(RemotingConst.HOST_KEY, "127.0.0.1");
         attribute.put(RemotingConst.PORT_KEY, 8080);
-
+        attribute.put(RemotingConst.TCP_PROTOCOL, true);
         // handle request
         HodorChannelHandler handler = new HodorClientChannelHandler();
 
         NetClientTransport clientTransport = ExtensionLoader.getExtensionLoader(NetClientTransport.class).getDefaultJoin();
         NetClient client = clientTransport.connect(attribute, handler);
-        HodorChannelFuture future = client.connection();
-        boolean open = future.channel().isOpen();
-        future.channel().send("abc");
+        HodorChannel connection = client.connection();
 
-        while (!future.isDone()) {
-            TimeUnit.SECONDS.sleep(3);
+        for (;;) {
+            System.out.println("channel is open:" + connection.isOpen());
+            connection.send(Unpooled.copiedBuffer("Netty rocks!", CharsetUtil.UTF_8));
+            //connection.send("Netty rocks!");
+            TimeUnit.SECONDS.sleep(5);
         }
-
-        System.out.println("------------");
-
-        TimeUnit.SECONDS.sleep(60);
     }
 
 }

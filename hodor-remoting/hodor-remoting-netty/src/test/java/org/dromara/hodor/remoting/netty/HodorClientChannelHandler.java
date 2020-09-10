@@ -1,7 +1,5 @@
 package org.dromara.hodor.remoting.netty;
 
-import io.netty.buffer.Unpooled;
-import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.HodorChannelHandler;
@@ -18,7 +16,6 @@ public class HodorClientChannelHandler implements HodorChannelHandler {
     @Override
     public void connected(HodorChannel channel) {
         log.info("{} channel connected.", channel);
-        channel.send("abc");
     }
 
     @Override
@@ -40,11 +37,14 @@ public class HodorClientChannelHandler implements HodorChannelHandler {
     @Override
     public void exceptionCaught(HodorChannel channel, Throwable cause) {
         log.info("{} channel exceptionCaught.", channel);
+        cause.printStackTrace();
+        channel.close();
     }
 
     @Override
     public void timeout(HodorChannel channel) {
         log.info("{} channel timeout.", channel);
+        channel.close();
     }
 
 }

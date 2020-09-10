@@ -25,6 +25,7 @@ import io.netty.channel.ChannelPromise;
 import org.dromara.hodor.remoting.api.Attribute;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.HodorChannelHandler;
+import org.dromara.hodor.remoting.api.RemotingConst;
 
 /**
  * NettyServerHandler.
@@ -49,6 +50,14 @@ public class NettyChannelHandler extends ChannelDuplexHandler {
         this.channelHandler = channelHandler;
         this.attribute = attribute;
         //Timeout handling.
+    }
+
+    public boolean isHttpProtocol() {
+        return attribute.getProperty(RemotingConst.HTTP_PROTOCOL, false);
+    }
+
+    public boolean isTcpProtocol() {
+        return attribute.getProperty(RemotingConst.TCP_PROTOCOL, true);
     }
 
     @Override
