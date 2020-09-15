@@ -1,6 +1,8 @@
 package org.dromara.hodor.remoting.netty.rpc;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * rpc request
@@ -10,7 +12,6 @@ import lombok.*;
  */
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class RpcRequest {
 
