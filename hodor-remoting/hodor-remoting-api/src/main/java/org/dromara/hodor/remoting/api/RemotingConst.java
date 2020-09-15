@@ -59,4 +59,10 @@ public class RemotingConst  {
      */
     public static final String TCP_PROTOCOL = "tcp_protocol";
 
+    /**
+     * The constant RPC_VERSION
+     */
+    public static final int RPC_VERSION = 1;
+
+    public static final int RPC_CRC_CODE = 12345;
 }

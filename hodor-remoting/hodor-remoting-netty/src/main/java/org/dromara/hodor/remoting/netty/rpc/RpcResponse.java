@@ -1,5 +1,6 @@
 package org.dromara.hodor.remoting.netty.rpc;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,11 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @NoArgsConstructor
-public class RpcResponse {
+@AllArgsConstructor
+public class RpcResponse<T extends ResponseBody> {
+
+    private Header header;
+
+    private T body;
 
 }

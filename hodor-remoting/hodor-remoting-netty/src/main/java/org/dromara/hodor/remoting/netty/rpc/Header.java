@@ -1,5 +1,6 @@
 package org.dromara.hodor.remoting.netty.rpc;
 
+import java.util.Map;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,5 +35,15 @@ public class Header {
      * 消息体长度
      */
     private int length;
+
+    /**
+     * 扩展参数大小
+     */
+    private int attachmentSize;
+
+    /**
+     * 扩展参数
+     */
+    private Map<String, Object> attachment;
 
 }

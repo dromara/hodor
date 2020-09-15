@@ -1,37 +1,19 @@
 package org.dromara.hodor.remoting.netty.rpc;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.io.Serializable;
 
 /**
- *  
+ * request body
  *
  * @author tomgs
- * @version 2020/9/13 1.0 
+ * @since 2020/9/15
  */
-@Data
-@Builder
-@NoArgsConstructor
-public class RequestBody {
+public interface RequestBody extends Serializable {
 
-    private String requestId;
-
-    private String jobName;
-
-    private String groupName;
-
-    private String jobPath;
-
-    private String jobCommand;
-
-    private String jobCommandType;
-
-    private String jobParameters;
-
-    private String extensibleParameters;
-
-    private Integer timeout;
-
+    /**
+     * 请求id
+     * @return request id
+     */
+    String getRequestId();
 
 }
