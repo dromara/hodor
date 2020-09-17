@@ -37,11 +37,6 @@ public class Header {
     private int length;
 
     /**
-     * 扩展参数大小
-     */
-    private int attachmentSize;
-
-    /**
      * 扩展参数
      */
     private Map<String, Object> attachment;

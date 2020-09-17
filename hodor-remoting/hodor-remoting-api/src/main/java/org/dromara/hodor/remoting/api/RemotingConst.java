@@ -65,4 +65,10 @@ public class RemotingConst  {
     public static final int RPC_VERSION = 1;
 
     public static final int RPC_CRC_CODE = 12345;
+
+    public static final int MAX_FRAME_LENGTH = 32 * 1024 * 1024;
+
+    public static final int LENGTH_FIELD_OFFSET = 5;
+
+    public static final int LENGTH_FIELD_LENGTH = 4;
 }

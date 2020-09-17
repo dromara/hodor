@@ -27,6 +27,13 @@ import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketSe
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
+import org.dromara.hodor.remoting.api.RemotingConst;
+import org.dromara.hodor.remoting.netty.rpc.ResponseBody;
+import org.dromara.hodor.remoting.netty.rpc.SchedulerRequestBody;
+import org.dromara.hodor.remoting.netty.rpc.codec.RpcRequestDecoder;
+import org.dromara.hodor.remoting.netty.rpc.codec.RpcRequestEncoder;
+import org.dromara.hodor.remoting.netty.rpc.codec.RpcResponseDecoder;
+import org.dromara.hodor.remoting.netty.rpc.codec.RpcResponseEncoder;
 
 /**
  * The type Netty server initializer.
@@ -57,6 +64,8 @@ public class NettyServerInitializer extends ChannelInitializer<SocketChannel> {
             channel.pipeline().addLast("chunkedWriter", new ChunkedWriteHandler());
         } else if (serverHandler.isTcpProtocol()) {
             //TODO: impl tcp
+            channel.pipeline().addLast(new RpcRequestDecoder(RemotingConst.MAX_FRAME_LENGTH, RemotingConst.LENGTH_FIELD_OFFSET, RemotingConst.LENGTH_FIELD_LENGTH));
+            channel.pipeline().addLast(new RpcResponseEncoder(ResponseBody.class));
         } else {
             throw new UnsupportedOperationException("unsupported protocol.");
         }
