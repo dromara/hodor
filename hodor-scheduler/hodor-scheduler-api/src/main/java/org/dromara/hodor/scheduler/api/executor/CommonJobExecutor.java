@@ -15,7 +15,7 @@ public class CommonJobExecutor extends AbstractJobExecutor {
 
     @Override
     public void process(HodorJobExecutionContext context) {
-        log.info("scheduler executor, context: {}", context);
+        log.info("scheduler executor, context: {}.", context);
         long requestId = context.getRequestId();
         JobDesc jobDesc = context.getJobDesc();
 

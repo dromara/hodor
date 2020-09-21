@@ -5,7 +5,7 @@ import org.dromara.hodor.scheduler.api.JobExecutor;
 import org.dromara.hodor.scheduler.api.exception.HodorSchedulerException;
 
 /**
- *  
+ *  abstract job executor
  *
  * @author tomgs
  * @version 2020/6/25 1.0 
