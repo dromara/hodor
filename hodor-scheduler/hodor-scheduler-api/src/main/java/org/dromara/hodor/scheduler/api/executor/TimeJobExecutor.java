@@ -8,11 +8,12 @@ import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
  * @author tomgs
  * @version 2020/6/25 1.0 
  */
-public class TimeJobExecutor extends AbstractJobExecutor {
+public class TimeJobExecutor extends CommonJobExecutor {
 
     @Override
     public void process(HodorJobExecutionContext context) {
-
+        // TODO: 检查一些与定时相关的校验项
+        super.process(context);
     }
 
 }

@@ -22,8 +22,7 @@ public class HodorJob implements Job {
     private JobDesc jobDesc;
 
     @Override
-    public void execute(JobExecutionContext jobExecutionContext) {
-        
+    public void execute(JobExecutionContext context) {
         jobExecutor.execute(new HodorJobExecutionContext(jobDesc));
     }
 

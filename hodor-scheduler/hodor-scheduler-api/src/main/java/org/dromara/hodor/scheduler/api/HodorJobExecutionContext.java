@@ -15,12 +15,12 @@ import java.util.Map;
  */
 public class HodorJobExecutionContext {
 
-    private final long id;
+    private final long requestId;
     private final Map<String, Object> jobData;
     private final JobDesc jobDesc;
 
     public HodorJobExecutionContext(JobDesc jobDesc) {
-        this.id = IdGenerator.defaultGenerator().nextId();
+        this.requestId = IdGenerator.defaultGenerator().nextId();
         this.jobDesc = jobDesc;
         //this.jobData = jobDesc.getJobData();
         this.jobData = new HashMap<>();
@@ -38,8 +38,8 @@ public class HodorJobExecutionContext {
         return jobDesc;
     }
 
-    public long getId() {
-        return id;
+    public long getRequestId() {
+        return requestId;
     }
 
 }
