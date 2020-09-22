@@ -16,7 +16,7 @@
  *
  */
 
-package org.dromara.hodor.common.distuptor;
+package org.dromara.hodor.common.disruptor;
 
 
 /**

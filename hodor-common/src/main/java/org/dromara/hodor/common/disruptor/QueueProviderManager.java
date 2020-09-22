@@ -16,7 +16,7 @@
  *
  */
 
-package org.dromara.hodor.common.distuptor;
+package org.dromara.hodor.common.disruptor;
 
 import com.lmax.disruptor.BlockingWaitStrategy;
 import com.lmax.disruptor.IgnoreExceptionHandler;
@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
  * @author xiaoyu
  */
 @SuppressWarnings("all")
-public class QueueProviderManage<T> {
+public class QueueProviderManager<T> {
 
 
     /**
@@ -74,7 +74,7 @@ public class QueueProviderManage<T> {
      *
      * @param queueConsumerFactory 处理；
      */
-    public QueueProviderManage(final QueueConsumerFactory<T> queueConsumerFactory) {
+    public QueueProviderManager(final QueueConsumerFactory<T> queueConsumerFactory) {
         this(queueConsumerFactory, 4096 * 2 * 2);
     }
 
@@ -84,7 +84,7 @@ public class QueueProviderManage<T> {
      * @param queueConsumerFactory the queue consumer factory
      * @param ringBufferSize       the ring buffer size
      */
-    public QueueProviderManage(final QueueConsumerFactory<T> queueConsumerFactory, final int ringBufferSize) {
+    public QueueProviderManager(final QueueConsumerFactory<T> queueConsumerFactory, final int ringBufferSize) {
         this(queueConsumerFactory, Runtime.getRuntime().availableProcessors() << 1, Runtime.getRuntime().availableProcessors() << 1, ringBufferSize);
     }
 
@@ -95,14 +95,14 @@ public class QueueProviderManage<T> {
      * @param exeThreadSize        the thread size 执行线程的数量.
      * @param ringBufferSize       the ring buffer size
      */
-    public QueueProviderManage(final QueueConsumerFactory<T> queueConsumerFactory, final int exeThreadSize, final int consumerSize, final int ringBufferSize) {
+    public QueueProviderManager(final QueueConsumerFactory<T> queueConsumerFactory, final int exeThreadSize, final int consumerSize, final int ringBufferSize) {
         this.queueConsumerFactory = queueConsumerFactory;
         this.threadSize = exeThreadSize;
         this.size = ringBufferSize;
         this.consumerSize = consumerSize;
         executor = new ThreadPoolExecutor(threadSize, threadSize, 0, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<>(),
-                HodorThreadFactory.create("disruptor_queue_exe" + queueConsumerFactory.fixName(), false),
+                HodorThreadFactory.create("disruptor_queue_exe-" + queueConsumerFactory.fixName(), false),
                 new ThreadPoolExecutor.AbortPolicy());
     }
 
@@ -116,7 +116,7 @@ public class QueueProviderManage<T> {
          */
         Disruptor<QueueEvent<T>> disruptor = new Disruptor<>(factory,
                 size,
-                HodorThreadFactory.create("disruptor_queue_consumer" + queueConsumerFactory.fixName(), false),
+                HodorThreadFactory.create("disruptor_queue_consumer-" + queueConsumerFactory.fixName(), false),
                 ProducerType.MULTI,
                 new BlockingWaitStrategy());
         QueueConsumer<T>[] consumers = new QueueConsumer[this.consumerSize];

@@ -16,26 +16,19 @@
  *
  */
 
-package org.dromara.hodor.common.distuptor;
+package org.dromara.hodor.common.disruptor;
 
+import com.lmax.disruptor.EventFactory;
 
 /**
- * The interface Queue consumer factory.
+ * The type Queue event factory.
  *
  * @author xiaoyu
  */
-public interface QueueConsumerFactory<T> {
-    /**
-     * 创建一个对象.
-     *
-     * @return 返回一个对象 ;
-     */
-    QueueConsumerExecutor<T> create();
+public class QueueEventFactory<T> implements EventFactory<QueueEvent<T>> {
 
-    /**
-     * 获取一个可以标识的fixName.
-     *
-     * @return the string
-     */
-    String fixName();
+    @Override
+    public QueueEvent<T> newInstance() {
+        return new QueueEvent<>();
+    }
 }

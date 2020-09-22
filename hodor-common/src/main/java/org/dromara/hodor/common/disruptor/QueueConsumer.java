@@ -16,37 +16,46 @@
  *
  */
 
-package org.dromara.hodor.common.distuptor;
+package org.dromara.hodor.common.disruptor;
 
-import java.io.Serializable;
+import com.lmax.disruptor.WorkHandler;
+
+import java.util.concurrent.ExecutorService;
 
 /**
- * The type Queue event.
+ * 后置队列的定义处理.
  *
- * @param <T> the type parameter
  * @author xiaoyu
  */
-public class QueueEvent<T> implements Serializable {
-    /**
-     * The T.
-     */
-    private T data;
+public class QueueConsumer<T> implements WorkHandler<QueueEvent<T>> {
 
     /**
-     * Gets data.
-     *
-     * @return the data
+     * 线程池执行器.
      */
-    public T getData() {
-        return data;
+    private ExecutorService executor;
+
+    /**
+     * 创建的对象.
+     */
+    private QueueConsumerFactory<T> factory;
+
+    /**
+     * 消息设置.
+     *
+     * @param executor 处理器；
+     * @param factory  线程处理对象；
+     */
+    QueueConsumer(final ExecutorService executor, final QueueConsumerFactory<T> factory) {
+        this.executor = executor;
+        this.factory = factory;
     }
 
-    /**
-     * Sets data.
-     *
-     * @param data the data
-     */
-    public void setData(T data) {
-        this.data = data;
+    @Override
+    public void onEvent(final QueueEvent<T> t) {
+        if (t != null) {
+            QueueConsumerExecutor<T> queueConsumerExecutor = factory.create();
+            queueConsumerExecutor.setData(t.getData());
+            executor.execute(queueConsumerExecutor);
+        }
     }
 }
