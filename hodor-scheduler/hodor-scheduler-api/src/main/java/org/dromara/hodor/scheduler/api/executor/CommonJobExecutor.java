@@ -1,8 +1,9 @@
 package org.dromara.hodor.scheduler.api.executor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.core.JobDesc;
+import org.dromara.hodor.common.disruptor.QueueProviderManager;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
+import org.dromara.hodor.scheduler.api.JobRequestExecutorManager;
 
 /**
  *  common job executor
@@ -13,12 +14,13 @@ import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 @Slf4j
 public class CommonJobExecutor extends AbstractJobExecutor {
 
-    @Override
-    public void process(HodorJobExecutionContext context) {
-        log.info("scheduler executor, context: {}.", context);
-        long requestId = context.getRequestId();
-        JobDesc jobDesc = context.getJobDesc();
+    private final JobRequestExecutorManager requestExecutor = JobRequestExecutorManager.getInstance();
 
+    @Override
+    public void process(final HodorJobExecutionContext context) {
+        log.info("scheduler executor, context: {}.", context);
+
+        requestExecutor.submitHodorJobExecutor(context);
     }
 
 }

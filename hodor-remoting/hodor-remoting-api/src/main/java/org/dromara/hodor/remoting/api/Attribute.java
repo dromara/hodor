@@ -28,6 +28,8 @@ import java.util.Properties;
  */
 public class Attribute extends Properties {
 
+    private static final long serialVersionUID = 3263878045463371449L;
+
     /**
      * Gets property.
      *
