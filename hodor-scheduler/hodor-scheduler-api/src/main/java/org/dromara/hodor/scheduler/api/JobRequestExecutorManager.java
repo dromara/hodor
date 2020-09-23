@@ -4,7 +4,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import org.dromara.hodor.common.disruptor.QueueProviderManager;
 import org.dromara.hodor.scheduler.api.executor.HodorJobRequestConsumerFactory;
-import org.dromara.hodor.scheduler.api.executor.HodorJobRequestExecutor;
+import org.dromara.hodor.scheduler.api.handler.HodorJobRequestHandler;
 
 /**
  * job request executor manager
@@ -36,7 +36,7 @@ public final class JobRequestExecutorManager {
     }
 
     private QueueProviderManager<HodorJobExecutionContext> getQueueProviderManager(String jobKey) {
-        QueueProviderManager<HodorJobExecutionContext> manager = new QueueProviderManager<>(new HodorJobRequestConsumerFactory(jobKey, new HodorJobRequestExecutor()));
+        QueueProviderManager<HodorJobExecutionContext> manager = new QueueProviderManager<>(new HodorJobRequestConsumerFactory(jobKey, new HodorJobRequestHandler()));
         manager.start();
         return manager;
     }

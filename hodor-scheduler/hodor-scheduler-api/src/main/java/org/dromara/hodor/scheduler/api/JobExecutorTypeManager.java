@@ -7,15 +7,21 @@ import org.dromara.hodor.scheduler.api.executor.TimeJobExecutor;
 import org.dromara.hodor.scheduler.api.executor.WorkFlowJobExecutor;
 
 /**
+ * job executor type manager
+ *
  * @author tangzy
  * @since 1.0
  */
 public class JobExecutorTypeManager {
 
-    public static final JobExecutorTypeManager INSTANCE = new JobExecutorTypeManager();
+    private static final JobExecutorTypeManager INSTANCE = new JobExecutorTypeManager();
 
     private JobExecutorTypeManager() {
 
+    }
+
+    public static JobExecutorTypeManager getInstance() {
+        return INSTANCE;
     }
 
     private enum JobExecutorClassEnum {

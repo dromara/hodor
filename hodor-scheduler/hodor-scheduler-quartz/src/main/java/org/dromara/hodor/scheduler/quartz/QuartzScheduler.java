@@ -109,7 +109,7 @@ public class QuartzScheduler implements HodorScheduler {
                 .requestRecovery(true)
                 .build();
 
-        JobExecutor jobExecutor = JobExecutorTypeManager.INSTANCE.getJobExecutor(jobDesc.getJobType());
+        JobExecutor jobExecutor = JobExecutorTypeManager.getInstance().getJobExecutor(jobDesc.getJobType());
         jobDetail.getJobDataMap().put("jobExecutor", jobExecutor);
         jobDetail.getJobDataMap().put("jobDesc", jobDesc);
 
