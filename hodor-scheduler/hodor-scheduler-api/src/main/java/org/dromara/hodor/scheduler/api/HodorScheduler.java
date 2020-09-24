@@ -3,7 +3,7 @@ package org.dromara.hodor.scheduler.api;
 import java.util.List;
 import org.dromara.hodor.common.extension.SPI;
 import org.dromara.hodor.core.JobDesc;
-import org.dromara.hodor.scheduler.api.config.SchedulerConfig;
+import org.dromara.hodor.scheduler.api.common.SchedulerConfig;
 
 /**
  * hodor scheduler basic interface

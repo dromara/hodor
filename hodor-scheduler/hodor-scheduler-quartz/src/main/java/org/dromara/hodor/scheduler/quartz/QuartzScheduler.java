@@ -8,7 +8,7 @@ import org.dromara.hodor.core.JobDesc;
 import org.dromara.hodor.scheduler.api.HodorScheduler;
 import org.dromara.hodor.scheduler.api.JobExecutor;
 import org.dromara.hodor.scheduler.api.JobExecutorTypeManager;
-import org.dromara.hodor.scheduler.api.config.SchedulerConfig;
+import org.dromara.hodor.scheduler.api.common.SchedulerConfig;
 import org.dromara.hodor.scheduler.api.exception.HodorSchedulerException;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;

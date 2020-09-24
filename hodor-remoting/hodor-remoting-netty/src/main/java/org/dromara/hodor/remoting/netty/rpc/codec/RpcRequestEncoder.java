@@ -5,9 +5,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.utils.SerializeUtils;
-import org.dromara.hodor.remoting.netty.rpc.Header;
-import org.dromara.hodor.remoting.netty.rpc.RequestBody;
-import org.dromara.hodor.remoting.netty.rpc.RpcRequest;
+import org.dromara.hodor.remoting.api.message.Header;
+import org.dromara.hodor.remoting.api.message.RequestBody;
+import org.dromara.hodor.remoting.api.message.RemotingRequest;
 
 /**
  * rpc request encoder for rpc client
@@ -16,7 +16,7 @@ import org.dromara.hodor.remoting.netty.rpc.RpcRequest;
  * @since 2020/9/10
  */
 @Slf4j
-public class RpcRequestEncoder extends MessageToByteEncoder<RpcRequest<? extends RequestBody>> {
+public class RpcRequestEncoder extends MessageToByteEncoder<RemotingRequest<? extends RequestBody>> {
 
     private final Class<? extends RequestBody> genericClass;
 
@@ -25,7 +25,7 @@ public class RpcRequestEncoder extends MessageToByteEncoder<RpcRequest<? extends
     }
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, RpcRequest request, ByteBuf out) {
+    protected void encode(ChannelHandlerContext ctx, RemotingRequest request, ByteBuf out) {
         if (!genericClass.isInstance(request.getBody())) {
             log.error("Illegal class {}.", request.getClass().getName());
             return;

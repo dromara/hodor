@@ -6,9 +6,9 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.utils.SerializeUtils;
-import org.dromara.hodor.remoting.netty.rpc.Header;
-import org.dromara.hodor.remoting.netty.rpc.RequestBody;
-import org.dromara.hodor.remoting.netty.rpc.RpcRequest;
+import org.dromara.hodor.remoting.api.message.Header;
+import org.dromara.hodor.remoting.api.message.RequestBody;
+import org.dromara.hodor.remoting.api.message.RemotingRequest;
 
 /**
  * rpc request decoder for rpc server
@@ -41,7 +41,7 @@ public class RpcRequestDecoder extends LengthFieldBasedFrameDecoder {
             byte[] req = new byte[buf.readableBytes()];
             buf.readBytes(req);
             RequestBody requestBody = SerializeUtils.deserialize(req, RequestBody.class);
-            return RpcRequest.builder().header(header).body(requestBody).build();
+            return RemotingRequest.builder().header(header).body(requestBody).build();
         } finally {
             ReferenceCountUtil.release(buf);
             ReferenceCountUtil.release(in);

@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 import org.dromara.hodor.common.extension.ExtensionLoader;
-import org.dromara.hodor.scheduler.api.config.SchedulerConfig;
+import org.dromara.hodor.scheduler.api.common.SchedulerConfig;
 
 /**
  * scheduler manager

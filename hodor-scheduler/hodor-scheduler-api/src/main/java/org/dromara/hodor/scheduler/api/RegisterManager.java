@@ -1,4 +1,6 @@
-package org.dromara.hodor.register.api;
+package org.dromara.hodor.scheduler.api;
+
+import org.dromara.hodor.core.Host;
 
 /**
  * register manager
@@ -17,5 +19,9 @@ public final class RegisterManager {
         return INSTANCE;
     }
 
+
+    public Host selectSuitableHost(String jobGroup) {
+        return null;
+    }
 
 }

@@ -1,4 +1,4 @@
-package org.dromara.hodor.remoting.netty.rpc;
+package org.dromara.hodor.remoting.api.message;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * rpc request
+ * rpc response
  *
  * @author tomgs
  * @since 2020/9/10
@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RpcRequest<T extends RequestBody> {
+public class RemotingResponse<T extends ResponseBody> {
 
     private Header header;
 

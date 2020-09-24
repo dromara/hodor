@@ -1,4 +1,4 @@
-package org.dromara.hodor.remoting.netty.rpc;
+package org.dromara.hodor.remoting.api.message;
 
 import java.util.Map;
 import lombok.Builder;

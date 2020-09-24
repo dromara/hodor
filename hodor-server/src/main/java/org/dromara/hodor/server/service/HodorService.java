@@ -16,7 +16,7 @@ import org.dromara.hodor.core.manager.NodeServerManager;
 import org.dromara.hodor.core.service.JobInfoService;
 import org.dromara.hodor.scheduler.api.HodorScheduler;
 import org.dromara.hodor.scheduler.api.SchedulerManager;
-import org.dromara.hodor.scheduler.api.config.SchedulerConfig;
+import org.dromara.hodor.scheduler.api.common.SchedulerConfig;
 import org.dromara.hodor.server.component.Constants;
 import org.dromara.hodor.server.component.LifecycleComponent;
 import org.dromara.hodor.server.listener.LeaderElectChangeListener;

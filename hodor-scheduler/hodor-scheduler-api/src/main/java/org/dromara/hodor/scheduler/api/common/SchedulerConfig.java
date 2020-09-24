@@ -1,4 +1,4 @@
-package org.dromara.hodor.scheduler.api.config;
+package org.dromara.hodor.scheduler.api.common;
 
 import lombok.Builder;
 import lombok.Getter;

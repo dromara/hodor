@@ -17,23 +17,12 @@ public class HodorJobExecutionContext {
 
     private final long requestId;
     private final String jobKey;
-    private final Map<String, Object> jobData;
     private final JobDesc jobDesc;
 
     public HodorJobExecutionContext(JobDesc jobDesc) {
         this.requestId = IdGenerator.defaultGenerator().nextId();
         this.jobDesc = jobDesc;
         this.jobKey = jobDesc.getGroupName() + "_" + jobDesc.getJobName();
-        //this.jobData = jobDesc.getJobData();
-        this.jobData = new HashMap<>();
-    }
-
-    public String getString(final String key) {
-        if (jobData.containsKey(key)) {
-            return String.valueOf(jobData.get(key));
-        } else {
-            throw new UndefinedPropertyException("Missing required property '" + key + "'");
-        }
     }
 
     public JobDesc getJobDesc() {

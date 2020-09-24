@@ -9,7 +9,7 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import org.dromara.hodor.remoting.api.RemotingConst;
-import org.dromara.hodor.remoting.netty.rpc.SchedulerRequestBody;
+import org.dromara.hodor.remoting.api.message.SchedulerRequestBody;
 import org.dromara.hodor.remoting.netty.rpc.codec.RpcRequestEncoder;
 import org.dromara.hodor.remoting.netty.rpc.codec.RpcResponseDecoder;
 

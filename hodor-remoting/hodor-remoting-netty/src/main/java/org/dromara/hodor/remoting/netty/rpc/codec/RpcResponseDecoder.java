@@ -7,9 +7,9 @@ import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.remoting.api.exception.RemotingException;
-import org.dromara.hodor.remoting.netty.rpc.Header;
-import org.dromara.hodor.remoting.netty.rpc.ResponseBody;
-import org.dromara.hodor.remoting.netty.rpc.RpcResponse;
+import org.dromara.hodor.remoting.api.message.Header;
+import org.dromara.hodor.remoting.api.message.ResponseBody;
+import org.dromara.hodor.remoting.api.message.RemotingResponse;
 
 /**
  * rpc response decoder for rpc client
@@ -42,7 +42,7 @@ public class RpcResponseDecoder extends LengthFieldBasedFrameDecoder {
             byte[] req = new byte[buf.readableBytes()];
             buf.readBytes(req);
             ResponseBody body = SerializeUtils.deserialize(req, ResponseBody.class);
-            return RpcResponse.builder().body(body).header(header).build();
+            return RemotingResponse.builder().body(body).header(header).build();
         } catch (Exception e) {
             throw new RemotingException(e.getMessage(), e);
         } finally {

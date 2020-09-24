@@ -9,7 +9,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.remoting.api.RemotingConst;
 import org.dromara.hodor.remoting.api.exception.RemotingException;
-import org.dromara.hodor.remoting.netty.rpc.Header;
+import org.dromara.hodor.remoting.api.message.Header;
 
 /**
  * @author tomgs
