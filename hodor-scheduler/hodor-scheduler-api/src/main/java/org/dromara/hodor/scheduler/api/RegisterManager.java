@@ -20,7 +20,7 @@ public final class RegisterManager {
     }
 
 
-    public Host selectSuitableHost(String jobGroup) {
+    public Host selectSuitableHost(HodorJobExecutionContext context) {
         return null;
     }
 

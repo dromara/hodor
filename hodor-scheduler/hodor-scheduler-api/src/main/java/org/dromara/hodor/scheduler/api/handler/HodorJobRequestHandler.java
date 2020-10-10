@@ -36,7 +36,7 @@ public class HodorJobRequestHandler extends QueueConsumerExecutor<HodorJobExecut
     HodorJobExecutionContext context = getData();
     log.info("hodor job request handler, info {}.", context);
     RemotingRequest<RequestBody> request = RemotingRequest.builder().header(getHeader()).body(SchedulerRequestBody.fromContext(context)).build();
-    Host host = registerManager.selectSuitableHost(context.getJobKey());
+    Host host = registerManager.selectSuitableHost(context);
     remotingManager.sendRequest(host, request);
   }
 

@@ -1,11 +1,7 @@
 package org.dromara.hodor.scheduler.api;
 
-import java.util.HashMap;
 import org.dromara.hodor.common.IdGenerator;
-import org.dromara.hodor.common.exception.UndefinedPropertyException;
 import org.dromara.hodor.core.JobDesc;
-
-import java.util.Map;
 
 /**
  *  hodor scheduler context
