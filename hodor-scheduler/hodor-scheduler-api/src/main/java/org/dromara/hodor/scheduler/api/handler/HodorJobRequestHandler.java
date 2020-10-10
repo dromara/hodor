@@ -35,13 +35,24 @@ public class HodorJobRequestHandler extends QueueConsumerExecutor<HodorJobExecut
   public void run() {
     HodorJobExecutionContext context = getData();
     log.info("hodor job request handler, info {}.", context);
-    RemotingRequest<RequestBody> request = RemotingRequest.builder().header(getHeader()).body(SchedulerRequestBody.fromContext(context)).build();
+    RemotingRequest<RequestBody> request = getRequestBody(context);
     Host host = registerManager.selectSuitableHost(context);
     remotingManager.sendRequest(host, request);
   }
 
+  private RemotingRequest<RequestBody> getRequestBody(HodorJobExecutionContext context) {
+    return RemotingRequest.builder()
+        .header(getHeader())
+        .body(SchedulerRequestBody.fromContext(context))
+        .build();
+  }
+
   private Header getHeader() {
-    return Header.builder().crcCode(RemotingConst.RPC_CRC_CODE).version(RemotingConst.RPC_VERSION).type(RequestType.JOB_EXEC_REQUEST.getCode()).build();
+    return Header.builder()
+        .crcCode(RemotingConst.RPC_CRC_CODE)
+        .version(RemotingConst.RPC_VERSION)
+        .type(RequestType.JOB_EXEC_REQUEST.getCode())
+        .build();
   }
 
 }
