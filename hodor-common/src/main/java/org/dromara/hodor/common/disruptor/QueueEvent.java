@@ -27,6 +27,9 @@ import java.io.Serializable;
  * @author xiaoyu
  */
 public class QueueEvent<T> implements Serializable {
+
+    private static final long serialVersionUID = -6805960979021475565L;
+
     /**
      * The T.
      */
