@@ -4,8 +4,11 @@ import org.dromara.hodor.server.service.HodorService;
 import org.dromara.hodor.server.service.RegisterService;
 import org.dromara.hodor.server.service.RemoteService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeansException;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,20 +19,24 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class HodorServerInit implements ApplicationRunner {
+public class HodorServerInit implements ApplicationRunner, ApplicationContextAware {
 
     private final RemoteService remoteService;
     private final RegisterService registerService;
     private final HodorService hodorService;
+    private final ContextProvider contextProvider;
+    private ApplicationContext applicationContext;
 
     public HodorServerInit(final RemoteService remoteService, final RegisterService registerService, final HodorService hodorService) {
         this.remoteService = remoteService;
         this.registerService = registerService;
         this.hodorService = hodorService;
+        this.contextProvider = ContextProvider.getInstance();
     }
 
     @Override
     public void run(ApplicationArguments args) {
+        contextProvider.setApplicationContext(applicationContext);
         // start hodor server
         // start remoting server
         remoteService.start();
@@ -49,6 +56,11 @@ public class HodorServerInit implements ApplicationRunner {
         }));
 
         log.info("hodor server staring success.");
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 
 }

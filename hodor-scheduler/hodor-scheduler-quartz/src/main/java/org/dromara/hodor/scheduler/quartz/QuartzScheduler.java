@@ -7,7 +7,6 @@ import org.dromara.hodor.common.extension.Join;
 import org.dromara.hodor.core.JobDesc;
 import org.dromara.hodor.scheduler.api.HodorScheduler;
 import org.dromara.hodor.scheduler.api.JobExecutor;
-import org.dromara.hodor.scheduler.api.JobExecutorTypeManager;
 import org.dromara.hodor.scheduler.api.common.SchedulerConfig;
 import org.dromara.hodor.scheduler.api.exception.HodorSchedulerException;
 import org.quartz.CronScheduleBuilder;
@@ -103,13 +102,12 @@ public class QuartzScheduler implements HodorScheduler {
     }
 
     @Override
-    public void addJob(JobDesc jobDesc) {
+    public void addJob(JobDesc jobDesc, JobExecutor jobExecutor) {
         JobDetail jobDetail = JobBuilder.newJob(HodorJob.class)
                 .withIdentity(jobDesc.getJobName(), jobDesc.getGroupName())
                 .requestRecovery(true)
                 .build();
 
-        JobExecutor jobExecutor = JobExecutorTypeManager.getInstance().getJobExecutor(jobDesc.getJobType());
         jobDetail.getJobDataMap().put("jobExecutor", jobExecutor);
         jobDetail.getJobDataMap().put("jobDesc", jobDesc);
 
@@ -125,11 +123,6 @@ public class QuartzScheduler implements HodorScheduler {
         } catch (SchedulerException e) {
             throw new HodorSchedulerException(e);
         }
-    }
-
-    @Override
-    public void addJobList(List<JobDesc> jobDescList) {
-        jobDescList.forEach(this::addJob);
     }
 
     @Override

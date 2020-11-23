@@ -2,9 +2,9 @@ package org.dromara.hodor.scheduler.api;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import org.dromara.hodor.common.disruptor.QueueConsumerExecutor;
 import org.dromara.hodor.common.disruptor.QueueProviderManager;
 import org.dromara.hodor.scheduler.api.executor.HodorJobRequestConsumerFactory;
-import org.dromara.hodor.scheduler.api.handler.HodorJobRequestHandler;
 
 /**
  * job request executor manager
@@ -31,14 +31,22 @@ public final class JobRequestExecutorManager {
         return (QueueProviderManager<T>) this.queueProvider.computeIfAbsent(jobKey, queueProvider);
     }
 
-    public void submitHodorJobExecutor(HodorJobExecutionContext context) {
-        getQueueProvider(context.getJobKey(), this::getQueueProviderManager).getProvider().onData(e -> e.setData(context));
+    public void submit(final HodorJobExecutionContext context, final QueueConsumerExecutor<HodorJobExecutionContext> consumerExecutor) {
+        getQueueProvider(context.getJobKey(), key -> buildQueueProviderManager(key, consumerExecutor)).getProvider().onData(e -> e.setData(context));
     }
 
-    private QueueProviderManager<HodorJobExecutionContext> getQueueProviderManager(String jobKey) {
-        QueueProviderManager<HodorJobExecutionContext> manager = new QueueProviderManager<>(new HodorJobRequestConsumerFactory(jobKey, new HodorJobRequestHandler()));
+    private QueueProviderManager<HodorJobExecutionContext> buildQueueProviderManager(final String jobKey, final QueueConsumerExecutor<HodorJobExecutionContext> executor) {
+        QueueProviderManager<HodorJobExecutionContext> manager = buildQueueProviderManager(new HodorJobRequestConsumerFactory(jobKey, executor));
         manager.start();
         return manager;
+    }
+
+    private QueueProviderManager<HodorJobExecutionContext> buildQueueProviderManager(final HodorJobRequestConsumerFactory factory) {
+        return new QueueProviderManager<>(factory, 1, 1, 4096 * 2 * 2);
+    }
+
+    public void deleteQueueProvider(String jobKey) {
+        this.queueProvider.remove(jobKey);
     }
 
 }

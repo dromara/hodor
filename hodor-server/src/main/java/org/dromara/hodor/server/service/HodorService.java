@@ -19,6 +19,7 @@ import org.dromara.hodor.scheduler.api.SchedulerManager;
 import org.dromara.hodor.scheduler.api.common.SchedulerConfig;
 import org.dromara.hodor.server.component.Constants;
 import org.dromara.hodor.server.component.LifecycleComponent;
+import org.dromara.hodor.server.execute.JobExecutorTypeManager;
 import org.dromara.hodor.server.listener.LeaderElectChangeListener;
 import org.dromara.hodor.server.listener.MetadataChangeListener;
 import org.dromara.hodor.server.listener.ServerNodeChangeListener;
@@ -152,7 +153,8 @@ public class HodorService implements LifecycleComponent {
         List<Long> schedulerDataInterval = schedulerManager.getSchedulerDataInterval(config.getSchedulerName());
         if (CollectionUtils.isEmpty(schedulerDataInterval) || !CollectionUtils.isEqualCollection(schedulerDataInterval, dataInterval)) {
             List<JobInfo> jobInfoList = jobInfoService.queryJobInfoByHashIdOffset(dataInterval.get(0), dataInterval.get(1));
-            jobInfoList.forEach(scheduler::addJob);
+            HodorScheduler finalScheduler = scheduler;
+            jobInfoList.forEach(job -> finalScheduler.addJob(job, JobExecutorTypeManager.getInstance().getJobExecutor(job.getJobType())));
         }
         return scheduler;
     }

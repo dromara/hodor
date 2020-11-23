@@ -26,9 +26,7 @@ public interface HodorScheduler {
 
     void startDelayed(int seconds);
 
-    void addJob(JobDesc jobInfo);
-
-    void addJobList(List<JobDesc> jobInfoList);
+    void addJob(JobDesc jobInfo, JobExecutor jobExecutor);
 
     void resumeJob(JobDesc jobInfo);
 

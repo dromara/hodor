@@ -1,6 +1,6 @@
-package org.dromara.hodor.scheduler.api;
+package org.dromara.hodor.remoting.api;
 
-import org.dromara.hodor.core.Host;
+import org.dromara.hodor.common.Host;
 import org.dromara.hodor.remoting.api.message.RemotingRequest;
 import org.dromara.hodor.remoting.api.message.RequestBody;
 
@@ -21,7 +21,7 @@ public final class RemotingManager {
         return INSTANCE;
     }
 
-    public void sendRequest(Host host, RemotingRequest<? extends RequestBody> request) {
+    public void sendRequest(final Host host, final RemotingRequest<? extends RequestBody> request) {
 
     }
 

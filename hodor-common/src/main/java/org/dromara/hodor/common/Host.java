@@ -1,4 +1,4 @@
-package org.dromara.hodor.core;
+package org.dromara.hodor.common;
 
 import lombok.Data;
 

@@ -1,10 +1,8 @@
-package org.dromara.hodor.scheduler.api;
+package org.dromara.hodor.server.execute;
 
 import org.dromara.hodor.core.enums.JobType;
+import org.dromara.hodor.scheduler.api.JobExecutor;
 import org.dromara.hodor.scheduler.api.exception.HodorSchedulerException;
-import org.dromara.hodor.scheduler.api.executor.CommonJobExecutor;
-import org.dromara.hodor.scheduler.api.executor.TimeJobExecutor;
-import org.dromara.hodor.scheduler.api.executor.WorkFlowJobExecutor;
 
 /**
  * job executor type manager
