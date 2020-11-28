@@ -34,6 +34,7 @@ public class RpcResponseDecoder extends LengthFieldBasedFrameDecoder {
 
         Header header = CodecUtils.parseHeader(in);
         if (header == null) {
+            log.warn("Client receive response Header is null.");
             return null;
         }
         // decode body

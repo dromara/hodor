@@ -3,7 +3,6 @@ package org.dromara.hodor.server.listener;
 import java.util.List;
 import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.event.ObjectListener;
-import org.dromara.hodor.common.utils.LocalHost;
 import org.dromara.hodor.core.CopySet;
 import org.dromara.hodor.core.HodorMetadata;
 import org.dromara.hodor.core.manager.CopySetManager;

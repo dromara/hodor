@@ -33,6 +33,7 @@ public class RpcRequestDecoder extends LengthFieldBasedFrameDecoder {
 
         Header header = CodecUtils.parseHeader(in);
         if (header == null) {
+            log.warn("Server receive request Header is null.");
             return null;
         }
         //不是心跳包，则有消息内容体，解析消息内容

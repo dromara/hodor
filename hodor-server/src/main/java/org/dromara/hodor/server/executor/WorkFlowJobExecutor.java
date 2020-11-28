@@ -1,18 +1,18 @@
-package org.dromara.hodor.server.execute;
+package org.dromara.hodor.server.executor;
 
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 
 /**
- *  time job executor
+ *  workflow job executor
  *
  * @author tomgs
  * @version 2020/6/25 1.0 
  */
-public class TimeJobExecutor extends CommonJobExecutor {
+public class WorkFlowJobExecutor extends CommonJobExecutor {
 
     @Override
     public void process(HodorJobExecutionContext context) {
-        // TODO: 检查一些与定时相关的校验项
+        //TODO: 校验一些与工作流相关的事项
         super.process(context);
     }
 

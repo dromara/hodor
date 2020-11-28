@@ -1,5 +1,6 @@
 package org.dromara.hodor.scheduler.api;
 
+import java.util.Date;
 import org.dromara.hodor.common.IdGenerator;
 import org.dromara.hodor.core.JobDesc;
 
@@ -14,15 +15,23 @@ public class HodorJobExecutionContext {
     private final long requestId;
     private final String jobKey;
     private final JobDesc jobDesc;
+    private final Date fireTime;
+    private final Date scheduledFireTime;
+    private final Date previousFireTime;
+    private final Date nextFireTime;
 
-    public HodorJobExecutionContext(JobDesc jobDesc) {
+    public HodorJobExecutionContext(final JobDesc jobDesc,
+                                    final Date fireTime,
+                                    final Date scheduledFireTime,
+                                    final Date previousFireTime,
+                                    final Date nextFireTime) {
         this.requestId = IdGenerator.defaultGenerator().nextId();
         this.jobDesc = jobDesc;
         this.jobKey = jobDesc.getGroupName() + "_" + jobDesc.getJobName();
-    }
-
-    public JobDesc getJobDesc() {
-        return jobDesc;
+        this.fireTime = fireTime;
+        this.scheduledFireTime = scheduledFireTime;
+        this.previousFireTime = previousFireTime;
+        this.nextFireTime = nextFireTime;
     }
 
     public long getRequestId() {
@@ -31,6 +40,26 @@ public class HodorJobExecutionContext {
 
     public String getJobKey() {
         return jobKey;
+    }
+
+    public JobDesc getJobDesc() {
+        return jobDesc;
+    }
+
+    public Date getFireTime() {
+        return fireTime;
+    }
+
+    public Date getScheduledFireTime() {
+        return scheduledFireTime;
+    }
+
+    public Date getPreviousFireTime() {
+        return previousFireTime;
+    }
+
+    public Date getNextFireTime() {
+        return nextFireTime;
     }
 
 }

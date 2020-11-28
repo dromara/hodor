@@ -1,4 +1,4 @@
-package org.dromara.hodor.server.execute.handler;
+package org.dromara.hodor.server.executor.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
@@ -11,7 +11,7 @@ import org.dromara.hodor.remoting.api.message.Header;
 import org.dromara.hodor.remoting.api.message.RemotingRequest;
 import org.dromara.hodor.remoting.api.message.RequestBody;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
-import org.dromara.hodor.scheduler.api.common.SchedulerRequestBody;
+import org.dromara.hodor.server.executor.request.SchedulerRequestBody;
 
 /**
  * job request executor

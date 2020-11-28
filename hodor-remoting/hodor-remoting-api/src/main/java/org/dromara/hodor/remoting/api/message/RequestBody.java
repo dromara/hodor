@@ -14,6 +14,6 @@ public interface RequestBody extends Serializable {
      * 请求id
      * @return request id
      */
-    String getRequestId();
+    Long getRequestId();
 
 }

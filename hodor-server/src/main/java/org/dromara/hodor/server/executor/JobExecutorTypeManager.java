@@ -1,4 +1,4 @@
-package org.dromara.hodor.server.execute;
+package org.dromara.hodor.server.executor;
 
 import org.dromara.hodor.core.enums.JobType;
 import org.dromara.hodor.scheduler.api.JobExecutor;

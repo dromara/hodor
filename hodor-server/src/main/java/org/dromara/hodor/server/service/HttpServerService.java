@@ -16,14 +16,15 @@ import org.springframework.stereotype.Service;
  * @since 2020/6/28
  */
 @Service
-public class RemoteService implements LifecycleComponent {
+public class HttpServerService implements LifecycleComponent {
 
     private final NetServer netServer;
 
-    public RemoteService(final HodorServerProperties properties) {
+    public HttpServerService(final HodorServerProperties properties) {
         Attribute attribute = new Attribute();
         attribute.put(RemotingConst.HOST_KEY, properties.getNetServerHost());
         attribute.put(RemotingConst.PORT_KEY, properties.getNetServerPort());
+        attribute.put(RemotingConst.HTTP_PROTOCOL, true);
 
         NetServerTransport netServerTransport = ExtensionLoader.getExtensionLoader(NetServerTransport.class).getDefaultJoin();
         this.netServer = netServerTransport.bind(attribute, null);

@@ -1,5 +1,6 @@
-package org.dromara.hodor.scheduler.api.common;
+package org.dromara.hodor.server.executor.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,11 +17,12 @@ import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 @Data
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class SchedulerRequestBody implements RequestBody {
 
     private static final long serialVersionUID = -3703044901986185064L;
 
-    private String requestId;
+    private Long requestId;
 
     private String jobName;
 
@@ -39,7 +41,7 @@ public class SchedulerRequestBody implements RequestBody {
     private Integer timeout;
 
     public static SchedulerRequestBody fromContext(HodorJobExecutionContext context) {
-        String requestId = String.valueOf(context.getRequestId());
+        Long requestId = context.getRequestId();
         JobDesc jobDesc = context.getJobDesc();
         return SchedulerRequestBody.builder()
             .requestId(requestId)
