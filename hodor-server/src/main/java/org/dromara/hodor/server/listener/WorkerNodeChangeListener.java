@@ -1,6 +1,6 @@
 package org.dromara.hodor.server.listener;
 
-import com.google.common.collect.Sets;
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.core.manager.WorkerNodeManager;
 import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;
@@ -12,6 +12,7 @@ import org.dromara.hodor.register.api.node.ServerNode;
  * @author tomgs
  * @since 2020/11/27
  */
+@Slf4j
 public class WorkerNodeChangeListener implements DataChangeListener {
 
     private final WorkerNodeManager workerNodeManager;
@@ -27,11 +28,17 @@ public class WorkerNodeChangeListener implements DataChangeListener {
             return;
         }
 
-        String groupName = "";
+        String[] workerPathArr = workerPath.split(ServerNode.PATH_SEPARATOR);
+        if (workerPathArr.length != 4) {
+            return;
+        }
+
+        String groupName = workerPathArr[2];
+        String nodeEndpoint = workerPathArr[3];
         if (event.getType() == DataChangeEvent.Type.NODE_ADDED) {
-            workerNodeManager.addWorkerNodes(groupName, Sets.newConcurrentHashSet());
+            workerNodeManager.addWorkerNode(groupName, nodeEndpoint);
         } else if (event.getType() == DataChangeEvent.Type.NODE_REMOVED) {
-            workerNodeManager.removeWorkerNodes(groupName);
+            workerNodeManager.removeWorkerNode(groupName, nodeEndpoint);
         }
 
     }

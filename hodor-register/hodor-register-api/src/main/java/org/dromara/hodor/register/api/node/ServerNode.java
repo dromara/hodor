@@ -10,6 +10,7 @@ import org.dromara.hodor.common.utils.StringUtils;
  */
 public class ServerNode {
 
+    public static final String PATH_SEPARATOR = "/";
     public static final String METADATA_PATH = "/scheduler/metadata";
     public static final String NODES_PATH = "/scheduler/nodes";
     public static final String COPY_SETS_PATH = "/scheduler/copysets";

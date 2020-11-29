@@ -24,19 +24,19 @@ public class HodorServerInit implements ApplicationRunner, ApplicationContextAwa
     private final HttpServerService httpServerService;
     private final RegisterService registerService;
     private final HodorService hodorService;
-    private final ContextProvider contextProvider;
+    private final ServiceProvider serviceProvider;
     private ApplicationContext applicationContext;
 
     public HodorServerInit(final HttpServerService httpServerService, final RegisterService registerService, final HodorService hodorService) {
         this.httpServerService = httpServerService;
         this.registerService = registerService;
         this.hodorService = hodorService;
-        this.contextProvider = ContextProvider.getInstance();
+        this.serviceProvider = ServiceProvider.getInstance();
     }
 
     @Override
     public void run(ApplicationArguments args) {
-        contextProvider.setApplicationContext(applicationContext);
+        serviceProvider.setApplicationContext(applicationContext);
         // start hodor server
         // start remoting server
         httpServerService.start();

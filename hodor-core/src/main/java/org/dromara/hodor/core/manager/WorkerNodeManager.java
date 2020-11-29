@@ -1,6 +1,8 @@
 package org.dromara.hodor.core.manager;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -33,5 +35,22 @@ public enum WorkerNodeManager {
 
     public void clearWorkerNodes() {
         workerNodes.clear();
+    }
+
+    public void addWorkerNode(String groupName, String nodeEndpoint) {
+        Set<String> nodes = workerNodes.get(groupName);
+        if (nodes == null) {
+            nodes = Sets.newConcurrentHashSet();
+        }
+        nodes.add(nodeEndpoint);
+        workerNodes.put(groupName, nodes);
+    }
+
+    public void removeWorkerNode(String groupName, String nodeEndpoint) {
+        Set<String> nodes = workerNodes.get(groupName);
+        if (nodes == null) {
+            return;
+        }
+        nodes.remove(nodeEndpoint);
     }
 }
