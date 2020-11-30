@@ -47,7 +47,7 @@ public class ZookeeperRegistryCenter implements RegistryCenter {
             .connectString(config.getServers())
             .namespace(config.getNamespace())
             .retryPolicy(new ExponentialBackoffRetry(1000, 3, 3000))
-            .sessionTimeoutMs(5000)
+            .sessionTimeoutMs(30000)
             .connectionTimeoutMs(5000)
             .build();
         client.start();

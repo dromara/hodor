@@ -71,14 +71,15 @@ public class HodorService implements LifecycleComponent {
             ThreadUtils.sleep(TimeUnit.MILLISECONDS, 1000);
             currRunningNodeCount = registerService.getRunningNodeCount();
         }
-        //select leader
-        electLeader();
 
         //init data
         registerService.registryServerNodeListener(new ServerNodeChangeListener(nodeServerManager));
         registerService.registryWorkerNodeListener(new WorkerNodeChangeListener(workerNodeManager));
         registerService.registryMetadataListener(new MetadataChangeListener(this));
         registerService.registryElectLeaderListener(new LeaderElectChangeListener(this));
+
+        //select leader
+        electLeader();
     }
 
     @Override
