@@ -53,7 +53,7 @@ public interface HodorChannelHandler {
      * @param channel the channel
      * @param message the message
      */
-    void received(HodorChannel channel, Object message);
+    void received(HodorChannel channel, Object message) throws Exception;
 
     /**
      * Exception caught.

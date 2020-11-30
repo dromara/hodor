@@ -1,4 +1,4 @@
-package org.dromara.hodor.remoting.api;
+package org.dromara.hodor.server.remoting;
 
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.remoting.api.message.RemotingRequest;

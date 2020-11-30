@@ -28,7 +28,7 @@ public enum RequestType {
         return type;
     }
 
-    public RequestType to(byte type) {
+    public static RequestType to(byte type) {
         RequestType requestType = null;
         switch (type) {
             case (byte) 0:

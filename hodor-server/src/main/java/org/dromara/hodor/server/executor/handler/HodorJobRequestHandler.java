@@ -6,7 +6,7 @@ import org.dromara.hodor.common.disruptor.QueueConsumerExecutor;
 import org.dromara.hodor.core.enums.RequestType;
 import org.dromara.hodor.register.api.RegisterManager;
 import org.dromara.hodor.remoting.api.RemotingConst;
-import org.dromara.hodor.remoting.api.RemotingManager;
+import org.dromara.hodor.server.remoting.RemotingManager;
 import org.dromara.hodor.remoting.api.message.Header;
 import org.dromara.hodor.remoting.api.message.RemotingRequest;
 import org.dromara.hodor.remoting.api.message.RequestBody;
