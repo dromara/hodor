@@ -29,7 +29,7 @@ public class ServerNodeChangeListener implements DataChangeListener {
             return;
         }
 
-        log.info("WorkerNodeChange, eventType: {}, path: {}", event.getType(), nodePath);
+        log.info("ServerNodeChange, eventType: {}, path: {}", event.getType(), nodePath);
 
         String[] nodePathArr = nodePath.split(ServerNode.PATH_SEPARATOR);
         if (nodePathArr.length != 4) {

@@ -31,11 +31,11 @@ public class ServerNode {
     }
 
     public static boolean isWorkerPath(String path) {
-        return StringUtils.isNotBlank(path) && path.startsWith(WORKER_PATH);
+        return StringUtils.isNotBlank(path) && path.startsWith(WORKER_PATH + PATH_SEPARATOR);
     }
 
     public static boolean isNodePath(String path) {
-        return StringUtils.isNotBlank(path) && path.startsWith(NODES_PATH);
+        return StringUtils.isNotBlank(path) && path.startsWith(NODES_PATH + PATH_SEPARATOR);
     }
 
     public static boolean isMasterActivePath(String path) {
