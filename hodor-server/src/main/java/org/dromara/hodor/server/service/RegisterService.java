@@ -8,7 +8,6 @@ import org.dromara.hodor.core.HodorMetadata;
 import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.RegistryCenter;
 import org.dromara.hodor.register.api.RegistryConfig;
-import org.dromara.hodor.register.api.node.LeaderNode;
 import org.dromara.hodor.register.api.node.ServerNode;
 import org.dromara.hodor.server.component.LifecycleComponent;
 import org.dromara.hodor.server.config.HodorServerProperties;
@@ -65,7 +64,7 @@ public class RegisterService implements LifecycleComponent {
         //registryCenter.makeDirs(ServerNode.WORK_PATH);
 
         // init data
-        registryCenter.createPersistent(ServerNode.getServerNodePath(getServerId()), getServerId());
+        registryCenter.createEphemeral(ServerNode.getServerNodePath(getServerId()), getServerId());
 
     }
 
@@ -101,7 +100,7 @@ public class RegisterService implements LifecycleComponent {
     }
 
     public void registryElectLeaderListener(DataChangeListener listener) {
-        registryListener(LeaderNode.ACTIVE_PATH, listener);
+        registryListener(ServerNode.ACTIVE_PATH, listener);
     }
 
     public void registryWorkerNodeListener(DataChangeListener listener) {

@@ -1,8 +1,7 @@
 package org.dromara.hodor.server;
 
+import java.util.Objects;
 import org.springframework.context.ApplicationContext;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * context provider
@@ -27,11 +26,11 @@ public class ServiceProvider {
         if (this.applicationContext != null) {
             throw new IllegalStateException("application context is already set");
         }
-        this.applicationContext = requireNonNull(applicationContext, "application context is null");
+        this.applicationContext = Objects.requireNonNull(applicationContext, "application context is null");
     }
 
     public <T> T getBean(Class<T> clazz) {
-        return requireNonNull(applicationContext).getBean(clazz);
+        return Objects.requireNonNull(applicationContext).getBean(clazz);
     }
 
 }

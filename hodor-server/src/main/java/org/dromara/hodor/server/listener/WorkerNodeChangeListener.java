@@ -28,6 +28,9 @@ public class WorkerNodeChangeListener implements DataChangeListener {
             return;
         }
 
+        log.info("WorkerNodeChange, eventType: {}, path: {}", event.getType(), workerPath);
+
+        // path: /worker/${groupName}/${endpoint}
         String[] workerPathArr = workerPath.split(ServerNode.PATH_SEPARATOR);
         if (workerPathArr.length != 4) {
             return;

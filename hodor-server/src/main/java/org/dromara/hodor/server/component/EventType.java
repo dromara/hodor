@@ -10,5 +10,5 @@ public interface EventType {
     /**
      * 任务分发
      */
-    String JOB_DIS = "jobDistribute";
+    String JOB_DISTRIBUTE = "jobDistribute";
 }
