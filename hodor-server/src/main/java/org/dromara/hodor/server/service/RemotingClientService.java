@@ -1,10 +1,8 @@
-package org.dromara.hodor.server.remoting;
+package org.dromara.hodor.server.service;
 
 import com.google.common.collect.Maps;
-import io.netty.buffer.Unpooled;
-import io.netty.util.CharsetUtil;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.remoting.api.Attribute;
@@ -19,32 +17,33 @@ import org.dromara.hodor.remoting.api.message.RemotingRequest;
 import org.dromara.hodor.remoting.api.message.RemotingResponse;
 import org.dromara.hodor.remoting.api.message.RequestBody;
 import org.dromara.hodor.remoting.api.message.ResponseBody;
+import org.dromara.hodor.server.remoting.JobResponseHandler;
+import org.springframework.stereotype.Service;
 
 /**
- * remoting manager
- *
  * @author tomgs
- * @since 2020/9/23
+ * @since 2020/12/1
  */
-public final class RemotingManager {
-
-    private static final RemotingManager INSTANCE = new RemotingManager();
+@Slf4j
+@Service
+public class RemotingClientService {
 
     private final Map<Host, HodorChannel> activeChannels = Maps.newConcurrentMap();
     private final NetClientTransport clientTransport;
 
-    private RemotingManager() {
+    public RemotingClientService() {
         this.clientTransport = ExtensionLoader.getExtensionLoader(NetClientTransport.class).getDefaultJoin();
-    }
-
-    public static RemotingManager getInstance() {
-        return INSTANCE;
     }
 
     public void sendRequest(final Host host, final RemotingRequest<? extends RequestBody> request) throws RemotingException {
         HodorChannel channel = getChannel(host);
         HodorChannelFuture hodorChannelFuture = channel.send(request);
-
+        if (hodorChannelFuture.isSuccess()) {
+            log.debug("send request [{}]::[{}] success.", host.getEndpoint(), request);
+        } else {
+            String msg = String.format("send request [%s]::[%s]failed.", host.getEndpoint(), request);
+            throw new RemotingException(msg, hodorChannelFuture.cause());
+        }
     }
 
     public HodorChannel getChannel(final Host host) {
@@ -56,10 +55,7 @@ public final class RemotingManager {
     }
 
     public HodorChannel createChannel(final Host host) {
-        Attribute attribute = new Attribute();
-        attribute.put(RemotingConst.HOST_KEY, host.getIp());
-        attribute.put(RemotingConst.PORT_KEY, host.getPort());
-        attribute.put(RemotingConst.TCP_PROTOCOL, true);
+        Attribute attribute = buildAttribute(host);
         // handle request
         @SuppressWarnings("unchecked")
         HodorChannelHandler handler = new JobResponseHandler((Class<? extends RemotingResponse<ResponseBody>>) RemotingResponse.class);
@@ -69,4 +65,11 @@ public final class RemotingManager {
         return hodorChannel;
     }
 
+    public Attribute buildAttribute(Host host) {
+        Attribute attribute = new Attribute();
+        attribute.put(RemotingConst.HOST_KEY, host.getIp());
+        attribute.put(RemotingConst.PORT_KEY, host.getPort());
+        attribute.put(RemotingConst.TCP_PROTOCOL, true);
+        return attribute;
+    }
 }

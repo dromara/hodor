@@ -1,5 +1,6 @@
 package org.dromara.hodor.server.service;
 
+import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.utils.GsonUtils;
 import org.dromara.hodor.common.utils.LocalHost;
@@ -122,6 +123,10 @@ public class RegisterService implements LifecycleComponent {
 
     public List<String> getAllWorkNodes(String groupName) {
         return registryCenter.getChildren(ServerNode.WORKER_PATH + "/" + groupName);
+    }
+
+    public Host selectSuitableHost(String groupName, String jobName) {
+        return null;
     }
 
 }

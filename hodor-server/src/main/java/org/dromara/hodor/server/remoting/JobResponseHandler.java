@@ -13,7 +13,7 @@ import org.dromara.hodor.remoting.api.message.ResponseBody;
 @Slf4j
 public class JobResponseHandler extends AbstractHodorClientChannelHandler<RemotingResponse<ResponseBody>> {
 
-    protected JobResponseHandler(Class<? extends RemotingResponse<ResponseBody>> inboundMessageType) {
+    public JobResponseHandler(Class<? extends RemotingResponse<ResponseBody>> inboundMessageType) {
         super(inboundMessageType);
     }
 

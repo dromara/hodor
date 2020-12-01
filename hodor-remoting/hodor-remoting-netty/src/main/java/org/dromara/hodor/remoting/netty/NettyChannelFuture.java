@@ -47,6 +47,11 @@ public class NettyChannelFuture implements HodorChannelFuture {
     }
 
     @Override
+    public boolean isSuccess() {
+        return this.future.isSuccess();
+    }
+
+    @Override
     public Throwable cause() {
         return this.future.cause();
     }

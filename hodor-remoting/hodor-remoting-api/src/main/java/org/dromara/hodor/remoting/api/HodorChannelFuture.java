@@ -43,6 +43,12 @@ public interface HodorChannelFuture {
     boolean isDone();
 
     /**
+     * Returns {@code true} if and only if the I/O operation was completed
+     * successfully.
+     */
+    boolean isSuccess();
+
+    /**
      * Cause boolean.
      *
      * @return the boolean
