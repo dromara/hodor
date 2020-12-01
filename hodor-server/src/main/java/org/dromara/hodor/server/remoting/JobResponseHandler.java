@@ -11,11 +11,7 @@ import org.dromara.hodor.remoting.api.message.ResponseBody;
  * @since 2020/11/30
  */
 @Slf4j
-public class JobResponseHandler extends AbstractHodorClientChannelHandler<RemotingResponse<ResponseBody>> {
-
-    public JobResponseHandler(Class<? extends RemotingResponse<ResponseBody>> inboundMessageType) {
-        super(inboundMessageType);
-    }
+public class JobResponseHandler extends AbstractHodorClientChannelHandler {
 
     @Override
     protected void received0(HodorChannel channel, RemotingResponse<ResponseBody> message) throws Exception {
@@ -38,7 +34,6 @@ public class JobResponseHandler extends AbstractHodorClientChannelHandler<Remoti
                 break;
             default:
                 break;
-
         }
     }
 

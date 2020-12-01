@@ -14,9 +14,7 @@ import org.dromara.hodor.remoting.api.NetClientTransport;
 import org.dromara.hodor.remoting.api.RemotingConst;
 import org.dromara.hodor.remoting.api.exception.RemotingException;
 import org.dromara.hodor.remoting.api.message.RemotingRequest;
-import org.dromara.hodor.remoting.api.message.RemotingResponse;
 import org.dromara.hodor.remoting.api.message.RequestBody;
-import org.dromara.hodor.remoting.api.message.ResponseBody;
 import org.dromara.hodor.server.remoting.JobResponseHandler;
 import org.springframework.stereotype.Service;
 
@@ -57,8 +55,7 @@ public class RemotingClientService {
     public HodorChannel createChannel(final Host host) {
         Attribute attribute = buildAttribute(host);
         // handle request
-        @SuppressWarnings("unchecked")
-        HodorChannelHandler handler = new JobResponseHandler((Class<? extends RemotingResponse<ResponseBody>>) RemotingResponse.class);
+        HodorChannelHandler handler = new JobResponseHandler();
         NetClient client = clientTransport.connect(attribute, handler);
         HodorChannel hodorChannel = client.connection();
         activeChannels.put(host, hodorChannel);

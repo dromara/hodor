@@ -45,7 +45,7 @@ public class HodorJobRequestHandler extends QueueConsumerExecutor<HodorJobExecut
       Host currHost = Host.of(workNode);
       try {
         clientService.sendRequest(currHost, request);
-        return;
+        break;
       } catch (Exception e) {
         log.error(e.getMessage(), e);
       }

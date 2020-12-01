@@ -92,7 +92,7 @@ public abstract class AbstractNetChannelHandler implements HodorChannelHandler {
     }
 
     @Override
-    public void received(HodorChannel channel, Object message) {
+    public void received(HodorChannel channel, Object message) throws Exception {
         handler.received(channel, message);
     }
 
