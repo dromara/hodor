@@ -19,6 +19,8 @@ import org.dromara.hodor.server.remoting.JobResponseHandler;
 import org.springframework.stereotype.Service;
 
 /**
+ * remoting client service
+ *
  * @author tomgs
  * @since 2020/12/1
  */
@@ -69,4 +71,5 @@ public class RemotingClientService {
         attribute.put(RemotingConst.TCP_PROTOCOL, true);
         return attribute;
     }
+
 }

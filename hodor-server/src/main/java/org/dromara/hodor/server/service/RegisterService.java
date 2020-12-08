@@ -129,4 +129,8 @@ public class RegisterService implements LifecycleComponent {
         return null;
     }
 
+    public List<Host> getAvailableHosts(String groupName, String jobName) {
+        return null;
+    }
+
 }

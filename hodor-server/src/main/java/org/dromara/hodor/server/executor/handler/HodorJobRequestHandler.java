@@ -39,12 +39,10 @@ public class HodorJobRequestHandler extends QueueConsumerExecutor<HodorJobExecut
     HodorJobExecutionContext context = getData();
     log.info("hodor job request handler, info {}.", context);
     RemotingRequest<RequestBody> request = getRequestBody(context);
-    Host host = registerService.selectSuitableHost(context.getJobDesc().getGroupName(), context.getJobDesc().getJobName());
-    List<String> workNodes = registerService.getAllWorkNodes(context.getJobDesc().getGroupName());
-    for (String workNode : workNodes) {
-      Host currHost = Host.of(workNode);
+    List<Host> hosts = registerService.getAvailableHosts(context.getJobDesc().getGroupName(), context.getJobDesc().getJobName());
+    for (Host host : hosts) {
       try {
-        clientService.sendRequest(currHost, request);
+        clientService.sendRequest(host, request);
         break;
       } catch (Exception e) {
         log.error(e.getMessage(), e);
