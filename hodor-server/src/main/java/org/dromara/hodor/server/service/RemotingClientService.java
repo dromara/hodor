@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 public class RemotingClientService {
 
     private final Map<Host, HodorChannel> activeChannels = Maps.newConcurrentMap();
+
     private final NetClientTransport clientTransport;
 
     public RemotingClientService() {
@@ -64,11 +65,12 @@ public class RemotingClientService {
         return hodorChannel;
     }
 
-    public Attribute buildAttribute(Host host) {
+    public Attribute buildAttribute(final Host host) {
         Attribute attribute = new Attribute();
         attribute.put(RemotingConst.HOST_KEY, host.getIp());
         attribute.put(RemotingConst.PORT_KEY, host.getPort());
         attribute.put(RemotingConst.TCP_PROTOCOL, true);
+        attribute.put(RemotingConst.NET_TIMEOUT_KEY, 100); // connect timeout 100ms
         return attribute;
     }
 

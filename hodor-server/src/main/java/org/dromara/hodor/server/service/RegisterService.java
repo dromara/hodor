@@ -1,7 +1,13 @@
 package org.dromara.hodor.server.service;
 
+import com.google.common.collect.Lists;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.extension.ExtensionLoader;
+import org.dromara.hodor.common.loadbalance.LoadBalance;
+import org.dromara.hodor.common.loadbalance.LoadBalanceEnum;
+import org.dromara.hodor.common.loadbalance.LoadBalanceFactory;
 import org.dromara.hodor.common.utils.GsonUtils;
 import org.dromara.hodor.common.utils.LocalHost;
 import org.dromara.hodor.core.CopySet;
@@ -10,11 +16,10 @@ import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.RegistryCenter;
 import org.dromara.hodor.register.api.RegistryConfig;
 import org.dromara.hodor.register.api.node.ServerNode;
+import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.server.component.LifecycleComponent;
 import org.dromara.hodor.server.config.HodorServerProperties;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  *  register service
@@ -122,15 +127,25 @@ public class RegisterService implements LifecycleComponent {
     }
 
     public List<String> getAllWorkNodes(String groupName) {
-        return registryCenter.getChildren(ServerNode.WORKER_PATH + "/" + groupName);
+        List<String> children = registryCenter.getChildren(ServerNode.WORKER_PATH + "/" + groupName);
+        if (children == null) {
+            children = Lists.newArrayList();
+        }
+        return children;
     }
 
-    public Host selectSuitableHost(String groupName, String jobName) {
-        return null;
+    public List<Host> getAvailableHosts(String groupName) {
+        List<String> allWorkNodes = getAllWorkNodes(groupName);
+        List<Host> hosts = allWorkNodes.stream().map(Host::of).collect(Collectors.toList());
+        LoadBalance loadBalance = LoadBalanceFactory.getLoadBalance(LoadBalanceEnum.RANDOM.name());
+        Host selected = loadBalance.select(hosts);
+        hosts.remove(selected);
+        hosts.add(selected);
+        return hosts;
     }
 
-    public List<Host> getAvailableHosts(String groupName, String jobName) {
-        return null;
+    public List<Host> getAvailableHosts(HodorJobExecutionContext context) {
+        return getAvailableHosts(context.getJobDesc().getGroupName());
     }
 
 }
