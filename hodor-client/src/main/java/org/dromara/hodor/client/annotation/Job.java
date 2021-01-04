@@ -29,7 +29,7 @@ public @interface Job {
     /**
      * cron 表达式
      */
-    String cron() default "";
+    String cron();
 
     /**
      * 在配置了 cron 的基础上，如果需要立即执行，则设置为true, 默认是不立即执行的
