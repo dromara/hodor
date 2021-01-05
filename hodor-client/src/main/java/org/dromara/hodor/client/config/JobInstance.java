@@ -1,12 +1,12 @@
 package org.dromara.hodor.client.config;
 
 /**
- * job registrar
+ * job instance info
  *
  * @author tomgs
- * @since 2021/1/4
+ * @since 2021/1/5
  */
-public class JobRegistrar {
+public class JobInstance {
 
 
 

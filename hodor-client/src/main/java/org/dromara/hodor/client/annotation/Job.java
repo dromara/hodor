@@ -4,7 +4,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 调度任务描述
@@ -17,12 +16,17 @@ import java.util.concurrent.TimeUnit;
 public @interface Job {
 
     /**
-     * group name
+     * cron disabled这个用于不需要调度，但是需要注册的任务，可能用于任务的关联任务
+     */
+    String CRON_DISABLED = "-";
+
+    /**
+     * group name, default is class short name decapitate
      */
     String group() default "";
 
     /**
-     * job name
+     * job name, default is class method name
      */
     String jobName() default "";
 
@@ -40,11 +44,6 @@ public @interface Job {
      * job 执行超时时间设置。默认为3分钟，单位：s;
      */
     int timeout() default 180;
-
-    /**
-     * 超时时间单位，默认为 s
-     */
-    TimeUnit timeunit() default TimeUnit.SECONDS;
 
     /**
      * 任务是否广播执行
