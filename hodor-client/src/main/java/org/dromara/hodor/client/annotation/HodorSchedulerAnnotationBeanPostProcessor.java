@@ -8,16 +8,25 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.client.config.JobDesc;
 import org.dromara.hodor.client.config.JobRegistrar;
 import org.springframework.aop.framework.AopInfrastructureBean;
 import org.springframework.aop.framework.AopProxyUtils;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.EmbeddedValueResolverAware;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.MethodIntrospector;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.support.CronSequenceGenerator;
+import org.springframework.scheduling.support.ScheduledMethodRunnable;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
@@ -33,12 +42,16 @@ import org.springframework.util.StringValueResolver;
  * @since 2020/12/30
  */
 @Slf4j
-public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProcessor, EmbeddedValueResolverAware {
+public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProcessor, EmbeddedValueResolverAware,
+        ApplicationContextAware, ApplicationListener<ContextRefreshedEvent> {
 
     private final JobRegistrar registrar;
 
     @Nullable
     private StringValueResolver embeddedValueResolver;
+
+    @Nullable
+    private ApplicationContext applicationContext;
 
     private final Set<Class<?>> nonAnnotatedClasses = Collections.newSetFromMap(new ConcurrentHashMap<>(64));
 
@@ -54,6 +67,19 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
     @Override
     public void setEmbeddedValueResolver(StringValueResolver resolver) {
         this.embeddedValueResolver = resolver;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        if (event.getApplicationContext() == applicationContext) {
+            // 容器初始化完成之后完成任务的注册方法
+            registrar.registerJobs();
+        }
     }
 
     @Override
@@ -99,11 +125,19 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
         return bean;
     }
 
+    protected Runnable createRunnable(Object target, Method method) {
+        Assert.isTrue(method.getParameterCount() == 0, "Only no-arg methods may be annotated with @Job");
+        Method invocableMethod = AopUtils.selectInvocableMethod(method, target.getClass());
+        return new ScheduledMethodRunnable(target, invocableMethod);
+    }
+
     protected void processJob(Job job, Method method, Object bean) {
-        String group = job.group();
-        if (!StringUtils.hasText(group)) {
+        Runnable runnable = createRunnable(bean, method);
+
+        String groupName = job.group();
+        if (!StringUtils.hasText(groupName)) {
             // 默认使用类的简化名称作为group
-            group = Introspector.decapitalize(ClassUtils.getShortName(bean.getClass()));
+            groupName = Introspector.decapitalize(ClassUtils.getShortName(bean.getClass()));
         }
 
         String jobName = job.jobName();
@@ -120,14 +154,25 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
                 //TODO: 时区先不考虑
                 //zone = this.embeddedValueResolver.resolveStringValue(zone);
             }
+            if (StringUtils.hasLength(cron) && !Scheduled.CRON_DISABLED.equals(cron)) {
+                Assert.isTrue(CronSequenceGenerator.isValidExpression(cron), String.format("cron [%s] xpression is invalid.", cron));
+            }
         }
 
         boolean fireNow = job.fireNow();
         boolean broadcast = job.isBroadcast();
         int timeout = job.timeout();
 
+        JobDesc jobDesc = JobDesc.builder()
+            .groupName(groupName)
+            .jobName(jobName)
+            .cron(cron)
+            .fireNow(fireNow)
+            .broadcast(broadcast)
+            .timeout(timeout)
+            .build();
 
-
+        registrar.addCronJob(jobDesc);
     }
 
 }

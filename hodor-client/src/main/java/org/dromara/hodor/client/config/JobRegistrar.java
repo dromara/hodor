@@ -8,6 +8,12 @@ package org.dromara.hodor.client.config;
  */
 public class JobRegistrar {
 
+    public void registerJobs() {
 
+    }
+
+    public void addCronJob(JobDesc jobDesc) {
+
+    }
 
 }
