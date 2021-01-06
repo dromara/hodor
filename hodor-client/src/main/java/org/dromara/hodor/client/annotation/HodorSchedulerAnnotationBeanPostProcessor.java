@@ -8,18 +8,14 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.client.config.JobDesc;
 import org.dromara.hodor.client.JobRegistrar;
+import org.dromara.hodor.client.config.JobDesc;
 import org.springframework.aop.framework.AopInfrastructureBean;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.EmbeddedValueResolverAware;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.MethodIntrospector;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.lang.Nullable;
@@ -42,16 +38,12 @@ import org.springframework.util.StringValueResolver;
  * @since 2020/12/30
  */
 @Slf4j
-public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProcessor, EmbeddedValueResolverAware,
-        ApplicationContextAware, ApplicationListener<ContextRefreshedEvent> {
+public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProcessor, EmbeddedValueResolverAware {
 
     private final JobRegistrar registrar;
 
     @Nullable
     private StringValueResolver embeddedValueResolver;
-
-    @Nullable
-    private ApplicationContext applicationContext;
 
     private final Set<Class<?>> nonAnnotatedClasses = Collections.newSetFromMap(new ConcurrentHashMap<>(64));
 
@@ -67,19 +59,6 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
     @Override
     public void setEmbeddedValueResolver(StringValueResolver resolver) {
         this.embeddedValueResolver = resolver;
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
-
-    @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
-        if (event.getApplicationContext() == applicationContext) {
-            // 容器初始化完成之后完成任务的注册方法
-            registrar.registerJobs();
-        }
     }
 
     @Override

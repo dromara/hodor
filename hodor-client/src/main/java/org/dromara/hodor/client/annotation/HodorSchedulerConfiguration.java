@@ -1,7 +1,7 @@
 package org.dromara.hodor.client.annotation;
 
-import javax.xml.ws.Service;
 import org.dromara.hodor.client.HodorApiClient;
+import org.dromara.hodor.client.HodorClientInit;
 import org.dromara.hodor.client.JobRegistrar;
 import org.dromara.hodor.client.ServiceProvider;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -39,6 +39,11 @@ public class HodorSchedulerConfiguration {
     @Bean
     public JobRegistrar jobRegistrar() {
         return new JobRegistrar();
+    }
+
+    @Bean
+    public HodorClientInit hodorClientInit() {
+        return new HodorClientInit();
     }
 
 }
