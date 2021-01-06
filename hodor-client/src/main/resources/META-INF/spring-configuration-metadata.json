@@ -1,0 +1,88 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "org.dromara.hodor.client.annotation.HodorProperties",
+      "name": "hodor",
+      "type": "org.dromara.hodor.client.annotation.HodorProperties"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "org.dromara.hodor.client.annotation.HodorProperties",
+      "defaultValue": "",
+      "name": "hodor.appName",
+      "description": "应用名称，这个用于和用户进行关联，需要先在管理平台进行注册分配",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.dromara.hodor.client.annotation.HodorProperties",
+      "defaultValue": "",
+      "name": "hodor.appKey",
+      "description": "hodor分配的客户端密钥key，需要先在管理平台进行注册分配",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.dromara.hodor.client.annotation.HodorProperties",
+      "defaultValue": "http://localhost:8080/hodor/registry",
+      "name": "hodor.registryAddress",
+      "description": "任务注册地址",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.dromara.hodor.client.annotation.HodorProperties",
+      "defaultValue": "127.0.0.1",
+      "name": "hodor.host",
+      "description": "客户端host，如果存在多网卡的时候设置此值，默认自动获取本机ip",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.dromara.hodor.client.annotation.HodorProperties",
+      "defaultValue": 46367,
+      "name": "hodor.port",
+      "description": "客户端暴露端口，默认46367",
+      "type": "java.lang.Integer"
+    },
+    {
+      "sourceType": "org.dromara.hodor.client.annotation.HodorProperties",
+      "defaultValue": 5000,
+      "name": "hodor.queueSize",
+      "description": "任务执行队列大小，默认5000，短时任务队列为其1/2",
+      "type": "java.lang.Integer"
+    },
+    {
+      "sourceType": "org.dromara.hodor.client.annotation.HodorProperties",
+      "defaultValue": 500,
+      "name": "hodor.poolSize",
+      "description": "任务运行线程池大小",
+      "type": "java.lang.Integer"
+    },
+    {
+      "sourceType": "org.dromara.hodor.client.annotation.HodorProperties",
+      "defaultValue": false,
+      "name": "hodor.enableCloud",
+      "description": "是否为云服务",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "sourceType": "org.dromara.hodor.client.annotation.HodorProperties",
+      "name": "hodor.cloudIpProvider",
+      "description": "云服务机器ip提供接口地址",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.dromara.hodor.client.annotation.HodorProperties",
+      "defaultValue": 0,
+      "name": "hodor.taskStackingStrategy",
+      "description": "任务堆积策略，默认0，0：丢弃最老、1：继续等待（阻塞）、2：自适应调整队列大小、3：增大执行线程数量、4：转移任务到别的机器",
+      "type": "java.lang.Integer"
+    },
+    {
+      "sourceType": "org.dromara.hodor.client.annotation.HodorProperties",
+      "defaultValue": 60,
+      "name": "hodor.longTaskTime",
+      "description": "长时任务临界值单位秒，默认60s为长时任务，统计上一次任务执行的时长，然后判断下一次执行是放在长时队列还是短时队列",
+      "type": "java.lang.Integer"
+    }
+  ]
+}

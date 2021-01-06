@@ -1,7 +1,11 @@
 package org.dromara.hodor.client.annotation;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.xml.ws.Service;
+import org.dromara.hodor.client.HodorApiClient;
+import org.dromara.hodor.client.JobRegistrar;
+import org.dromara.hodor.client.ServiceProvider;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,12 +19,26 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(HodorProperties.class)
 public class HodorSchedulerConfiguration {
 
-    @Autowired(required = false)
-    private HodorProperties properties;
+    private final HodorProperties properties;
+
+    public HodorSchedulerConfiguration(final HodorProperties properties, final ApplicationContext applicationContext) {
+        this.properties = properties;
+        ServiceProvider.getInstance().setApplicationContext(applicationContext);
+    }
 
     @Bean
     public HodorSchedulerAnnotationBeanPostProcessor scheduledAnnotationProcessor() {
-        return new HodorSchedulerAnnotationBeanPostProcessor();
+        return new HodorSchedulerAnnotationBeanPostProcessor(jobRegistrar());
+    }
+
+    @Bean
+    public HodorApiClient hodorApiClient() {
+        return new HodorApiClient(properties);
+    }
+
+    @Bean
+    public JobRegistrar jobRegistrar() {
+        return new JobRegistrar();
     }
 
 }

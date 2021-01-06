@@ -1,6 +1,7 @@
 package org.dromara.hodor.client.config;
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.ToString;
 
 /**
@@ -10,6 +11,7 @@ import lombok.ToString;
  * @since 2021/1/5
  */
 @Builder
+@Getter
 @ToString
 public class JobDesc {
 

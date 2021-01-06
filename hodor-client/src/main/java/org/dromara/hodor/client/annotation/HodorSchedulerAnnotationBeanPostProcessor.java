@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.client.config.JobDesc;
-import org.dromara.hodor.client.config.JobRegistrar;
+import org.dromara.hodor.client.JobRegistrar;
 import org.springframework.aop.framework.AopInfrastructureBean;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.support.AopUtils;
@@ -126,7 +126,7 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
     }
 
     protected Runnable createRunnable(Object target, Method method) {
-        Assert.isTrue(method.getParameterCount() == 0, "Only no-arg methods may be annotated with @Job");
+        //Assert.isTrue(method.getParameterCount() == 0, "Only no-arg methods may be annotated with @Job");
         Method invocableMethod = AopUtils.selectInvocableMethod(method, target.getClass());
         return new ScheduledMethodRunnable(target, invocableMethod);
     }
@@ -172,7 +172,7 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
             .timeout(timeout)
             .build();
 
-        registrar.addCronJob(jobDesc);
+        registrar.addJob(jobDesc);
     }
 
 }

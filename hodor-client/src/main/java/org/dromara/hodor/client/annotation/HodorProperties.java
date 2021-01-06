@@ -44,6 +44,11 @@ public class HodorProperties {
     private Integer queueSize;
 
     /**
+     * 任务运行线程池大小
+     */
+    private Integer poolSize;
+
+    /**
      * 任务堆积策略，默认0，0：丢弃最老、1：继续等待（阻塞）、2：自适应调整队列大小、3：增大执行线程数量、4：转移任务到别的机器
      */
     private Integer taskStackingStrategy;
