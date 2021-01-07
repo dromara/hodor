@@ -19,19 +19,35 @@ public class HodorApiClient {
 
     private final String registryAddress;
 
+    private final String appName;
+
+    private final String appKey;
+
     private final GsonUtils gsonUtils = GsonUtils.getInstance();
 
     public HodorApiClient(final HodorProperties properties) {
         this.registryAddress = properties.getRegistryAddress();
+        this.appKey = properties.getAppKey();
+        this.appName = properties.getAppName();
     }
 
     public void registerJobs(Collection<JobDesc> jobs) {
-        String result = HttpUtil.post(registryAddress + "/jobs", gsonUtils.toJson(jobs));
+        String result = HttpUtil.createPost(registryAddress + "/jobs")
+            .body(gsonUtils.toJson(jobs))
+            .header("appName", appName)
+            .header("appKey", appKey)
+            .execute()
+            .body();
         log.info("Register jobs result: {}", result);
     }
 
     public void sendHeartbeat(HeartbeatMsg msg) {
-        String result = HttpUtil.post(registryAddress + "/heartbeat", gsonUtils.toJson(msg));
+        String result = HttpUtil.createPost(registryAddress + "/heartbeat")
+            .body(gsonUtils.toJson(msg))
+            .header("appName", appName)
+            .header("appKey", appKey)
+            .execute()
+            .body();
         log.info("Send heartbeat result: {}", result);
     }
 
