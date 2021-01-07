@@ -30,14 +30,14 @@ public interface HodorChannelHandler {
      *
      * @param channel the channel
      */
-    void connected(HodorChannel channel);
+    default void connected(HodorChannel channel) {}
 
     /**
      * Disconnected.
      *
      * @param channel the channel
      */
-    void disconnected(HodorChannel channel);
+    default void disconnected(HodorChannel channel) {}
 
     /**
      * Send.
@@ -68,5 +68,5 @@ public interface HodorChannelHandler {
      *
      * @param channel the channel
      */
-    void timeout(HodorChannel channel);
+    default void timeout(HodorChannel channel) {}
 }
