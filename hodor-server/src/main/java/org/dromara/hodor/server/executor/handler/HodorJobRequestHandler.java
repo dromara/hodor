@@ -28,6 +28,8 @@ public class HodorJobRequestHandler extends QueueConsumerExecutor<HodorJobExecut
 
   private final RegisterService registerService;
 
+  private HodorJobExecutionContext context;
+
   public HodorJobRequestHandler() {
     ServiceProvider serviceProvider = ServiceProvider.getInstance();
     this.clientService = serviceProvider.getBean(RemotingClientService.class);
@@ -63,6 +65,17 @@ public class HodorJobRequestHandler extends QueueConsumerExecutor<HodorJobExecut
         .version(RemotingConst.RPC_VERSION)
         .type(RequestType.JOB_EXEC_REQUEST.getCode())
         .build();
+  }
+
+  @Override
+  public void setData(HodorJobExecutionContext context) {
+    this.context = context;
+    super.setData(context);
+  }
+
+  @Override
+  public String fixName() {
+    return context.getJobKey();
   }
 
 }

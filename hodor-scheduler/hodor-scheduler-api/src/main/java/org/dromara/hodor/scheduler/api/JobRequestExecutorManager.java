@@ -31,17 +31,19 @@ public final class JobRequestExecutorManager {
         return (QueueProviderManager<T>) this.queueProvider.computeIfAbsent(jobKey, queueProvider);
     }
 
-    public void submit(final HodorJobExecutionContext context, final QueueConsumerExecutor<HodorJobExecutionContext> consumerExecutor) {
-        getQueueProvider(context.getJobKey(), key -> buildQueueProviderManager(key, consumerExecutor)).getProvider().onData(e -> e.setData(context));
+    public <T> void submit(final QueueConsumerExecutor<T> consumerExecutor) {
+        getQueueProvider(consumerExecutor.fixName(), key -> buildQueueProviderManager(key, consumerExecutor))
+            .getProvider()
+            .onData(e -> e.setData(consumerExecutor.getData()));
     }
 
-    private QueueProviderManager<HodorJobExecutionContext> buildQueueProviderManager(final String jobKey, final QueueConsumerExecutor<HodorJobExecutionContext> executor) {
-        QueueProviderManager<HodorJobExecutionContext> manager = buildQueueProviderManager(new HodorJobRequestConsumerFactory(jobKey, executor));
+    private <T> QueueProviderManager<T> buildQueueProviderManager(final String jobKey, final QueueConsumerExecutor<T> executor) {
+        QueueProviderManager<T> manager = buildQueueProviderManager(new HodorJobRequestConsumerFactory<>(jobKey, executor));
         manager.start();
         return manager;
     }
 
-    private QueueProviderManager<HodorJobExecutionContext> buildQueueProviderManager(final HodorJobRequestConsumerFactory factory) {
+    private <T> QueueProviderManager<T> buildQueueProviderManager(final HodorJobRequestConsumerFactory<T> factory) {
         return new QueueProviderManager<>(factory, 1, 1, 4096 * 2 * 2);
     }
 

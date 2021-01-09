@@ -2,7 +2,6 @@ package org.dromara.hodor.scheduler.api.executor;
 
 import org.dromara.hodor.common.disruptor.QueueConsumerExecutor;
 import org.dromara.hodor.common.disruptor.QueueConsumerFactory;
-import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 
 /**
  * HodorJobConsumerFactory
@@ -10,18 +9,18 @@ import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
  * @author tomgs
  * @since 2020/9/22
  */
-public class HodorJobRequestConsumerFactory implements QueueConsumerFactory<HodorJobExecutionContext> {
+public class HodorJobRequestConsumerFactory<T> implements QueueConsumerFactory<T> {
 
   private final String jobKey;
-  private final QueueConsumerExecutor<HodorJobExecutionContext> executor;
+  private final QueueConsumerExecutor<T> executor;
 
-  public HodorJobRequestConsumerFactory(final String jobKey, final QueueConsumerExecutor<HodorJobExecutionContext> executor) {
+  public HodorJobRequestConsumerFactory(final String jobKey, final QueueConsumerExecutor<T> executor) {
     this.jobKey = jobKey;
     this.executor = executor;
   }
 
   @Override
-  public QueueConsumerExecutor<HodorJobExecutionContext> create() {
+  public QueueConsumerExecutor<T> create() {
     return executor;
   }
 
