@@ -26,6 +26,13 @@ package org.dromara.hodor.common.disruptor;
  * @author sixh chebin
  */
 public abstract class QueueConsumerExecutor<T> implements Runnable {
+
+    /**
+     * 获取一个可以标识的fixName.
+     * @return string
+     */
+    public abstract String fixName();
+
     /**
      * 数据处理.
      */
@@ -34,7 +41,7 @@ public abstract class QueueConsumerExecutor<T> implements Runnable {
     /**
      * 获取数据.
      *
-     * @return 数据 ；
+     * @return 数据；
      */
     public T getData() {
         return data;
@@ -48,4 +55,5 @@ public abstract class QueueConsumerExecutor<T> implements Runnable {
     public void setData(T data) {
         this.data = data;
     }
+
 }

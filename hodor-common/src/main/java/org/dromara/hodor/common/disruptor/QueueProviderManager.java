@@ -23,12 +23,11 @@ import com.lmax.disruptor.IgnoreExceptionHandler;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
-import org.dromara.hodor.common.concurrent.HodorThreadFactory;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import org.dromara.hodor.common.concurrent.HodorThreadFactory;
 
 /**
  * disruptor 管理器.
@@ -100,10 +99,24 @@ public class QueueProviderManager<T> {
         this.threadSize = exeThreadSize;
         this.size = ringBufferSize;
         this.consumerSize = consumerSize;
-        executor = new ThreadPoolExecutor(threadSize, threadSize, 0, TimeUnit.MILLISECONDS,
+        this.executor = new ThreadPoolExecutor(threadSize, threadSize, 0, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<>(),
                 HodorThreadFactory.create("disruptor_queue_exe-" + queueConsumerFactory.fixName(), false),
                 new ThreadPoolExecutor.AbortPolicy());
+    }
+
+    /**
+     * 初始化数据.
+     *
+     * @param queueConsumerFactory the queue consumer factory
+     * @param exeThreadSize        the thread size 执行线程的数量.
+     * @param ringBufferSize       the ring buffer size
+     */
+    public QueueProviderManager(final QueueConsumerFactory<T> queueConsumerFactory, final ExecutorService executor, final int consumerSize, final int ringBufferSize) {
+        this.queueConsumerFactory = queueConsumerFactory;
+        this.size = ringBufferSize;
+        this.consumerSize = consumerSize;
+        this.executor = executor;
     }
 
     /**
@@ -139,4 +152,5 @@ public class QueueProviderManager<T> {
     public QueueProvider<T> getProvider() {
         return provider;
     }
+
 }
