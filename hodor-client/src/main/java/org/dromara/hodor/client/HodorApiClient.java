@@ -4,7 +4,7 @@ import cn.hutool.http.HttpUtil;
 import java.util.Collection;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.client.annotation.HodorProperties;
-import org.dromara.hodor.client.config.HeartbeatMsg;
+import org.dromara.hodor.client.config.NodeInfo;
 import org.dromara.hodor.client.config.JobDesc;
 import org.dromara.hodor.common.utils.GsonUtils;
 
@@ -41,8 +41,18 @@ public class HodorApiClient {
         log.info("Register jobs result: {}", result);
     }
 
-    public void sendHeartbeat(HeartbeatMsg msg) {
+    public void sendHeartbeat(NodeInfo msg) {
         String result = HttpUtil.createPost(registryAddress + "/heartbeat")
+            .body(gsonUtils.toJson(msg))
+            .header("appName", appName)
+            .header("appKey", appKey)
+            .execute()
+            .body();
+        log.info("Send heartbeat result: {}", result);
+    }
+
+    public void sendOfflineMsg(NodeInfo msg) {
+        String result = HttpUtil.createPost(registryAddress + "/offline")
             .body(gsonUtils.toJson(msg))
             .header("appName", appName)
             .header("appKey", appKey)

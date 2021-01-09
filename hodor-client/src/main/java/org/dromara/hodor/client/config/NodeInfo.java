@@ -3,13 +3,13 @@ package org.dromara.hodor.client.config;
 import lombok.Data;
 
 /**
- * heartbeat msg
+ * node info
  *
  * @author tomgs
  * @since 2021/1/6
  */
 @Data
-public class HeartbeatMsg {
+public class NodeInfo {
 
     /**
      * 执行端机器ip
@@ -25,6 +25,11 @@ public class HeartbeatMsg {
      * 执行端进程pid
      */
     private String pid;
+
+    /**
+     * 版本号
+     */
+    private String version;
 
     /**
      * 执行端节点hostname
