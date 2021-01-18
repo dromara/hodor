@@ -15,25 +15,21 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public abstract class AbstractEventPublisher<V> implements EventPublisher<V> {
 
-    private volatile Map<String, Set<ObjectListener<V>>> listeners;
+    private volatile Map<String, Set<ObjectListener<V>>> listeners = Maps.newConcurrentMap();
+
     private final ReentrantLock lock = new ReentrantLock();
 
     public AbstractEventPublisher() {
         this.registerListener();
     }
 
-    public abstract void registerListener();
-
-    public void publishEvent(V v, String eventType) {
-        publishEvent(new Event<>(v, eventType));
+    public void publish(V v, String eventType) {
+        publish(new Event<>(v, eventType));
     }
 
     public void addListener(ObjectListener<V> objectListener, String eventType) {
         lock.lock();
         try {
-            if (listeners == null) {
-                listeners = Maps.newConcurrentMap();
-            }
             if (listeners.get(eventType) == null) {
                 listeners.put(eventType, Sets.newCopyOnWriteArraySet(Lists.newArrayList(objectListener)));
             } else {
@@ -73,7 +69,7 @@ public abstract class AbstractEventPublisher<V> implements EventPublisher<V> {
         }
     }
 
-    public void publishEvent(Event<V> event) {
+    public void publish(Event<V> event) {
         if (listeners == null) {
             return;
         }

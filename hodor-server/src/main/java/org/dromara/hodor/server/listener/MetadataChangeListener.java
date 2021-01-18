@@ -53,12 +53,7 @@ public class MetadataChangeListener extends AbstractEventPublisher<HodorMetadata
     }
 
     private void notifyJobDistribute(MetadataManager metadataManager) {
-        this.publishEvent(metadataManager.getMetadata(), EventType.JOB_DISTRIBUTE);
-    }
-
-    @Override
-    public void registerListener() {
-
+        this.publish(metadataManager.getMetadata(), EventType.JOB_DISTRIBUTE);
     }
 
 }
