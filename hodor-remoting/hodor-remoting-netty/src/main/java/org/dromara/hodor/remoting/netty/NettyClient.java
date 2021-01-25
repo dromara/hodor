@@ -1,18 +1,25 @@
 package org.dromara.hodor.remoting.netty;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
+import io.netty.channel.AdaptiveRecvByteBufAllocator;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import java.net.ConnectException;
+import java.util.concurrent.ExecutionException;
 import lombok.SneakyThrows;
 import org.dromara.hodor.common.utils.OSInfo;
-import org.dromara.hodor.remoting.api.*;
-
-import java.util.concurrent.TimeUnit;
+import org.dromara.hodor.remoting.api.AbstractNetClient;
+import org.dromara.hodor.remoting.api.Attribute;
+import org.dromara.hodor.remoting.api.HodorChannel;
+import org.dromara.hodor.remoting.api.HodorChannelHandler;
+import org.dromara.hodor.remoting.api.RemotingConst;
 
 /**
  *  netty client
@@ -24,19 +31,28 @@ public class NettyClient extends AbstractNetClient {
 
     private final Bootstrap bootstrap;
 
-    private final NettyChannelHandler channelHandler;
-
-    public NettyClient(Attribute attribute, HodorChannelHandler channelHandler) {
+    public NettyClient(final Attribute attribute, final HodorChannelHandler channelHandler) {
         super(attribute, channelHandler);
         this.bootstrap = new Bootstrap();
-        this.channelHandler = new NettyChannelHandler(attribute, channelHandler);
+        init();
     }
 
     @Override
-    @SneakyThrows
-    public void connection() {
+    @SneakyThrows({ConnectException.class, InterruptedException.class, ExecutionException.class})
+    public HodorChannel connection() {
+        ChannelFuture future = bootstrap.connect(getHost(), getPort());
+        future.get();
+        if (!future.isSuccess()) {
+            throw new ConnectException(String.format("connect %s:%s failure.", getHost(), getPort()));
+        }
+        return new NettyChannel(future.channel());
+    }
+
+    private void init() {
         EventLoopGroup eventLoopGroup;
         Class<? extends SocketChannel> socketChannelClass;
+        NettyChannelHandler channelHandler = new NettyChannelHandler(getAttribute(), this);
+        Integer connectTimeout = getAttribute().getProperty(RemotingConst.NET_TIMEOUT_KEY, 1000);
 
         if (useEpoll()) {
             eventLoopGroup = new EpollEventLoopGroup();
@@ -49,15 +65,11 @@ public class NettyClient extends AbstractNetClient {
         bootstrap.channel(socketChannelClass);
         bootstrap.group(eventLoopGroup);
         bootstrap.option(ChannelOption.TCP_NODELAY, true)
-                .option(ChannelOption.SO_KEEPALIVE, true)
-                .option(ChannelOption.SO_REUSEADDR, true)
-                .option(ChannelOption.RCVBUF_ALLOCATOR, AdaptiveRecvByteBufAllocator.DEFAULT);
+            .option(ChannelOption.SO_KEEPALIVE, true)
+            .option(ChannelOption.SO_REUSEADDR, true)
+            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, connectTimeout)
+            .option(ChannelOption.RCVBUF_ALLOCATOR, new AdaptiveRecvByteBufAllocator());
         bootstrap.handler(new NettyClientInitializer(channelHandler));
-
-        ChannelFuture future = bootstrap.connect(getHost(), getPort());
-        if (future.isSuccess()) {
-            future.await(1000, TimeUnit.MILLISECONDS);
-        }
     }
 
     private boolean useEpoll() {

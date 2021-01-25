@@ -3,7 +3,7 @@ package org.dromara.hodor.server.service;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.register.api.LeaderExecutionCallback;
 import org.dromara.hodor.register.api.RegistryCenter;
-import org.dromara.hodor.register.api.node.LeaderNode;
+import org.dromara.hodor.register.api.node.ServerNode;
 import org.springframework.stereotype.Service;
 
 /**
@@ -29,7 +29,7 @@ public class LeaderService {
      * 选举主节点
      */
     public void electLeader(final LeaderExecutionCallback callback) {
-        registryCenter.executeInLeader(LeaderNode.LATCH_PATH, () -> {
+        registryCenter.executeInLeader(ServerNode.LATCH_PATH, () -> {
             if (!hasLeader()) {
                 createLeaderNode();
                 callback.execute();
@@ -41,21 +41,21 @@ public class LeaderService {
      * 创建主节点
      */
     public void createLeaderNode() {
-        registryCenter.createEphemeral(LeaderNode.ACTIVE_PATH, registerService.getServerId());
+        registryCenter.createEphemeral(ServerNode.ACTIVE_PATH, registerService.getServerId());
     }
 
     /**
      *是否存在主节点
      */
     public boolean hasLeader() {
-        return registryCenter.checkExists(LeaderNode.ACTIVE_PATH);
+        return registryCenter.checkExists(ServerNode.ACTIVE_PATH);
     }
 
     /**
      * 当期节点是否为主节点
      */
     public boolean isLeader() {
-        return !registerService.getServerId().equals(registryCenter.get(LeaderNode.ACTIVE_PATH));
+        return !registerService.getServerId().equals(registryCenter.get(ServerNode.ACTIVE_PATH));
     }
 
 }

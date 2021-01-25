@@ -13,15 +13,18 @@ import org.dromara.hodor.core.HodorMetadata;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.core.manager.CopySetManager;
 import org.dromara.hodor.core.manager.NodeServerManager;
+import org.dromara.hodor.core.manager.WorkerNodeManager;
 import org.dromara.hodor.core.service.JobInfoService;
 import org.dromara.hodor.scheduler.api.HodorScheduler;
 import org.dromara.hodor.scheduler.api.SchedulerManager;
-import org.dromara.hodor.scheduler.api.config.SchedulerConfig;
+import org.dromara.hodor.scheduler.api.common.SchedulerConfig;
 import org.dromara.hodor.server.component.Constants;
 import org.dromara.hodor.server.component.LifecycleComponent;
+import org.dromara.hodor.server.executor.JobExecutorTypeManager;
 import org.dromara.hodor.server.listener.LeaderElectChangeListener;
 import org.dromara.hodor.server.listener.MetadataChangeListener;
 import org.dromara.hodor.server.listener.ServerNodeChangeListener;
+import org.dromara.hodor.server.listener.WorkerNodeChangeListener;
 import org.springframework.stereotype.Service;
 
 /**
@@ -42,6 +45,8 @@ public class HodorService implements LifecycleComponent {
 
     private final NodeServerManager nodeServerManager;
 
+    private final WorkerNodeManager workerNodeManager;
+
     private final CopySetManager copySetManager;
 
     private final SchedulerManager schedulerManager;
@@ -53,6 +58,7 @@ public class HodorService implements LifecycleComponent {
         this.nodeServerManager = NodeServerManager.getInstance();
         this.copySetManager = CopySetManager.getInstance();
         this.schedulerManager = SchedulerManager.getInstance();
+        this.workerNodeManager = WorkerNodeManager.getInstance();
     }
 
     @Override
@@ -65,12 +71,15 @@ public class HodorService implements LifecycleComponent {
             ThreadUtils.sleep(TimeUnit.MILLISECONDS, 1000);
             currRunningNodeCount = registerService.getRunningNodeCount();
         }
-        //select leader
-        electLeader();
 
         //init data
+        registerService.registryServerNodeListener(new ServerNodeChangeListener(nodeServerManager));
+        registerService.registryWorkerNodeListener(new WorkerNodeChangeListener(workerNodeManager));
         registerService.registryMetadataListener(new MetadataChangeListener(this));
         registerService.registryElectLeaderListener(new LeaderElectChangeListener(this));
+
+        //select leader
+        electLeader();
     }
 
     @Override
@@ -78,12 +87,12 @@ public class HodorService implements LifecycleComponent {
         registerService.stop();
         copySetManager.clearCopySet();
         nodeServerManager.clearNodeServer();
+        workerNodeManager.clearWorkerNodes();
     }
 
     public void electLeader() {
         leaderService.electLeader(() -> {
             log.info("{} to be leader.", registerService.getServerId());
-            registerService.registryServerNodeListener(new ServerNodeChangeListener(nodeServerManager));
             // after to be leader write here
             List<String> currRunningNodes = registerService.getRunningNodes();
             if (CollectionUtils.isEmpty(currRunningNodes)) {
@@ -152,7 +161,8 @@ public class HodorService implements LifecycleComponent {
         List<Long> schedulerDataInterval = schedulerManager.getSchedulerDataInterval(config.getSchedulerName());
         if (CollectionUtils.isEmpty(schedulerDataInterval) || !CollectionUtils.isEqualCollection(schedulerDataInterval, dataInterval)) {
             List<JobInfo> jobInfoList = jobInfoService.queryJobInfoByHashIdOffset(dataInterval.get(0), dataInterval.get(1));
-            jobInfoList.forEach(scheduler::addJob);
+            HodorScheduler finalScheduler = scheduler;
+            jobInfoList.forEach(job -> finalScheduler.addJob(job, JobExecutorTypeManager.getInstance().getJobExecutor(job.getJobType())));
         }
         return scheduler;
     }

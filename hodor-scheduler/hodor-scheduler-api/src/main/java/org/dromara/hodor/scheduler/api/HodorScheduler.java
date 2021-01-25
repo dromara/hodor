@@ -3,7 +3,7 @@ package org.dromara.hodor.scheduler.api;
 import java.util.List;
 import org.dromara.hodor.common.extension.SPI;
 import org.dromara.hodor.core.JobDesc;
-import org.dromara.hodor.scheduler.api.config.SchedulerConfig;
+import org.dromara.hodor.scheduler.api.common.SchedulerConfig;
 
 /**
  * hodor scheduler basic interface
@@ -26,9 +26,7 @@ public interface HodorScheduler {
 
     void startDelayed(int seconds);
 
-    void addJob(JobDesc jobInfo);
-
-    void addJobList(List<JobDesc> jobInfoList);
+    void addJob(JobDesc jobInfo, JobExecutor jobExecutor);
 
     void resumeJob(JobDesc jobInfo);
 

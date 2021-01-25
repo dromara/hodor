@@ -19,6 +19,7 @@
 package org.dromara.hodor.remoting.netty;
 
 import io.netty.channel.ChannelFuture;
+import java.util.concurrent.ExecutionException;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.HodorChannelFuture;
 
@@ -46,8 +47,18 @@ public class NettyChannelFuture implements HodorChannelFuture {
     }
 
     @Override
+    public boolean isSuccess() {
+        return this.future.isSuccess();
+    }
+
+    @Override
     public Throwable cause() {
         return this.future.cause();
+    }
+
+    @Override
+    public Void get() throws ExecutionException, InterruptedException {
+        return future.get();
     }
 
 }

@@ -7,6 +7,7 @@ import org.dromara.hodor.core.HodorMetadata;
 import org.dromara.hodor.core.manager.MetadataManager;
 import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;
+import org.dromara.hodor.register.api.node.ServerNode;
 import org.dromara.hodor.server.component.EventType;
 import org.dromara.hodor.server.service.HodorService;
 
@@ -26,11 +27,14 @@ public class MetadataChangeListener extends AbstractEventPublisher<HodorMetadata
     public MetadataChangeListener(final HodorService hodorService) {
         this.metadataManager = MetadataManager.getInstance();
         this.gsonUtils = GsonUtils.getInstance();
-        this.addListener(new JobDistributeListener(hodorService), EventType.JOB_DIS);
+        this.addListener(new JobDistributeListener(hodorService), EventType.JOB_DISTRIBUTE);
     }
 
     @Override
     public void dataChanged(DataChangeEvent event) {
+        if (!ServerNode.isMetadataPath(event.getPath())) {
+            return;
+        }
 
         final String metadata = new String(event.getData());
         final HodorMetadata hodorMetadata = gsonUtils.fromJson(metadata, HodorMetadata.class);
@@ -49,12 +53,7 @@ public class MetadataChangeListener extends AbstractEventPublisher<HodorMetadata
     }
 
     private void notifyJobDistribute(MetadataManager metadataManager) {
-        this.publishEvent(metadataManager.getMetadata(), EventType.JOB_DIS);
-    }
-
-    @Override
-    public void registerListener() {
-
+        this.publish(metadataManager.getMetadata(), EventType.JOB_DISTRIBUTE);
     }
 
 }

@@ -30,6 +30,8 @@ import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import org.dromara.hodor.common.concurrent.HodorThreadFactory;
 import org.dromara.hodor.common.utils.OSInfo;
 import org.dromara.hodor.remoting.api.AbstractNetServer;
@@ -64,11 +66,13 @@ public class NettyServer extends AbstractNetServer {
     @Override
     public void bind() {
         this.bootstrap.group(bossGroup, workerGroup)
+                .handler(new LoggingHandler(LogLevel.INFO))
                 .channel(serverSocketChannelClass)
                 .option(ChannelOption.SO_BACKLOG, 1024)
                 .option(ChannelOption.SO_REUSEADDR, true)
                 .option(ChannelOption.WRITE_BUFFER_WATER_MARK, new WriteBufferWaterMark(8 * 1024 * 1024, 16 * 1024 * 1024))
                 .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
+                .childOption(ChannelOption.SO_KEEPALIVE, true)
                 .childOption(ChannelOption.TCP_NODELAY, true)
                 .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                 .childHandler(new NettyServerInitializer(serverHandler));

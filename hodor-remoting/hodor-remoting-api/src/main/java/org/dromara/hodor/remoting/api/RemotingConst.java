@@ -48,4 +48,27 @@ public class RemotingConst  {
      * The constant NET_TIMEOUT_KEY.
      */
     public static final String NET_TIMEOUT_KEY = "net_timeout";
+
+    /**
+     * The constant HTTP_PROTOCOL
+     */
+    public static final String HTTP_PROTOCOL = "http_protocol";
+
+    /**
+     * The constant TCP_PROTOCOL
+     */
+    public static final String TCP_PROTOCOL = "tcp_protocol";
+
+    /**
+     * The constant RPC_VERSION
+     */
+    public static final int RPC_VERSION = 1;
+
+    public static final int RPC_CRC_CODE = 12345;
+
+    public static final int MAX_FRAME_LENGTH = 32 * 1024 * 1024;
+
+    public static final int LENGTH_FIELD_OFFSET = 5;
+
+    public static final int LENGTH_FIELD_LENGTH = 4;
 }

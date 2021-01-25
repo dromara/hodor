@@ -1,6 +1,13 @@
 package org.dromara.hodor.server.service;
 
+import com.google.common.collect.Lists;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.extension.ExtensionLoader;
+import org.dromara.hodor.common.loadbalance.LoadBalance;
+import org.dromara.hodor.common.loadbalance.LoadBalanceEnum;
+import org.dromara.hodor.common.loadbalance.LoadBalanceFactory;
 import org.dromara.hodor.common.utils.GsonUtils;
 import org.dromara.hodor.common.utils.LocalHost;
 import org.dromara.hodor.core.CopySet;
@@ -8,13 +15,11 @@ import org.dromara.hodor.core.HodorMetadata;
 import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.RegistryCenter;
 import org.dromara.hodor.register.api.RegistryConfig;
-import org.dromara.hodor.register.api.node.LeaderNode;
 import org.dromara.hodor.register.api.node.ServerNode;
+import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.server.component.LifecycleComponent;
 import org.dromara.hodor.server.config.HodorServerProperties;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  *  register service
@@ -65,7 +70,7 @@ public class RegisterService implements LifecycleComponent {
         //registryCenter.makeDirs(ServerNode.WORK_PATH);
 
         // init data
-        registryCenter.createPersistent(ServerNode.getServerNodePath(getServerId()), getServerId());
+        registryCenter.createEphemeral(ServerNode.getServerNodePath(getServerId()), getServerId());
 
     }
 
@@ -93,15 +98,23 @@ public class RegisterService implements LifecycleComponent {
     }
 
     public void registryMetadataListener(DataChangeListener listener) {
-        registryCenter.addDataCacheListener(ServerNode.METADATA_PATH, listener);
+        registryListener(ServerNode.METADATA_PATH, listener);
     }
 
     public void registryServerNodeListener(DataChangeListener listener) {
-        registryCenter.addDataCacheListener(ServerNode.NODES_PATH, listener);
+        registryListener(ServerNode.NODES_PATH, listener);
     }
 
     public void registryElectLeaderListener(DataChangeListener listener) {
-        registryCenter.addDataCacheListener(LeaderNode.ACTIVE_PATH, listener);
+        registryListener(ServerNode.ACTIVE_PATH, listener);
+    }
+
+    public void registryWorkerNodeListener(DataChangeListener listener) {
+        registryListener(ServerNode.WORKER_PATH, listener);
+    }
+
+    public void registryListener(String path, DataChangeListener listener) {
+        registryCenter.addDataCacheListener(path, listener);
     }
 
     public String getServerId() {
@@ -111,6 +124,28 @@ public class RegisterService implements LifecycleComponent {
     public Integer getLeastNodeCount() {
         //return properties.getClusterNodes();
         return Integer.parseInt(System.getProperty("clusters", "1"));
+    }
+
+    public List<String> getAllWorkNodes(String groupName) {
+        List<String> children = registryCenter.getChildren(ServerNode.WORKER_PATH + "/" + groupName);
+        if (children == null) {
+            children = Lists.newArrayList();
+        }
+        return children;
+    }
+
+    public List<Host> getAvailableHosts(String groupName) {
+        List<String> allWorkNodes = getAllWorkNodes(groupName);
+        List<Host> hosts = allWorkNodes.stream().map(Host::of).collect(Collectors.toList());
+        LoadBalance loadBalance = LoadBalanceFactory.getLoadBalance(LoadBalanceEnum.RANDOM.name());
+        Host selected = loadBalance.select(hosts);
+        hosts.remove(selected);
+        hosts.add(selected);
+        return hosts;
+    }
+
+    public List<Host> getAvailableHosts(HodorJobExecutionContext context) {
+        return getAvailableHosts(context.getJobDesc().getGroupName());
     }
 
 }

@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: hodor-client-demo
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+  file: log/hodor-scheduler.log
+  pattern:
+    file: '%d{yyyy-MM-dd HH:mm:ss.SSS}  %highlight(%-5level) [%yellow(%thread)] %green(%logger{15}) : %msg%n'
+    console: '%d{yyyy-MM-dd HH:mm:ss.SSS}  %highlight(%-5level) [%yellow(%thread)] %green(%logger{15}) : %msg%n'
+
+hodor:
+  appName: hodor-client
+  appKey: 1234567
+  registryAddress: http://localhost:8080/hodor/registry
+  queueSize: 5000
+  poolSize: 500

@@ -17,6 +17,7 @@
         <module>hodor-admin</module>
         <module>hodor-server</module>
         <module>hodor-scheduler</module>
+        <module>hodor-client-demo</module>
     </modules>
 
     <organization>
@@ -70,10 +71,15 @@
 
     <dependencyManagement>
         <dependencies>
-
             <dependency>
                 <groupId>org.dromara</groupId>
                 <artifactId>hodor-admin</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>hodor-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -130,13 +136,13 @@
                 <artifactId>mapstruct-processor</artifactId>
                 <version>${mapstruct.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct-jdk8</artifactId>
                 <version>${mapstruct.version}</version>
             </dependency>
 
-            <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
             <dependency>
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
@@ -153,6 +159,7 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
@@ -231,6 +238,12 @@
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
                 <version>${quartz.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.mchange</groupId>
+                        <artifactId>c3p0</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -238,7 +251,6 @@
                 <artifactId>hutool-all</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 

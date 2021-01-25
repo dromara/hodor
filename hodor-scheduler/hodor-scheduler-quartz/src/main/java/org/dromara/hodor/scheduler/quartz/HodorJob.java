@@ -1,5 +1,6 @@
 package org.dromara.hodor.scheduler.quartz;
 
+import java.util.Date;
 import lombok.Setter;
 import org.dromara.hodor.core.JobDesc;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
@@ -22,9 +23,13 @@ public class HodorJob implements Job {
     private JobDesc jobDesc;
 
     @Override
-    public void execute(JobExecutionContext jobExecutionContext) {
-        
-        jobExecutor.execute(new HodorJobExecutionContext(jobDesc));
+    public void execute(JobExecutionContext context) {
+        Date fireTime = context.getFireTime();
+        Date scheduledFireTime = context.getScheduledFireTime();
+        Date previousFireTime = context.getPreviousFireTime();
+        Date nextFireTime = context.getNextFireTime();
+
+        jobExecutor.execute(new HodorJobExecutionContext(jobDesc, fireTime, scheduledFireTime, previousFireTime, nextFireTime));
     }
 
 }

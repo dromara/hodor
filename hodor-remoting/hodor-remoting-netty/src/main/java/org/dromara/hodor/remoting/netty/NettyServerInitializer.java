@@ -24,12 +24,19 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
+import org.dromara.hodor.remoting.api.RemotingConst;
+import org.dromara.hodor.remoting.api.message.ResponseBody;
+import org.dromara.hodor.remoting.netty.rpc.codec.RpcRequestDecoder;
+import org.dromara.hodor.remoting.netty.rpc.codec.RpcResponseEncoder;
 
 /**
  * The type Netty server initializer.
  *
  * @author xiaoyu
+ * @author tomgs
  */
 public class NettyServerInitializer extends ChannelInitializer<SocketChannel> {
 
@@ -46,10 +53,19 @@ public class NettyServerInitializer extends ChannelInitializer<SocketChannel> {
 
     @Override
     protected void initChannel(SocketChannel channel) {
-        channel.pipeline().addLast("http", new HttpServerCodec());
-        channel.pipeline().addLast("websocket", new WebSocketServerCompressionHandler());
-        channel.pipeline().addLast("http-aggregator", new HttpObjectAggregator(1024 * 1024 * 64));
-        channel.pipeline().addLast("chunkedWriter", new ChunkedWriteHandler());
+        channel.pipeline().addLast(new LoggingHandler(LogLevel.INFO));
+        if (serverHandler.isHttpProtocol()) {
+            channel.pipeline().addLast("http", new HttpServerCodec());
+            channel.pipeline().addLast("websocket", new WebSocketServerCompressionHandler());
+            channel.pipeline().addLast("http-aggregator", new HttpObjectAggregator(1024 * 1024 * 64));
+            channel.pipeline().addLast("chunkedWriter", new ChunkedWriteHandler());
+        } else if (serverHandler.isTcpProtocol()) {
+            //TODO: impl tcp
+            channel.pipeline().addLast(new RpcRequestDecoder(RemotingConst.MAX_FRAME_LENGTH, RemotingConst.LENGTH_FIELD_OFFSET, RemotingConst.LENGTH_FIELD_LENGTH));
+            channel.pipeline().addLast(new RpcResponseEncoder(ResponseBody.class));
+        } else {
+            throw new UnsupportedOperationException("unsupported protocol.");
+        }
         channel.pipeline().addLast(serverHandler);
     }
 }

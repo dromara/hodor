@@ -1,11 +1,8 @@
 package org.dromara.hodor.scheduler.api;
 
-import java.util.HashMap;
+import java.util.Date;
 import org.dromara.hodor.common.IdGenerator;
-import org.dromara.hodor.common.exception.UndefinedPropertyException;
 import org.dromara.hodor.core.JobDesc;
-
-import java.util.Map;
 
 /**
  *  hodor scheduler context
@@ -15,31 +12,54 @@ import java.util.Map;
  */
 public class HodorJobExecutionContext {
 
-    private final long id;
-    private final Map<String, Object> jobData;
+    private final long requestId;
+    private final String jobKey;
     private final JobDesc jobDesc;
+    private final Date fireTime;
+    private final Date scheduledFireTime;
+    private final Date previousFireTime;
+    private final Date nextFireTime;
 
-    public HodorJobExecutionContext(JobDesc jobDesc) {
-        this.id = IdGenerator.defaultGenerator().nextId();
+    public HodorJobExecutionContext(final JobDesc jobDesc,
+                                    final Date fireTime,
+                                    final Date scheduledFireTime,
+                                    final Date previousFireTime,
+                                    final Date nextFireTime) {
+        this.requestId = IdGenerator.defaultGenerator().nextId();
         this.jobDesc = jobDesc;
-        //this.jobData = jobDesc.getJobData();
-        this.jobData = new HashMap<>();
+        this.jobKey = jobDesc.getGroupName() + "_" + jobDesc.getJobName();
+        this.fireTime = fireTime;
+        this.scheduledFireTime = scheduledFireTime;
+        this.previousFireTime = previousFireTime;
+        this.nextFireTime = nextFireTime;
     }
 
-    public String getString(final String key) {
-        if (jobData.containsKey(key)) {
-            return String.valueOf(jobData.get(key));
-        } else {
-            throw new UndefinedPropertyException("Missing required property '" + key + "'");
-        }
+    public long getRequestId() {
+        return requestId;
+    }
+
+    public String getJobKey() {
+        return jobKey;
     }
 
     public JobDesc getJobDesc() {
         return jobDesc;
     }
 
-    public long getId() {
-        return id;
+    public Date getFireTime() {
+        return fireTime;
+    }
+
+    public Date getScheduledFireTime() {
+        return scheduledFireTime;
+    }
+
+    public Date getPreviousFireTime() {
+        return previousFireTime;
+    }
+
+    public Date getNextFireTime() {
+        return nextFireTime;
     }
 
 }

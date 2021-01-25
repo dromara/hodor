@@ -7,6 +7,8 @@ import com.google.common.collect.Sets;
 import java.util.*;
 
 /**
+ * 副本分配算法
+ *
  * https://github.com/chartbeat-labs/trepl
  *
  * @author tomgs

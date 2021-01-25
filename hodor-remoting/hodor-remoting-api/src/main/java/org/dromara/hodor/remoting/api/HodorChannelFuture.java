@@ -18,6 +18,8 @@
 
 package org.dromara.hodor.remoting.api;
 
+import java.util.concurrent.ExecutionException;
+
 /**
  * HodorChannelFuture。
  *
@@ -41,11 +43,18 @@ public interface HodorChannelFuture {
     boolean isDone();
 
     /**
+     * Returns {@code true} if and only if the I/O operation was completed
+     * successfully.
+     */
+    boolean isSuccess();
+
+    /**
      * Cause boolean.
      *
      * @return the boolean
      */
     Throwable cause();
 
+    Void get() throws ExecutionException, InterruptedException;
 
 }
