@@ -1,5 +1,8 @@
 package com.dromara.hodor.common;
 
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import org.dromara.hodor.common.executor.HodorExecutor;
 import org.dromara.hodor.common.executor.HodorRunnable;
 import org.dromara.hodor.common.queue.CircleQueue;
@@ -22,7 +25,8 @@ public class HodorExecutorTest {
         ExecutorService demoExecutor = Executors.newFixedThreadPool(10);
 
         CircleQueue<HodorRunnable> queue = new CircleQueue<>(16, new ResizeQueuePolicy<>());
-        ExecutorService threadPoolExecutor = Executors.newFixedThreadPool(10);
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(2, 2, 10,
+            TimeUnit.SECONDS, new LinkedBlockingQueue<>());
         HodorExecutor executor = new HodorExecutor();
         executor.setCircleQueue(queue);
         executor.setExecutor(threadPoolExecutor);

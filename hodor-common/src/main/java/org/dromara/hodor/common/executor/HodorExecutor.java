@@ -1,12 +1,13 @@
 package org.dromara.hodor.common.executor;
 
-import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.common.queue.CircleQueue;
-
 import java.util.Objects;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.common.queue.CircleQueue;
+import org.dromara.hodor.common.queue.RejectedEnqueueHandler;
 
 /**
  * HodorExecutor</br>
@@ -21,15 +22,17 @@ public class HodorExecutor {
 
     private AtomicBoolean executable = new AtomicBoolean(false);
 
+    private AtomicBoolean shutdown = new AtomicBoolean(false);
+
     private CircleQueue<HodorRunnable> circleQueue;
 
-    private Executor executor;
+    private ThreadPoolExecutor executor;
 
     public HodorExecutor() {
 
     }
 
-    public HodorExecutor(final CircleQueue<HodorRunnable> circleQueue, final Executor executor) {
+    public HodorExecutor(final CircleQueue<HodorRunnable> circleQueue, final ThreadPoolExecutor executor) {
         this.circleQueue = circleQueue;
         this.executor = executor;
     }
@@ -43,10 +46,19 @@ public class HodorExecutor {
         }
     }
 
-    public void setExecutor(Executor executor) {
+    public void setExecutor(ThreadPoolExecutor executor) {
         lock.lock();
         try {
             this.executor = executor;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void setRejectEnqueuePolicy(RejectedEnqueueHandler<HodorRunnable> handler) {
+        lock.lock();
+        try {
+            this.circleQueue.setRejectedEnqueueHandler(handler);
         } finally {
             lock.unlock();
         }
@@ -62,6 +74,10 @@ public class HodorExecutor {
     public void serialExecute(HodorRunnable runnable) {
         lock.lock();
         try {
+            if (isShutdown()) {
+                throw new IllegalStateException("Hodor executor has shutdown.");
+            }
+
             boolean offered = circleQueue.offer(runnable);
             if (!offered) {
                 log.warn("Queue offer false. Please check the job entry policy...");
@@ -115,6 +131,28 @@ public class HodorExecutor {
                 notifyNextTaskExecute();
             }
         });
+    }
+
+    public boolean isShutdown() {
+        return shutdown.get() && executor.isShutdown();
+    }
+
+    public void shutdown() {
+        shutdown.compareAndSet(false, true);
+        executor.shutdown();
+    }
+
+    public ExecutorInfo getExecutorInfo() {
+        return ExecutorInfo.builder().circleQueueCount(circleQueue.size())
+            .activeTaskCount(executor.getActiveCount())
+            .waitTaskCount(executor.getQueue().size())
+            .taskCount(executor.getTaskCount())
+            .completeTaskCount(executor.getCompletedTaskCount())
+            .largestPoolSize(executor.getLargestPoolSize())
+            .currentThreadSize(executor.getPoolSize())
+            .coreThreadSize(executor.getCorePoolSize())
+            .maximumPoolSize(executor.getMaximumPoolSize())
+            .build();
     }
 
 }
