@@ -37,7 +37,7 @@ public class HodorExecutorFactory {
         });
     }
 
-    public static HodorExecutor createExecutor(final String executorName, final int threadSize) {
+    public static HodorExecutor createDefaultExecutor(final String executorName, final int threadSize) {
         return new HodorExecutorFactory(executorName, threadSize).executor;
     }
 

@@ -1,5 +1,6 @@
 package org.dromara.hodor.common.executor;
 
+import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -76,6 +77,10 @@ public class HodorExecutor {
 
     public ThreadPoolExecutor getExecutor() {
         return executor;
+    }
+
+    public CircleQueue<HodorRunnable> getQueue() {
+        return circleQueue;
     }
 
     /**
