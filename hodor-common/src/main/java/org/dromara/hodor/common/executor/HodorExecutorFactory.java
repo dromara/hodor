@@ -25,7 +25,7 @@ public class HodorExecutorFactory {
         this.executor = new HodorExecutor(hodorQueue, threadPoolExecutor);
     }
 
-    public HodorExecutor createExecutor(final String executorName, final int threadSize) {
+    public static HodorExecutor createExecutor(final String executorName, final int threadSize) {
         return new HodorExecutorFactory(executorName, threadSize).executor;
     }
 
