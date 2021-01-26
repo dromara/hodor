@@ -3,7 +3,7 @@ package org.dromara.hodor.server.executor.handler;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
-import org.dromara.hodor.common.disruptor.QueueConsumerExecutor;
+import org.dromara.hodor.common.executor.HodorRunnable;
 import org.dromara.hodor.core.enums.RequestType;
 import org.dromara.hodor.remoting.api.RemotingConst;
 import org.dromara.hodor.remoting.api.message.Header;
@@ -22,23 +22,23 @@ import org.dromara.hodor.server.service.RemotingClientService;
  * @since 2020/9/22
  */
 @Slf4j
-public class HodorJobRequestHandler extends QueueConsumerExecutor<HodorJobExecutionContext> {
+public class HodorJobRequestHandler extends HodorRunnable {
 
   private final RemotingClientService clientService;
 
   private final RegisterService registerService;
 
-  private HodorJobExecutionContext context;
+  private final HodorJobExecutionContext context;
 
-  public HodorJobRequestHandler() {
+  public HodorJobRequestHandler(final HodorJobExecutionContext context) {
     ServiceProvider serviceProvider = ServiceProvider.getInstance();
     this.clientService = serviceProvider.getBean(RemotingClientService.class);
     this.registerService = serviceProvider.getBean(RegisterService.class);
+    this.context = context;
   }
 
   @Override
-  public void run() {
-    HodorJobExecutionContext context = getData();
+  public void execute() {
     log.info("hodor job request handler, info {}.", context);
     RemotingRequest<RequestBody> request = getRequestBody(context);
     List<Host> hosts = registerService.getAvailableHosts(context);
@@ -50,6 +50,12 @@ public class HodorJobRequestHandler extends QueueConsumerExecutor<HodorJobExecut
         log.error(e.getMessage(), e);
       }
     }
+  }
+
+  @Override
+  public void exceptionCaught(Exception e) {
+    log.error(e.getMessage(), e);
+    //TODO: exception handler
   }
 
   private RemotingRequest<RequestBody> getRequestBody(final HodorJobExecutionContext context) {
@@ -65,17 +71,6 @@ public class HodorJobRequestHandler extends QueueConsumerExecutor<HodorJobExecut
         .version(RemotingConst.RPC_VERSION)
         .type(RequestType.JOB_EXEC_REQUEST.getCode())
         .build();
-  }
-
-  @Override
-  public void setData(HodorJobExecutionContext context) {
-    this.context = context;
-    super.setData(context);
-  }
-
-  @Override
-  public String fixName() {
-    return context.getJobKey();
   }
 
 }
