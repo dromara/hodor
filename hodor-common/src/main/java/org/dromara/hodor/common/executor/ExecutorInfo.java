@@ -17,6 +17,11 @@ public class ExecutorInfo implements Serializable {
     private static final long serialVersionUID = -7910941077144237921L;
 
     /**
+     * 线程池名称
+     */
+    private String executorName;
+
+    /**
      * 线程池核心线程数
      */
     private int coreThreadSize;
@@ -57,8 +62,28 @@ public class ExecutorInfo implements Serializable {
     private long taskCount;
 
     /**
+     * 阻塞队列大小
+     */
+    private long queueSize;
+
+    /**
+     * 阻塞队列容量
+     */
+    private long queueCapacity;
+
+    /**
      * 任务队列任务数，待放到线程池的任务
      */
-    private int circleQueueCount;
+    private int circleQueueSize;
+
+    /**
+     * 任务队列任务数容量
+     */
+    private int circleQueueCapacity;
+
+    /**
+     * 任务被拒绝次数
+     */
+    private int rejectCount;
 
 }

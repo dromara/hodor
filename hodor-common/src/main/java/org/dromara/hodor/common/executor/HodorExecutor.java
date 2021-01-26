@@ -1,11 +1,13 @@
 package org.dromara.hodor.common.executor;
 
 import java.util.Objects;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.common.concurrent.HodorThreadFactory;
 import org.dromara.hodor.common.queue.CircleQueue;
 import org.dromara.hodor.common.queue.RejectedEnqueueHandler;
 
@@ -20,9 +22,11 @@ public class HodorExecutor {
 
     private final ReentrantLock lock = new ReentrantLock();
 
-    private AtomicBoolean executable = new AtomicBoolean(false);
+    private final AtomicBoolean executable = new AtomicBoolean(false);
 
-    private AtomicBoolean shutdown = new AtomicBoolean(false);
+    private final AtomicBoolean shutdown = new AtomicBoolean(false);
+
+    private final AtomicInteger rejectCount = new AtomicInteger(0);
 
     private CircleQueue<HodorRunnable> circleQueue;
 
@@ -35,9 +39,12 @@ public class HodorExecutor {
     public HodorExecutor(final CircleQueue<HodorRunnable> circleQueue, final ThreadPoolExecutor executor) {
         this.circleQueue = circleQueue;
         this.executor = executor;
+
+        setRejectExecutionHandler(executor);
     }
 
-    public void setCircleQueue(CircleQueue<HodorRunnable> circleQueue) {
+    public void setCircleQueue(final CircleQueue<HodorRunnable> circleQueue) {
+        final ReentrantLock lock = this.lock;
         lock.lock();
         try {
             this.circleQueue = circleQueue;
@@ -46,22 +53,29 @@ public class HodorExecutor {
         }
     }
 
-    public void setExecutor(ThreadPoolExecutor executor) {
-        lock.lock();
-        try {
-            this.executor = executor;
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    public void setRejectEnqueuePolicy(RejectedEnqueueHandler<HodorRunnable> handler) {
+    public void setRejectEnqueuePolicy(final RejectedEnqueueHandler<HodorRunnable> handler) {
+        final ReentrantLock lock = this.lock;
         lock.lock();
         try {
             this.circleQueue.setRejectedEnqueueHandler(handler);
         } finally {
             lock.unlock();
         }
+    }
+
+    public void setExecutor(final ThreadPoolExecutor executor) {
+        final ReentrantLock lock = this.lock;
+        lock.lock();
+        try {
+            this.executor = executor;
+            setRejectExecutionHandler(executor);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public ThreadPoolExecutor getExecutor() {
+        return executor;
     }
 
     /**
@@ -71,7 +85,8 @@ public class HodorExecutor {
      *
      * @param runnable 待执行任务
      */
-    public void serialExecute(HodorRunnable runnable) {
+    public void serialExecute(final HodorRunnable runnable) {
+        final ReentrantLock lock = this.lock;
         lock.lock();
         try {
             if (isShutdown()) {
@@ -98,8 +113,20 @@ public class HodorExecutor {
      *
      * @param runnable 待执行任务
      */
-    public void parallelExecute(HodorRunnable runnable) {
+    public void parallelExecute(final HodorRunnable runnable) {
         executor.execute(runnable);
+    }
+
+    /**
+     * 设置任务执行拒绝策略，新增拒绝次数的记录
+     * @param executor 线程池
+     */
+    private void setRejectExecutionHandler(final ThreadPoolExecutor executor) {
+        RejectedExecutionHandler rejectedExecutionHandler = executor.getRejectedExecutionHandler();
+        executor.setRejectedExecutionHandler((r, pool) -> {
+            rejectCount.incrementAndGet();
+            rejectedExecutionHandler.rejectedExecution(r, pool);
+        });
     }
 
     /**
@@ -142,8 +169,18 @@ public class HodorExecutor {
         executor.shutdown();
     }
 
+    /**
+     * 获取执行器的运行状况
+     *
+     * @return ExecutorInfo
+     */
     public ExecutorInfo getExecutorInfo() {
-        return ExecutorInfo.builder().circleQueueCount(circleQueue.size())
+        return ExecutorInfo.builder()
+            .executorName(((HodorThreadFactory)executor.getThreadFactory()).getName())
+            .circleQueueSize(circleQueue.size())
+            .circleQueueCapacity(circleQueue.getCapacity())
+            .queueSize(executor.getQueue().size())
+            .queueCapacity(executor.getQueue().size() + executor.getQueue().remainingCapacity())
             .activeTaskCount(executor.getActiveCount())
             .waitTaskCount(executor.getQueue().size())
             .taskCount(executor.getTaskCount())
@@ -152,6 +189,7 @@ public class HodorExecutor {
             .currentThreadSize(executor.getPoolSize())
             .coreThreadSize(executor.getCorePoolSize())
             .maximumPoolSize(executor.getMaximumPoolSize())
+            .rejectCount(rejectCount.get())
             .build();
     }
 
