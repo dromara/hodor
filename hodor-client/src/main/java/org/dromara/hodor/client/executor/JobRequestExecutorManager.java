@@ -1,10 +1,9 @@
-package org.dromara.hodor.scheduler.api;
+package org.dromara.hodor.client.executor;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import org.dromara.hodor.common.disruptor.QueueConsumerExecutor;
 import org.dromara.hodor.common.disruptor.QueueProviderManager;
-import org.dromara.hodor.scheduler.api.executor.HodorJobRequestConsumerFactory;
 
 /**
  * job request executor manager
