@@ -52,6 +52,10 @@ public final class HodorThreadFactory implements ThreadFactory {
         return new HodorThreadFactory(namePrefix, daemon);
     }
 
+    public String getName() {
+        return namePrefix;
+    }
+
     @Override
     public Thread newThread(final Runnable runnable) {
         Thread thread = new Thread(THREAD_GROUP, runnable,
