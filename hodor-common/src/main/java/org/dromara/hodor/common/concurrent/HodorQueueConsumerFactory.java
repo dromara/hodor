@@ -9,6 +9,7 @@ import org.dromara.hodor.common.disruptor.QueueConsumerFactory;
  * @author tomgs
  * @since 2020/9/22
  */
+@Deprecated
 public class HodorQueueConsumerFactory<T> implements QueueConsumerFactory<T> {
 
   private final String fixName;

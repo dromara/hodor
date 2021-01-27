@@ -10,6 +10,7 @@ import org.dromara.hodor.common.disruptor.QueueProviderManager;
  * @author tomgs
  * @since 2021/1/7
  */
+@Deprecated
 public class HodorExecutor<T> {
     /**
      * 分区大小.
