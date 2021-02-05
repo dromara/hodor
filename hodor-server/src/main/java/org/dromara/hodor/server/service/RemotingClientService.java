@@ -15,7 +15,7 @@ import org.dromara.hodor.remoting.api.RemotingConst;
 import org.dromara.hodor.remoting.api.exception.RemotingException;
 import org.dromara.hodor.remoting.api.message.RemotingRequest;
 import org.dromara.hodor.remoting.api.message.RequestBody;
-import org.dromara.hodor.server.remoting.JobResponseHandler;
+import org.dromara.hodor.server.executor.handler.JobResponseHandler;
 import org.springframework.stereotype.Service;
 
 /**
