@@ -42,7 +42,7 @@ public class RemotingClientService {
         if (hodorChannelFuture.isSuccess()) {
             log.debug("send request [{}]::[{}] success.", host.getEndpoint(), request);
         } else {
-            String msg = String.format("send request [%s]::[%s]failed.", host.getEndpoint(), request);
+            String msg = String.format("send request [%s]::[%s] failed.", host.getEndpoint(), request);
             throw new RemotingException(msg, hodorChannelFuture.cause());
         }
     }
