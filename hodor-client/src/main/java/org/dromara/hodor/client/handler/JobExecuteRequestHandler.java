@@ -1,6 +1,7 @@
 package org.dromara.hodor.client.handler;
 
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.client.core.SchedulerRequestBody;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.HodorChannelHandler;
 
@@ -21,6 +22,8 @@ public class JobExecuteRequestHandler implements HodorChannelHandler {
     @Override
     public void received(HodorChannel channel, Object message) throws Exception {
         log.info("received message {}", message);
+        SchedulerRequestBody requestBody = (SchedulerRequestBody) message;
+
     }
 
     @Override

@@ -25,11 +25,11 @@ public class RpcRequestDecoder extends LengthFieldBasedFrameDecoder {
 
     @Override
     protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
-        in = (ByteBuf) super.decode(ctx, in);
-        if (in == null) {
-            log.warn("Server receive request ByteBuf is null.");
-            return null;
-        }
+        //in = (ByteBuf) super.decode(ctx, in);
+        //if (in == null) {
+        //    log.warn("Server receive request ByteBuf is null.");
+        //    return null;
+        //}
 
         Header header = CodecUtils.parseHeader(in);
         if (header == null) {
@@ -41,11 +41,10 @@ public class RpcRequestDecoder extends LengthFieldBasedFrameDecoder {
         try {
             byte[] req = new byte[buf.readableBytes()];
             buf.readBytes(req);
-            RequestBody requestBody = SerializeUtils.deserialize(req, RequestBody.class);
+            Object requestBody = SerializeUtils.deserialize(req, Object.class);
             return RemotingRequest.builder().header(header).body(requestBody).build();
         } finally {
             ReferenceCountUtil.release(buf);
-            ReferenceCountUtil.release(in);
         }
     }
 

@@ -48,7 +48,6 @@ public class RpcResponseDecoder extends LengthFieldBasedFrameDecoder {
             throw new RemotingException(e.getMessage(), e);
         } finally {
             ReferenceCountUtil.release(buf);
-            ReferenceCountUtil.release(in);
         }
     }
 

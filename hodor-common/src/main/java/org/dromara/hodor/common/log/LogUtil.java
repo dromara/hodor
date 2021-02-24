@@ -1,4 +1,4 @@
-package org.dromara.hodor.client.log;
+package org.dromara.hodor.common.log;
 
 import java.io.File;
 import org.apache.logging.log4j.Level;

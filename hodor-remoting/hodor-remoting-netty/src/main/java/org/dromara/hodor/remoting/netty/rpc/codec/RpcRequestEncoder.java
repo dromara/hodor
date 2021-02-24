@@ -6,8 +6,8 @@ import io.netty.handler.codec.MessageToByteEncoder;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.remoting.api.message.Header;
-import org.dromara.hodor.remoting.api.message.RequestBody;
 import org.dromara.hodor.remoting.api.message.RemotingRequest;
+import org.dromara.hodor.remoting.api.message.RequestBody;
 
 /**
  * rpc request encoder for rpc client
@@ -16,7 +16,7 @@ import org.dromara.hodor.remoting.api.message.RemotingRequest;
  * @since 2020/9/10
  */
 @Slf4j
-public class RpcRequestEncoder extends MessageToByteEncoder<RemotingRequest<? extends RequestBody>> {
+public class RpcRequestEncoder extends MessageToByteEncoder<RemotingRequest> {
 
     private final Class<? extends RequestBody> genericClass;
 
@@ -32,7 +32,7 @@ public class RpcRequestEncoder extends MessageToByteEncoder<RemotingRequest<? ex
         }
 
         Header header = request.getHeader();
-        RequestBody body = request.getBody();
+        RequestBody body = (RequestBody) request.getBody();
 
         // write header
         CodecUtils.writeHeader(out, header);

@@ -15,10 +15,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RemotingRequest<T extends RequestBody> {
+public class RemotingRequest {
 
     private Header header;
 
-    private T body;
+    private Object body;
 
 }
