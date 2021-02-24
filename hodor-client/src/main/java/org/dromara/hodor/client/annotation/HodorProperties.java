@@ -1,6 +1,7 @@
 package org.dromara.hodor.client.annotation;
 
 import lombok.Data;
+import org.dromara.hodor.common.utils.LocalHost;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -31,12 +32,12 @@ public class HodorProperties {
     /**
      * 客户端host，如果存在多网卡的时候设置此值，默认自动获取本机ip
      */
-    private String host;
+    private String host = LocalHost.getIp();
 
     /**
      * 客户端暴露端口，默认46367
      */
-    private Integer port;
+    private Integer port = 46367;
 
     /**
      * 任务执行队列大小，默认5000，短时任务队列为其1/2
@@ -51,11 +52,11 @@ public class HodorProperties {
     /**
      * 任务堆积策略，默认0，0：丢弃最老、1：继续等待（阻塞）、2：自适应调整队列大小、3：增大执行线程数量、4：转移任务到别的机器
      */
-    private Integer taskStackingStrategy;
+    private Integer taskStackingStrategy = 0;
 
     /**
      * 长时任务临界值单位秒，默认60s为长时任务，统计上一次任务执行的时长，然后判断下一次执行是放在长时队列还是短时队列
      */
-    private Integer longTaskTime;
+    private Integer longTaskTime = 60;
 
 }

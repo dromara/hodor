@@ -28,6 +28,7 @@ public class JobRegistrar {
     }
 
     public void addJob(JobDesc jobDesc) {
+        log.info("add job {}", jobDesc);
         String jobKey = createJobKey(jobDesc.getGroupName(), jobDesc.getJobName());
         jobCache.putIfAbsent(jobKey, jobDesc);
     }

@@ -63,6 +63,7 @@ public class HodorService implements LifecycleComponent {
 
     @Override
     public void start() {
+        // TODO: 待优化
         Integer currRunningNodeCount = registerService.getRunningNodeCount();
         while (currRunningNodeCount < registerService.getLeastNodeCount()) {
 
@@ -153,6 +154,7 @@ public class HodorService implements LifecycleComponent {
     }
 
     public HodorScheduler getScheduler(String serverId, List<Long> dataInterval) {
+        //TODO: 改成配置形式
         SchedulerConfig config = SchedulerConfig.builder().schedulerName("HodorScheduler_" + serverId).threadCount(8).misfireThreshold(3000).build();
         HodorScheduler scheduler = schedulerManager.getScheduler(config.getSchedulerName());
         if (scheduler == null) {

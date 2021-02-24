@@ -38,12 +38,17 @@ public class JobDispatcher {
         return INSTANCE;
     }
 
-    public void dispatch(HodorJobExecutionContext context) {
+    /**
+     * 分发任务
+     *
+     * @param context 任务上下文参数
+     */
+    public void dispatch(final HodorJobExecutionContext context) {
         HodorExecutor hodorExecutor = hodorExecutorMap.computeIfAbsent(context.getJobKey(), this::createHodorExecutor);
         Objects.requireNonNull(hodorExecutor).serialExecute(new HodorJobRequestHandler(context));
     }
 
-    private HodorExecutor createHodorExecutor(String key) {
+    private HodorExecutor createHodorExecutor(final String key) {
         final HodorExecutor hodorExecutor = new HodorExecutor();
         hodorExecutor.setCircleQueue(new CircleQueue<>());
         hodorExecutor.setExecutor(threadPoolExecutor);
@@ -52,7 +57,17 @@ public class JobDispatcher {
     }
 
     /**
-     * 删除为使用的队列
+     * 获取正在运行的任务执行器
+     *
+     * @param key 任务key
+     * @return HodorExecutor
+     */
+    public HodorExecutor getHodorExecutor(final String key) {
+        return hodorExecutorMap.get(key);
+    }
+
+    /**
+     * 删除未使用的队列
      */
     public void clearUnavailableExecutor() {
         for (Map.Entry<String, HodorExecutor> item : hodorExecutorMap.entrySet()) {

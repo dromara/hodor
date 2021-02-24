@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+
+    <!-- Logging Properties -->
+    <Properties>
+        <Property name="APP_NAME">learning-logger</Property>
+        <Property name="LOG_PATTERN">[%d{yyyy-MM-dd HH:mm:ss}] [%X{requestId}] [%thread] %-5level %logger{40} [%L] %msg%n</Property>
+        <Property name="APP_LOG_ROOT">./logs</Property>
+    </Properties>
+
+    <CustomLevels>
+        <!--注意 ：intLevel 值越小，级别越高 （log4j2 官方文档），这个要放在Properties标签下面-->
+        <CustomLevel name="CUSTOMER" intLevel="50" />
+    </CustomLevels>
+
+    <Appenders>
+
+        <!-- Console Appender -->
+        <Console name="console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+
+        <RollingFile name="infoLog" fileName="${APP_LOG_ROOT}/${APP_NAME}/info.log"
+                     filePattern="${APP_LOG_ROOT}/${APP_NAME}/debug_%d{yyyy-MM-dd}_%i.log">
+            <LevelRangeFilter minLevel="INFO" maxLevel="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="20M" />
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+        <RollingFile name="warnLog" fileName="${APP_LOG_ROOT}/${APP_NAME}/warn.log"
+                     filePattern="${APP_LOG_ROOT}/${APP_NAME}/warn_%d{yyyy-MM-dd}_%i.log">
+            <LevelRangeFilter minLevel="WARN" maxLevel="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="20M" />
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+        <RollingFile name="errorLog" fileName="${APP_LOG_ROOT}/${APP_NAME}/error.log"
+                     filePattern="${APP_LOG_ROOT}/${APP_NAME}/error_%d{yyyy-MM-dd}_%i.log">
+            <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="20M" />
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+        <RollingFile name="debugLog" fileName="${APP_LOG_ROOT}/${APP_NAME}/debug.log"
+                     filePattern="${APP_LOG_ROOT}/${APP_NAME}/debug_%d{yyyy-MM-dd}_%i.log">
+            <LevelRangeFilter minLevel="DEBUG" maxLevel="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="20M" />
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+        <RollingFile name="traceLog" fileName="${APP_LOG_ROOT}/${APP_NAME}/trace.log"
+                     filePattern="${APP_LOG_ROOT}/${APP_NAME}/debug_%d{yyyy-MM-dd}_%i.log">
+            <LevelRangeFilter minLevel="TRACE" maxLevel="TRACE" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="20M" />
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+        <RollingFile name="customerLog" fileName="${APP_LOG_ROOT}/${APP_NAME}/customer.log"
+                     filePattern="${APP_LOG_ROOT}/${APP_NAME}/customer_%d{yyyy-MM-dd}_%i.log">
+            <LevelRangeFilter minLevel="CUSTOMER" maxLevel="CUSTOMER" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="20M" />
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+    </Appenders>
+
+    <Loggers>
+        <Root level="all">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="infoLog"/>
+            <AppenderRef ref="errorLog"/>
+            <AppenderRef ref="warnLog"/>
+            <AppenderRef ref="debugLog"/>
+            <AppenderRef ref="traceLog"/>
+        </Root>
+        <logger name="customerLogger" level="CUSTOMER" additivity="false">
+            <appender-ref ref="console" />
+            <appender-ref ref="customerLog" />
+        </logger>
+    </Loggers>
+
+</Configuration>

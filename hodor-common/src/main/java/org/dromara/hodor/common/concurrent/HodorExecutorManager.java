@@ -9,6 +9,7 @@ import org.dromara.hodor.common.disruptor.QueueConsumerFactory;
  * @author tomgs
  * @since 2021/1/7
  */
+@Deprecated
 public class HodorExecutorManager {
 
     private static final HodorExecutorManager INSTANCE = new HodorExecutorManager();

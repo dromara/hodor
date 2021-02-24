@@ -3,13 +3,14 @@ package org.dromara.hodor.remoting.netty.rpc.codec;
 import com.google.common.collect.Maps;
 import io.netty.buffer.ByteBuf;
 import io.netty.util.ReferenceCountUtil;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.remoting.api.RemotingConst;
 import org.dromara.hodor.remoting.api.exception.RemotingException;
 import org.dromara.hodor.remoting.api.message.Header;
+
+import java.util.Map;
 
 /**
  * @author tomgs
@@ -32,6 +33,9 @@ public class CodecUtils {
     }
 
     public static void writeHeader(ByteBuf out, Header header) {
+        if (header == null) {
+            throw new RemotingException("message header must be not null.");
+        }
         out.writeInt(header.getCrcCode());
         out.writeInt(header.getVersion());
         out.writeByte(header.getType());
@@ -44,30 +48,30 @@ public class CodecUtils {
             out.writeInt(attachmentByte.length);
             out.writeBytes(attachmentByte);
         }
+
+        // write length
+        out.writeInt(header.getLength());
     }
 
     public static Header parseHeader(ByteBuf in) {
+        // 17 is header message length
         if (in.readableBytes() < 17) {
-            log.error("Server receive client request, but readableBytes length less than header length!");
-            ReferenceCountUtil.release(in);
-            return null;
+            throw new RemotingException("Server receive client message, but readableBytes length less than header length!");
         }
 
         int crcCode = in.readInt();
         if (crcCode != RemotingConst.RPC_CRC_CODE) {
-            throw new RemotingException("Server receive request crcCode is illegal.");
+            throw new RemotingException("Server receive message crcCode is illegal.");
         }
 
         int version = in.readInt();
         if (version != RemotingConst.RPC_VERSION) {
-            throw new RemotingException("Server receive request version is illegal.");
+            throw new RemotingException("Server receive message version is illegal.");
         }
 
         byte type = in.readByte();
-        if (type == 0) {
-            log.debug("Server receive heartbeat response from rpc client.");
-            ReferenceCountUtil.release(in);
-            return null;
+        if (type < 0) {
+            throw new RemotingException("Server receive message type must >= 0.");
         }
 
         // attachment
@@ -76,11 +80,16 @@ public class CodecUtils {
 
         // body length
         int length = in.readInt();
-        if (length <= 0) {
-            return null;
+        if (length < 0) {
+            throw new RemotingException("Server receive message length must >= 0.");
         }
 
         return Header.builder().crcCode(crcCode).type(type).version(version).length(length).attachment(attachment).build();
     }
 
+    public static void writeBody(ByteBuf out, byte[] body) {
+        if (body != null) {
+            out.writeBytes(body);
+        }
+    }
 }

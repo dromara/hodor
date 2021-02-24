@@ -1,11 +1,8 @@
 package org.dromara.hodor.server.executor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.common.executor.HodorExecutor;
-import org.dromara.hodor.common.executor.HodorExecutorFactory;
-import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.scheduler.api.AbstractJobExecutor;
-import org.dromara.hodor.server.executor.handler.HodorJobRequestHandler;
+import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 
 /**
  *  common job executor

@@ -13,9 +13,8 @@ import org.dromara.hodor.remoting.api.NetClient;
 import org.dromara.hodor.remoting.api.NetClientTransport;
 import org.dromara.hodor.remoting.api.RemotingConst;
 import org.dromara.hodor.remoting.api.exception.RemotingException;
-import org.dromara.hodor.remoting.api.message.RemotingRequest;
-import org.dromara.hodor.remoting.api.message.RequestBody;
-import org.dromara.hodor.server.remoting.JobResponseHandler;
+import org.dromara.hodor.remoting.api.message.RemotingMessage;
+import org.dromara.hodor.server.executor.handler.JobResponseHandler;
 import org.springframework.stereotype.Service;
 
 /**
@@ -36,13 +35,13 @@ public class RemotingClientService {
         this.clientTransport = ExtensionLoader.getExtensionLoader(NetClientTransport.class).getDefaultJoin();
     }
 
-    public void sendRequest(final Host host, final RemotingRequest<? extends RequestBody> request) throws RemotingException {
+    public void sendRequest(final Host host, final RemotingMessage request) throws RemotingException {
         HodorChannel channel = getChannel(host);
         HodorChannelFuture hodorChannelFuture = channel.send(request);
         if (hodorChannelFuture.isSuccess()) {
             log.debug("send request [{}]::[{}] success.", host.getEndpoint(), request);
         } else {
-            String msg = String.format("send request [%s]::[%s]failed.", host.getEndpoint(), request);
+            String msg = String.format("send request [%s]::[%s] failed.", host.getEndpoint(), request);
             throw new RemotingException(msg, hodorChannelFuture.cause());
         }
     }
