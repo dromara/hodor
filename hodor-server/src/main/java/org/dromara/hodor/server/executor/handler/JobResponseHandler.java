@@ -3,8 +3,7 @@ package org.dromara.hodor.server.executor.handler;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.core.enums.RequestType;
 import org.dromara.hodor.remoting.api.HodorChannel;
-import org.dromara.hodor.remoting.api.message.RemotingResponse;
-import org.dromara.hodor.remoting.api.message.ResponseBody;
+import org.dromara.hodor.remoting.api.message.RemotingMessage;
 
 /**
  * @author tomgs
@@ -14,7 +13,7 @@ import org.dromara.hodor.remoting.api.message.ResponseBody;
 public class JobResponseHandler extends AbstractHodorClientChannelHandler {
 
     @Override
-    protected void received0(HodorChannel channel, RemotingResponse<ResponseBody> message) throws Exception {
+    protected void received0(HodorChannel channel, RemotingMessage message) throws Exception {
         byte type = message.getHeader().getType();
         switch (RequestType.to(type)) {
             case JOB_EXEC_REQUEST:

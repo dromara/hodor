@@ -3,8 +3,7 @@ package org.dromara.hodor.server.executor.handler;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.HodorChannelHandler;
-import org.dromara.hodor.remoting.api.message.RemotingResponse;
-import org.dromara.hodor.remoting.api.message.ResponseBody;
+import org.dromara.hodor.remoting.api.message.RemotingMessage;
 
 /**
  * abstract hodor client channel handler
@@ -32,11 +31,10 @@ public abstract class AbstractHodorClientChannelHandler implements HodorChannelH
 
     @Override
     public void received(HodorChannel channel, Object message) throws Exception {
-        if (!(message instanceof RemotingResponse)) {
+        if (!(message instanceof RemotingMessage)) {
             return;
         }
-        @SuppressWarnings("unchecked")
-        RemotingResponse<ResponseBody> msg = (RemotingResponse<ResponseBody>) message;
+        RemotingMessage msg = (RemotingMessage) message;
         received0(channel, msg);
     }
 
@@ -52,5 +50,5 @@ public abstract class AbstractHodorClientChannelHandler implements HodorChannelH
         channel.close();
     }
 
-    protected abstract void received0(HodorChannel channel, RemotingResponse<ResponseBody> message) throws Exception;
+    protected abstract void received0(HodorChannel channel, RemotingMessage message) throws Exception;
 }

@@ -1,9 +1,9 @@
 package org.dromara.hodor.server;
 
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.server.service.HodorService;
 import org.dromara.hodor.server.service.RegisterService;
 import org.dromara.hodor.server.service.RestServerService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

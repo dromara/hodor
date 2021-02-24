@@ -1,0 +1,1 @@
+serializer=org.dromara.hodor.remoting.netty.rpc.serialize.DefaultMessageSerializer
