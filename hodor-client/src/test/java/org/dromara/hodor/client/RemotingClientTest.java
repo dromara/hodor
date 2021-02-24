@@ -1,18 +1,14 @@
 package org.dromara.hodor.client;
 
-import java.util.concurrent.CountDownLatch;
 import org.dromara.hodor.client.core.SchedulerRequestBody;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.utils.LocalHost;
-import org.dromara.hodor.remoting.api.Attribute;
-import org.dromara.hodor.remoting.api.HodorChannel;
-import org.dromara.hodor.remoting.api.HodorChannelHandler;
-import org.dromara.hodor.remoting.api.NetClient;
-import org.dromara.hodor.remoting.api.NetClientTransport;
-import org.dromara.hodor.remoting.api.RemotingConst;
+import org.dromara.hodor.remoting.api.*;
 import org.dromara.hodor.remoting.api.message.Header;
-import org.dromara.hodor.remoting.api.message.RemotingRequest;
+import org.dromara.hodor.remoting.api.message.RemotingMessage;
 import org.dromara.hodor.remoting.api.message.RequestBody;
+
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @author tomgs
@@ -30,17 +26,14 @@ public class RemotingClientTest {
         // handle request
         HodorChannelHandler handler = new HodorClientChannelHandler(downLatch);
 
+        RemotingMessageSerializer serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
+
         NetClientTransport clientTransport = ExtensionLoader.getExtensionLoader(NetClientTransport.class).getDefaultJoin();
         NetClient client = clientTransport.connect(attribute, handler);
         HodorChannel connection = client.connection();
 
         System.out.println("channel is open:" + connection.isOpen());
 
-        Header header = Header.builder()
-            .crcCode(RemotingConst.RPC_CRC_CODE)
-            .type((byte)1)
-            .version(RemotingConst.RPC_VERSION)
-            .build();
         RequestBody body = SchedulerRequestBody.builder()
             .requestId(123L)
             .groupName("testGroup")
@@ -48,7 +41,16 @@ public class RemotingClientTest {
             .jobCommandType("java")
             .jobParameters("123")
             .build();
-        RemotingRequest request = RemotingRequest.builder().header(header).body(body).build();
+        byte[] requestBody = serializer.serialize(body);
+
+        Header header = Header.builder()
+                .crcCode(RemotingConst.RPC_CRC_CODE)
+                .type((byte)1)
+                .version(RemotingConst.RPC_VERSION)
+                .length(requestBody.length)
+                .build();
+
+        RemotingMessage request = RemotingMessage.builder().header(header).body(requestBody).build();
 
         connection.send(request);
 
