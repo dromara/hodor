@@ -4,6 +4,7 @@ import org.dromara.hodor.client.HodorApiClient;
 import org.dromara.hodor.client.HodorClientInit;
 import org.dromara.hodor.client.JobRegistrar;
 import org.dromara.hodor.client.ServiceProvider;
+import org.dromara.hodor.client.executor.RequestEventPublisher;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -44,6 +45,11 @@ public class HodorSchedulerConfiguration {
     @Bean
     public HodorClientInit hodorClientInit() {
         return new HodorClientInit();
+    }
+
+    @Bean
+    public RequestEventPublisher requestEventPublisher() {
+        return new RequestEventPublisher();
     }
 
 }

@@ -57,4 +57,11 @@ public interface HodorChannelFuture {
 
     Void get() throws ExecutionException, InterruptedException;
 
+    /**
+     * Invoked when the operation associated with the {@link HodorChannelFuture} has been completed.
+     *
+     * @param listener  the source {@link HodorChannelFutureListener} which called this callback
+     */
+    void operationComplete(HodorChannelFutureListener<HodorChannelFuture> listener);
+
 }
