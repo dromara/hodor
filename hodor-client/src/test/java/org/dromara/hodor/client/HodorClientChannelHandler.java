@@ -47,12 +47,14 @@ public class HodorClientChannelHandler implements HodorChannelHandler {
         log.info("{} channel exceptionCaught.", channel);
         cause.printStackTrace();
         channel.close();
+        downLatch.countDown();
     }
 
     @Override
     public void timeout(HodorChannel channel) {
         log.info("{} channel timeout.", channel);
         channel.close();
+        downLatch.countDown();
     }
 
 }

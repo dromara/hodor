@@ -1,15 +1,12 @@
 package org.dromara.hodor.client.handler;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.client.core.SchedulerRequestBody;
-import org.dromara.hodor.common.extension.ExtensionLoader;
+import org.dromara.hodor.client.ServiceProvider;
+import org.dromara.hodor.client.core.RequestContext;
+import org.dromara.hodor.client.executor.RequestEventPublisher;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.HodorChannelHandler;
-import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
-import org.dromara.hodor.remoting.api.message.Header;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
-
-import java.util.concurrent.ExecutionException;
 
 /**
  * job execute request handler
@@ -20,32 +17,23 @@ import java.util.concurrent.ExecutionException;
 @Slf4j
 public class JobExecuteRequestHandler implements HodorChannelHandler {
 
-    RemotingMessageSerializer serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
+    private final RequestEventPublisher requestEventPublisher = ServiceProvider.getInstance().getBean(RequestEventPublisher.class);
 
     @Override
-    public void send(HodorChannel channel, Object message) {
-        log.info("send message {}", message);
-    }
-
-    @Override
-    public void received(HodorChannel channel, Object message) throws Exception {
-        log.info("received message {}", message);
+    public void received(HodorChannel channel, Object message) {
         RemotingMessage request = (RemotingMessage) message;
-        Header header = request.getHeader();
-        byte[] body = request.getBody();
-        SchedulerRequestBody requestBody = serializer.deserialize(body, SchedulerRequestBody.class);
-        log.info("body message: {}.", requestBody);
+
+        log.info("body message: {}.", request);
+
+        final RequestContext context = new RequestContext(channel, request);
+        requestEventPublisher.notifyRequestHandler(context);
     }
 
     @Override
     public void exceptionCaught(HodorChannel channel, Throwable cause) {
         log.error("handler the request message has exception, message: {}.", cause.getMessage(), cause);
-        try {
-            channel.send(cause).get();
-        } catch (ExecutionException | InterruptedException e) {
-            log.error("response error to client error.", e);
-        }
-        channel.close();
+        // 发送失败响应给客户端，然后关闭通道
+        channel.send(cause).operationComplete(future -> future.channel().close());
     }
 
 }
