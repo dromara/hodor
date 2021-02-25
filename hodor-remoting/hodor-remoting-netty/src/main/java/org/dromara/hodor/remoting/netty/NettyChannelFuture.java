@@ -20,6 +20,9 @@ package org.dromara.hodor.remoting.netty;
 
 import io.netty.channel.ChannelFuture;
 import java.util.concurrent.ExecutionException;
+
+import io.netty.channel.ChannelFutureListener;
+import org.dromara.hodor.remoting.api.HodorChannelFutureListener;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.HodorChannelFuture;
 
@@ -61,4 +64,9 @@ public class NettyChannelFuture implements HodorChannelFuture {
         return future.get();
     }
 
+    @Override
+    public void operationComplete(HodorChannelFutureListener<HodorChannelFuture> listener) {
+        this.future.addListener((ChannelFutureListener) future ->
+                listener.operationComplete(new NettyChannelFuture(future)));
+    }
 }
