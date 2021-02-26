@@ -15,7 +15,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public abstract class AbstractEventPublisher<V> implements EventPublisher<V> {
 
-    private volatile Map<String, Set<ObjectListener<V>>> listeners = Maps.newConcurrentMap();
+    private volatile Map<Object, Set<ObjectListener<V>>> listeners = Maps.newConcurrentMap();
 
     private final ReentrantLock lock = new ReentrantLock();
 
@@ -23,11 +23,11 @@ public abstract class AbstractEventPublisher<V> implements EventPublisher<V> {
         this.registerListener();
     }
 
-    public void publish(V v, String eventType) {
+    public void publish(V v, Object eventType) {
         publish(new Event<>(v, eventType));
     }
 
-    public void addListener(ObjectListener<V> objectListener, String eventType) {
+    public void addListener(ObjectListener<V> objectListener, Object eventType) {
         lock.lock();
         try {
             if (listeners.get(eventType) == null) {
@@ -40,7 +40,7 @@ public abstract class AbstractEventPublisher<V> implements EventPublisher<V> {
         }
     }
 
-    public void removeListener(ObjectListener<V> objectListener, String eventType) {
+    public void removeListener(ObjectListener<V> objectListener, Object eventType) {
         if (listeners == null) {
             return;
         }
@@ -60,7 +60,7 @@ public abstract class AbstractEventPublisher<V> implements EventPublisher<V> {
         }
     }
 
-    public void removeListener(String eventType) {
+    public void removeListener(Object eventType) {
         lock.lock();
         try {
             listeners.remove(eventType);
@@ -73,7 +73,7 @@ public abstract class AbstractEventPublisher<V> implements EventPublisher<V> {
         if (listeners == null) {
             return;
         }
-        String eventType = event.getEventType();
+        Object eventType = event.getEventType();
         if (listeners.get(eventType) != null) {
             Set<ObjectListener<V>> listenerSet = listeners.get(eventType);
             for (ObjectListener<V> listener : listenerSet) {

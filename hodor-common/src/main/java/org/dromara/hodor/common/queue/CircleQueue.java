@@ -7,6 +7,7 @@ import java.util.NoSuchElementException;
 /**
  * 环形队列<br/>
  * 1、支持可动态调整入队拒绝策略
+ * 2、这个是非线程安全的，安全使用要结合 {@link org.dromara.hodor.common.executor.HodorExecutor} 使用
  *
  * @author tomgs
  * @since 2021/1/21
@@ -41,8 +42,12 @@ public class CircleQueue<T> extends AbstractQueue<T> {
     this.tail = 0;
   }
 
+  public CircleQueue(int initialCapacity) {
+    this(initialCapacity, new AbortEnqueuePolicy<>());
+  }
+
   public CircleQueue() {
-    this(DEFAULT_CAPACITY, new AbortEnqueuePolicy<>());
+    this(DEFAULT_CAPACITY);
   }
 
   @Override

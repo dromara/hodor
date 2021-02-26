@@ -186,8 +186,9 @@ public class HodorExecutor {
     }
 
     public void shutdown() {
-        shutdown.compareAndSet(false, true);
-        executor.shutdown();
+        if (shutdown.compareAndSet(false, true)) {
+            executor.shutdown();
+        }
     }
 
     /**

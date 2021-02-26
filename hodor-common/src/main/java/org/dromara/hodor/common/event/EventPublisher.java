@@ -17,17 +17,17 @@ public interface EventPublisher<V> {
     /**
      * 添加某个事件类型的监听器。一个 eventType 可对应多个 object listener
      */
-    void addListener(ObjectListener<V> objectListener, String eventType);
+    void addListener(ObjectListener<V> objectListener, Object eventType);
 
     /**
      * 移除指定 event type 中的一个object listener
      */
-    void removeListener(ObjectListener<V> objectListener, String eventType);
+    void removeListener(ObjectListener<V> objectListener, Object eventType);
 
     /**
      * 移除一组 object listeners
      */
-    void removeListener(String eventType);
+    void removeListener(Object eventType);
 
     /**
      * 清除事件监听器
@@ -42,6 +42,6 @@ public interface EventPublisher<V> {
     /**
      * 给某个事件类型发布一个消息。这个消息会触发一组事件监听器执行
      */
-    void publish(V v, String eventType);
+    void publish(V v, Object eventType);
 
 }
