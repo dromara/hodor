@@ -44,9 +44,9 @@ public class RemotingClientTest {
         byte[] requestBody = serializer.serialize(body);
 
         Header header = Header.builder()
-                .crcCode(RemotingConst.RPC_CRC_CODE)
+                .crcCode(RemotingConst.MESSAGE_CRC_CODE)
                 .type((byte)1)
-                .version(RemotingConst.RPC_VERSION)
+                .version(RemotingConst.DEFAULT_VERSION)
                 .length(requestBody.length)
                 .build();
 
