@@ -176,7 +176,6 @@ public class HodorExecutor {
             }
             HodorRunnable runnable = Objects.requireNonNull(circleQueue.poll());
             executor.execute(runnable);
-
         }
         // 这里为了严谨起见递归调用改用循环方式避免栈溢出
         // notifyTaskExecute();
