@@ -60,12 +60,12 @@ public class CodecUtils {
         }
 
         int crcCode = in.readInt();
-        if (crcCode != RemotingConst.RPC_CRC_CODE) {
+        if (crcCode != RemotingConst.MESSAGE_CRC_CODE) {
             throw new RemotingException("Server receive message crcCode is illegal.");
         }
 
         int version = in.readInt();
-        if (version != RemotingConst.RPC_VERSION) {
+        if (version != RemotingConst.DEFAULT_VERSION) {
             throw new RemotingException("Server receive message version is illegal.");
         }
 

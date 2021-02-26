@@ -11,6 +11,12 @@ import java.io.Serializable;
 public interface ResponseBody extends Serializable {
 
     /**
+     * 请求id
+     * @return request id
+     */
+    Long getRequestId();
+
+    /**
      * 请求响应code
      * @return code
      */
@@ -23,9 +29,10 @@ public interface ResponseBody extends Serializable {
     String getMsg();
 
     /**
-     * 请求id
-     * @return request id
+     * 响应数据
+     *
+     * @return data
      */
-    String getRequestId();
+    Object getData();
 
 }
