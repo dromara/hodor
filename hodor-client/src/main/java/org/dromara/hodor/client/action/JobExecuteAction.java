@@ -1,9 +1,10 @@
 package org.dromara.hodor.client.action;
 
 import org.dromara.hodor.client.ServiceProvider;
+import org.dromara.hodor.client.RemotingResponse;
 import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.client.core.SchedulerRequestBody;
-import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
+import org.dromara.hodor.remoting.api.message.RemotingMessage;
 
 /**
  * job execute action
@@ -13,23 +14,32 @@ import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
  */
 public class JobExecuteAction extends AbstractAction {
 
-    private final RemotingMessageSerializer serializer;
-
     public JobExecuteAction(final RequestContext context) {
         super(context);
-        this.serializer = ServiceProvider.getInstance().getBean(RemotingMessageSerializer.class);
     }
 
     @Override
     public void execute() throws Exception {
-        RequestContext requestContext = getRequestContext();
-        SchedulerRequestBody requestBody = serializer.deserialize(requestContext.rawRequestBody(), SchedulerRequestBody.class);
+        SchedulerRequestBody requestBody = buildRequestMessage(SchedulerRequestBody.class);
 
+        Class<?> jobClass = Class.forName(requestBody.getJobPath());
+
+        Object bean = ServiceProvider.getInstance().getBean(jobClass);
+        String jobCommand = requestBody.getJobCommand();
+        String jobParameters = requestBody.getJobParameters();
+
+        //Method invocableMethod = AopUtils.selectInvocableMethod(method, bean.getClass());
+
+        RemotingResponse responseBody = new RemotingResponse(0, "success");
+        RemotingMessage response = buildResponseMessage(responseBody);
+        sendMessage(response);
     }
 
     @Override
     public void exceptionCaught(Exception e) {
-
+        RemotingResponse responseBody = new RemotingResponse(1, "failure", e);
+        RemotingMessage response = buildResponseMessage(responseBody);
+        sendMessage(response);
     }
 
 }
