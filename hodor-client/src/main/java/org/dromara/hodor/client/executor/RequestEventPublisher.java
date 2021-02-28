@@ -52,7 +52,7 @@ public class RequestEventPublisher extends AbstractEventPublisher<RequestContext
         this.addListener(e -> {
             RequestContext context = e.getValue();
             executorManager.submit(new JobExecuteAction(context));
-        }, MessageType.HEARTBEAT_REQUEST);
+        }, MessageType.JOB_EXEC_REQUEST);
     }
 
     private void registerHeartbeatListener() {

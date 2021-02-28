@@ -1,5 +1,6 @@
 package org.dromara.hodor.client;
 
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.client.core.SchedulerRequestBody;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.utils.LocalHost;
@@ -14,6 +15,7 @@ import java.util.concurrent.CountDownLatch;
  * @author tomgs
  * @since 2021/2/24
  */
+@Slf4j
 public class RemotingClientTest {
 
     private final static CountDownLatch downLatch = new CountDownLatch(1);
@@ -36,6 +38,8 @@ public class RemotingClientTest {
 
         RequestBody body = SchedulerRequestBody.builder()
             .requestId(123L)
+            .jobPath("org.dromara.hodor.client.demo.job.JobList")
+            .jobCommand("test1")
             .groupName("testGroup")
             .jobName("test1")
             .jobCommandType("java")
@@ -55,6 +59,9 @@ public class RemotingClientTest {
         connection.send(request);
 
         downLatch.await();
+
+        System.out.println("----------");
+        System.exit(0);
     }
 
 }

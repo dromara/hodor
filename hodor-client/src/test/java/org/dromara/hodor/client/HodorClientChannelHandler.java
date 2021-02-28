@@ -28,6 +28,7 @@ public class HodorClientChannelHandler implements HodorChannelHandler {
     @Override
     public void disconnected(HodorChannel channel) {
         log.info("{} channel disconnected.", channel);
+        downLatch.countDown();
     }
 
     @Override

@@ -17,12 +17,11 @@ public class ExecutorManager {
 
     private static final ExecutorManager INSTANCE = new ExecutorManager();
 
-    private static final int THREAD_SIZE = Runtime.getRuntime().availableProcessors() * 2;
-
     private final HodorExecutor hodorExecutor;
 
     private ExecutorManager() {
-        final ThreadPoolExecutor threadPoolExecutor = HodorExecutorFactory.createThreadPoolExecutor("job-exec", THREAD_SIZE);
+        final int threadSize = Runtime.getRuntime().availableProcessors() * 2;
+        final ThreadPoolExecutor threadPoolExecutor = HodorExecutorFactory.createThreadPoolExecutor("job-exec", threadSize);
         this.hodorExecutor = new HodorExecutor();
 
         hodorExecutor.setCircleQueue(new CircleQueue<>(100));

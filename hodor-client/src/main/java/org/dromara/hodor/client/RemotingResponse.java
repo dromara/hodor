@@ -1,4 +1,4 @@
-package org.dromara.hodor.client.core;
+package org.dromara.hodor.client;
 
 import org.dromara.hodor.remoting.api.message.ResponseBody;
 
@@ -6,7 +6,7 @@ import org.dromara.hodor.remoting.api.message.ResponseBody;
  * @author tomgs
  * @since 2021/2/26
  */
-public class HeartbeatResponse implements ResponseBody {
+public class RemotingResponse implements ResponseBody {
 
     private static final long serialVersionUID = 8889407473710885893L;
 
@@ -16,11 +16,11 @@ public class HeartbeatResponse implements ResponseBody {
 
     private Object data;
 
-    public HeartbeatResponse(int code, String msg) {
+    public RemotingResponse(int code, String msg) {
         this(code, msg, null);
     }
 
-    public HeartbeatResponse(int code, String msg, Object data) {
+    public RemotingResponse(int code, String msg, Object data) {
         this.code = code;
         this.msg = msg;
         this.data = data;
