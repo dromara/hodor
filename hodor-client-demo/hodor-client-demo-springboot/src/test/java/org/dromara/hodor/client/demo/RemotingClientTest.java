@@ -1,4 +1,4 @@
-package org.dromara.hodor.client;
+package org.dromara.hodor.client.demo;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.client.core.SchedulerRequestBody;
@@ -39,9 +39,9 @@ public class RemotingClientTest {
         RequestBody body = SchedulerRequestBody.builder()
             .requestId(123L)
             .jobPath("org.dromara.hodor.client.demo.job.JobList")
-            .jobCommand("test1")
+            .jobCommand("test2")
             .groupName("testGroup")
-            .jobName("test1")
+            .jobName("test2")
             .jobCommandType("java")
             .jobParameters("123")
             .build();
@@ -61,6 +61,7 @@ public class RemotingClientTest {
         downLatch.await();
 
         System.out.println("----------");
+        connection.close();
         System.exit(0);
     }
 
