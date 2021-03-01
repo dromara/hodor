@@ -1,6 +1,8 @@
 package org.dromara.hodor.client.action;
 
 import java.io.File;
+import java.text.MessageFormat;
+
 import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.client.JobExecutionContext;
 import org.dromara.hodor.client.JobParameter;
@@ -40,9 +42,9 @@ public class JobExecuteAction extends AbstractAction {
         if (jobRunnable.isHasArg()) {
             JobParameter jobParameter = new JobParameter(requestBody.getGroupName(), requestBody.getJobName(), requestBody.getRequestId(), requestBody.getJobParameters());
 
-            final String logPath = DEFAULT_EXECUTION_DIR + File.separator + requestBody.getRequestId();
-            final File jobLoggerFile = new File(logPath, createLogFileName(requestBody));
-            final String loggerName = System.currentTimeMillis() + "_" + requestBody.getGroupName() + "_" + requestBody.getJobName() + "_" + requestBody.getRequestId();
+            String logPath = DEFAULT_EXECUTION_DIR + File.separator + requestBody.getRequestId();
+            File jobLoggerFile = new File(logPath, createLogFileName(requestBody));
+            String loggerName = createLoggerName(requestBody);
             Logger jobLogger = LogUtil.getInstance().createLogger(loggerName, jobLoggerFile);
 
             JobExecutionContext context = new JobExecutionContext(jobLogger, jobParameter);
@@ -58,14 +60,23 @@ public class JobExecuteAction extends AbstractAction {
 
     @Override
     public void exceptionCaught(Exception e) {
-        RemotingResponse responseBody = new RemotingResponse(1, "failure", e);
-        e.printStackTrace();
+        RemotingResponse responseBody = new RemotingResponse(1, "failed", e);
         RemotingMessage response = buildResponseMessage(responseBody);
         sendMessage(response);
     }
 
+    private String createLoggerName(SchedulerRequestBody requestBody) {
+        return MessageFormat.format("{0}_{1}_{2}_{3}", System.currentTimeMillis(),
+                requestBody.getGroupName(),
+                requestBody.getJobName(),
+                requestBody.getRequestId());
+    }
+
     private String createLogFileName(SchedulerRequestBody requestBody) {
-        return "_job." + requestBody.getGroupName() + "." + requestBody.getJobName() + requestBody.getRequestId() + ".log";
+        return MessageFormat.format("_job.{0}.{1}.{2}.log",
+                requestBody.getGroupName(),
+                requestBody.getJobName(),
+                requestBody.getRequestId());
     }
 
 }
