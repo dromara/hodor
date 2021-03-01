@@ -8,8 +8,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.client.JobExecutionContext;
 import org.dromara.hodor.client.JobRegistrar;
 import org.dromara.hodor.client.config.JobDesc;
+import org.dromara.hodor.client.core.ScheduledMethodRunnable;
 import org.springframework.aop.framework.AopInfrastructureBean;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.support.AopUtils;
@@ -22,7 +24,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.support.CronSequenceGenerator;
-import org.springframework.scheduling.support.ScheduledMethodRunnable;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
@@ -104,14 +105,20 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
         return bean;
     }
 
-    protected Runnable createRunnable(Object target, Method method) {
-        //Assert.isTrue(method.getParameterCount() == 0, "Only no-arg methods may be annotated with @Job");
+    protected ScheduledMethodRunnable createRunnable(Object target, Method method) {
+        Assert.isTrue(method.getParameterCount() == 0 || method.getParameterCount() == 1, "A method annotated by @Job has at most one parameter");
+        if (method.getParameterCount() == 1) {
+            Class<?> parameterType = method.getParameterTypes()[0];
+            if (!JobExecutionContext.class.isAssignableFrom(parameterType)) {
+                throw new IllegalArgumentException("arg must be class JobExecutionContext");
+            }
+        }
         Method invocableMethod = AopUtils.selectInvocableMethod(method, target.getClass());
-        return new ScheduledMethodRunnable(target, invocableMethod);
+        return new ScheduledMethodRunnable(target, invocableMethod, method.getParameterCount() == 1);
     }
 
     protected void processJob(Job job, Method method, Object bean) {
-        Runnable runnable = createRunnable(bean, method);
+        ScheduledMethodRunnable runnable = createRunnable(bean, method);
 
         String groupName = job.group();
         if (!StringUtils.hasText(groupName)) {
@@ -151,7 +158,7 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
             .timeout(timeout)
             .build();
 
-        registrar.addJob(jobDesc);
+        registrar.addJob(jobDesc, runnable);
     }
 
 }
