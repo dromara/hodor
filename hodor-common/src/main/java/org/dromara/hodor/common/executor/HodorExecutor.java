@@ -90,6 +90,27 @@ public class HodorExecutor {
      * @param runnable 待执行任务
      */
     public void serialExecute(final HodorRunnable runnable) {
+        offer(runnable);
+        // 从第一个任务触发，后续自动执行
+        if (executable.compareAndSet(false, true) && circleQueue.size() >= 1) {
+            notifyNextTaskExecute();
+        }
+
+    }
+
+    /**
+     * 并行执行</br>
+     *
+     * @param runnable 待执行任务
+     */
+    public void parallelExecute(final HodorRunnable runnable) {
+        offer(runnable);
+        if (executable.compareAndSet(false, true) && circleQueue.size() >= 1) {
+            notifyTaskExecute();
+        }
+    }
+
+    private void offer(HodorRunnable runnable) {
         final ReentrantLock lock = this.lock;
         lock.lock();
         try {
@@ -104,21 +125,6 @@ public class HodorExecutor {
         } finally {
             lock.unlock();
         }
-
-        // 从第一个任务触发，后续自动执行
-        if (executable.compareAndSet(false, true) && circleQueue.size() >= 1) {
-            notifyNextTaskExecute();
-        }
-
-    }
-
-    /**
-     * 并行执行</br>
-     *
-     * @param runnable 待执行任务
-     */
-    public void parallelExecute(final HodorRunnable runnable) {
-        executor.execute(runnable);
     }
 
     /**
@@ -154,8 +160,6 @@ public class HodorExecutor {
         executor.execute(() -> {
             try {
                 runnable.run();
-            } catch (Exception e) {
-                runnable.exceptionCaught(e);
             } catch (Throwable unexpected) {
                 log.error("Catch unexpected exception {}.", unexpected.getMessage(), unexpected);
             } finally {
@@ -164,13 +168,27 @@ public class HodorExecutor {
         });
     }
 
+    private void notifyTaskExecute() {
+        for (;;) {
+            if (circleQueue.isEmpty()) {
+                reset();
+                return;
+            }
+            HodorRunnable runnable = Objects.requireNonNull(circleQueue.poll());
+            executor.execute(runnable);
+        }
+        // 这里为了严谨起见递归调用改用循环方式避免栈溢出
+        // notifyTaskExecute();
+    }
+
     public boolean isShutdown() {
         return shutdown.get() && executor.isShutdown();
     }
 
     public void shutdown() {
-        shutdown.compareAndSet(false, true);
-        executor.shutdown();
+        if (shutdown.compareAndSet(false, true)) {
+            executor.shutdown();
+        }
     }
 
     /**

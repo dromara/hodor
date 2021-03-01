@@ -17,13 +17,17 @@ public class JobParameter {
 
     private String jobName;
 
-    private String requestId;
+    private Long requestId;
 
     private String parameters;
 
     private String sharingRequestId;
 
-    public JobParameter(String groupName, String jobName, String requestId, String parameters, String sharingRequestId) {
+    public JobParameter(String groupName, String jobName, Long requestId, String parameters) {
+        this(groupName, jobName, requestId, parameters, null);
+    }
+
+    public JobParameter(String groupName, String jobName, Long requestId, String parameters, String sharingRequestId) {
         this.groupName = groupName;
         this.jobName = jobName;
         this.requestId = requestId;

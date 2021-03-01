@@ -60,15 +60,27 @@ public class RemotingConst  {
     public static final String TCP_PROTOCOL = "tcp_protocol";
 
     /**
-     * The constant RPC_VERSION
+     * The constant DEFAULT_VERSION
      */
-    public static final int RPC_VERSION = 1;
+    public static final int DEFAULT_VERSION = 1;
 
-    public static final int RPC_CRC_CODE = 12345;
+    /**
+     * The constant MESSAGE_CRC_CODE
+     */
+    public static final int MESSAGE_CRC_CODE = 12345;
 
+    /**
+     * The constant MAX_FRAME_LENGTH
+     */
     public static final int MAX_FRAME_LENGTH = 32 * 1024 * 1024;
 
+    /**
+     * The constant LENGTH_FIELD_OFFSET
+     */
     public static final int LENGTH_FIELD_OFFSET = 5;
 
+    /**
+     * The constant LENGTH_FIELD_LENGTH
+     */
     public static final int LENGTH_FIELD_LENGTH = 4;
 }

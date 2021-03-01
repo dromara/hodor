@@ -23,7 +23,7 @@ public class JobExecuteRequestHandler implements HodorChannelHandler {
     public void received(HodorChannel channel, Object message) {
         RemotingMessage request = (RemotingMessage) message;
 
-        log.info("body message: {}.", request);
+        log.info("request message: {}.", request);
 
         final RequestContext context = new RequestContext(channel, request);
         requestEventPublisher.notifyRequestHandler(context);
@@ -32,7 +32,6 @@ public class JobExecuteRequestHandler implements HodorChannelHandler {
     @Override
     public void exceptionCaught(HodorChannel channel, Throwable cause) {
         log.error("handler the request message has exception, message: {}.", cause.getMessage(), cause);
-        // 发送失败响应给客户端，然后关闭通道
         channel.send(cause).operationComplete(future -> future.channel().close());
     }
 

@@ -48,7 +48,7 @@ public class HodorApiClient {
             .header("appKey", appKey)
             .execute()
             .body();
-        log.info("Send heartbeat result: {}", result);
+        //log.info("Send heartbeat result: {}", result);
     }
 
     public void sendOfflineMsg(NodeInfo msg) {
@@ -58,7 +58,7 @@ public class HodorApiClient {
             .header("appKey", appKey)
             .execute()
             .body();
-        log.info("Send heartbeat result: {}", result);
+        //log.info("Send heartbeat result: {}", result);
     }
 
 }

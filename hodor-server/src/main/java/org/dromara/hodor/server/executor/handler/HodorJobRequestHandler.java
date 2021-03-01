@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.executor.HodorRunnable;
 import org.dromara.hodor.common.extension.ExtensionLoader;
-import org.dromara.hodor.core.enums.RequestType;
+import org.dromara.hodor.remoting.api.message.MessageType;
 import org.dromara.hodor.remoting.api.RemotingConst;
 import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
 import org.dromara.hodor.remoting.api.message.Header;
@@ -73,9 +73,9 @@ public class HodorJobRequestHandler extends HodorRunnable {
 
     private Header buildHeader(int bodyLength) {
         return Header.builder()
-                .crcCode(RemotingConst.RPC_CRC_CODE)
-                .version(RemotingConst.RPC_VERSION)
-                .type(RequestType.JOB_EXEC_REQUEST.getCode())
+                .crcCode(RemotingConst.MESSAGE_CRC_CODE)
+                .version(RemotingConst.DEFAULT_VERSION)
+                .type(MessageType.JOB_EXEC_REQUEST.getCode())
                 .length(bodyLength)
                 .build();
     }

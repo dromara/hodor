@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.client.config.JobDesc;
+import org.dromara.hodor.client.core.ScheduledMethodRunnable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -21,16 +22,24 @@ public class JobRegistrar {
 
     private final Map<String, JobDesc> jobCache = new ConcurrentHashMap<>(32);
 
+    private final Map<String, ScheduledMethodRunnable> jobRunnableCache = new ConcurrentHashMap<>(32);
+
     public void registerJobs() {
         log.info("register jobs.");
         Collection<JobDesc> jobs = jobCache.values();
         hodorApiClient.registerJobs(jobs);
     }
 
-    public void addJob(JobDesc jobDesc) {
+    public ScheduledMethodRunnable getJobRunnable(String groupName, String jobName) {
+        String jobKey = createJobKey(groupName, jobName);
+        return jobRunnableCache.get(jobKey);
+    }
+
+    public void addJob(JobDesc jobDesc, ScheduledMethodRunnable runnable) {
         log.info("add job {}", jobDesc);
         String jobKey = createJobKey(jobDesc.getGroupName(), jobDesc.getJobName());
         jobCache.putIfAbsent(jobKey, jobDesc);
+        jobRunnableCache.putIfAbsent(jobKey, runnable);
     }
 
     private String createJobKey(String groupName, String jobName) {

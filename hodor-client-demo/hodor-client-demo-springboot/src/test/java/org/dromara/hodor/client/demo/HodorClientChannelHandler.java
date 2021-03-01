@@ -1,9 +1,10 @@
-package org.dromara.hodor.client;
+package org.dromara.hodor.client.demo;
 
-import java.util.concurrent.CountDownLatch;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.HodorChannelHandler;
+
+import java.util.concurrent.CountDownLatch;
 
 /**
  * hodor client channel handler
@@ -28,6 +29,7 @@ public class HodorClientChannelHandler implements HodorChannelHandler {
     @Override
     public void disconnected(HodorChannel channel) {
         log.info("{} channel disconnected.", channel);
+        downLatch.countDown();
     }
 
     @Override

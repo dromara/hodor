@@ -1,12 +1,14 @@
-package org.dromara.hodor.core.enums;
+package org.dromara.hodor.remoting.api.message;
+
+import org.dromara.hodor.remoting.api.exception.RemotingException;
 
 /**
- * request type
+ * message type
  *
  * @author tomgs
  * @since 2020/9/24
  */
-public enum RequestType {
+public enum MessageType {
 
     HEARTBEAT_REQUEST((byte) 0),
 
@@ -20,7 +22,7 @@ public enum RequestType {
 
     private final byte type;
 
-    RequestType(byte type) {
+    MessageType(byte type) {
         this.type = type;
     }
 
@@ -28,8 +30,8 @@ public enum RequestType {
         return type;
     }
 
-    public static RequestType to(byte type) {
-        RequestType requestType = null;
+    public static MessageType to(byte type) {
+        MessageType requestType = null;
         switch (type) {
             case (byte) 0:
                 requestType = HEARTBEAT_REQUEST;
@@ -47,7 +49,7 @@ public enum RequestType {
                 requestType = KILL_JOB_REQUEST;
                 break;
             default:
-                break;
+                throw new RemotingException("not found message type, " + type);
         }
         return requestType;
     }

@@ -1,6 +1,8 @@
 package org.dromara.hodor.client.core;
 
 import org.dromara.hodor.remoting.api.HodorChannel;
+import org.dromara.hodor.remoting.api.message.Header;
+import org.dromara.hodor.remoting.api.message.MessageType;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
 
 /**
@@ -11,8 +13,29 @@ import org.dromara.hodor.remoting.api.message.RemotingMessage;
  */
 public class RequestContext {
 
-    public RequestContext(HodorChannel channel, RemotingMessage request) {
+    private final HodorChannel channel;
 
+    private final RemotingMessage remotingMessage;
+
+    public RequestContext(HodorChannel channel, RemotingMessage remotingMessage) {
+        this.channel = channel;
+        this.remotingMessage = remotingMessage;
+    }
+
+    public HodorChannel channel() {
+        return channel;
+    }
+
+    public MessageType messageType() {
+        return MessageType.to(remotingMessage.getHeader().getType());
+    }
+
+    public Header requestHeader() {
+        return remotingMessage.getHeader();
+    }
+
+    public byte[] rawRequestBody() {
+        return remotingMessage.getBody();
     }
 
 }
