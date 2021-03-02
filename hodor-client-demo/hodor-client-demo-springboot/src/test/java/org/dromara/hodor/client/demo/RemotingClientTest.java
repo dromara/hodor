@@ -1,7 +1,7 @@
 package org.dromara.hodor.client.demo;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.client.core.SchedulerRequestBody;
+import org.dromara.hodor.remoting.api.message.request.SchedulerRequestBody;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.utils.LocalHost;
 import org.dromara.hodor.remoting.api.*;
