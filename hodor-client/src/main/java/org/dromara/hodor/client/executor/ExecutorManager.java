@@ -1,5 +1,7 @@
 package org.dromara.hodor.client.executor;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 import org.dromara.hodor.common.executor.HodorExecutor;
 import org.dromara.hodor.common.executor.HodorExecutorFactory;
@@ -19,6 +21,8 @@ public class ExecutorManager {
 
     private final HodorExecutor hodorExecutor;
 
+    private final Map<Long, Thread> runningThread = new ConcurrentHashMap<>();
+
     private ExecutorManager() {
         final int threadSize = Runtime.getRuntime().availableProcessors() * 2;
         final ThreadPoolExecutor threadPoolExecutor = HodorExecutorFactory.createThreadPoolExecutor("job-exec", threadSize);
@@ -35,6 +39,22 @@ public class ExecutorManager {
 
     public void submit(final HodorRunnable runnable) {
         hodorExecutor.parallelExecute(runnable);
+    }
+
+    public HodorExecutor getHodorExecutor() {
+        return hodorExecutor;
+    }
+
+    public void addRunningThread(Long requestId, Thread currentThread) {
+        runningThread.put(requestId, currentThread);
+    }
+
+    public void removeRunningThread(Long requestId) {
+        runningThread.remove(requestId);
+    }
+
+    public Thread getRunningThread(Long requestId) {
+        return runningThread.get(requestId);
     }
 
 }

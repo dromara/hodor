@@ -1,4 +1,4 @@
-package org.dromara.hodor.client.core;
+package org.dromara.hodor.remoting.api.message.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

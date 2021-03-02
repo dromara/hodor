@@ -1,7 +1,7 @@
 package org.dromara.hodor.client.action;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.client.RemotingResponse;
+import org.dromara.hodor.remoting.api.message.response.RemotingResponse;
 import org.dromara.hodor.client.core.RequestContext;
 
 /**
