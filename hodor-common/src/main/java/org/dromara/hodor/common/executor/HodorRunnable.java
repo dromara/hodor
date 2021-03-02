@@ -14,6 +14,8 @@ public abstract class HodorRunnable implements Runnable {
             execute();
         } catch (Exception e) {
             exceptionCaught(e);
+        } finally {
+            afterProcess();
         }
 
     }
@@ -32,6 +34,13 @@ public abstract class HodorRunnable implements Runnable {
      */
     public void exceptionCaught(Exception e) {
         //默认不处理,交由子类处理处理任务出现异常时的逻辑
+    }
+
+    /**
+     * 任务执行完成处理
+     */
+    public void afterProcess() {
+        // 默认不处理，交由子类处理
     }
 
 }
