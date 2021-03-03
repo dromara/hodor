@@ -1,7 +1,7 @@
 package org.dromara.hodor.client.demo;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.remoting.api.message.request.SchedulerRequestBody;
+import org.dromara.hodor.remoting.api.message.request.ScheduledRequest;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.utils.LocalHost;
 import org.dromara.hodor.remoting.api.*;
@@ -36,7 +36,7 @@ public class RemotingClientTest {
 
         System.out.println("channel is open:" + connection.isOpen());
 
-        RequestBody body = SchedulerRequestBody.builder()
+        RequestBody body = ScheduledRequest.builder()
             .requestId(123L)
             .jobPath("org.dromara.hodor.client.demo.job.JobList")
             .jobCommand("test2")
