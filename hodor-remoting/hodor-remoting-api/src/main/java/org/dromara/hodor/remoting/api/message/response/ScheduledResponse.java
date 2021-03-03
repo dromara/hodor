@@ -3,12 +3,12 @@ package org.dromara.hodor.remoting.api.message.response;
 import org.dromara.hodor.remoting.api.message.ResponseBody;
 
 /**
- * remoting response
+ * scheduled response
  *
  * @author tomgs
  * @since 2021/2/26
  */
-public class RemotingResponse implements ResponseBody {
+public class ScheduledResponse implements ResponseBody {
 
     private static final long serialVersionUID = 8889407473710885893L;
 
@@ -20,15 +20,15 @@ public class RemotingResponse implements ResponseBody {
 
     private Object data;
 
-    public RemotingResponse(Integer code, String msg) {
+    public ScheduledResponse(Integer code, String msg) {
         this(0L, code, msg);
     }
 
-    public RemotingResponse(Long requestId, Integer code, String msg) {
+    public ScheduledResponse(Long requestId, Integer code, String msg) {
         this(requestId, code, msg, null);
     }
 
-    public RemotingResponse(Long requestId, Integer code, String msg, Object data) {
+    public ScheduledResponse(Long requestId, Integer code, String msg, Object data) {
         this.requestId = requestId;
         this.code = code;
         this.msg = msg;
