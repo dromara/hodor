@@ -9,8 +9,8 @@ import org.dromara.hodor.client.JobRegistrar;
 import org.dromara.hodor.client.ServiceProvider;
 import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.client.core.ScheduledMethodRunnable;
-import org.dromara.hodor.remoting.api.message.request.ScheduledRequest;
-import org.dromara.hodor.remoting.api.message.response.ScheduledResponse;
+import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
+import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
 
 /**
  * job execution
@@ -28,7 +28,7 @@ public class JobExecuteAction extends AbstractExecuteAction {
     }
 
     @Override
-    public ScheduledResponse executeRequest0(ScheduledRequest request) {
+    public JobExecuteResponse executeRequest0(JobExecuteRequest request) {
         ScheduledMethodRunnable jobRunnable = jobRegistrar.getJobRunnable(request.getGroupName(), request.getJobName());
         if (jobRunnable == null) {
             throw new IllegalArgumentException(String.format("not found job %s_%s.", request.getGroupName(), request.getJobName()));
@@ -43,7 +43,7 @@ public class JobExecuteAction extends AbstractExecuteAction {
         jobRunnable.run();
 
         // to set job return result to response
-        ScheduledResponse response = buildResponse(request);
+        JobExecuteResponse response = buildResponse(request);
         response.setStatus(JobExecuteStatus.SUCCESS);
         response.setCompleteTime(DateUtil.formatDateTime(new Date()));
         return response;

@@ -12,8 +12,8 @@ import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.client.executor.ExecutorManager;
 import org.dromara.hodor.common.log.LogUtil;
 import org.dromara.hodor.remoting.api.message.RemotingResponse;
-import org.dromara.hodor.remoting.api.message.request.ScheduledRequest;
-import org.dromara.hodor.remoting.api.message.response.ScheduledResponse;
+import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
+import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
 
 /**
  * abstract execute action
@@ -21,7 +21,7 @@ import org.dromara.hodor.remoting.api.message.response.ScheduledResponse;
  * @author tomgs
  * @since 2021/3/2
  */
-public abstract class AbstractExecuteAction extends AbstractAction<ScheduledRequest, ScheduledResponse> {
+public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteRequest, JobExecuteResponse> {
 
     private String loggerName;
 
@@ -36,10 +36,10 @@ public abstract class AbstractExecuteAction extends AbstractAction<ScheduledRequ
         this.properties = ServiceProvider.getInstance().getBean(HodorProperties.class);
     }
 
-    public abstract ScheduledResponse executeRequest0(ScheduledRequest request) throws Exception;
+    public abstract JobExecuteResponse executeRequest0(JobExecuteRequest request) throws Exception;
 
     @Override
-    public ScheduledResponse executeRequest(ScheduledRequest request) throws Exception {
+    public JobExecuteResponse executeRequest(JobExecuteRequest request) throws Exception {
         requestId = request.getRequestId();
         // send start execute response
         sendStartExecuteResponse(request);
@@ -55,25 +55,25 @@ public abstract class AbstractExecuteAction extends AbstractAction<ScheduledRequ
         // executing job
         jobLogger.info("start executing job.");
 
-        ScheduledResponse remotingResponse = executeRequest0(request);
+        JobExecuteResponse remotingResponse = executeRequest0(request);
 
         jobLogger.info("job execution completed.");
         return remotingResponse;
     }
 
-    public String createLogPath(ScheduledRequest request) {
+    public String createLogPath(JobExecuteRequest request) {
         return getJobLoggerDir() + File.separator + request.getRequestId();
     }
 
-    public void sendStartExecuteResponse(ScheduledRequest request) {
-        ScheduledResponse response = buildResponse(request);
+    public void sendStartExecuteResponse(JobExecuteRequest request) {
+        JobExecuteResponse response = buildResponse(request);
         response.setStatus(JobExecuteStatus.RUNNING);
         response.setStartTime(DateUtil.formatDateTime(new Date()));
         sendMessage(buildResponseMessage(RemotingResponse.succeeded(requestId, response)));
     }
 
-    public ScheduledResponse buildResponse(ScheduledRequest request) {
-        ScheduledResponse response = new ScheduledResponse();
+    public JobExecuteResponse buildResponse(JobExecuteRequest request) {
+        JobExecuteResponse response = new JobExecuteResponse();
         response.setRequestId(request.getRequestId());
         response.setShardId(request.getShardId());
         response.setShardName(request.getShardName());
@@ -88,18 +88,18 @@ public abstract class AbstractExecuteAction extends AbstractAction<ScheduledRequ
         return System.getProperty("user.dir", properties.getRootJobLogPath());
     }
 
-    private String createLoggerName(ScheduledRequest requestBody) {
+    private String createLoggerName(JobExecuteRequest request) {
         return MessageFormat.format("{0}_{1}_{2}_{3}", System.currentTimeMillis(),
-            requestBody.getGroupName(),
-            requestBody.getJobName(),
-            requestBody.getRequestId());
+            request.getGroupName(),
+            request.getJobName(),
+            request.getRequestId());
     }
 
-    private String createLogFileName(ScheduledRequest requestBody) {
+    private String createLogFileName(JobExecuteRequest request) {
         return MessageFormat.format("_job.{0}.{1}.{2}.log",
-            requestBody.getGroupName(),
-            requestBody.getJobName(),
-            requestBody.getRequestId());
+            request.getGroupName(),
+            request.getJobName(),
+            request.getRequestId());
     }
 
     @Override
