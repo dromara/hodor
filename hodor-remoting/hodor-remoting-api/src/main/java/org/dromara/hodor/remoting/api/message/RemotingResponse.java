@@ -38,7 +38,7 @@ public class RemotingResponse implements ResponseBody {
     }
 
     public static RemotingResponse succeeded(Long requestId, Object data) {
-        return new RemotingResponse(requestId, 0, "success", data);
+        return new RemotingResponse(requestId, RemotingStatus.SUCCEEDED, "success", data);
     }
 
     public static RemotingResponse failed(String msg) {
@@ -50,7 +50,7 @@ public class RemotingResponse implements ResponseBody {
     }
 
     public static RemotingResponse failed(Long requestId, String msg, Object data) {
-        return new RemotingResponse(requestId, 1, msg, data);
+        return new RemotingResponse(requestId, RemotingStatus.FAILED, msg, data);
     }
 
     public void setRequestId(Long requestId) {
