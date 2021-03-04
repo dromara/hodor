@@ -2,6 +2,7 @@ package org.dromara.hodor.client.action;
 
 import cn.hutool.core.date.DateUtil;
 import java.util.Date;
+import org.draomara.hodor.model.executor.JobExecuteStatus;
 import org.dromara.hodor.client.JobExecutionContext;
 import org.dromara.hodor.client.JobParameter;
 import org.dromara.hodor.client.JobRegistrar;
@@ -43,7 +44,7 @@ public class JobExecuteAction extends AbstractExecuteAction {
 
         // to set job return result to response
         ScheduledResponse response = buildResponse(request);
-        response.setStatus(0);
+        response.setStatus(JobExecuteStatus.SUCCESS);
         response.setCompleteTime(DateUtil.formatDateTime(new Date()));
         return response;
     }
