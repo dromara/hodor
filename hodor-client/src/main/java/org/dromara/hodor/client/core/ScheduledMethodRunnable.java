@@ -89,10 +89,17 @@ public class ScheduledMethodRunnable implements Runnable {
         catch (IllegalAccessException ex) {
             throw new UndeclaredThrowableException(ex);
         }
+        finally {
+            argsThreadLocal.remove();
+        }
     }
 
     @Override
     public String toString() {
-        return this.method.getDeclaringClass().getName() + "." + this.method.getName();
+        return "ScheduledMethodRunnable {" +
+            "target=" + target.getClass().getName() +
+            ", method=" + method.getName() +
+            ", hasArg=" + hasArg +
+            '}';
     }
 }

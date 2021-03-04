@@ -1,13 +1,16 @@
 package org.dromara.hodor.client.action;
 
+import cn.hutool.core.date.DateUtil;
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.Date;
 import org.apache.logging.log4j.Logger;
-import org.dromara.hodor.remoting.api.message.response.ScheduledResponse;
 import org.dromara.hodor.client.core.RequestContext;
-import org.dromara.hodor.remoting.api.message.request.ScheduledRequest;
 import org.dromara.hodor.client.executor.ExecutorManager;
 import org.dromara.hodor.common.log.LogUtil;
+import org.dromara.hodor.remoting.api.message.RemotingResponse;
+import org.dromara.hodor.remoting.api.message.request.ScheduledRequest;
+import org.dromara.hodor.remoting.api.message.response.ScheduledResponse;
 
 /**
  * abstract execute action
@@ -15,7 +18,7 @@ import org.dromara.hodor.common.log.LogUtil;
  * @author tomgs
  * @since 2021/3/2
  */
-public abstract class AbstractExecuteAction extends AbstractAction {
+public abstract class AbstractExecuteAction extends AbstractAction<ScheduledRequest, ScheduledResponse> {
 
     private String loggerName;
 
@@ -27,17 +30,13 @@ public abstract class AbstractExecuteAction extends AbstractAction {
         super(context);
     }
 
-    public abstract ScheduledResponse executeRequest(ScheduledRequest request) throws Exception;
+    public abstract ScheduledResponse executeRequest0(ScheduledRequest request) throws Exception;
 
     @Override
-    public void execute() throws Exception {
-        // deserialization
-        ScheduledRequest request = buildRequestMessage(ScheduledRequest.class);
+    public ScheduledResponse executeRequest(ScheduledRequest request) throws Exception {
         requestId = request.getRequestId();
-
         // send start execute response
-        ScheduledResponse response = new ScheduledResponse(requestId, 1, "start executing job.");
-        sendMessage(buildResponseMessage(response));
+        sendStartExecuteResponse(request);
 
         // log current thread
         ExecutorManager.getInstance().addRunningThread(requestId, Thread.currentThread());
@@ -50,20 +49,26 @@ public abstract class AbstractExecuteAction extends AbstractAction {
 
         // executing job
         jobLogger.info("start executing job.");
-        ScheduledResponse remotingResponse = executeRequest(request);
-        remotingResponse.setRequestId(requestId);
 
-        // send complete execute response
-        sendMessage(buildResponseMessage(remotingResponse));
+        ScheduledResponse remotingResponse = executeRequest0(request);
+
         jobLogger.info("job execution completed.");
+        return remotingResponse;
     }
 
-    @Override
-    public void exceptionCaught(Exception e) {
-        jobLogger.error("execute job has exception, {}.", e.getMessage(), e);
-        // send failed execute response
-        ScheduledResponse response = new ScheduledResponse(requestId, 1, "failed", e);
-        sendMessage(buildResponseMessage(response));
+    public void sendStartExecuteResponse(ScheduledRequest request) {
+        ScheduledResponse response = buildResponse(request);
+        response.setStatus(1);
+        response.setStartTime(DateUtil.formatDateTime(new Date()));
+        sendMessage(buildResponseMessage(RemotingResponse.succeeded(requestId, response)));
+    }
+
+    public ScheduledResponse buildResponse(ScheduledRequest request) {
+        ScheduledResponse response = new ScheduledResponse();
+        response.setRequestId(request.getRequestId());
+        response.setShardId(request.getShardId());
+        response.setShardName(request.getShardName());
+        return response;
     }
 
     public Logger getLogger() {

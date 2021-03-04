@@ -21,18 +21,17 @@ public class JobParameter {
 
     private String parameters;
 
-    private String sharingRequestId;
+    private Integer shardId;
 
-    public JobParameter(String groupName, String jobName, Long requestId, String parameters) {
-        this(groupName, jobName, requestId, parameters, null);
-    }
+    private String shardName;
 
-    public JobParameter(String groupName, String jobName, Long requestId, String parameters, String sharingRequestId) {
+    public JobParameter(String groupName, String jobName, Long requestId, String parameters, Integer shardId, String shardName) {
         this.groupName = groupName;
         this.jobName = jobName;
         this.requestId = requestId;
         this.parameters = parameters;
-        this.sharingRequestId = sharingRequestId;
+        this.shardId = shardId;
+        this.shardName = shardName;
     }
 
 }

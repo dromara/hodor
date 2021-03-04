@@ -1,5 +1,7 @@
 package org.dromara.hodor.client.action;
 
+import cn.hutool.core.date.DateUtil;
+import java.util.Date;
 import org.dromara.hodor.client.JobExecutionContext;
 import org.dromara.hodor.client.JobParameter;
 import org.dromara.hodor.client.JobRegistrar;
@@ -25,20 +27,25 @@ public class JobExecuteAction extends AbstractExecuteAction {
     }
 
     @Override
-    public ScheduledResponse executeRequest(ScheduledRequest request) {
+    public ScheduledResponse executeRequest0(ScheduledRequest request) {
         ScheduledMethodRunnable jobRunnable = jobRegistrar.getJobRunnable(request.getGroupName(), request.getJobName());
         if (jobRunnable == null) {
             throw new IllegalArgumentException(String.format("not found job %s_%s.", request.getGroupName(), request.getJobName()));
         }
         if (jobRunnable.isHasArg()) {
-            final JobParameter jobParameter = new JobParameter(request.getGroupName(), request.getJobName(), request.getRequestId(), request.getJobParameters());
+            final JobParameter jobParameter = new JobParameter(request.getGroupName(), request.getJobName(), request.getRequestId(),
+                request.getJobParameters(), request.getShardId(), request.getShardName());
             final JobExecutionContext context = new JobExecutionContext(getLogger(), jobParameter);
             jobRunnable.setArgs(context);
         }
 
         jobRunnable.run();
+
         // to set job return result to response
-        return new ScheduledResponse(0, "success");
+        ScheduledResponse response = buildResponse(request);
+        response.setStatus(0);
+        response.setCompleteTime(DateUtil.formatDateTime(new Date()));
+        return response;
     }
 
 }

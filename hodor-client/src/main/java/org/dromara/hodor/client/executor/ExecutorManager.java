@@ -37,7 +37,7 @@ public class ExecutorManager {
         return INSTANCE;
     }
 
-    public void submit(final HodorRunnable runnable) {
+    public void execute(final HodorRunnable runnable) {
         hodorExecutor.parallelExecute(runnable);
     }
 

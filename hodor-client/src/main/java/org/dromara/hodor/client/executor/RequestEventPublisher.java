@@ -6,6 +6,8 @@ import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.common.event.AbstractEventPublisher;
 import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.remoting.api.message.MessageType;
+import org.dromara.hodor.remoting.api.message.request.HeartbeatRequest;
+import org.dromara.hodor.remoting.api.message.request.ScheduledRequest;
 
 /**
  *  请求事件分发器
@@ -51,14 +53,16 @@ public class RequestEventPublisher extends AbstractEventPublisher<RequestContext
     private void registerRequestExecuteListener() {
         this.addListener(e -> {
             RequestContext context = e.getValue();
-            executorManager.submit(new JobExecuteAction(context));
+            context.setRequestType(ScheduledRequest.class);
+            executorManager.execute(new JobExecuteAction(context));
         }, MessageType.JOB_EXEC_REQUEST);
     }
 
     private void registerHeartbeatListener() {
         this.addListener(e -> {
             RequestContext context = e.getValue();
-            executorManager.submit(new HeartbeatAction(context));
+            context.setRequestType(HeartbeatRequest.class);
+            executorManager.execute(new HeartbeatAction(context));
         }, MessageType.HEARTBEAT_REQUEST);
     }
 
