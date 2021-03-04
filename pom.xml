@@ -18,6 +18,7 @@
         <module>hodor-server</module>
         <module>hodor-scheduler</module>
         <module>hodor-client-demo</module>
+        <module>hodor-model</module>
     </modules>
 
     <organization>
@@ -71,6 +72,12 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>hodor-model</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.dromara</groupId>
                 <artifactId>hodor-admin</artifactId>
