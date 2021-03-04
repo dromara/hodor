@@ -8,7 +8,7 @@ import org.dromara.hodor.remoting.api.message.ResponseBody;
  * @author tomgs
  * @since 2021/2/26
  */
-public class ScheduledResponse implements ResponseBody {
+public class JobExecuteResponse implements ResponseBody {
 
     private static final long serialVersionUID = 8889407473710885893L;
 

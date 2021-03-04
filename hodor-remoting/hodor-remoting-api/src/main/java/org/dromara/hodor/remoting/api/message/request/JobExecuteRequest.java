@@ -16,7 +16,7 @@ import org.dromara.hodor.remoting.api.message.RequestBody;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ScheduledRequest implements RequestBody {
+public class JobExecuteRequest implements RequestBody {
 
     private static final long serialVersionUID = -3703044901986185064L;
 
