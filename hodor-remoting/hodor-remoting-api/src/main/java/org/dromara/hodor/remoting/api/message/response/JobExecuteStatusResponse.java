@@ -10,24 +10,16 @@ import org.dromara.hodor.remoting.api.message.ResponseBody;
  */
 public class JobExecuteStatusResponse implements ResponseBody {
 
+    private static final long serialVersionUID = 8892404430523254103L;
+
     @Override
     public Long getRequestId() {
         return null;
     }
 
     @Override
-    public int getCode() {
-        return 0;
-    }
+    public void setRequestId(Long requestId) {
 
-    @Override
-    public String getMsg() {
-        return null;
-    }
-
-    @Override
-    public Object getData() {
-        return null;
     }
 
 }

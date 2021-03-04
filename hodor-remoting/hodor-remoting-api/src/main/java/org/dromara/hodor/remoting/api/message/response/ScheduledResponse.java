@@ -14,57 +14,17 @@ public class ScheduledResponse implements ResponseBody {
 
     private Long requestId;
 
-    private Integer code;
+    private Integer status;
 
-    private String msg;
+    private String startTime;
 
-    private Object data;
+    private String completeTime;
 
-    public ScheduledResponse(Integer code, String msg) {
-        this(0L, code, msg);
-    }
+    private Integer processTime;
 
-    public ScheduledResponse(Long requestId, Integer code, String msg) {
-        this(requestId, code, msg, null);
-    }
+    private Integer shardId;
 
-    public ScheduledResponse(Long requestId, Integer code, String msg, Object data) {
-        this.requestId = requestId;
-        this.code = code;
-        this.msg = msg;
-        this.data = data;
-    }
-
-    public void setRequestId(Long requestId) {
-        this.requestId = requestId;
-    }
-
-    public void setCode(Integer code) {
-        this.code = code;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public void setData(Object data) {
-        this.data = data;
-    }
-
-    @Override
-    public int getCode() {
-        return code;
-    }
-
-    @Override
-    public String getMsg() {
-        return msg;
-    }
-
-    @Override
-    public Object getData() {
-        return data;
-    }
+    private String shardName;
 
     @Override
     public Long getRequestId() {
@@ -72,12 +32,68 @@ public class ScheduledResponse implements ResponseBody {
     }
 
     @Override
+    public void setRequestId(Long requestId) {
+        this.requestId = requestId;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getCompleteTime() {
+        return completeTime;
+    }
+
+    public void setCompleteTime(String completeTime) {
+        this.completeTime = completeTime;
+    }
+
+    public Integer getProcessTime() {
+        return processTime;
+    }
+
+    public void setProcessTime(Integer processTime) {
+        this.processTime = processTime;
+    }
+
+    public Integer getShardId() {
+        return shardId;
+    }
+
+    public void setShardId(Integer shardId) {
+        this.shardId = shardId;
+    }
+
+    public String getShardName() {
+        return shardName;
+    }
+
+    public void setShardName(String shardName) {
+        this.shardName = shardName;
+    }
+
+    @Override
     public String toString() {
-        return "RemotingResponse{" +
+        return "ScheduledResponse{" +
             "requestId=" + requestId +
-            ", code=" + code +
-            ", msg='" + msg + '\'' +
-            ", data=" + data +
+            ", status='" + status + '\'' +
+            ", startTime='" + startTime + '\'' +
+            ", completeTime='" + completeTime + '\'' +
+            ", processTime=" + processTime +
+            ", shardId=" + shardId +
+            ", shardName='" + shardName + '\'' +
             '}';
     }
 

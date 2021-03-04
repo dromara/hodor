@@ -38,4 +38,8 @@ public class ScheduledRequest implements RequestBody {
 
     private Integer timeout;
 
+    private Integer shardId;
+
+    private String shardName;
+
 }

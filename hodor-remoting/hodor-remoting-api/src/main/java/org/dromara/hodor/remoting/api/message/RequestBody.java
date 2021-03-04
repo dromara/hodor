@@ -16,4 +16,10 @@ public interface RequestBody extends Serializable {
      */
     Long getRequestId();
 
+    /**
+     * 设置requestId
+     * @param requestId 请求id
+     */
+    void setRequestId(Long requestId);
+
 }

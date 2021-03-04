@@ -10,24 +10,16 @@ import org.dromara.hodor.remoting.api.message.ResponseBody;
  */
 public class HeartbeatResponse implements ResponseBody {
 
+    private static final long serialVersionUID = -6628660201359842320L;
+
     @Override
     public Long getRequestId() {
         return null;
     }
 
     @Override
-    public int getCode() {
-        return 0;
-    }
+    public void setRequestId(Long requestId) {
 
-    @Override
-    public String getMsg() {
-        return null;
-    }
-
-    @Override
-    public Object getData() {
-        return null;
     }
 
 }
