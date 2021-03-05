@@ -2,12 +2,14 @@ package org.dromara.hodor.client.executor;
 
 import org.dromara.hodor.client.action.HeartbeatAction;
 import org.dromara.hodor.client.action.JobExecuteAction;
+import org.dromara.hodor.client.action.KillRunningJobAction;
 import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.common.event.AbstractEventPublisher;
 import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.remoting.api.message.MessageType;
 import org.dromara.hodor.remoting.api.message.request.HeartbeatRequest;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
+import org.dromara.hodor.remoting.api.message.request.KillRunningJobRequest;
 
 /**
  *  请求事件分发器
@@ -47,7 +49,11 @@ public class RequestEventPublisher extends AbstractEventPublisher<RequestContext
     }
 
     private void registerKillRunningListener() {
-
+        this.addListener(e -> {
+            RequestContext context = e.getValue();
+            context.setRequestType(KillRunningJobRequest.class);
+            executorManager.execute(new KillRunningJobAction(context));
+        }, MessageType.JOB_EXEC_REQUEST);
     }
 
     private void registerRequestExecuteListener() {

@@ -12,14 +12,16 @@ public class KillRunningJobRequest implements RequestBody {
 
     private static final long serialVersionUID = -1814909263364679439L;
 
+    private Long requestId;
+
     @Override
     public Long getRequestId() {
-        return null;
+        return requestId;
     }
 
     @Override
     public void setRequestId(Long requestId) {
-
+        this.requestId = requestId;
     }
 
 }
