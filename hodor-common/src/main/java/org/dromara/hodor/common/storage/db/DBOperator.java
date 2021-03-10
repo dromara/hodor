@@ -1,16 +1,17 @@
 package org.dromara.hodor.common.storage.db;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import javax.sql.DataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.dromara.hodor.common.extension.ExtensionLoader;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
@@ -28,7 +29,7 @@ public class DBOperator {
   private final DataSource dataSource;
 
   public DBOperator() {
-    AbstractHodorDataSource hodorDataSource = ExtensionLoader.getExtensionLoader(AbstractHodorDataSource.class).getProtoJoin("datasource");
+    HodorDataSource hodorDataSource = ExtensionLoader.getExtensionLoader(HodorDataSource.class).getProtoJoin("datasource");
     requireNonNull(hodorDataSource, "data source must not be null.");
     this.dataSource = hodorDataSource.getDataSource();
     this.queryRunner = new QueryRunner(dataSource);
