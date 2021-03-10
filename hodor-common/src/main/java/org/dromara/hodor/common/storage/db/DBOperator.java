@@ -28,7 +28,7 @@ public class DBOperator {
   private final DataSource dataSource;
 
   public DBOperator() {
-    HodorDataSource hodorDataSource = ExtensionLoader.getExtensionLoader(HodorDataSource.class).getProtoJoin("datasource");
+    AbstractHodorDataSource hodorDataSource = ExtensionLoader.getExtensionLoader(AbstractHodorDataSource.class).getProtoJoin("datasource");
     requireNonNull(hodorDataSource, "data source must not be null.");
     this.dataSource = hodorDataSource.getDataSource();
     this.queryRunner = new QueryRunner(dataSource);
