@@ -8,6 +8,7 @@ import org.dromara.hodor.client.executor.RequestEventPublisher;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.storage.db.DBOperator;
 import org.dromara.hodor.common.storage.db.DataSourceConfig;
+import org.dromara.hodor.common.storage.db.AbstractHodorDataSource;
 import org.dromara.hodor.common.storage.db.HodorDataSource;
 import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

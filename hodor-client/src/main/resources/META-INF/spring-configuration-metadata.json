@@ -83,6 +83,55 @@
       "name": "hodor.longTaskTime",
       "description": "长时任务临界值单位秒，默认60s为长时任务，统计上一次任务执行的时长，然后判断下一次执行是放在长时队列还是短时队列",
       "type": "java.lang.Integer"
+    },
+    {
+      "sourceType": "org.dromara.hodor.client.annotation.HodorProperties",
+      "defaultValue": null,
+      "name": "hodor.rootJobLogPath",
+      "description": "任务日志路径",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.dromara.hodor.client.annotation.HodorProperties",
+      "defaultValue": null,
+      "name": "hodor.dataSourceConfig",
+      "description": "数据库配置",
+      "type": "org.dromara.hodor.common.storage.db.DataSourceConfig"
+    },
+    {
+      "sourceType": "org.dromara.hodor.client.annotation.HodorProperties",
+      "defaultValue": null,
+      "name": "hodor.dataSourceConfig.dataSourceProperties",
+      "description": "数据库连接池扩展属性配置",
+      "type": "java.util.Properties"
+    },
+    {
+      "sourceType": "org.dromara.hodor.client.annotation.HodorProperties",
+      "defaultValue": null,
+      "name": "hodor.dataSourceConfig.url",
+      "description": "数据库url配置",
+      "type": "java.util.String"
+    },
+    {
+      "sourceType": "org.dromara.hodor.client.annotation.HodorProperties",
+      "defaultValue": null,
+      "name": "hodor.dataSourceConfig.dataSourceClassName",
+      "description": "数据库驱动全类名",
+      "type": "java.util.String"
+    },
+    {
+      "sourceType": "org.dromara.hodor.client.annotation.HodorProperties",
+      "defaultValue": null,
+      "name": "hodor.dataSourceConfig.username",
+      "description": "数据库用户名",
+      "type": "java.util.String"
+    },
+    {
+      "sourceType": "org.dromara.hodor.client.annotation.HodorProperties",
+      "defaultValue": null,
+      "name": "hodor.dataSourceConfig.password",
+      "description": "数据库密码",
+      "type": "java.util.String"
     }
   ]
 }
