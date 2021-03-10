@@ -18,3 +18,9 @@ hodor:
   registryAddress: http://localhost:8080/hodor/registry
   queueSize: 5000
   poolSize: 500
+  dataSourceConfig:
+    dataSourceClassName: org.h2.jdbcx.JdbcDataSource
+    url: jdbc:h2:file:./hodor-scheduler/db_hodor;IGNORECASE=TRUE
+    dataSourceProperties:
+      username: test
+      password: test

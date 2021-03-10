@@ -68,6 +68,7 @@
         <mapstruct.version>1.2.0.Final</mapstruct.version>
         <curator.version>2.13.0</curator.version>
         <quartz.version>2.3.2</quartz.version>
+        <commons-dbutils.version>1.7</commons-dbutils.version>
     </properties>
 
     <dependencyManagement>
@@ -227,6 +228,12 @@
                 <groupId>commons-dbcp</groupId>
                 <artifactId>commons-dbcp</artifactId>
                 <version>${commons-dbcp.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-dbutils</groupId>
+                <artifactId>commons-dbutils</artifactId>
+                <version>${commons-dbutils.version}</version>
             </dependency>
 
             <dependency>

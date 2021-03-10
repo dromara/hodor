@@ -2,12 +2,9 @@ package org.dromara.hodor.client.executor;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadPoolExecutor;
 import org.dromara.hodor.common.executor.HodorExecutor;
 import org.dromara.hodor.common.executor.HodorExecutorFactory;
 import org.dromara.hodor.common.executor.HodorRunnable;
-import org.dromara.hodor.common.queue.CircleQueue;
-import org.dromara.hodor.common.queue.DiscardOldestElementPolicy;
 
 /**
  * executor manager
@@ -21,16 +18,16 @@ public class ExecutorManager {
 
     private final HodorExecutor hodorExecutor;
 
+    private final HodorExecutor commonExecutor;
+
     private final Map<Long, Thread> runningThread = new ConcurrentHashMap<>();
 
     private ExecutorManager() {
         final int threadSize = Runtime.getRuntime().availableProcessors() * 2;
-        final ThreadPoolExecutor threadPoolExecutor = HodorExecutorFactory.createThreadPoolExecutor("job-exec", threadSize);
-        this.hodorExecutor = new HodorExecutor();
-
-        hodorExecutor.setCircleQueue(new CircleQueue<>(100));
-        hodorExecutor.setExecutor(threadPoolExecutor);
-        hodorExecutor.setRejectEnqueuePolicy(new DiscardOldestElementPolicy<>());
+        // request job, heartbeat
+        hodorExecutor = HodorExecutorFactory.createDefaultExecutor("job-exec", threadSize, false);
+        // fetch log, job status, kill job
+        commonExecutor = HodorExecutorFactory.createDefaultExecutor("common-exec", threadSize / 4, true);
     }
 
     public static ExecutorManager getInstance() {
@@ -41,8 +38,16 @@ public class ExecutorManager {
         hodorExecutor.parallelExecute(runnable);
     }
 
+    public void commonExecute(final HodorRunnable runnable) {
+        commonExecutor.parallelExecute(runnable);
+    }
+
     public HodorExecutor getHodorExecutor() {
         return hodorExecutor;
+    }
+
+    public HodorExecutor getCommonExecutor() {
+        return commonExecutor;
     }
 
     public void addRunningThread(Long requestId, Thread currentThread) {

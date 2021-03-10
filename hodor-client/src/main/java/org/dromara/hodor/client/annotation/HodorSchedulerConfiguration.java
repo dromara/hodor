@@ -6,6 +6,9 @@ import org.dromara.hodor.client.JobRegistrar;
 import org.dromara.hodor.client.ServiceProvider;
 import org.dromara.hodor.client.executor.RequestEventPublisher;
 import org.dromara.hodor.common.extension.ExtensionLoader;
+import org.dromara.hodor.common.storage.db.DBOperator;
+import org.dromara.hodor.common.storage.db.DataSourceConfig;
+import org.dromara.hodor.common.storage.db.HodorDataSource;
 import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -57,6 +60,14 @@ public class HodorSchedulerConfiguration {
     @Bean
     public RemotingMessageSerializer remotingMessageSerializer() {
         return ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
+    }
+
+    @Bean
+    public DBOperator dbOperator() {
+        DataSourceConfig dataSourceConfig = properties.getDataSourceConfig();
+        HodorDataSource datasource = ExtensionLoader.getExtensionLoader(HodorDataSource.class, DataSourceConfig.class)
+            .getProtoJoin("datasource", dataSourceConfig);
+        return new DBOperator(datasource.getDataSource());
     }
 
 }

@@ -1,6 +1,7 @@
 package org.dromara.hodor.client.annotation;
 
 import lombok.Data;
+import org.dromara.hodor.common.storage.db.DataSourceConfig;
 import org.dromara.hodor.common.utils.LocalHost;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -63,5 +64,10 @@ public class HodorProperties {
      * 任务日志路径
      */
     private String rootJobLogPath;
+
+    /**
+     * 数据库配置
+     */
+    private DataSourceConfig dataSourceConfig;
 
 }

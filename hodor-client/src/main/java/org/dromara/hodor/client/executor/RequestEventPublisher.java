@@ -2,13 +2,17 @@ package org.dromara.hodor.client.executor;
 
 import org.dromara.hodor.client.action.HeartbeatAction;
 import org.dromara.hodor.client.action.JobExecuteAction;
+import org.dromara.hodor.client.action.JobExecuteLogAction;
+import org.dromara.hodor.client.action.JobExecuteStatusAction;
 import org.dromara.hodor.client.action.KillRunningJobAction;
 import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.common.event.AbstractEventPublisher;
 import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.remoting.api.message.MessageType;
 import org.dromara.hodor.remoting.api.message.request.HeartbeatRequest;
+import org.dromara.hodor.remoting.api.message.request.JobExecuteLogRequest;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
+import org.dromara.hodor.remoting.api.message.request.JobExecuteStatusRequest;
 import org.dromara.hodor.remoting.api.message.request.KillRunningJobRequest;
 
 /**
@@ -37,23 +41,31 @@ public class RequestEventPublisher extends AbstractEventPublisher<RequestContext
     }
 
     private void registerFailureHandlerListener() {
-
+        //TODO: 发送失败消息处理
     }
 
     private void registerFetchJobExecLogListener() {
-
+        this.addListener(e -> {
+            RequestContext context = e.getValue();
+            context.setRequestType(JobExecuteLogRequest.class);
+            executorManager.commonExecute(new JobExecuteLogAction(context));
+        }, MessageType.FETCH_JOB_LOG_REQUEST);
     }
 
     private void registerFetchJobStatusListener() {
-
+        this.addListener(e -> {
+            RequestContext context = e.getValue();
+            context.setRequestType(JobExecuteStatusRequest.class);
+            executorManager.commonExecute(new JobExecuteStatusAction(context));
+        }, MessageType.FETCH_JOB_STATUS_REQUEST);
     }
 
     private void registerKillRunningListener() {
         this.addListener(e -> {
             RequestContext context = e.getValue();
             context.setRequestType(KillRunningJobRequest.class);
-            executorManager.execute(new KillRunningJobAction(context));
-        }, MessageType.JOB_EXEC_REQUEST);
+            executorManager.commonExecute(new KillRunningJobAction(context));
+        }, MessageType.KILL_JOB_REQUEST);
     }
 
     private void registerRequestExecuteListener() {
