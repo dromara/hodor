@@ -6,8 +6,11 @@ import java.lang.reflect.UndeclaredThrowableException;
 import org.springframework.util.ReflectionUtils;
 
 /**
+ * schedule method runnable
+ *
  * @author tomgs
  * @since 2021/3/1
+ *
  * @see org.springframework.scheduling.support.ScheduledMethodRunnable
  */
 public class ScheduledMethodRunnable implements Runnable {
@@ -44,7 +47,6 @@ public class ScheduledMethodRunnable implements Runnable {
         this.method = target.getClass().getMethod(methodName);
         this.hasArg = hasArg;
     }
-
 
     /**
      * Return the target instance to call the method on.
@@ -102,4 +104,5 @@ public class ScheduledMethodRunnable implements Runnable {
             ", hasArg=" + hasArg +
             '}';
     }
+
 }
