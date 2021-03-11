@@ -1,11 +1,13 @@
 package org.dromara.hodor.client;
 
+import java.sql.SQLException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.client.core.HodorDatabaseSetup;
 import org.dromara.hodor.client.executor.ExecutorServer;
 import org.dromara.hodor.client.executor.MsgSender;
 import org.dromara.hodor.common.concurrent.HodorThreadFactory;
@@ -29,6 +31,8 @@ public class HodorClientInit implements ApplicationRunner {
 
     private final ScheduledExecutorService heartbeatSenderService;
 
+    private final HodorDatabaseSetup hodorDatabaseSetup;
+
     public HodorClientInit() {
         this.interval = System.getProperty("hodor.heartbeat.interval", "3000");
 
@@ -39,11 +43,15 @@ public class HodorClientInit implements ApplicationRunner {
         this.heartbeatSenderService = new ScheduledThreadPoolExecutor(2,
             HodorThreadFactory.create("hodor-heartbeat-sender", true),
             new ThreadPoolExecutor.DiscardOldestPolicy());
+
+        this.hodorDatabaseSetup = new HodorDatabaseSetup();
     }
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
         // TODO: 这里可以改造为SPI的方式加载服务
+        // init data
+        initHodorClientData();
         // start executor server
         log.info("HodorClient starting executor server...");
         startExecutorServer();
@@ -58,6 +66,11 @@ public class HodorClientInit implements ApplicationRunner {
 
         // add close shutdown hook
         Runtime.getRuntime().addShutdownHook(new Thread(this::close));
+    }
+
+    private void initHodorClientData() throws SQLException {
+        hodorDatabaseSetup.initTables();
+        hodorDatabaseSetup.initData();
     }
 
     private void startExecutorServer() throws InterruptedException {

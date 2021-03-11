@@ -2,7 +2,6 @@ package org.dromara.hodor.client.demo.job;
 
 import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.client.JobExecutionContext;
-import org.dromara.hodor.client.JobParameter;
 import org.dromara.hodor.client.annotation.Job;
 import org.springframework.stereotype.Component;
 

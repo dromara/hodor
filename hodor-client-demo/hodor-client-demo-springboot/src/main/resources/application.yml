@@ -20,7 +20,7 @@ hodor:
   poolSize: 500
   dataSourceConfig:
     dataSourceClassName: org.h2.jdbcx.JdbcDataSource
-    url: jdbc:h2:file:./hodor-scheduler/db_hodor;IGNORECASE=TRUE
+    url: jdbc:h2:file:./hodorScheduler/db_hodor;IGNORECASE=TRUE
     username: test
     password: test
     dataSourceProperties:
