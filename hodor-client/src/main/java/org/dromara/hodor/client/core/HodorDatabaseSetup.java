@@ -2,6 +2,7 @@ package org.dromara.hodor.client.core;
 
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.client.ServiceProvider;
 import org.dromara.hodor.common.storage.db.DBOperator;
 
@@ -11,6 +12,7 @@ import org.dromara.hodor.common.storage.db.DBOperator;
  * @author tomgs
  * @since 2021/3/11
  */
+@Slf4j
 public class HodorDatabaseSetup {
 
     private final DBOperator dbOperator;
@@ -25,7 +27,7 @@ public class HodorDatabaseSetup {
      * 初始化表
      */
     public void initTables() throws SQLException {
-        //createJobExecutionTable();
+        createJobExecutionTable();
     }
 
     /**
@@ -36,12 +38,37 @@ public class HodorDatabaseSetup {
     }
 
     private void createJobExecutionTable() throws SQLException {
-        String sql = buildCreateJobExecutionTableSql();
-        dbOperator.createTableIfNeeded(JOB_EXECUTION_TABLE_NAME, sql);
+        String tableSql = buildCreateJobExecutionTableSql();
+        String indexSql = buildJobExecutionTableIndex();
+
+        log.info("create table sql: {}", tableSql);
+        log.info("create index sql: {}", indexSql);
+
+        dbOperator.createTableIfNeeded(JOB_EXECUTION_TABLE_NAME, tableSql);
+        dbOperator.update(indexSql);
     }
 
     private String buildCreateJobExecutionTableSql() {
-        return MessageFormat.format("CREATE TABLE {0} {}",
+        return MessageFormat.format("CREATE TABLE {0} " +
+                "(\n" +
+                "\trequest_id INT NOT NULL,\n" +
+                "\tgroup_name VARCHAR2 NOT NULL,\n" +
+                "\tjob_name VARCHAR2 NOT NULL,\n" +
+                "\tparameters VARCHAR2 DEFAULT '' NOT NULL,\n" +
+                "\tscheduler_tag VARCHAR2 NOT NULL,\n" +
+                "\tclient_hostname VARCHAR2 NOT NULL,\n" +
+                "\tclient_ip VARCHAR2 NOT NULL,\n" +
+                "\tstart_time TIMESTAMP NOT NULL,\n" +
+                "\tcomplete_time TIMESTAMP NOT NULL,\n" +
+                "\tstatus INT NOT NULL,\n" +
+                "\tcomments VARCHAR2 NOT NULL,\n" +
+                "\tCONSTRAINT {0}_pk PRIMARY KEY (request_id)\n" +
+                ");",
+            JOB_EXECUTION_TABLE_NAME);
+    }
+
+    private String buildJobExecutionTableIndex() {
+        return MessageFormat.format("CREATE UNIQUE INDEX {0}_request_id_uindex ON {0} (request_id);",
             JOB_EXECUTION_TABLE_NAME);
     }
 
