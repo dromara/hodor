@@ -183,7 +183,8 @@ public class CircleQueue<T> extends AbstractQueue<T> {
       return "[]";
     } else {
       StringBuilder sb = new StringBuilder();
-      sb.append(String.format("Queue size: %s, capacity: %s;\n", size(), getCapacity()));
+      sb.append(String.format("Queue size: %s, capacity: %s;", size(), getCapacity()));
+      sb.append("\n");
       sb.append("[");
       if (tail > head) {
         for (int i = head; i < tail; i++) {
