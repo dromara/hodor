@@ -16,12 +16,7 @@ public abstract class AbstractHodorDataSource implements HodorDataSource {
 
     private DataSourceConfig dataSourceConfig;
 
-    public AbstractHodorDataSource() {
-
-    }
-
     public AbstractHodorDataSource(final DataSourceConfig dataSourceConfig) {
-        requireNonNull(dataSourceConfig, "data source config must not be null.");
         this.dataSourceConfig = dataSourceConfig;
     }
 
