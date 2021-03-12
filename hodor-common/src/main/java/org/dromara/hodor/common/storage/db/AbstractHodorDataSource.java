@@ -2,8 +2,6 @@ package org.dromara.hodor.common.storage.db;
 
 import javax.sql.DataSource;
 
-import static java.util.Objects.requireNonNull;
-
 /**
  * hodor data source
  *
