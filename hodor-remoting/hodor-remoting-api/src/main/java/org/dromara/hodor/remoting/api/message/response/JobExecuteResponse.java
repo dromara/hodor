@@ -1,18 +1,14 @@
 package org.dromara.hodor.remoting.api.message.response;
 
-import org.dromara.hodor.remoting.api.message.ResponseBody;
-
 /**
  * scheduled response
  *
  * @author tomgs
  * @since 2021/2/26
  */
-public class JobExecuteResponse implements ResponseBody {
+public class JobExecuteResponse extends AbstractResponseBody {
 
     private static final long serialVersionUID = 8889407473710885893L;
-
-    private Long requestId;
 
     private Integer status;
 
@@ -25,16 +21,6 @@ public class JobExecuteResponse implements ResponseBody {
     private Integer shardId;
 
     private String shardName;
-
-    @Override
-    public Long getRequestId() {
-        return requestId;
-    }
-
-    @Override
-    public void setRequestId(Long requestId) {
-        this.requestId = requestId;
-    }
 
     public Integer getStatus() {
         return status;
@@ -87,7 +73,7 @@ public class JobExecuteResponse implements ResponseBody {
     @Override
     public String toString() {
         return "ScheduledResponse{" +
-            "requestId=" + requestId +
+            "requestId=" + getRequestId() +
             ", status='" + status + '\'' +
             ", startTime='" + startTime + '\'' +
             ", completeTime='" + completeTime + '\'' +
