@@ -62,6 +62,7 @@ public class HodorDatabaseSetup {
                 "\tcomplete_time TIMESTAMP NOT NULL,\n" +
                 "\tstatus INT NOT NULL,\n" +
                 "\tcomments VARCHAR2 NOT NULL,\n" +
+                "\tresult VARCHAR2 DEFAULT '' NOT NULL,\n" +
                 "\tCONSTRAINT {0}_pk PRIMARY KEY (request_id)\n" +
                 ");",
             JOB_EXECUTION_TABLE_NAME);
