@@ -19,13 +19,8 @@ public class HeartbeatAction extends AbstractAction<HeartbeatRequest, HeartbeatR
     }
 
     @Override
-    public HeartbeatResponse executeRequest(HeartbeatRequest request) throws Exception {
+    public HeartbeatResponse executeRequest(HeartbeatRequest request) {
         return null;
-    }
-
-    @Override
-    public void exceptionCaught(Exception e) {
-        log.error("heartbeat request handler exception, {}", e.getMessage(), e);
     }
 
 }

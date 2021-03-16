@@ -41,7 +41,6 @@ public abstract class AbstractAction<I extends RequestBody, O extends ResponseBo
     @Override
     @SuppressWarnings("unchecked")
     public void execute() throws Exception {
-
         I request = (I) buildRequestMessage(getRequestContext().getRequestType());
         requestId = request.getRequestId();
         O response = executeRequest(request);
