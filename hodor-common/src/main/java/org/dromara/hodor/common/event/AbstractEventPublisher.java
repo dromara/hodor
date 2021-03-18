@@ -41,9 +41,6 @@ public abstract class AbstractEventPublisher<V> implements EventPublisher<V> {
     }
 
     public void removeListener(ObjectListener<V> objectListener, Object eventType) {
-        if (listeners == null) {
-            return;
-        }
         lock.lock();
         try {
             Set<ObjectListener<V>> listenerSet = listeners.get(eventType);
@@ -70,27 +67,26 @@ public abstract class AbstractEventPublisher<V> implements EventPublisher<V> {
     }
 
     public void publish(Event<V> event) {
-        if (listeners == null) {
-            return;
-        }
-        Object eventType = event.getEventType();
-        if (listeners.get(eventType) != null) {
-            Set<ObjectListener<V>> listenerSet = listeners.get(eventType);
-            for (ObjectListener<V> listener : listenerSet) {
-                listener.onEvent(event);
-            }
+        Set<ObjectListener<V>> listeners = getListeners(event.getEventType());
+        for (ObjectListener<V> listener : listeners) {
+            listener.onEvent(event);
         }
     }
 
     public void clearListener() {
         lock.lock();
         try {
-            if (listeners != null) {
-                listeners = null;
-            }
+            listeners.clear();
         } finally {
             lock.unlock();
         }
+    }
+
+    public Set<ObjectListener<V>> getListeners(Object eventType) {
+        if (listeners.get(eventType) == null) {
+            return Sets.newHashSet();
+        }
+        return listeners.get(eventType);
     }
 
 }
