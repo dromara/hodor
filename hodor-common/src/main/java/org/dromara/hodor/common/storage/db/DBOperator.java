@@ -41,15 +41,18 @@ public class DBOperator {
     this.queryRunner = new QueryRunner(dataSource);
   }
 
-  public void createTableIfNeeded(String tableName, String sql) throws SQLException {
+  public boolean createTableIfNeeded(String tableName, String sql) throws SQLException {
     try (Connection connection = dataSource.getConnection()) {
+      // 表名要大写
       try (ResultSet resultSet = connection.getMetaData()
-          .getTables(null, null, tableName, new String[]{"TABLE"})) {
+          .getTables(null, null, tableName.toUpperCase(), new String[]{"TABLE"})) {
         if (!resultSet.next()) {
           queryRunner.update(connection, sql);
+          return false;
         }
       }
     }
+    return true;
   }
 
   public <T> T query(String querySql, ResultSetHandler<T> rsh, Object... params) throws SQLException {
