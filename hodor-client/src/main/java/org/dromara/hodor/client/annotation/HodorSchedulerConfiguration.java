@@ -4,11 +4,11 @@ import org.dromara.hodor.client.HodorApiClient;
 import org.dromara.hodor.client.HodorClientInit;
 import org.dromara.hodor.client.JobRegistrar;
 import org.dromara.hodor.client.ServiceProvider;
+import org.dromara.hodor.client.executor.JobPersistenceEventPublisher;
 import org.dromara.hodor.client.executor.RequestEventPublisher;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.storage.db.DBOperator;
 import org.dromara.hodor.common.storage.db.DataSourceConfig;
-import org.dromara.hodor.common.storage.db.AbstractHodorDataSource;
 import org.dromara.hodor.common.storage.db.HodorDataSource;
 import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -56,6 +56,11 @@ public class HodorSchedulerConfiguration {
     @Bean
     public RequestEventPublisher requestEventPublisher() {
         return new RequestEventPublisher();
+    }
+
+    @Bean
+    public JobPersistenceEventPublisher jobPersistenceEventPublisher() {
+        return new JobPersistenceEventPublisher(dbOperator());
     }
 
     @Bean

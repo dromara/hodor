@@ -44,8 +44,10 @@ public class HodorDatabaseSetup {
         log.info("create table sql: {}", tableSql);
         log.info("create index sql: {}", indexSql);
 
-        dbOperator.createTableIfNeeded(JOB_EXECUTION_TABLE_NAME, tableSql);
-        dbOperator.update(indexSql);
+        if (!dbOperator.createTableIfNeeded(JOB_EXECUTION_TABLE_NAME, tableSql)) {
+            // create index
+            dbOperator.update(indexSql);
+        }
     }
 
     private String buildCreateJobExecutionTableSql() {
