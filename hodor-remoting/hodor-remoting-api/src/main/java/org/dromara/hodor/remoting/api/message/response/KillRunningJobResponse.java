@@ -12,11 +12,21 @@ public class KillRunningJobResponse extends AbstractResponseBody {
 
     private int status;
 
+    private String completeTime;
+
     public int getStatus() {
         return status;
     }
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public void setCompleteTime(String completeTime) {
+        this.completeTime = completeTime;
+    }
+
+    public String getCompleteTime() {
+        return completeTime;
     }
 }

@@ -22,6 +22,8 @@ public class JobExecuteResponse extends AbstractResponseBody {
 
     private String shardName;
 
+    private String result;
+
     public Integer getStatus() {
         return status;
     }
@@ -70,17 +72,24 @@ public class JobExecuteResponse extends AbstractResponseBody {
         this.shardName = shardName;
     }
 
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
     @Override
     public String toString() {
-        return "ScheduledResponse{" +
-            "requestId=" + getRequestId() +
-            ", status='" + status + '\'' +
+        return "JobExecuteResponse{" +
+            "status=" + status +
             ", startTime='" + startTime + '\'' +
             ", completeTime='" + completeTime + '\'' +
             ", processTime=" + processTime +
             ", shardId=" + shardId +
             ", shardName='" + shardName + '\'' +
+            ", result='" + result + '\'' +
             '}';
     }
-
 }
