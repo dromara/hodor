@@ -17,6 +17,9 @@ import org.quartz.JobExecutionContext;
 public class HodorJob implements Job {
 
     @Setter
+    private String schedulerName;
+
+    @Setter
     private JobExecutor jobExecutor;
 
     @Setter
@@ -29,7 +32,7 @@ public class HodorJob implements Job {
         Date previousFireTime = context.getPreviousFireTime();
         Date nextFireTime = context.getNextFireTime();
 
-        jobExecutor.execute(new HodorJobExecutionContext(jobDesc, fireTime, scheduledFireTime, previousFireTime, nextFireTime));
+        jobExecutor.execute(new HodorJobExecutionContext(jobDesc, schedulerName, fireTime, scheduledFireTime, previousFireTime, nextFireTime));
     }
 
 }
