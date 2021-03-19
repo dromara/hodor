@@ -1,5 +1,7 @@
 package org.dromara.hodor.server.executor.handler;
 
+import java.util.HashMap;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.executor.HodorRunnable;
@@ -66,16 +68,19 @@ public class HodorJobRequestHandler extends HodorRunnable {
     private RemotingMessage getRequestBody(final HodorJobExecutionContext context) {
         byte[] requestBody = serializer.serialize(SchedulerRequestBody.fromContext(context));
         return RemotingMessage.builder()
-            .header(buildHeader(requestBody.length))
+            .header(buildHeader(requestBody.length, context.getSchedulerName()))
             .body(requestBody)
             .build();
     }
 
-    private Header buildHeader(int bodyLength) {
+    private Header buildHeader(int bodyLength, String schedulerName) {
+        Map<String, Object> attachment = new HashMap<>();
+        attachment.put("schedulerName", schedulerName);
         return Header.builder()
                 .crcCode(RemotingConst.MESSAGE_CRC_CODE)
                 .version(RemotingConst.DEFAULT_VERSION)
                 .type(MessageType.JOB_EXEC_REQUEST.getCode())
+                .attachment(attachment)
                 .length(bodyLength)
                 .build();
     }
