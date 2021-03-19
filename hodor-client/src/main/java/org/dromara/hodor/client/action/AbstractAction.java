@@ -3,6 +3,7 @@ package org.dromara.hodor.client.action;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.client.ServiceProvider;
 import org.dromara.hodor.client.core.RequestContext;
+import org.dromara.hodor.client.executor.RequestEventPublisher;
 import org.dromara.hodor.common.executor.HodorRunnable;
 import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.remoting.api.HodorChannelFuture;
@@ -46,7 +47,7 @@ public abstract class AbstractAction<I extends RequestBody, O extends ResponseBo
         requestId = request.getRequestId();
         O response = executeRequest(request);
         response.setRequestId(requestId);
-        sendMessage(buildResponseMessage(RemotingResponse.succeeded(requestId, response)));
+        retryableSendMessage(buildResponseMessage(RemotingResponse.succeeded(requestId, response)));
     }
 
     @Override
@@ -54,7 +55,7 @@ public abstract class AbstractAction<I extends RequestBody, O extends ResponseBo
         // send failed execute response
         log.error("execute has exception, {}.", e.getMessage(), e);
         RemotingResponse response = RemotingResponse.failed(requestId, e.getMessage(), ThreadUtils.getStackTraceInfo(e));
-        sendMessage(buildResponseMessage(response));
+        retryableSendMessage(buildResponseMessage(response));
     }
 
     public <T> T buildRequestMessage(Class<T> requestBodyClass) {
@@ -74,6 +75,21 @@ public abstract class AbstractAction<I extends RequestBody, O extends ResponseBo
             .header(header)
             .body(body)
             .build();
+    }
+
+    /**
+     * 可重试消息发送
+     *
+     * @param message 消息体
+     */
+    public void retryableSendMessage(RemotingMessage message) {
+        sendMessage(message).operationComplete(future -> {
+            if (!future.isSuccess() || future.cause() != null) {
+                log.warn("response failed.", future.cause());
+                RequestEventPublisher publisher = ServiceProvider.getInstance().getBean(RequestEventPublisher.class);
+                publisher.fireRetrySendMessage(requestId, future.channel().remoteAddress(), message);
+            }
+        });
     }
 
     public HodorChannelFuture sendMessage(RemotingMessage message) {

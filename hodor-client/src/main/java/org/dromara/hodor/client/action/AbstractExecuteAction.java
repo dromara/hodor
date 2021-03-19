@@ -95,7 +95,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
             request.getJobName(), request.getJobParameters(),
             attachment == null ? getRequestContext().channel().remoteAddress().toString() : attachment.get("schedulerName").toString());
         jobPersistence.fireJobExecutionEvent(runningJobExecution);
-        sendMessage(buildResponseMessage(RemotingResponse.succeeded(requestId, response)));
+        retryableSendMessage(buildResponseMessage(RemotingResponse.succeeded(requestId, response)));
     }
 
     public JobExecuteResponse buildResponse(JobExecuteRequest request) {

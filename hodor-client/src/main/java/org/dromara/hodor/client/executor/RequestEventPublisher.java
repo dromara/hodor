@@ -1,5 +1,7 @@
 package org.dromara.hodor.client.executor;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import org.dromara.hodor.client.action.HeartbeatAction;
 import org.dromara.hodor.client.action.JobExecuteAction;
 import org.dromara.hodor.client.action.JobExecuteLogAction;
@@ -9,6 +11,7 @@ import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.common.event.AbstractEventPublisher;
 import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.remoting.api.message.MessageType;
+import org.dromara.hodor.remoting.api.message.RemotingMessage;
 import org.dromara.hodor.remoting.api.message.request.HeartbeatRequest;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteLogRequest;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
@@ -87,6 +90,13 @@ public class RequestEventPublisher extends AbstractEventPublisher<RequestContext
     public void notifyRequestHandler(RequestContext request) {
         Event<RequestContext> event = new Event<>(request, request.messageType());
         publish(event);
+    }
+
+    public void fireRetrySendMessage(Long requestId, SocketAddress socketAddress, RemotingMessage message) {
+        // persistence to db
+        InetSocketAddress inetSocketAddress = (InetSocketAddress) socketAddress;
+        String endpoint = inetSocketAddress.getAddress().getHostAddress() + ":" + inetSocketAddress.getPort();
+
     }
 
 }
