@@ -4,7 +4,7 @@ import org.dromara.hodor.client.HodorApiClient;
 import org.dromara.hodor.client.HodorClientInit;
 import org.dromara.hodor.client.JobRegistrar;
 import org.dromara.hodor.client.ServiceProvider;
-import org.dromara.hodor.client.executor.JobPersistenceEventPublisher;
+import org.dromara.hodor.client.executor.JobPersistence;
 import org.dromara.hodor.client.executor.RequestEventPublisher;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.storage.db.DBOperator;
@@ -59,8 +59,8 @@ public class HodorSchedulerConfiguration {
     }
 
     @Bean
-    public JobPersistenceEventPublisher jobPersistenceEventPublisher() {
-        return new JobPersistenceEventPublisher(dbOperator());
+    public JobPersistence jobPersistenceEventPublisher() {
+        return new JobPersistence(dbOperator());
     }
 
     @Bean

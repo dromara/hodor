@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.client.ServiceProvider;
 import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.common.executor.HodorRunnable;
+import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.remoting.api.HodorChannelFuture;
 import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
 import org.dromara.hodor.remoting.api.message.Header;
@@ -52,7 +53,7 @@ public abstract class AbstractAction<I extends RequestBody, O extends ResponseBo
     public void exceptionCaught(Exception e) {
         // send failed execute response
         log.error("execute has exception, {}.", e.getMessage(), e);
-        RemotingResponse response = RemotingResponse.failed(requestId, e.getMessage(), e);
+        RemotingResponse response = RemotingResponse.failed(requestId, e.getMessage(), ThreadUtils.getStackTraceInfo(e));
         sendMessage(buildResponseMessage(response));
     }
 
