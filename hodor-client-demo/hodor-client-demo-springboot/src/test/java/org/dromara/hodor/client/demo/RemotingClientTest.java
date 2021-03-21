@@ -9,6 +9,8 @@ import org.dromara.hodor.remoting.api.message.Header;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
 import org.dromara.hodor.remoting.api.message.RequestBody;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -38,7 +40,6 @@ public class RemotingClientTest {
 
         RequestBody body = JobExecuteRequest.builder()
             .requestId(123L)
-            .jobPath("org.dromara.hodor.client.demo.job.JobList")
             .jobCommand("test2")
             .groupName("testGroup")
             .jobName("test2")
@@ -47,11 +48,14 @@ public class RemotingClientTest {
             .build();
         byte[] requestBody = serializer.serialize(body);
 
+        Map<String, Object> attachment = new HashMap<>();
+        attachment.put("schedulerName", "test");
         Header header = Header.builder()
                 .crcCode(RemotingConst.MESSAGE_CRC_CODE)
                 .type((byte)1)
                 .version(RemotingConst.DEFAULT_VERSION)
                 .length(requestBody.length)
+                .attachment(attachment)
                 .build();
 
         RemotingMessage request = RemotingMessage.builder().header(header).body(requestBody).build();
@@ -62,6 +66,9 @@ public class RemotingClientTest {
 
         System.out.println("----------");
         connection.close();
+
+        // 清除历史数据
+
         System.exit(0);
     }
 

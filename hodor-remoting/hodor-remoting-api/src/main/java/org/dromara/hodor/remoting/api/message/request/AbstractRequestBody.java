@@ -12,7 +12,7 @@ public abstract class AbstractRequestBody implements RequestBody {
 
     private static final long serialVersionUID = -3888648975481173115L;
 
-    private Long requestId;
+    Long requestId;
 
     @Override
     public Long getRequestId() {

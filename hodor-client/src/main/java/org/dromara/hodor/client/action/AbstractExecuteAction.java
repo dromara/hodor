@@ -1,10 +1,6 @@
 package org.dromara.hodor.client.action;
 
 import cn.hutool.core.date.DateUtil;
-import java.io.File;
-import java.text.MessageFormat;
-import java.util.Date;
-import java.util.Map;
 import org.apache.logging.log4j.Logger;
 import org.draomara.hodor.model.executor.JobExecuteStatus;
 import org.dromara.hodor.client.ServiceProvider;
@@ -18,6 +14,11 @@ import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.remoting.api.message.RemotingResponse;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
+
+import java.io.File;
+import java.text.MessageFormat;
+import java.util.Date;
+import java.util.Map;
 
 /**
  * abstract execute action
@@ -49,7 +50,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
     public JobExecuteResponse executeRequest(JobExecuteRequest request) throws Exception {
         requestId = request.getRequestId();
         // create job logger
-        File jobLoggerFile = new File(createLogPath(request), createLogFileName(request));
+        File jobLoggerFile = new File(getJobLoggerDir(), createLogFileName(request));
         loggerName = createLoggerName(request);
         jobLogger = LogUtil.getInstance().createLogger(loggerName, jobLoggerFile);
 
@@ -81,10 +82,6 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
         super.exceptionCaught(e);
     }
 
-    public String createLogPath(JobExecuteRequest request) {
-        return getJobLoggerDir() + File.separator + request.getRequestId();
-    }
-
     public void sendStartExecuteResponse(JobExecuteRequest request) {
         JobExecuteResponse response = buildResponse(request);
         response.setStatus(JobExecuteStatus.RUNNING);
@@ -111,7 +108,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
     }
 
     private String getJobLoggerDir() {
-        return System.getProperty("user.dir", properties.getRootJobLogPath());
+        return properties.getRootJobLogPath() == null ? System.getProperty("user.dir") : properties.getRootJobLogPath();
     }
 
     private String createLoggerName(JobExecuteRequest request) {
