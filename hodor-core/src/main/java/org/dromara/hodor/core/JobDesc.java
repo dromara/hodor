@@ -55,4 +55,6 @@ public class JobDesc {
 
   private Date endTime;
 
+  private Integer retryCount;
+
 }
