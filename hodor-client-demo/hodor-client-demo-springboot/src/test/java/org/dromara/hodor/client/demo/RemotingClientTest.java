@@ -3,7 +3,7 @@ package org.dromara.hodor.client.demo;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 import org.dromara.hodor.common.extension.ExtensionLoader;
-import org.dromara.hodor.common.utils.LocalHost;
+import org.dromara.hodor.common.utils.HostUtils;
 import org.dromara.hodor.remoting.api.*;
 import org.dromara.hodor.remoting.api.message.Header;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
@@ -24,7 +24,7 @@ public class RemotingClientTest {
 
     public static void main(String[] args) throws InterruptedException {
         Attribute attribute = new Attribute();
-        attribute.put(RemotingConst.HOST_KEY, LocalHost.getIp());
+        attribute.put(RemotingConst.HOST_KEY, HostUtils.getLocalIp());
         attribute.put(RemotingConst.PORT_KEY, 46367);
         attribute.put(RemotingConst.TCP_PROTOCOL, true);
         // handle request
