@@ -9,7 +9,7 @@ import org.dromara.hodor.common.loadbalance.LoadBalance;
 import org.dromara.hodor.common.loadbalance.LoadBalanceEnum;
 import org.dromara.hodor.common.loadbalance.LoadBalanceFactory;
 import org.dromara.hodor.common.utils.GsonUtils;
-import org.dromara.hodor.common.utils.LocalHost;
+import org.dromara.hodor.common.utils.HostUtils;
 import org.dromara.hodor.core.CopySet;
 import org.dromara.hodor.core.HodorMetadata;
 import org.dromara.hodor.register.api.DataChangeListener;
@@ -42,7 +42,7 @@ public class RegisterService implements LifecycleComponent {
         this.properties = properties;
         this.registryCenter = ExtensionLoader.getExtensionLoader(RegistryCenter.class).getDefaultJoin();
         this.gsonUtils = GsonUtils.getInstance();
-        this.serverId = LocalHost.getIp() + ":" + properties.getNetServerPort();
+        this.serverId = HostUtils.getLocalIp() + ":" + properties.getNetServerPort();
     }
 
     @Override
