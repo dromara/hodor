@@ -6,14 +6,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.executor.HodorRunnable;
 import org.dromara.hodor.common.extension.ExtensionLoader;
+import org.dromara.hodor.core.JobDesc;
 import org.dromara.hodor.remoting.api.message.MessageType;
 import org.dromara.hodor.remoting.api.RemotingConst;
 import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
 import org.dromara.hodor.remoting.api.message.Header;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
+import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.server.ServiceProvider;
-import org.dromara.hodor.server.executor.request.SchedulerRequestBody;
 import org.dromara.hodor.server.service.RegisterService;
 import org.dromara.hodor.server.service.RemotingClientService;
 
@@ -66,10 +67,27 @@ public class HodorJobRequestHandler extends HodorRunnable {
     }
 
     private RemotingMessage getRequestBody(final HodorJobExecutionContext context) {
-        byte[] requestBody = serializer.serialize(SchedulerRequestBody.fromContext(context));
+        byte[] requestBody = serializer.serialize(buildRequestFromContext(context));
         return RemotingMessage.builder()
             .header(buildHeader(requestBody.length, context.getSchedulerName()))
             .body(requestBody)
+            .build();
+    }
+
+    private JobExecuteRequest buildRequestFromContext(HodorJobExecutionContext context) {
+        Long requestId = context.getRequestId();
+        JobDesc jobDesc = context.getJobDesc();
+        return JobExecuteRequest.builder()
+            .requestId(requestId)
+            .jobName(jobDesc.getJobName())
+            .groupName(jobDesc.getGroupName())
+            .jobPath(jobDesc.getJobPath())
+            .jobCommand(jobDesc.getJobCommand())
+            .jobCommandType(jobDesc.getJobCommandType().getName())
+            .jobParameters(jobDesc.getJobParameters())
+            .extensibleParameters(jobDesc.getExtensibleParameters())
+            .timeout(jobDesc.getTimeout())
+            .retryCount(jobDesc.getRetryCount())
             .build();
     }
 

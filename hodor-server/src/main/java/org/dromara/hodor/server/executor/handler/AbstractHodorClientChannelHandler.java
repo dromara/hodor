@@ -15,21 +15,6 @@ import org.dromara.hodor.remoting.api.message.RemotingMessage;
 public abstract class AbstractHodorClientChannelHandler implements HodorChannelHandler {
 
     @Override
-    public void connected(HodorChannel channel) {
-
-    }
-
-    @Override
-    public void disconnected(HodorChannel channel) {
-
-    }
-
-    @Override
-    public void send(HodorChannel channel, Object message) {
-
-    }
-
-    @Override
     public void received(HodorChannel channel, Object message) throws Exception {
         if (!(message instanceof RemotingMessage)) {
             return;
