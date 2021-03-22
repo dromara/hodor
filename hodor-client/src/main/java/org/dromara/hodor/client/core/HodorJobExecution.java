@@ -4,7 +4,7 @@ import java.util.Date;
 import lombok.Builder;
 import lombok.Data;
 import org.draomara.hodor.model.executor.JobExecuteStatus;
-import org.dromara.hodor.common.utils.LocalHost;
+import org.dromara.hodor.common.utils.HostUtils;
 
 /**
  * hodor_job_execution table entity
@@ -48,8 +48,8 @@ public class HodorJobExecution {
             .jobName(jobName)
             .parameters(jobParameters)
             .schedulerTag(schedulerName)
-            .clientIp(LocalHost.getIp())
-            .clientHostname(LocalHost.getHostName())
+            .clientIp(HostUtils.getLocalIp())
+            .clientHostname(HostUtils.getLocalHostName())
             .startTime(new Date())
             .status(JobExecuteStatus.RUNNING)
             .build();

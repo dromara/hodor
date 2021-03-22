@@ -2,7 +2,7 @@ package org.dromara.hodor.client.annotation;
 
 import lombok.Data;
 import org.dromara.hodor.common.storage.db.DataSourceConfig;
-import org.dromara.hodor.common.utils.LocalHost;
+import org.dromara.hodor.common.utils.HostUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -33,7 +33,7 @@ public class HodorProperties {
     /**
      * 客户端host，如果存在多网卡的时候设置此值，默认自动获取本机ip
      */
-    private String host = LocalHost.getIp();
+    private String host = HostUtils.getLocalIp();
 
     /**
      * 客户端暴露端口，默认46367

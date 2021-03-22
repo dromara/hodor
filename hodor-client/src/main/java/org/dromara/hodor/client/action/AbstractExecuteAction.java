@@ -8,7 +8,7 @@ import org.dromara.hodor.client.annotation.HodorProperties;
 import org.dromara.hodor.client.core.HodorJobExecution;
 import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.client.executor.ExecutorManager;
-import org.dromara.hodor.client.executor.JobPersistence;
+import org.dromara.hodor.client.executor.JobExecutionPersistence;
 import org.dromara.hodor.common.log.LogUtil;
 import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.remoting.api.message.RemotingResponse;
@@ -36,12 +36,12 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
 
     private final HodorProperties properties;
 
-    private final JobPersistence jobPersistence;
+    private final JobExecutionPersistence jobExecutionPersistence;
 
     public AbstractExecuteAction(RequestContext context) {
         super(context);
         this.properties = ServiceProvider.getInstance().getBean(HodorProperties.class);
-        this.jobPersistence = ServiceProvider.getInstance().getBean(JobPersistence.class);
+        this.jobExecutionPersistence = ServiceProvider.getInstance().getBean(JobExecutionPersistence.class);
     }
 
     public abstract JobExecuteResponse executeRequest0(JobExecuteRequest request) throws Exception;
@@ -67,7 +67,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
         jobLogger.info("job execution completed.");
 
         HodorJobExecution successJobExecution = HodorJobExecution.createSuccessJobExecution(requestId, remotingResponse.getResult());
-        jobPersistence.fireJobExecutionEvent(successJobExecution);
+        jobExecutionPersistence.fireJobExecutionEvent(successJobExecution);
 
         return remotingResponse;
     }
@@ -78,7 +78,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
 
         String exceptionStack = ThreadUtils.getStackTraceInfo(e);
         HodorJobExecution failureJobExecution = HodorJobExecution.createFailureJobExecution(requestId, exceptionStack);
-        jobPersistence.fireJobExecutionEvent(failureJobExecution);
+        jobExecutionPersistence.fireJobExecutionEvent(failureJobExecution);
         super.exceptionCaught(e);
     }
 
@@ -91,7 +91,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
         HodorJobExecution runningJobExecution = HodorJobExecution.createRunningJobExecution(request.getRequestId(), request.getGroupName(),
             request.getJobName(), request.getJobParameters(),
             attachment == null ? getRequestContext().channel().remoteAddress().toString() : attachment.get("schedulerName").toString());
-        jobPersistence.fireJobExecutionEvent(runningJobExecution);
+        jobExecutionPersistence.fireJobExecutionEvent(runningJobExecution);
         retryableSendMessage(buildResponseMessage(RemotingResponse.succeeded(requestId, response)));
     }
 

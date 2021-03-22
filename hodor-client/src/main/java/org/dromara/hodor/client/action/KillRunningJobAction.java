@@ -7,7 +7,7 @@ import org.dromara.hodor.client.ServiceProvider;
 import org.dromara.hodor.client.core.HodorJobExecution;
 import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.client.executor.ExecutorManager;
-import org.dromara.hodor.client.executor.JobPersistence;
+import org.dromara.hodor.client.executor.JobExecutionPersistence;
 import org.dromara.hodor.remoting.api.message.request.KillRunningJobRequest;
 import org.dromara.hodor.remoting.api.message.response.KillRunningJobResponse;
 
@@ -21,12 +21,12 @@ public class KillRunningJobAction extends AbstractAction<KillRunningJobRequest, 
 
     private final ExecutorManager executorManager;
 
-    private final JobPersistence jobPersistence;
+    private final JobExecutionPersistence jobExecutionPersistence;
 
     public KillRunningJobAction(final RequestContext context) {
         super(context);
         this.executorManager = ExecutorManager.getInstance();
-        this.jobPersistence = ServiceProvider.getInstance().getBean(JobPersistence.class);
+        this.jobExecutionPersistence = ServiceProvider.getInstance().getBean(JobExecutionPersistence.class);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class KillRunningJobAction extends AbstractAction<KillRunningJobRequest, 
         runningThread.interrupt();
 
         HodorJobExecution killedJobExecution = HodorJobExecution.createKilledJobExecution(request.getRequestId());
-        jobPersistence.fireJobExecutionEvent(killedJobExecution);
+        jobExecutionPersistence.fireJobExecutionEvent(killedJobExecution);
         return response;
     }
 

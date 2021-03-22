@@ -2,6 +2,8 @@ package org.dromara.hodor.client.executor;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.dromara.hodor.client.action.HeartbeatAction;
 import org.dromara.hodor.client.action.JobExecuteAction;
 import org.dromara.hodor.client.action.JobExecuteLogAction;
@@ -10,6 +12,8 @@ import org.dromara.hodor.client.action.KillRunningJobAction;
 import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.common.event.AbstractEventPublisher;
 import org.dromara.hodor.common.event.Event;
+import org.dromara.hodor.common.utils.HostUtils;
+import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.message.MessageType;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
 import org.dromara.hodor.remoting.api.message.request.HeartbeatRequest;
@@ -19,18 +23,23 @@ import org.dromara.hodor.remoting.api.message.request.JobExecuteStatusRequest;
 import org.dromara.hodor.remoting.api.message.request.KillRunningJobRequest;
 
 /**
- *  请求事件分发器
+ *  请求事件处理manager
  *
  * @author tomgs
  * @version 2021/2/26 1.0 
  */
-
-public class RequestEventPublisher extends AbstractEventPublisher<RequestContext> {
+public class RequestHandleManager extends AbstractEventPublisher<RequestContext> {
 
     private final ExecutorManager executorManager;
 
-    public RequestEventPublisher() {
-        executorManager = ExecutorManager.getInstance();
+    private final FailureRequestHandleManager failureRequestHandleManager;
+
+    private final Map<String, HodorChannel> activeChannels;
+
+    public RequestHandleManager() {
+        this.executorManager = ExecutorManager.getInstance();
+        this.failureRequestHandleManager = FailureRequestHandleManager.getInstance();
+        this.activeChannels = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -40,11 +49,6 @@ public class RequestEventPublisher extends AbstractEventPublisher<RequestContext
         registerKillRunningListener();
         registerFetchJobStatusListener();
         registerFetchJobExecLogListener();
-        registerFailureHandlerListener();
-    }
-
-    private void registerFailureHandlerListener() {
-        //TODO: 发送失败消息处理
     }
 
     private void registerFetchJobExecLogListener() {
@@ -92,11 +96,18 @@ public class RequestEventPublisher extends AbstractEventPublisher<RequestContext
         publish(event);
     }
 
-    public void fireRetrySendMessage(Long requestId, SocketAddress socketAddress, RemotingMessage message) {
+    public void fireRetrySendMessage(SocketAddress socketAddress, RemotingMessage message) {
         // persistence to db
-        InetSocketAddress inetSocketAddress = (InetSocketAddress) socketAddress;
-        String endpoint = inetSocketAddress.getAddress().getHostAddress() + ":" + inetSocketAddress.getPort();
+        String remoteIp = HostUtils.getIp(socketAddress);
+        HodorChannel activeChannel = activeChannels.get(remoteIp);
+        failureRequestHandleManager.fireFailureRequestHandler(remoteIp, activeChannel, message);
+    }
 
+    public void recordActiveChannel(HodorChannel activeChannel) {
+        SocketAddress remoteAddress = activeChannel.remoteAddress();
+        InetSocketAddress inetSocketAddress = (InetSocketAddress) remoteAddress;
+        String remoteIp = inetSocketAddress.getAddress().getHostAddress();
+        activeChannels.put(remoteIp, activeChannel);
     }
 
 }

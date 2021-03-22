@@ -4,7 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import org.dromara.hodor.client.ServiceProvider;
 import org.dromara.hodor.client.core.HodorJobExecution;
 import org.dromara.hodor.client.core.RequestContext;
-import org.dromara.hodor.client.executor.JobPersistence;
+import org.dromara.hodor.client.executor.JobExecutionPersistence;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteStatusRequest;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteStatusResponse;
 
@@ -16,16 +16,16 @@ import org.dromara.hodor.remoting.api.message.response.JobExecuteStatusResponse;
  */
 public class JobExecuteStatusAction extends AbstractAction<JobExecuteStatusRequest, JobExecuteStatusResponse> {
 
-    private final JobPersistence jobPersistence;
+    private final JobExecutionPersistence jobExecutionPersistence;
 
     public JobExecuteStatusAction(RequestContext context) {
         super(context);
-        this.jobPersistence = ServiceProvider.getInstance().getBean(JobPersistence.class);
+        this.jobExecutionPersistence = ServiceProvider.getInstance().getBean(JobExecutionPersistence.class);
     }
 
     @Override
     public JobExecuteStatusResponse executeRequest(JobExecuteStatusRequest request) throws Exception {
-        HodorJobExecution jobExecution = jobPersistence.fetchJobExecution(request.getRequestId());
+        HodorJobExecution jobExecution = jobExecutionPersistence.fetchJobExecution(request.getRequestId());
         JobExecuteStatusResponse response = new JobExecuteStatusResponse();
         response.setStatus(jobExecution.getStatus());
         response.setStartTime(DateUtil.formatDateTime(jobExecution.getStartTime()));

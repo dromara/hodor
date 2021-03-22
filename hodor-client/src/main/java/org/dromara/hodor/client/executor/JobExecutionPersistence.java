@@ -15,7 +15,7 @@ import org.dromara.hodor.common.storage.db.DBOperator;
  * @since 2021/3/18
  */
 @Slf4j
-public class JobPersistence extends AbstractAsyncEventPublisher<HodorJobExecution> {
+public class JobExecutionPersistence extends AbstractAsyncEventPublisher<HodorJobExecution> {
 
     private final DBOperator dbOperator;
 
@@ -23,7 +23,7 @@ public class JobPersistence extends AbstractAsyncEventPublisher<HodorJobExecutio
 
     private final static Integer UPDATE_EVENT = 1;
 
-    public JobPersistence(final DBOperator dbOperator) {
+    public JobExecutionPersistence(final DBOperator dbOperator) {
         this.dbOperator = dbOperator;
     }
 
