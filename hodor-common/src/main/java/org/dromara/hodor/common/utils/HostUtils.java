@@ -1,7 +1,9 @@
 package org.dromara.hodor.common.utils;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
+import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
@@ -10,7 +12,7 @@ import org.dromara.hodor.common.exception.HodorException;
 /**
  * 获取真实本机IP&主机名.
  */
-public final class LocalHost {
+public final class HostUtils {
 
     private static volatile String cachedIpAddress;
 
@@ -20,7 +22,7 @@ public final class LocalHost {
      *
      * @return 本机IP地址
      */
-    public static String getIp() {
+    public static String getLocalIp() {
         if (null != cachedIpAddress) {
             return cachedIpAddress;
         }
@@ -55,7 +57,7 @@ public final class LocalHost {
      *
      * @return 本机Host名称
      */
-    public static String getHostName() {
+    public static String getLocalHostName() {
         return getLocalHost().getHostName();
     }
 
@@ -101,6 +103,21 @@ public final class LocalHost {
             }
         }
         return flag;
+    }
+
+    public static String getIp(SocketAddress socketAddress) {
+        InetSocketAddress inetSocketAddress = (InetSocketAddress) socketAddress;
+        return inetSocketAddress.getAddress().getHostAddress();
+    }
+
+    public static String getHostName(SocketAddress socketAddress) {
+        InetSocketAddress inetSocketAddress = (InetSocketAddress) socketAddress;
+        return inetSocketAddress.getAddress().getHostName();
+    }
+
+    public static Integer getPort(SocketAddress socketAddress) {
+        InetSocketAddress inetSocketAddress = (InetSocketAddress) socketAddress;
+        return inetSocketAddress.getPort();
     }
 
 }
