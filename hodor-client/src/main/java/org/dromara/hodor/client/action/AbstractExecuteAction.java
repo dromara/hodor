@@ -1,24 +1,22 @@
 package org.dromara.hodor.client.action;
 
 import cn.hutool.core.date.DateUtil;
+import java.io.File;
+import java.util.Date;
+import java.util.Map;
 import org.apache.logging.log4j.Logger;
 import org.draomara.hodor.model.executor.JobExecuteStatus;
 import org.dromara.hodor.client.ServiceProvider;
 import org.dromara.hodor.client.annotation.HodorProperties;
 import org.dromara.hodor.client.core.HodorJobExecution;
+import org.dromara.hodor.client.core.JobLoggerManager;
 import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.client.executor.ExecutorManager;
 import org.dromara.hodor.client.executor.JobExecutionPersistence;
-import org.dromara.hodor.common.log.LogUtil;
 import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.remoting.api.message.RemotingResponse;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
-
-import java.io.File;
-import java.text.MessageFormat;
-import java.util.Date;
-import java.util.Map;
 
 /**
  * abstract execute action
@@ -38,10 +36,13 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
 
     private final JobExecutionPersistence jobExecutionPersistence;
 
+    private final JobLoggerManager jobLoggerManager;
+
     public AbstractExecuteAction(RequestContext context) {
         super(context);
         this.properties = ServiceProvider.getInstance().getBean(HodorProperties.class);
         this.jobExecutionPersistence = ServiceProvider.getInstance().getBean(JobExecutionPersistence.class);
+        this.jobLoggerManager = JobLoggerManager.getInstance();
     }
 
     public abstract JobExecuteResponse executeRequest0(JobExecuteRequest request) throws Exception;
@@ -50,9 +51,9 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
     public JobExecuteResponse executeRequest(JobExecuteRequest request) throws Exception {
         requestId = request.getRequestId();
         // create job logger
-        File jobLoggerFile = new File(getJobLoggerDir(), createLogFileName(request));
-        loggerName = createLoggerName(request);
-        jobLogger = LogUtil.getInstance().createLogger(loggerName, jobLoggerFile);
+        File jobLoggerFile = jobLoggerManager.buildJobLoggerFile(properties.getRootJobLogPath(), request.getGroupName(), request.getJobName(), requestId);
+        this.loggerName = jobLoggerManager.createLoggerName(request.getGroupName(), request.getJobName(), requestId);
+        this.jobLogger = jobLoggerManager.createJobLogger(this.loggerName, jobLoggerFile);
 
         jobLogger.info("job ready.");
         // send start execute response
@@ -107,28 +108,10 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
         return this.jobLogger;
     }
 
-    private String getJobLoggerDir() {
-        return properties.getRootJobLogPath() == null ? System.getProperty("user.dir") : properties.getRootJobLogPath();
-    }
-
-    private String createLoggerName(JobExecuteRequest request) {
-        return MessageFormat.format("{0}_{1}_{2}_{3}", System.currentTimeMillis(),
-            request.getGroupName(),
-            request.getJobName(),
-            request.getRequestId());
-    }
-
-    private String createLogFileName(JobExecuteRequest request) {
-        return MessageFormat.format("_job.{0}.{1}.{2}.log",
-            request.getGroupName(),
-            request.getJobName(),
-            request.getRequestId());
-    }
-
     @Override
     public void afterProcess() {
         ExecutorManager.getInstance().removeRunningThread(requestId);
-        LogUtil.getInstance().stopLogger(loggerName);
+        jobLoggerManager.stopJobLogger(loggerName);
     }
 
 }
