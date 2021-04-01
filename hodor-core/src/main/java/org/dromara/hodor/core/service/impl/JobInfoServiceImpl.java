@@ -59,6 +59,7 @@ public class JobInfoServiceImpl implements JobInfoService {
     @Override
     public List<JobInfo> queryJobInfoByHashIdOffset(Long startHashId, Long endHashId) {
         return jobInfoMapper.selectList(Wrappers.<JobInfo>lambdaQuery()
+            .ne(JobInfo::getCronExpression, "") // cron expression is not null
             .ge(JobInfo::getHashId, startHashId)
             .lt(JobInfo::getHashId, endHashId));
     }
