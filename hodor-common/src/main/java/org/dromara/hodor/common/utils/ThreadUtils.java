@@ -86,4 +86,8 @@ public class ThreadUtils {
         return className.substring(className.lastIndexOf(".") + 1);
     }
 
+    public static int availableProcessors() {
+        return Runtime.getRuntime().availableProcessors();
+    }
+
 }
