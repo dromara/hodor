@@ -142,29 +142,28 @@ public class HodorService implements LifecycleComponent {
     }
 
     public void createActiveScheduler(String serverId, List<Long> dataInterval) {
-        HodorScheduler activeScheduler = getScheduler(serverId, dataInterval);
+        HodorScheduler activeScheduler = buildScheduler(serverId, dataInterval);
         schedulerManager.addActiveScheduler(activeScheduler);
         schedulerManager.addSchedulerDataInterval(activeScheduler.getSchedulerName(), dataInterval);
     }
 
     public void createStandbyScheduler(String serverId, List<Long> standbyDataInterval) {
-        HodorScheduler standbyScheduler = getScheduler(serverId, standbyDataInterval);
+        HodorScheduler standbyScheduler = buildScheduler(serverId, standbyDataInterval);
         schedulerManager.addStandByScheduler(standbyScheduler);
         schedulerManager.addSchedulerDataInterval(standbyScheduler.getSchedulerName(), standbyDataInterval);
     }
 
-    public HodorScheduler getScheduler(String serverId, List<Long> dataInterval) {
-        //TODO: 改成配置形式
-        SchedulerConfig config = SchedulerConfig.builder().schedulerName("HodorScheduler_" + serverId).threadCount(8).misfireThreshold(3000).build();
-        HodorScheduler scheduler = schedulerManager.getScheduler(config.getSchedulerName());
-        if (scheduler == null) {
-            scheduler = schedulerManager.createScheduler(config);
-        }
-        List<Long> schedulerDataInterval = schedulerManager.getSchedulerDataInterval(config.getSchedulerName());
+    public HodorScheduler buildScheduler(String serverId, List<Long> dataInterval) {
+        final SchedulerConfig config = SchedulerConfig.builder()
+            .schedulerName("HodorScheduler_" + serverId)
+            .threadCount(ThreadUtils.availableProcessors() * 2)
+            .misfireThreshold(3000)
+            .build();
+        final HodorScheduler scheduler = schedulerManager.getOrCreateScheduler(config);
+        final List<Long> schedulerDataInterval = schedulerManager.getSchedulerDataInterval(config.getSchedulerName());
         if (CollectionUtils.isEmpty(schedulerDataInterval) || !CollectionUtils.isEqualCollection(schedulerDataInterval, dataInterval)) {
             List<JobInfo> jobInfoList = jobInfoService.queryJobInfoByHashIdOffset(dataInterval.get(0), dataInterval.get(1));
-            HodorScheduler finalScheduler = scheduler;
-            jobInfoList.forEach(job -> finalScheduler.addJob(job, JobExecutorTypeManager.getInstance().getJobExecutor(job.getJobType())));
+            jobInfoList.forEach(job -> scheduler.addJob(job, JobExecutorTypeManager.getInstance().getJobExecutor(job.getJobType())));
         }
         return scheduler;
     }
