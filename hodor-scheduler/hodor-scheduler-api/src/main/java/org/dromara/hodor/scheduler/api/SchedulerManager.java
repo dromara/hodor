@@ -97,4 +97,12 @@ public final class SchedulerManager {
         schedulerDataInterval.put(schedulerName, dataInterval);
     }
 
+    public HodorScheduler getOrCreateScheduler(SchedulerConfig config) {
+        HodorScheduler scheduler = getScheduler(config.getSchedulerName());
+        if (scheduler != null) {
+            return scheduler;
+        }
+        return createScheduler(config);
+    }
+
 }
