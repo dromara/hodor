@@ -1,24 +1,23 @@
 package org.dromara.hodor.server.executor.handler;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.executor.HodorRunnable;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.core.JobDesc;
-import org.dromara.hodor.remoting.api.message.MessageType;
 import org.dromara.hodor.remoting.api.RemotingConst;
 import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
 import org.dromara.hodor.remoting.api.message.Header;
+import org.dromara.hodor.remoting.api.message.MessageType;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.server.ServiceProvider;
 import org.dromara.hodor.server.service.RegisterService;
 import org.dromara.hodor.server.service.RemotingClientService;
-
-import java.util.List;
 
 /**
  * job request executor
@@ -33,16 +32,16 @@ public class HodorJobRequestHandler extends HodorRunnable {
 
     private final RegisterService registerService;
 
-    private final HodorJobExecutionContext context;
-
     private final RemotingMessageSerializer serializer;
 
+    private final HodorJobExecutionContext context;
+
     public HodorJobRequestHandler(final HodorJobExecutionContext context) {
-        ServiceProvider serviceProvider = ServiceProvider.getInstance();
+        final ServiceProvider serviceProvider = ServiceProvider.getInstance();
         this.clientService = serviceProvider.getBean(RemotingClientService.class);
         this.registerService = serviceProvider.getBean(RegisterService.class);
-        this.context = context;
         this.serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
+        this.context = context;
     }
 
     @Override
@@ -95,12 +94,12 @@ public class HodorJobRequestHandler extends HodorRunnable {
         Map<String, Object> attachment = new HashMap<>();
         attachment.put("schedulerName", schedulerName);
         return Header.builder()
-                .crcCode(RemotingConst.MESSAGE_CRC_CODE)
-                .version(RemotingConst.DEFAULT_VERSION)
-                .type(MessageType.JOB_EXEC_REQUEST.getCode())
-                .attachment(attachment)
-                .length(bodyLength)
-                .build();
+            .crcCode(RemotingConst.MESSAGE_CRC_CODE)
+            .version(RemotingConst.DEFAULT_VERSION)
+            .type(MessageType.JOB_EXEC_REQUEST.getCode())
+            .attachment(attachment)
+            .length(bodyLength)
+            .build();
     }
 
 }
