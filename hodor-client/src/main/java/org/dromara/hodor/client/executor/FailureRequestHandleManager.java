@@ -21,8 +21,6 @@ public class FailureRequestHandleManager extends AbstractEventPublisher<HodorCha
 
     private static final FailureRequestHandleManager INSTANCE = new FailureRequestHandleManager();
 
-    private final static Integer RESEND_EVENT = 0;
-
     private final ExecutorManager executorManager;
 
     //TODO: to persistence
@@ -59,7 +57,7 @@ public class FailureRequestHandleManager extends AbstractEventPublisher<HodorCha
                     }
                 }
             });
-        }, RESEND_EVENT);
+        }, 0); // 0 RESEND_EVENT
     }
 
     public void fireFailureRequestHandler(String remoteIp, HodorChannel activeChannel, RemotingMessage message) {
@@ -70,7 +68,7 @@ public class FailureRequestHandleManager extends AbstractEventPublisher<HodorCha
             return;
         }
 
-        publish(new Event<>(activeChannel, RESEND_EVENT));
+        publish(new Event<>(activeChannel, 0)); // 0 RESEND_EVENT
     }
 
 }
