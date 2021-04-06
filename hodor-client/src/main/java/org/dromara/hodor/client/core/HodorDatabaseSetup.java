@@ -56,15 +56,15 @@ public class HodorDatabaseSetup {
                 "\trequest_id INT NOT NULL,\n" +
                 "\tgroup_name VARCHAR2 NOT NULL,\n" +
                 "\tjob_name VARCHAR2 NOT NULL,\n" +
-                "\tparameters VARCHAR2 DEFAULT '' NOT NULL,\n" +
-                "\tscheduler_tag VARCHAR2 NOT NULL,\n" +
+                "\tparameters VARCHAR2,\n" +
+                "\tscheduler_tag VARCHAR2,\n" +
                 "\tclient_hostname VARCHAR2 NOT NULL,\n" +
                 "\tclient_ip VARCHAR2 NOT NULL,\n" +
                 "\tstart_time TIMESTAMP NOT NULL,\n" +
-                "\tcomplete_time TIMESTAMP NOT NULL,\n" +
+                "\tcomplete_time TIMESTAMP,\n" +
                 "\tstatus INT NOT NULL,\n" +
-                "\tcomments VARCHAR2 NOT NULL,\n" +
-                "\tresult VARCHAR2 DEFAULT '' NOT NULL,\n" +
+                "\tcomments VARCHAR2,\n" +
+                "\tresult VARCHAR2,\n" +
                 "\tCONSTRAINT {0}_pk PRIMARY KEY (request_id)\n" +
                 ");",
             JOB_EXECUTION_TABLE_NAME);
