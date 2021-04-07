@@ -65,7 +65,7 @@ public abstract class AbstractAction<I extends RequestBody, O extends ResponseBo
     public RemotingMessage buildResponseMessage(RemotingResponse response) {
         byte[] body = serializer.serialize(response);
         Header header = Header.builder()
-            .crcCode(context.requestHeader().getCrcCode())
+            .id(context.requestHeader().getId())
             .type(context.requestHeader().getType())
             .version(context.requestHeader().getVersion())
             .length(body.length)

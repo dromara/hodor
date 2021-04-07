@@ -38,8 +38,8 @@ public class CodecUtils {
         if (header == null) {
             throw new RemotingException("message header must be not null.");
         }
-        out.writeInt(header.getCrcCode());
-        out.writeInt(header.getVersion());
+        out.writeLong(header.getId());
+        out.writeByte(header.getVersion());
         out.writeByte(header.getType());
 
         // write attachment
@@ -56,18 +56,14 @@ public class CodecUtils {
     }
 
     public static Header parseHeader(ByteBuf in) {
-        // 17 is header message length
-        if (in.readableBytes() < 17) {
+        // 18 is header message length
+        if (in.readableBytes() < 18) {
             throw new RemotingException("Server receive client message, but readableBytes length less than header length!");
         }
 
-        int crcCode = in.readInt();
-        if (crcCode != RemotingConst.MESSAGE_CRC_CODE) {
-            throw new RemotingException("Server receive message crcCode is illegal.");
-        }
-
-        int version = in.readInt();
-        if (version != RemotingConst.DEFAULT_VERSION) {
+        long id = in.readLong();
+        byte version = in.readByte();
+        if (version < RemotingConst.DEFAULT_VERSION) {
             throw new RemotingException("Server receive message version is illegal.");
         }
 
@@ -86,7 +82,7 @@ public class CodecUtils {
             throw new RemotingException("Server receive message length must >= 0.");
         }
 
-        return Header.builder().crcCode(crcCode).type(type).version(version).length(length).attachment(attachment).build();
+        return Header.builder().id(id).type(type).version(version).length(length).attachment(attachment).build();
     }
 
     public static void writeBody(ByteBuf out, byte[] body) {

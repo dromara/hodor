@@ -15,7 +15,7 @@ import org.dromara.hodor.remoting.api.message.RemotingMessage;
  * @since 2021/1/7
  */
 @Slf4j
-public class JobExecuteRequestHandler implements HodorChannelHandler {
+public class JobRequestHandler implements HodorChannelHandler {
 
     private final RequestHandleManager requestHandleManager = ServiceProvider.getInstance().getBean(RequestHandleManager.class);
 

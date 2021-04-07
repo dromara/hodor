@@ -1,6 +1,7 @@
 package org.dromara.hodor.client.demo;
 
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.common.IdGenerator;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.utils.HostUtils;
@@ -51,7 +52,7 @@ public class RemotingClientTest {
         Map<String, Object> attachment = new HashMap<>();
         attachment.put("schedulerName", "test");
         Header header = Header.builder()
-                .crcCode(RemotingConst.MESSAGE_CRC_CODE)
+                .id(IdGenerator.defaultGenerator().nextId())
                 .type((byte)1)
                 .version(RemotingConst.DEFAULT_VERSION)
                 .length(requestBody.length)

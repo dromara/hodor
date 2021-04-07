@@ -62,12 +62,7 @@ public class RemotingConst  {
     /**
      * The constant DEFAULT_VERSION
      */
-    public static final int DEFAULT_VERSION = 1;
-
-    /**
-     * The constant MESSAGE_CRC_CODE
-     */
-    public static final int MESSAGE_CRC_CODE = 12345;
+    public static final byte DEFAULT_VERSION = 1;
 
     /**
      * The constant MAX_FRAME_LENGTH

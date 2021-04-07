@@ -2,7 +2,7 @@ package org.dromara.hodor.client.executor;
 
 import org.dromara.hodor.client.ServiceProvider;
 import org.dromara.hodor.client.annotation.HodorProperties;
-import org.dromara.hodor.client.handler.JobExecuteRequestHandler;
+import org.dromara.hodor.client.handler.JobRequestHandler;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.remoting.api.Attribute;
 import org.dromara.hodor.remoting.api.NetServer;
@@ -27,7 +27,7 @@ public class ExecutorServer {
         attribute.put(RemotingConst.PORT_KEY, properties.getPort());
         attribute.put(RemotingConst.TCP_PROTOCOL, true);
 
-        JobExecuteRequestHandler handler = new JobExecuteRequestHandler();
+        JobRequestHandler handler = new JobRequestHandler();
         NetServerTransport netServerTransport = ExtensionLoader.getExtensionLoader(NetServerTransport.class).getDefaultJoin();
         this.netServer = netServerTransport.bind(attribute, handler);
     }

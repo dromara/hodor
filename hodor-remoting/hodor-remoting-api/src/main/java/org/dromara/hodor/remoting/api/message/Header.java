@@ -19,9 +19,9 @@ import lombok.NoArgsConstructor;
 public class Header {
 
     /**
-     * 消息校验码
+     * 消息id
      */
-    private int crcCode;
+    private long id;
 
     /**
      * 消息类型
@@ -31,7 +31,7 @@ public class Header {
     /**
      * 协议版本，目前是1
      */
-    private int version;
+    private byte version;
 
     /**
      * 消息体长度

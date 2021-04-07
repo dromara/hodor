@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
+import org.dromara.hodor.common.IdGenerator;
 import org.dromara.hodor.common.executor.HodorRunnable;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.core.JobDesc;
@@ -51,7 +52,7 @@ public class HodorJobRequestHandler extends HodorRunnable {
         List<Host> hosts = registerService.getAvailableHosts(context);
         for (int i = hosts.size() - 1; i >= 0; i--) {
             try {
-                clientService.sendRequest(hosts.get(i), request);
+                clientService.sendAsyncRequest(hosts.get(i), request);
                 break;
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
@@ -94,7 +95,7 @@ public class HodorJobRequestHandler extends HodorRunnable {
         Map<String, Object> attachment = new HashMap<>();
         attachment.put("schedulerName", schedulerName);
         return Header.builder()
-            .crcCode(RemotingConst.MESSAGE_CRC_CODE)
+            .id(IdGenerator.defaultGenerator().nextId())
             .version(RemotingConst.DEFAULT_VERSION)
             .type(MessageType.JOB_EXEC_REQUEST.getCode())
             .attachment(attachment)

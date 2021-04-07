@@ -45,7 +45,7 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
     @Override
     public void registerListener() {
         registerHeartbeatListener();
-        registerRequestExecuteListener();
+        registerJobExecuteListener();
         registerKillRunningListener();
         registerFetchJobStatusListener();
         registerFetchJobExecLogListener();
@@ -75,7 +75,7 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
         }, MessageType.KILL_JOB_REQUEST);
     }
 
-    private void registerRequestExecuteListener() {
+    private void registerJobExecuteListener() {
         this.addListener(e -> {
             RequestContext context = e.getValue();
             context.setRequestType(JobExecuteRequest.class);
