@@ -2,6 +2,7 @@ package org.dromara.hodor.server.executor.handler;
 
 import org.dromara.hodor.common.event.AbstractEventPublisher;
 import org.dromara.hodor.common.event.Event;
+import org.dromara.hodor.remoting.api.DefaultResponseFuture;
 import org.dromara.hodor.remoting.api.message.MessageType;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
 
@@ -29,7 +30,7 @@ public class ResponseHandlerManager extends AbstractEventPublisher<RemotingMessa
     private void registerHeartbeatResponseListener() {
         this.addListener(event -> {
             RemotingMessage message = event.getValue();
-
+            DefaultResponseFuture.getResponseFuture(message.getHeader().getId()).receive(message);
         }, MessageType.HEARTBEAT_REQUEST);
     }
 

@@ -14,7 +14,7 @@ import org.dromara.hodor.remoting.api.NetClient;
 import org.dromara.hodor.remoting.api.NetClientTransport;
 import org.dromara.hodor.remoting.api.RemotingConst;
 import org.dromara.hodor.remoting.api.exception.RemotingException;
-import org.dromara.hodor.remoting.api.message.DefaultResponseFuture;
+import org.dromara.hodor.remoting.api.DefaultResponseFuture;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
 import org.dromara.hodor.server.executor.handler.JobResponseHandler;
 import org.springframework.stereotype.Service;
@@ -64,8 +64,7 @@ public class RemotingClientService {
      * @return response message
      */
     public RemotingMessage sendSyncRequest(final Host host, final RemotingMessage request, final int timeout) throws RemoteException {
-        long messageId = request.getHeader().getId();
-        DefaultResponseFuture responseFuture = new DefaultResponseFuture(messageId);
+        DefaultResponseFuture responseFuture = new DefaultResponseFuture(request);
         HodorChannel channel = getActiveChannel(host);
         channel.send(request).operationComplete(e -> {
             if (e.isSuccess()) {
