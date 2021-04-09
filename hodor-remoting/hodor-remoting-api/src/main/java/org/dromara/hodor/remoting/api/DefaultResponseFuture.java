@@ -1,10 +1,12 @@
-package org.dromara.hodor.remoting.api.message;
+package org.dromara.hodor.remoting.api;
 
 import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.remoting.api.message.RemotingMessage;
 
 /**
  * default response future
@@ -12,6 +14,7 @@ import java.util.concurrent.TimeUnit;
  * @author tomgs
  * @since 2021/4/7
  */
+@Slf4j
 public class DefaultResponseFuture implements ResponseFuture {
 
     private static final long DEFAULT_TIMEOUT = 10_000; // 10s
@@ -19,6 +22,10 @@ public class DefaultResponseFuture implements ResponseFuture {
     private static final Map<Long, ResponseFuture> RESPONSE_FUTURE_MAP = new ConcurrentHashMap<>();
 
     private final CountDownLatch latch = new CountDownLatch(1);
+
+    private final long messageId;
+
+    private final RemotingMessage message;
 
     private RemotingMessage responseMessage;
 
@@ -28,7 +35,9 @@ public class DefaultResponseFuture implements ResponseFuture {
 
     private boolean success;
 
-    public DefaultResponseFuture(final long messageId) {
+    public DefaultResponseFuture(final RemotingMessage message) {
+        this.messageId = message.getHeader().getId();
+        this.message = message;
         RESPONSE_FUTURE_MAP.put(messageId, this);
     }
 
@@ -39,10 +48,17 @@ public class DefaultResponseFuture implements ResponseFuture {
 
     @Override
     public RemotingMessage get(long timeout) throws RemoteException {
-        try {
-            this.latch.await(timeout, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-
+        if (!isDone()) {
+            try {
+                this.latch.await(timeout, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                log.error("get response timeout, request message: {}", message);
+                throw new RemoteException("request " + messageId + " timeout.");
+            }
+        }
+        if (!isSuccess()) {
+            log.error("get response exception, request message: {}", message, cause());
+            throw new RemoteException("request " + messageId + " exception.", cause());
         }
         return this.responseMessage;
     }

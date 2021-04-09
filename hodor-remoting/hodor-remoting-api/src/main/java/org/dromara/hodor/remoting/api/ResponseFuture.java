@@ -1,6 +1,7 @@
-package org.dromara.hodor.remoting.api.message;
+package org.dromara.hodor.remoting.api;
 
 import java.rmi.RemoteException;
+import org.dromara.hodor.remoting.api.message.RemotingMessage;
 
 /**
  * response future
