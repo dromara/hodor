@@ -51,7 +51,7 @@
         <mysql.version>8.0.16</mysql.version>
         <druid.version>1.0.29</druid.version>
         <commons-lang3.version>3.8</commons-lang3.version>
-        <commons-io.version>2.5</commons-io.version>
+        <commons-io.version>2.7</commons-io.version>
         <guava.version>21.0</guava.version>
         <commons-collections4.version>4.1</commons-collections4.version>
         <reactor-spring.version>1.0.1.RELEASE</reactor-spring.version>
