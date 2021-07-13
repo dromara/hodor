@@ -1,4 +1,4 @@
-package org.dromara.hodor.core.enums;
+package org.draomara.hodor.model.enums;
 
 /**
  * job priority

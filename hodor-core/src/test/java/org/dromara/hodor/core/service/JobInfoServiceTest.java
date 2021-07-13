@@ -1,10 +1,10 @@
 package org.dromara.hodor.core.service;
 
 import javax.annotation.Resource;
+import org.draomara.hodor.model.enums.JobStatus;
 import org.dromara.hodor.common.utils.HashUtils;
 import org.dromara.hodor.core.BaseTest;
 import org.dromara.hodor.core.entity.JobInfo;
-import org.dromara.hodor.core.enums.JobStatus;
 import org.junit.Test;
 
 /**

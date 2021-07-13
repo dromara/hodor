@@ -2,9 +2,9 @@ package org.dromara.hodor.core;
 
 import java.util.Date;
 import lombok.Data;
-import org.dromara.hodor.core.enums.CommandType;
-import org.dromara.hodor.core.enums.JobType;
-import org.dromara.hodor.core.enums.Priority;
+import org.draomara.hodor.model.enums.CommandType;
+import org.draomara.hodor.model.enums.JobType;
+import org.draomara.hodor.model.enums.Priority;
 
 @Data
 public class JobDesc {

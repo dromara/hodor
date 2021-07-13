@@ -31,8 +31,8 @@ public class QuartzScheduler implements HodorScheduler {
 
     private String schedulerName;
     private Scheduler scheduler;
-    private StdSchedulerFactory factory;
-    private ReentrantLock lock;
+    private final StdSchedulerFactory factory;
+    private final ReentrantLock lock;
 
     public QuartzScheduler() {
         factory = new StdSchedulerFactory();
