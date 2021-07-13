@@ -15,7 +15,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public abstract class AbstractEventPublisher<V> implements EventPublisher<V> {
 
-    private volatile Map<Object, Set<ObjectListener<V>>> listeners = Maps.newConcurrentMap();
+    private final Map<Object, Set<HodorEventListener<V>>> listeners = Maps.newConcurrentMap();
 
     private final ReentrantLock lock = new ReentrantLock();
 
@@ -27,7 +27,7 @@ public abstract class AbstractEventPublisher<V> implements EventPublisher<V> {
         publish(new Event<>(v, eventType));
     }
 
-    public void addListener(ObjectListener<V> objectListener, Object eventType) {
+    public void addListener(HodorEventListener<V> objectListener, Object eventType) {
         lock.lock();
         try {
             if (listeners.get(eventType) == null) {
@@ -40,10 +40,10 @@ public abstract class AbstractEventPublisher<V> implements EventPublisher<V> {
         }
     }
 
-    public void removeListener(ObjectListener<V> objectListener, Object eventType) {
+    public void removeListener(HodorEventListener<V> objectListener, Object eventType) {
         lock.lock();
         try {
-            Set<ObjectListener<V>> listenerSet = listeners.get(eventType);
+            Set<HodorEventListener<V>> listenerSet = listeners.get(eventType);
             if (listenerSet == null) {
                 return;
             }
@@ -67,8 +67,8 @@ public abstract class AbstractEventPublisher<V> implements EventPublisher<V> {
     }
 
     public void publish(Event<V> event) {
-        Set<ObjectListener<V>> listeners = getListeners(event.getEventType());
-        for (ObjectListener<V> listener : listeners) {
+        Set<HodorEventListener<V>> listeners = getListeners(event.getEventType());
+        for (HodorEventListener<V> listener : listeners) {
             listener.onEvent(event);
         }
     }
@@ -82,7 +82,7 @@ public abstract class AbstractEventPublisher<V> implements EventPublisher<V> {
         }
     }
 
-    public Set<ObjectListener<V>> getListeners(Object eventType) {
+    public Set<HodorEventListener<V>> getListeners(Object eventType) {
         if (listeners.get(eventType) == null) {
             return Sets.newHashSet();
         }

@@ -29,11 +29,11 @@ public class AbstractAsyncEventPublisher<V> extends AbstractEventPublisher<V> {
 
     @Override
     public void publish(Event<V> event) {
-        Set<ObjectListener<V>> listenerSet = getListeners(event.getEventType());
+        Set<HodorEventListener<V>> listenerSet = getListeners(event.getEventType());
         eventExecutor.serialExecute(new HodorRunnable() {
             @Override
             public void execute() {
-                for (ObjectListener<V> listener : listenerSet) {
+                for (HodorEventListener<V> listener : listenerSet) {
                     listener.onEvent(event);
                 }
             }
@@ -46,11 +46,11 @@ public class AbstractAsyncEventPublisher<V> extends AbstractEventPublisher<V> {
      * @param event 事件
      */
     public void parallelPublish(Event<V> event) {
-        Set<ObjectListener<V>> listenerSet = getListeners(event.getEventType());
+        Set<HodorEventListener<V>> listenerSet = getListeners(event.getEventType());
         eventExecutor.parallelExecute(new HodorRunnable() {
             @Override
             public void execute() {
-                for (ObjectListener<V> listener : listenerSet) {
+                for (HodorEventListener<V> listener : listenerSet) {
                     listener.onEvent(event);
                 }
             }

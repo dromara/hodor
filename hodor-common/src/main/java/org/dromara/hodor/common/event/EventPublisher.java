@@ -17,12 +17,12 @@ public interface EventPublisher<V> {
     /**
      * 添加某个事件类型的监听器。一个 eventType 可对应多个 object listener
      */
-    void addListener(ObjectListener<V> objectListener, Object eventType);
+    void addListener(HodorEventListener<V> objectListener, Object eventType);
 
     /**
      * 移除指定 event type 中的一个object listener
      */
-    void removeListener(ObjectListener<V> objectListener, Object eventType);
+    void removeListener(HodorEventListener<V> objectListener, Object eventType);
 
     /**
      * 移除一组 object listeners

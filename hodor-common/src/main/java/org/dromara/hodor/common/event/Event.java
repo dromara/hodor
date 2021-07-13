@@ -1,10 +1,17 @@
 package org.dromara.hodor.common.event;
 
 
+/**
+ * event source
+ *
+ * @author tomgs
+ * @param <V> event value
+ */
 public class Event<V> {
 
     private V value;
-    private Object eventType;
+
+    private final Object eventType;
 
     /**
      * @param value     自定义参数
