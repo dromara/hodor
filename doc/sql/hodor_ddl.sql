@@ -26,6 +26,7 @@ CREATE TABLE `hodor_job_info` (
   `failover` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否开启故障转移 1:开启 0：不开启',
   `misfire` tinyint(1) NOT NULL DEFAULT 0 COMMENT '错过执行是否马上调度 1：错过马上调度 0 ：否',
   `fire_now` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否马上开始执行（比如设置时间是5分钟，那么5分钟后才执行），如果设置为true，则现在执行一次，1：马上执行，0：否',
+  `retry_count` tinyint(1) NOT NULL DEFAULT 0 COMMENT '重试次数，不超过10次',
   `is_once` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否为一次性任务，0：否，1：是；默认0',
   `is_broadcast` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否广播模式 0：否，1：是；默认0',
   `slave_ip` varchar(32) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '该job被分配到slave的IP',
@@ -70,9 +71,8 @@ CREATE TABLE `hodor_job_exec_detail` (
   `enc_type` int(4) DEFAULT NULL COMMENT '1:rar 2:zip 3:tar 4:json  数据保存类型',
   `detailed_log` mediumblob COMMENT '存储详细日志',
   `job_exe_data` mediumblob COMMENT 'job执行信息',
-  `parent_request_id` varchar(32) NOT NULL DEFAULT '' COMMENT 'flow上一任务的requestid'
+  `parent_request_id` varchar(32) NOT NULL DEFAULT '' COMMENT 'flow上一任务的requestid',
   PRIMARY KEY (`id`),
-  KEY `index_created_at` (`created_at`),
   UNIQUE KEY `index_job_group` (`job_name`, `group_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
