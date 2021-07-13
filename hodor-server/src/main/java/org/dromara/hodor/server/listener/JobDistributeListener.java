@@ -2,7 +2,7 @@ package org.dromara.hodor.server.listener;
 
 import java.util.List;
 import org.dromara.hodor.common.event.Event;
-import org.dromara.hodor.common.event.ObjectListener;
+import org.dromara.hodor.common.event.HodorEventListener;
 import org.dromara.hodor.core.CopySet;
 import org.dromara.hodor.core.HodorMetadata;
 import org.dromara.hodor.core.manager.CopySetManager;
@@ -14,7 +14,7 @@ import org.dromara.hodor.server.service.HodorService;
  * @author tomgs
  * @since 2020/7/30
  */
-public class JobDistributeListener implements ObjectListener<HodorMetadata> {
+public class JobDistributeListener implements HodorEventListener<HodorMetadata> {
 
     private final CopySetManager copySetManager;
 
@@ -26,7 +26,7 @@ public class JobDistributeListener implements ObjectListener<HodorMetadata> {
     }
 
     @Override
-    public void onEvent(Event<HodorMetadata> event) {
+    public void onEvent(final Event<HodorMetadata> event) {
         final HodorMetadata metadata = event.getValue();
         List<CopySet> copySets = metadata.getCopySets();
         copySets.forEach(e -> {

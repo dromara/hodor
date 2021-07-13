@@ -2,7 +2,7 @@ package org.dromara.hodor.server.executor;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.dromara.hodor.core.enums.JobType;
+import org.draomara.hodor.model.enums.JobType;
 import org.dromara.hodor.scheduler.api.JobExecutor;
 import org.dromara.hodor.scheduler.api.exception.HodorSchedulerException;
 
