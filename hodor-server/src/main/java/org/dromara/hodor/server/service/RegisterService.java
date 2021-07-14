@@ -1,5 +1,6 @@
 package org.dromara.hodor.server.service;
 
+import cn.hutool.core.lang.Assert;
 import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -137,6 +138,9 @@ public class RegisterService implements LifecycleComponent {
     public List<Host> getAvailableHosts(String groupName) {
         List<String> allWorkNodes = getAllWorkNodes(groupName);
         List<Host> hosts = allWorkNodes.stream().map(Host::of).collect(Collectors.toList());
+
+        Assert.notEmpty(hosts, "The group [{}] has no available nodes.", groupName);
+
         LoadBalance loadBalance = LoadBalanceFactory.getLoadBalance(LoadBalanceEnum.RANDOM.name());
         Host selected = loadBalance.select(hosts);
         hosts.remove(selected);
