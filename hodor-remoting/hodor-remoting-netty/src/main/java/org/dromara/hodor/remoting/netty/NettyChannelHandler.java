@@ -26,6 +26,8 @@ import org.dromara.hodor.remoting.api.Attribute;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.HodorChannelHandler;
 import org.dromara.hodor.remoting.api.RemotingConst;
+import org.dromara.hodor.remoting.api.http.HodorHttpRequest;
+import org.dromara.hodor.remoting.netty.http.HttpMessageWrapper;
 
 /**
  * NettyServerHandler.
@@ -36,7 +38,7 @@ import org.dromara.hodor.remoting.api.RemotingConst;
 @ChannelHandler.Sharable
 public class NettyChannelHandler extends ChannelDuplexHandler {
 
-    private HodorChannelHandler channelHandler;
+    private final HodorChannelHandler channelHandler;
 
     private final Attribute attribute;
 
@@ -78,6 +80,11 @@ public class NettyChannelHandler extends ChannelDuplexHandler {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         super.channelRead(ctx, msg);
         HodorChannel channel = new NettyChannel(ctx.channel());
+        if (isHttpProtocol()) {
+            HodorHttpRequest hodorHttpRequest = HttpMessageWrapper.requestWrapper(msg);
+            channelHandler.received(channel, hodorHttpRequest);
+            return;
+        }
         channelHandler.received(channel, msg);
     }
 
