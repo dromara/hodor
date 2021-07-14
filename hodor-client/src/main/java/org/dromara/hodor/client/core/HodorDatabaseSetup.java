@@ -53,7 +53,7 @@ public class HodorDatabaseSetup {
     private String buildCreateJobExecutionTableSql() {
         return MessageFormat.format("CREATE TABLE {0} " +
                 "(\n" +
-                "\trequest_id INT NOT NULL,\n" +
+                "\trequest_id BIGINT NOT NULL,\n" +
                 "\tgroup_name VARCHAR2 NOT NULL,\n" +
                 "\tjob_name VARCHAR2 NOT NULL,\n" +
                 "\tparameters VARCHAR2,\n" +
