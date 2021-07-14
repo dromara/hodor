@@ -43,7 +43,7 @@
     <properties>
         <jdk.version>1.8</jdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <hutool.version>4.1.12</hutool.version>
+        <hutool.version>5.7.4</hutool.version>
         <jasypt.version>1.9.2</jasypt.version>
         <lombok.version>1.16.20</lombok.version>
         <springfox.version>2.6.1</springfox.version>
