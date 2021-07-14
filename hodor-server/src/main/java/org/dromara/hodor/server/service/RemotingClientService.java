@@ -47,12 +47,14 @@ public class RemotingClientService {
     public void sendAsyncRequest(final Host host, final RemotingMessage request) throws RemotingException {
         HodorChannel channel = getActiveChannel(host);
         HodorChannelFuture hodorChannelFuture = channel.send(request);
-        if (hodorChannelFuture.isSuccess()) {
-            log.debug("send request [{}]::[{}] success.", host.getEndpoint(), request);
-        } else {
-            String msg = String.format("send request [%s]::[%s] failed.", host.getEndpoint(), request);
-            throw new RemotingException(msg, hodorChannelFuture.cause());
-        }
+        hodorChannelFuture.operationComplete(future -> {
+            if (future.isSuccess()) {
+                log.debug("send request [{}]::[{}] success.", host.getEndpoint(), request);
+            } else {
+                String msg = String.format("send request [%s]::[%s] failed.", host.getEndpoint(), request);
+                throw new RemotingException(msg, future.cause());
+            }
+        });
     }
 
     /**
