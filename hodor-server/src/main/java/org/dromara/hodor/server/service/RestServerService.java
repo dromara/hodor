@@ -1,5 +1,6 @@
 package org.dromara.hodor.server.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.server.component.LifecycleComponent;
 import org.dromara.hodor.server.config.HodorServerProperties;
 import org.dromara.hodor.common.extension.ExtensionLoader;
@@ -18,12 +19,16 @@ import org.springframework.stereotype.Service;
  * @author tomgs
  * @since 2020/6/28
  */
+@Slf4j
 @Service
 public class RestServerService implements LifecycleComponent {
 
     private final NetServer netServer;
 
+    private final HodorServerProperties properties;
+
     public RestServerService(final HodorServerProperties properties) {
+        this.properties = properties;
         Attribute attribute = new Attribute();
         attribute.put(RemotingConst.HOST_KEY, properties.getNetServerHost());
         attribute.put(RemotingConst.PORT_KEY, properties.getNetServerPort());
@@ -32,12 +37,18 @@ public class RestServerService implements LifecycleComponent {
         RestServiceRequestHandler handler = new RestServiceRequestHandler();
 
         NetServerTransport netServerTransport = ExtensionLoader.getExtensionLoader(NetServerTransport.class).getDefaultJoin();
-        this.netServer = netServerTransport.bind(attribute, handler);
+        this.netServer = netServerTransport.build(attribute, handler);
     }
 
     @Override
     public void start() {
-        netServer.bind();
+        log.info("RestServerService staring, endpoint:[{}:{}]", properties.getNetServerHost(), properties.getNetServerPort());
+        try {
+            netServer.bind();
+        } catch (Exception e) {
+            log.error("RestServerService start exception, {}", e.getMessage(), e);
+            System.exit(-1);
+        }
     }
 
     @Override
