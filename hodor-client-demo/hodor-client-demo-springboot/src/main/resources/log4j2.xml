@@ -3,7 +3,7 @@
 
     <!-- Logging Properties -->
     <Properties>
-        <Property name="APP_NAME">learning-logger</Property>
+        <Property name="APP_NAME">hodor-client-demo</Property>
         <Property name="LOG_PATTERN">[%d{yyyy-MM-dd HH:mm:ss}] [%X{requestId}] [%thread] %-5level %logger{40} [%L] %msg%n</Property>
         <Property name="APP_LOG_ROOT">./logs</Property>
     </Properties>

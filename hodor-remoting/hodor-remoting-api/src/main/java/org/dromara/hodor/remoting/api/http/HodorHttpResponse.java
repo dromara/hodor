@@ -1,5 +1,6 @@
 package org.dromara.hodor.remoting.api.http;
 
+import java.util.HashMap;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,14 +14,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class HodorHttpResponse {
 
-    private String uri;
+    private String protocolVersion = "HTTP/1.1";
 
-    private int statusCode;
+    private int statusCode = 200;
 
-    private String contentType;
-
-    private Map<String, String> responseHeader;
+    private Map<String, String> responseHeader = new HashMap<>();
 
     private byte[] body;
+
+    public void addHeader(String headerName, String headerValue) {
+        responseHeader.put(headerName, headerValue);
+    }
 
 }
