@@ -28,7 +28,7 @@ public interface NetServer {
     /**
      * bind network server.
      */
-    void bind();
+    void bind() throws Exception;
 
     /**
      * Close.

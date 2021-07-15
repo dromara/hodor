@@ -67,7 +67,6 @@ public class RemotingClient {
         final CompletableFuture<RemotingMessage> future = new CompletableFuture<>();
         final HodorChannel channel = computeActiveChannel(host, e -> createChannel(e, new JobResponseHandler(future)));
         channel.send(request).operationComplete(e -> {
-            e.get();
             if (!e.isSuccess()) {
                 future.completeExceptionally(e.cause());
             }

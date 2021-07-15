@@ -10,7 +10,7 @@ public class HodorHttpRequest implements Serializable {
 
     private static final long serialVersionUID = 4466331260180550160L;
 
-    private String protocolVersion;
+    private String protocolVersion = "HTTP/1.1";
 
     private String uri;
 
