@@ -20,6 +20,7 @@ package org.dromara.hodor.remoting.netty;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
@@ -64,8 +65,9 @@ public class NettyServer extends AbstractNetServer {
     }
 
     @Override
-    public void bind() {
-        this.bootstrap.group(bossGroup, workerGroup)
+    public void bind() throws Exception {
+        try {
+            this.bootstrap.group(bossGroup, workerGroup)
                 .handler(new LoggingHandler(LogLevel.INFO))
                 .channel(serverSocketChannelClass)
                 .option(ChannelOption.SO_BACKLOG, 1024)
@@ -76,19 +78,22 @@ public class NettyServer extends AbstractNetServer {
                 .childOption(ChannelOption.TCP_NODELAY, true)
                 .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                 .childHandler(new NettyServerInitializer(serverHandler));
-        ChannelFuture future = bootstrap.bind(getHost(), getPort());
-        io.netty.channel.Channel channel = future.syncUninterruptibly().channel();
-        this.channel = new NettyChannel(channel);
+            ChannelFuture future = bootstrap.bind(getHost(), getPort()).sync();
+            Channel rawChannel = future.channel();
+            this.channel = new NettyChannel(rawChannel);
+            rawChannel.closeFuture().sync();
+        } finally {
+            if (bootstrap != null) {
+                bossGroup.shutdownGracefully();
+                workerGroup.shutdownGracefully();
+            }
+        }
     }
 
     @Override
     public void close() {
         if (channel != null) {
             channel.close();
-        }
-        if (bootstrap != null) {
-            bossGroup.shutdownGracefully();
-            workerGroup.shutdownGracefully();
         }
     }
 

@@ -18,15 +18,20 @@
 
 package org.dromara.hodor.remoting.netty;
 
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelDuplexHandler;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
 import org.dromara.hodor.remoting.api.Attribute;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.HodorChannelHandler;
 import org.dromara.hodor.remoting.api.RemotingConst;
 import org.dromara.hodor.remoting.api.http.HodorHttpRequest;
+import org.dromara.hodor.remoting.api.http.HodorHttpResponse;
 import org.dromara.hodor.remoting.netty.http.HttpMessageWrapper;
 
 /**
@@ -42,7 +47,7 @@ public class NettyChannelHandler extends ChannelDuplexHandler {
 
     private final Attribute attribute;
 
-    public NettyChannelHandler(Attribute attribute, HodorChannelHandler channelHandler) {
+    public NettyChannelHandler(final Attribute attribute, final HodorChannelHandler channelHandler) {
         if (attribute == null) {
             throw new IllegalArgumentException("attribute is null");
         }
@@ -78,20 +83,26 @@ public class NettyChannelHandler extends ChannelDuplexHandler {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        super.channelRead(ctx, msg);
         HodorChannel channel = new NettyChannel(ctx.channel());
         if (isHttpProtocol()) {
-            HodorHttpRequest hodorHttpRequest = HttpMessageWrapper.requestWrapper(msg);
+            HodorHttpRequest hodorHttpRequest = HttpMessageWrapper.requestWrapper((FullHttpRequest) msg);
             channelHandler.received(channel, hodorHttpRequest);
             return;
         }
+        super.channelRead(ctx, msg);
         channelHandler.received(channel, msg);
     }
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-        super.write(ctx, msg, promise);
         HodorChannel channel = new NettyChannel(ctx.channel());
+        if (isHttpProtocol()) {
+            FullHttpResponse httpResponse = HttpMessageWrapper.responseWrapper((HodorHttpResponse) msg);
+            ctx.write(httpResponse);
+            ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
+            return;
+        }
+        super.write(ctx, msg, promise);
         channelHandler.send(channel, msg);
     }
 

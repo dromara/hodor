@@ -18,22 +18,22 @@ public class HttpServerTest {
     private NetServer netServer;
 
     @Test
-    public void testHttpServer() {
+    public void testHttpServer() throws Exception {
         Attribute attribute = new Attribute();
         attribute.put(RemotingConst.HOST_KEY, "localhost");
-        attribute.put(RemotingConst.PORT_KEY, "8888");
+        attribute.put(RemotingConst.PORT_KEY, 8888);
         attribute.put(RemotingConst.HTTP_PROTOCOL, true);
 
         HttpServerHandler handler = new HttpServerHandler();
 
         NetServerTransport netServerTransport = ExtensionLoader.getExtensionLoader(NetServerTransport.class).getDefaultJoin();
-        this.netServer = netServerTransport.bind(attribute, handler);
+        this.netServer = netServerTransport.build(attribute, handler);
         this.netServer.bind();
     }
 
     @After
     public void close() {
-        this.netServer.close();
+        //this.netServer.close();
     }
 
 }

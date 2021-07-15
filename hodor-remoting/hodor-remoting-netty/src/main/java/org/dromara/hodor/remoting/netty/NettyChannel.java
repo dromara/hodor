@@ -30,9 +30,9 @@ import java.net.SocketAddress;
  */
 public class NettyChannel implements HodorChannel {
 
-    private io.netty.channel.Channel channel;
+    private final io.netty.channel.Channel channel;
 
-    public NettyChannel(io.netty.channel.Channel channel) {
+    public NettyChannel(final io.netty.channel.Channel channel) {
         this.channel = channel;
     }
 

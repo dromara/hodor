@@ -17,7 +17,7 @@ import org.junit.Test;
 public class NettyServerTest {
 
     @Test
-    public void testNettyServer() throws IOException {
+    public void testNettyServer() throws Exception {
         Attribute attribute = new Attribute();
         attribute.put(RemotingConst.HOST_KEY, "127.0.0.1");
         attribute.put(RemotingConst.PORT_KEY, 8080);
@@ -27,10 +27,8 @@ public class NettyServerTest {
         HodorServerChannelHandler handler = new HodorServerChannelHandler();
 
         NetServerTransport netServerTransport = ExtensionLoader.getExtensionLoader(NetServerTransport.class).getDefaultJoin();
-        NetServer netServer = netServerTransport.bind(attribute, handler);
+        NetServer netServer = netServerTransport.build(attribute, handler);
         netServer.bind();
-
-        System.in.read();
     }
     
 }

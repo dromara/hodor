@@ -34,7 +34,7 @@ import org.dromara.hodor.remoting.api.NetServerTransport;
 public class NettyServerTransport implements NetServerTransport {
 
     @Override
-    public NetServer bind(Attribute attribute, HodorChannelHandler handler) {
+    public NetServer build(Attribute attribute, HodorChannelHandler handler) {
         return new NettyServer(attribute, handler);
     }
 }

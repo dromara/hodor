@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+    <!-- Logging Properties -->
+    <Properties>
+        <Property name="APP_NAME">hodor-remoting-netty</Property>
+        <Property name="LOG_PATTERN">[%d{yyyy-MM-dd HH:mm:ss}] [%X{requestId}] [%thread] %-5level %logger{40} [%L] %msg%n</Property>
+        <Property name="APP_LOG_ROOT">./logs</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- Console Appender -->
+        <Console name="console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Root level="all">
+            <AppenderRef ref="console"/>
+        </Root>
+    </Loggers>
+
+</Configuration>
