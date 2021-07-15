@@ -1,5 +1,6 @@
 package org.dromara.hodor.client.executor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.client.ServiceProvider;
 import org.dromara.hodor.client.annotation.HodorProperties;
 import org.dromara.hodor.client.handler.JobRequestHandler;
@@ -15,13 +16,14 @@ import org.dromara.hodor.remoting.api.RemotingConst;
  * @author tomgs
  * @since 2021/1/6
  */
+@Slf4j
 public class ExecutorServer {
 
     private final NetServer netServer;
 
-    public ExecutorServer() {
-        HodorProperties properties = ServiceProvider.getInstance().getBean(HodorProperties.class);
+    private final HodorProperties properties = ServiceProvider.getInstance().getBean(HodorProperties.class);
 
+    public ExecutorServer() {
         Attribute attribute = new Attribute();
         attribute.put(RemotingConst.HOST_KEY, properties.getHost());
         attribute.put(RemotingConst.PORT_KEY, properties.getPort());
@@ -29,11 +31,17 @@ public class ExecutorServer {
 
         JobRequestHandler handler = new JobRequestHandler();
         NetServerTransport netServerTransport = ExtensionLoader.getExtensionLoader(NetServerTransport.class).getDefaultJoin();
-        this.netServer = netServerTransport.bind(attribute, handler);
+        this.netServer = netServerTransport.build(attribute, handler);
     }
 
     public void start() {
-        netServer.bind();
+        log.info("ExecutorServer starting host:{}, port:{}", properties.getHost(), properties.getPort());
+        try {
+            netServer.bind();
+        } catch (Exception e) {
+            log.error("ExecutorServer start exception, {}", e.getMessage(), e);
+            System.exit(-1);
+        }
     }
 
     public void close() {

@@ -1,7 +1,6 @@
 package org.dromara.hodor.client;
 
 import java.sql.SQLException;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -73,16 +72,10 @@ public class HodorClientInit implements ApplicationRunner {
         hodorDatabaseSetup.initData();
     }
 
-    private void startExecutorServer() throws InterruptedException {
-        CountDownLatch countDownLatch = new CountDownLatch(1);
-        Thread executorServerThread = new Thread(() -> {
-            executorServer.start();
-            countDownLatch.countDown();
-        }, "hodor-scheduler-executor-server");
+    private void startExecutorServer() {
+        Thread executorServerThread = new Thread(executorServer::start, "hodor-scheduler-executor-server");
         executorServerThread.setDaemon(true);
         executorServerThread.start();
-        // wait
-        countDownLatch.await();
     }
 
     private void startHeartbeatSender() {
@@ -98,6 +91,7 @@ public class HodorClientInit implements ApplicationRunner {
     }
 
     public void close() {
+        log.info("Shutdown server ...");
         // 发送下线通知
         msgSender.getNodeOfflineSender().run();
         // 关闭相应服务
