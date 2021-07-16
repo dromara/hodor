@@ -7,16 +7,17 @@ spring:
   profiles:
     active: core
 
-logging:
-  level:
-    root: INFO
-  file: log/hodor-scheduler.log
-  pattern:
-    file: '%d{yyyy-MM-dd HH:mm:ss.SSS}  %-5level [%thread] %logger{15} : %msg%n'
-    console: '%d{yyyy-MM-dd HH:mm:ss.SSS}  %highlight(%-5level) [%yellow(%thread)] %green(%logger{15}) : %msg%n'
+#logging:
+#  level:
+#    root: INFO
+#  file: log/hodor-scheduler.log
+#  pattern:
+#    file: '%d{yyyy-MM-dd HH:mm:ss.SSS}  %-5level [%thread] %logger{15} : %msg%n'
+#    console: '%d{yyyy-MM-dd HH:mm:ss.SSS}  %highlight(%-5level) [%yellow(%thread)] %green(%logger{15}) : %msg%n'
 
 hodor:
   netServer:
+    appName: hodor
     host: 127.0.0.1
     port: 8081
   registry:
