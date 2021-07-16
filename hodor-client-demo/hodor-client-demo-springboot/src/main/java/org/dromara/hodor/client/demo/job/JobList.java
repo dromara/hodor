@@ -17,7 +17,7 @@ public class JobList {
     @Job(group = "testGroup", jobName = "test1", cron = "0/5 * * * * ?")
     public void test1(JobExecutionContext context) {
         System.out.println(context);
-        Logger logger = context.getLogger();
+        Logger logger = context.getJobLogger();
         logger.info("start executor job test1");
         logger.info("job argument: {}", context.getJobParameter());
         logger.info("executing......");

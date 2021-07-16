@@ -14,14 +14,14 @@ import org.apache.logging.log4j.Logger;
 @AllArgsConstructor
 public class JobExecutionContext {
 
-    private final Logger logger;
+    private final Logger jobLogger;
 
     private final JobParameter jobParameter;
 
     @Override
     public String toString() {
         return "JobExecutionContext{" +
-            "logger=" + logger +
+            "jobLogger=" + jobLogger +
             ", jobParameter=" + jobParameter +
             '}';
     }
