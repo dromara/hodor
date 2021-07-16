@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.util.Date;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.draomara.hodor.model.enums.JobStatus;
+import org.dromara.hodor.model.enums.JobStatus;
 import org.dromara.hodor.core.JobDesc;
 
 /**

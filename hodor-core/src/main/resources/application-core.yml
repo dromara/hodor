@@ -10,7 +10,7 @@ spring:
 # mybatis-plus
 mybatis-plus:
   mapper-locations: classpath*:/mappers/*.xml
-  typeEnumsPackage: org.dromara.hodor.core.enums
+  typeEnumsPackage: org.dromara.hodor.model.enums
   configuration:
     map-underscore-to-camel-case: true
     defaultEnumTypeHandler: org.apache.ibatis.type.EnumOrdinalTypeHandler

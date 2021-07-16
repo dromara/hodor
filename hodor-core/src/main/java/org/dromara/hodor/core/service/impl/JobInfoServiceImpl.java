@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.draomara.hodor.model.enums.JobStatus;
+import org.dromara.hodor.model.enums.JobStatus;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.core.mapper.JobInfoMapper;
 import org.dromara.hodor.core.service.JobInfoService;
@@ -59,6 +59,7 @@ public class JobInfoServiceImpl implements JobInfoService {
     @Override
     public List<JobInfo> queryJobInfoByHashIdOffset(Long startHashId, Long endHashId) {
         return jobInfoMapper.selectList(Wrappers.<JobInfo>lambdaQuery()
+            .eq(JobInfo::getJobStatus, JobStatus.RUNNING)
             .ne(JobInfo::getCronExpression, "") // cron expression is not null
             .ge(JobInfo::getHashId, startHashId)
             .lt(JobInfo::getHashId, endHashId));

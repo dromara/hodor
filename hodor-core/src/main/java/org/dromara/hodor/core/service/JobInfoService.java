@@ -42,7 +42,7 @@ public interface JobInfoService {
     Long queryJobIdByOffset(Integer offset);
 
     /**
-     * 获取指定位置数据
+     * 获取指定位置可运行的任务
      *
      * @param startHashId 起始位置
      * @param endHashId 结束位置
