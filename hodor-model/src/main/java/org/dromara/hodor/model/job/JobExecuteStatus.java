@@ -1,4 +1,4 @@
-package org.draomara.hodor.model.executor;
+package org.dromara.hodor.model.job;
 
 /**
  * JobExecuteStatus

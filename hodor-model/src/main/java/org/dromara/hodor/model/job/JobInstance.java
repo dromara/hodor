@@ -1,4 +1,4 @@
-package org.dromara.hodor.client.config;
+package org.dromara.hodor.model.job;
 
 /**
  * job instance info
@@ -7,7 +7,5 @@ package org.dromara.hodor.client.config;
  * @since 2021/1/5
  */
 public class JobInstance {
-
-
 
 }
