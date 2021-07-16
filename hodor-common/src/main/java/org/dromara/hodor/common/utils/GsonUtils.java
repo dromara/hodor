@@ -135,7 +135,17 @@ public class GsonUtils {
     public <T> T fromJson(final JsonElement jsonElement, final Class<T> tClass) {
         return GSON.fromJson(jsonElement, tClass);
     }
-    
+
+    /**
+     * From json t type
+     * @param json json sttring
+     * @param typeOfT type of T
+     * @param <T> the type parameter
+     * @return the t
+     */
+    public <T> T fromJson(final String json, final Type typeOfT) {
+        return GSON.fromJson(json, typeOfT);
+    }
     
     /**
      * From list list.
