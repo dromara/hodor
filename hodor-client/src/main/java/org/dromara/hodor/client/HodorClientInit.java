@@ -33,7 +33,7 @@ public class HodorClientInit implements ApplicationRunner {
     private final HodorDatabaseSetup hodorDatabaseSetup;
 
     public HodorClientInit() {
-        this.interval = System.getProperty("hodor.heartbeat.interval", "3000");
+        this.interval = System.getProperty("hodor.heartbeat.interval", "5000");
 
         this.executorServer = new ExecutorServer();
 

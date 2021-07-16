@@ -24,9 +24,9 @@
     },
     {
       "sourceType": "org.dromara.hodor.client.annotation.HodorProperties",
-      "defaultValue": "http://localhost:8080/hodor/registry",
+      "defaultValue": "http://localhost:8080/hodor",
       "name": "hodor.registryAddress",
-      "description": "任务注册地址",
+      "description": "任务注册地址, eg: http://{host:port1,host:port2,host:port3}/{hodorSchedulerNetName}",
       "type": "java.lang.String"
     },
     {

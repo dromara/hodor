@@ -2,7 +2,7 @@ package org.dromara.hodor.client.executor;
 
 import java.sql.SQLException;
 import lombok.extern.slf4j.Slf4j;
-import org.draomara.hodor.model.executor.JobExecuteStatus;
+import org.dromara.hodor.model.job.JobExecuteStatus;
 import org.dromara.hodor.client.core.HodorJobExecution;
 import org.dromara.hodor.common.event.AbstractAsyncEventPublisher;
 import org.dromara.hodor.common.event.Event;

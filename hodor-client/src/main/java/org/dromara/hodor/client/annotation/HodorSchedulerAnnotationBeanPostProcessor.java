@@ -10,7 +10,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.client.JobExecutionContext;
 import org.dromara.hodor.client.JobRegistrar;
-import org.dromara.hodor.client.config.JobDesc;
+import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.client.core.ScheduledMethodRunnable;
 import org.springframework.aop.framework.AopInfrastructureBean;
 import org.springframework.aop.framework.AopProxyUtils;

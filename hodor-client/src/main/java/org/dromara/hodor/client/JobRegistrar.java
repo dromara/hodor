@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.client.config.JobDesc;
+import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.client.core.ScheduledMethodRunnable;
 import org.springframework.beans.factory.annotation.Autowired;
 

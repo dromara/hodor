@@ -5,7 +5,7 @@ import java.io.File;
 import java.util.Date;
 import java.util.Map;
 import org.apache.logging.log4j.Logger;
-import org.draomara.hodor.model.executor.JobExecuteStatus;
+import org.dromara.hodor.model.job.JobExecuteStatus;
 import org.dromara.hodor.client.ServiceProvider;
 import org.dromara.hodor.client.annotation.HodorProperties;
 import org.dromara.hodor.client.core.HodorJobExecution;

@@ -4,8 +4,8 @@ import cn.hutool.http.HttpUtil;
 import java.util.Collection;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.client.annotation.HodorProperties;
-import org.dromara.hodor.client.config.NodeInfo;
-import org.dromara.hodor.client.config.JobDesc;
+import org.dromara.hodor.model.node.NodeInfo;
+import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.common.utils.GsonUtils;
 
 /**
@@ -32,7 +32,7 @@ public class HodorApiClient {
     }
 
     public void registerJobs(Collection<JobDesc> jobs) {
-        String result = HttpUtil.createPost(registryAddress + "/jobs")
+        String result = HttpUtil.createPost(registryAddress + "/scheduler/createJob")
             .body(gsonUtils.toJson(jobs))
             .header("appName", appName)
             .header("appKey", appKey)
@@ -42,17 +42,17 @@ public class HodorApiClient {
     }
 
     public void sendHeartbeat(NodeInfo msg) {
-        String result = HttpUtil.createPost(registryAddress + "/heartbeat")
+        String result = HttpUtil.createPost(registryAddress + "/worker/heartbeat")
             .body(gsonUtils.toJson(msg))
             .header("appName", appName)
             .header("appKey", appKey)
             .execute()
             .body();
-        //log.info("Send heartbeat result: {}", result);
+        log.info("Send heartbeat result: {}", result);
     }
 
     public void sendOfflineMsg(NodeInfo msg) {
-        String result = HttpUtil.createPost(registryAddress + "/offline")
+        String result = HttpUtil.createPost(registryAddress + "/worker/offline")
             .body(gsonUtils.toJson(msg))
             .header("appName", appName)
             .header("appKey", appKey)

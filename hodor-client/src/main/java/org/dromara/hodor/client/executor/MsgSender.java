@@ -3,7 +3,7 @@ package org.dromara.hodor.client.executor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.client.HodorApiClient;
 import org.dromara.hodor.client.ServiceProvider;
-import org.dromara.hodor.client.config.NodeInfo;
+import org.dromara.hodor.model.node.NodeInfo;
 
 /**
  * 心跳/下线消息发送服务

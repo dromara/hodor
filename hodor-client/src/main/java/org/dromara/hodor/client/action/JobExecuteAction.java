@@ -3,7 +3,7 @@ package org.dromara.hodor.client.action;
 import cn.hutool.core.date.DateUtil;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-import org.draomara.hodor.model.executor.JobExecuteStatus;
+import org.dromara.hodor.model.job.JobExecuteStatus;
 import org.dromara.hodor.client.JobExecutionContext;
 import org.dromara.hodor.client.JobParameter;
 import org.dromara.hodor.client.JobRegistrar;

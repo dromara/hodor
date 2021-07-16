@@ -2,7 +2,7 @@ package org.dromara.hodor.client.action;
 
 import cn.hutool.core.date.DateUtil;
 import java.util.Date;
-import org.draomara.hodor.model.executor.JobExecuteStatus;
+import org.dromara.hodor.model.job.JobExecuteStatus;
 import org.dromara.hodor.client.ServiceProvider;
 import org.dromara.hodor.client.core.HodorJobExecution;
 import org.dromara.hodor.client.core.RequestContext;
