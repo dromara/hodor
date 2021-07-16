@@ -2,7 +2,7 @@ spring:
   application:
     name: hodor-client-demo
 server:
-  port: 8080
+  port: 8088
 
 logging:
   level:
@@ -15,7 +15,7 @@ logging:
 hodor:
   appName: hodor-client
   appKey: 1234567
-  registryAddress: http://localhost:8080/hodor/registry
+  registryAddress: http://localhost:8081/hodor
   queueSize: 5000
   poolSize: 500
   rootJobLogPath: E:\\data\\hodor-scheudler\\logs
