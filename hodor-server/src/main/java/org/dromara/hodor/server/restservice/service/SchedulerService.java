@@ -1,6 +1,8 @@
 package org.dromara.hodor.server.restservice.service;
 
-import org.dromara.hodor.remoting.api.http.HodorHttpRequest;
+import java.util.List;
+import org.dromara.hodor.model.common.HodorResult;
+import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.server.restservice.HodorRestService;
 
 /**
@@ -10,14 +12,18 @@ import org.dromara.hodor.server.restservice.HodorRestService;
  * @since 2021/1/28
  */
 @HodorRestService(value = "scheduler", desc = "scheduler rest service")
+@SuppressWarnings("unused")
 public class SchedulerService {
 
-    public void isAlive(HodorHttpRequest request) {
-
+    public HodorResult<String> isAlive() {
+        return HodorResult.success("success");
     }
 
-    public void createJob(HodorHttpRequest request) {
-
+    public HodorResult<String> createJob(List<JobDesc> jobs) {
+        for (JobDesc job : jobs) {
+            System.out.println(job);
+        }
+        return HodorResult.success("success");
     }
 
 }

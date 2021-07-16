@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Configuration;
 @Data
 @Configuration
 @ConfigurationProperties(prefix = "hodor")
-//@EnableConfigurationProperties({HodorServerProperties.class})
 public class HodorServerProperties {
 
     private NetServerProperties netServer;
@@ -36,8 +35,13 @@ public class HodorServerProperties {
         return netServer.getPort();
     }
 
+    public String getNetServerName() {
+        return netServer.getAppName();
+    }
+
     @Data
     static class NetServerProperties {
+        private String appName;
         private String host;
         private Integer port;
     }

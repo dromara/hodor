@@ -1,6 +1,7 @@
 package org.dromara.hodor.server.restservice.service;
 
-import org.dromara.hodor.remoting.api.http.HodorHttpRequest;
+import org.dromara.hodor.model.common.HodorResult;
+import org.dromara.hodor.model.node.NodeInfo;
 import org.dromara.hodor.server.restservice.HodorRestService;
 
 /**
@@ -10,10 +11,17 @@ import org.dromara.hodor.server.restservice.HodorRestService;
  * @since 2021/2/5
  */
 @HodorRestService(value = "worker", desc = "work rest service")
+@SuppressWarnings("unused")
 public class WorkerService {
 
-    public void workerRegistry(HodorHttpRequest request) {
+    public HodorResult<String> heartbeat(NodeInfo nodeInfo) {
+        System.out.println(nodeInfo);
+        return HodorResult.success("success");
+    }
 
+    public HodorResult<String> offline(NodeInfo nodeInfo) {
+        System.out.println(nodeInfo);
+        return HodorResult.success("success");
     }
 
 }

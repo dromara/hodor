@@ -34,7 +34,7 @@ public class RestServerService implements LifecycleComponent {
         attribute.put(RemotingConst.PORT_KEY, properties.getNetServerPort());
         attribute.put(RemotingConst.HTTP_PROTOCOL, true);
 
-        RestServiceRequestHandler handler = new RestServiceRequestHandler();
+        RestServiceRequestHandler handler = new RestServiceRequestHandler(properties);
 
         NetServerTransport netServerTransport = ExtensionLoader.getExtensionLoader(NetServerTransport.class).getDefaultJoin();
         this.netServer = netServerTransport.build(attribute, handler);
@@ -43,12 +43,17 @@ public class RestServerService implements LifecycleComponent {
     @Override
     public void start() {
         log.info("RestServerService staring, endpoint:[{}:{}]", properties.getNetServerHost(), properties.getNetServerPort());
-        try {
-            netServer.bind();
-        } catch (Exception e) {
-            log.error("RestServerService start exception, {}", e.getMessage(), e);
-            System.exit(-1);
-        }
+        Thread restServerServiceThread = new Thread(() -> {
+            try {
+                netServer.bind();
+            } catch (Exception e) {
+                log.error("RestServerService start exception, {}", e.getMessage(), e);
+                System.exit(-1);
+            }
+        }, "hodor-scheduler-rest-server");
+        restServerServiceThread.setDaemon(true);
+        restServerServiceThread.start();
+
     }
 
     @Override

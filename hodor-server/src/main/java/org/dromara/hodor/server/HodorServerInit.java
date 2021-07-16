@@ -39,7 +39,7 @@ public class HodorServerInit implements ApplicationRunner, ApplicationContextAwa
         serviceProvider.setApplicationContext(applicationContext);
         // start hodor server
         // start remoting server
-        //restServerService.start();
+        restServerService.start();
         registerService.start();
         hodorService.start();
         // register service
@@ -49,7 +49,7 @@ public class HodorServerInit implements ApplicationRunner, ApplicationContextAwa
             try {
                 hodorService.stop();
                 registerService.stop();
-                //restServerService.stop();
+                restServerService.stop();
             } catch (Exception e) {
                 log.error("Error where shutting down remote service.", e);
             }
