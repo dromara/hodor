@@ -6,7 +6,6 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.IdGenerator;
-import org.dromara.hodor.common.executor.HodorRunnable;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.core.JobDesc;
 import org.dromara.hodor.remoting.api.RemotingConst;
@@ -27,7 +26,7 @@ import org.dromara.hodor.server.service.RemotingClientService;
  * @since 2020/9/22
  */
 @Slf4j
-public class HodorJobRequestHandler extends HodorRunnable {
+public class HodorJobRequestHandler {
 
     private final RemotingClientService clientService;
 
@@ -35,18 +34,14 @@ public class HodorJobRequestHandler extends HodorRunnable {
 
     private final RemotingMessageSerializer serializer;
 
-    private final HodorJobExecutionContext context;
-
-    public HodorJobRequestHandler(final HodorJobExecutionContext context) {
+    public HodorJobRequestHandler() {
         final ServiceProvider serviceProvider = ServiceProvider.getInstance();
         this.clientService = serviceProvider.getBean(RemotingClientService.class);
         this.registerService = serviceProvider.getBean(RegisterService.class);
         this.serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
-        this.context = context;
     }
 
-    @Override
-    public void execute() {
+    public void handle(final HodorJobExecutionContext context) {
         log.info("hodor job request handler, info {}.", context);
         RemotingMessage request = getRequestBody(context);
         List<Host> hosts = registerService.getAvailableHosts(context);
@@ -60,7 +55,6 @@ public class HodorJobRequestHandler extends HodorRunnable {
         }
     }
 
-    @Override
     public void exceptionCaught(Exception e) {
         log.error(e.getMessage(), e);
         //TODO: exception handler
@@ -74,7 +68,7 @@ public class HodorJobRequestHandler extends HodorRunnable {
             .build();
     }
 
-    private JobExecuteRequest buildRequestFromContext(HodorJobExecutionContext context) {
+    private JobExecuteRequest buildRequestFromContext(final HodorJobExecutionContext context) {
         Long requestId = context.getRequestId();
         JobDesc jobDesc = context.getJobDesc();
         return JobExecuteRequest.builder()

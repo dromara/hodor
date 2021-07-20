@@ -8,6 +8,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import org.dromara.hodor.common.executor.HodorExecutor;
 import org.dromara.hodor.common.executor.HodorExecutorFactory;
+import org.dromara.hodor.common.executor.HodorRunnable;
 import org.dromara.hodor.common.queue.CircleQueue;
 import org.dromara.hodor.common.queue.DiscardOldestElementPolicy;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
@@ -27,11 +28,14 @@ public class JobDispatcher {
 
     private final ThreadPoolExecutor threadPoolExecutor;
 
+    private final HodorJobRequestHandler hodorJobRequestHandler;
+
     private JobDispatcher() {
         final int threadSize = Runtime.getRuntime().availableProcessors() * 2;
         this.threadPoolExecutor = HodorExecutorFactory.createThreadPoolExecutor("job-dispatcher", threadSize, false);
         ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(2);
         scheduledThreadPoolExecutor.scheduleWithFixedDelay(this::clearUnavailableExecutor, 1, 1, TimeUnit.HOURS);
+        this.hodorJobRequestHandler = new HodorJobRequestHandler();
     }
 
     public static JobDispatcher getInstance() {
@@ -45,7 +49,16 @@ public class JobDispatcher {
      */
     public void dispatch(final HodorJobExecutionContext context) {
         HodorExecutor hodorExecutor = hodorExecutorMap.computeIfAbsent(context.getJobKey(), this::createHodorExecutor);
-        Objects.requireNonNull(hodorExecutor).serialExecute(new HodorJobRequestHandler(context));
+        Objects.requireNonNull(hodorExecutor).serialExecute(new HodorRunnable() {
+            @Override
+            public void execute() {
+                try {
+                    hodorJobRequestHandler.handle(context);
+                } catch (Exception e) {
+                    hodorJobRequestHandler.exceptionCaught(e);
+                }
+            }
+        });
     }
 
     private HodorExecutor createHodorExecutor(final String key) {
