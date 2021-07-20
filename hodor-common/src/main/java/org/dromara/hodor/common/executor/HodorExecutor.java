@@ -1,6 +1,6 @@
 package org.dromara.hodor.common.executor;
 
-import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -156,8 +156,7 @@ public class HodorExecutor {
             return;
         }
 
-        HodorRunnable runnable = Objects.requireNonNull(circleQueue.poll());
-        executor.execute(() -> {
+        Optional.of(circleQueue.poll()).ifPresent(runnable -> executor.execute(() -> {
             try {
                 runnable.run();
             } catch (Throwable unexpected) {
@@ -165,7 +164,8 @@ public class HodorExecutor {
             } finally {
                 notifyNextTaskExecute();
             }
-        });
+        }));
+
     }
 
     private void notifyTaskExecute() {
@@ -174,8 +174,7 @@ public class HodorExecutor {
                 reset();
                 return;
             }
-            HodorRunnable runnable = Objects.requireNonNull(circleQueue.poll());
-            executor.execute(runnable);
+            Optional.of(circleQueue.poll()).ifPresent(runnable -> executor.execute(runnable));
         }
         // 这里为了严谨起见递归调用改用循环方式避免栈溢出
         // notifyTaskExecute();
