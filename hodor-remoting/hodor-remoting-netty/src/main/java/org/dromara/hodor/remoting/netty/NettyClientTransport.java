@@ -16,7 +16,7 @@ import org.dromara.hodor.remoting.api.NetClientTransport;
 public class NettyClientTransport implements NetClientTransport {
 
     @Override
-    public NetClient connect(Attribute attribute, HodorChannelHandler handler) {
+    public NetClient build(Attribute attribute, HodorChannelHandler handler) {
         return new NettyClient(attribute, handler);
     }
 

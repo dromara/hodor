@@ -30,8 +30,8 @@ public class NettyClientTest {
         HodorChannelHandler handler = new HodorClientChannelHandler();
 
         NetClientTransport clientTransport = ExtensionLoader.getExtensionLoader(NetClientTransport.class).getDefaultJoin();
-        NetClient client = clientTransport.connect(attribute, handler);
-        HodorChannel connection = client.connection();
+        NetClient client = clientTransport.build(attribute, handler);
+        HodorChannel connection = client.connect();
 
         for (;;) {
             System.out.println("channel is open:" + connection.isOpen());

@@ -34,8 +34,8 @@ public class RemotingClientTest {
         RemotingMessageSerializer serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
 
         NetClientTransport clientTransport = ExtensionLoader.getExtensionLoader(NetClientTransport.class).getDefaultJoin();
-        NetClient client = clientTransport.connect(attribute, handler);
-        HodorChannel connection = client.connection();
+        NetClient client = clientTransport.build(attribute, handler);
+        HodorChannel connection = client.connect();
 
         System.out.println("channel is open:" + connection.isOpen());
 

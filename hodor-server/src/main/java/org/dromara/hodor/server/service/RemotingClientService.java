@@ -91,8 +91,8 @@ public class RemotingClientService {
         Attribute attribute = buildAttribute(host);
         // handle request
         HodorChannelHandler handler = new JobResponseHandler();
-        NetClient client = clientTransport.connect(attribute, handler);
-        HodorChannel hodorChannel = client.connection();
+        NetClient client = clientTransport.build(attribute, handler);
+        HodorChannel hodorChannel = client.connect();
         activeChannels.put(host, hodorChannel);
         return hodorChannel;
     }
@@ -102,7 +102,7 @@ public class RemotingClientService {
         attribute.put(RemotingConst.HOST_KEY, host.getIp());
         attribute.put(RemotingConst.PORT_KEY, host.getPort());
         attribute.put(RemotingConst.TCP_PROTOCOL, true);
-        attribute.put(RemotingConst.NET_TIMEOUT_KEY, 100); // connect timeout 100ms
+        attribute.put(RemotingConst.NET_TIMEOUT_KEY, 1000); // connect timeout 1000ms
         return attribute;
     }
 

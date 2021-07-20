@@ -26,7 +26,7 @@ package org.dromara.hodor.remoting.api;
 public interface NetClient {
 
     /**
-     * Connection.
+     * client connect.
      */
-    HodorChannel connection();
+    HodorChannel connect();
 }
