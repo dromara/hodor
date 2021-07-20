@@ -1,7 +1,6 @@
 package org.dromara.hodor.remoting.api;
 
 import com.google.common.collect.Maps;
-import com.google.common.util.concurrent.FutureCallback;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -10,6 +9,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
+import org.dromara.hodor.common.concurrent.FutureCallback;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.remoting.api.exception.RemotingException;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
@@ -25,12 +25,29 @@ public class RemotingClient {
 
     public static final RemotingClient INSTANCE = new RemotingClient();
 
+    private static final Map<Long, CompletableFuture<RemotingMessage>> FUTURE_MAP = Maps.newConcurrentMap();
+
     private final Map<Host, HodorChannel> activeChannels = Maps.newConcurrentMap();
 
     private final NetClientTransport clientTransport;
 
     private RemotingClient() {
         this.clientTransport = ExtensionLoader.getExtensionLoader(NetClientTransport.class).getDefaultJoin();
+    }
+
+    public void sendDuplexRequest(final Host host, final RemotingMessage request, final FutureCallback<RemotingMessage> callback) throws RemotingException {
+        HodorChannel channel = computeIfInActiveChannel(host, e -> createChannel(e, new JobExecuteResponseHandler(callback)));
+        HodorChannelFuture hodorChannelFuture = channel.send(request);
+        hodorChannelFuture.operationComplete(future -> {
+            if (future.isSuccess()) {
+                log.debug("send request [{}]::[{}] success.", host.getEndpoint(), request);
+            } else {
+                // 异常节点
+                channel.close();
+                String msg = String.format("send request [%s]::[%s] failed.", host.getEndpoint(), request);
+                throw new RemotingException(msg, future.cause());
+            }
+        });
     }
 
     /**
@@ -65,16 +82,18 @@ public class RemotingClient {
 
     public CompletableFuture<RemotingMessage> sendRequest(final Host host, final RemotingMessage request) {
         final CompletableFuture<RemotingMessage> future = new CompletableFuture<>();
-        final HodorChannel channel = computeActiveChannel(host, e -> createChannel(e, new JobResponseHandler(future)));
+        FUTURE_MAP.put(request.getHeader().getId(), future);
+        final HodorChannel channel = computeIfInActiveChannel(host, e -> createChannel(e, new SyncResponseHandler()));
         channel.send(request).operationComplete(e -> {
             if (!e.isSuccess()) {
+                FUTURE_MAP.remove(request.getHeader().getId());
                 future.completeExceptionally(e.cause());
             }
         });
         return future;
     }
 
-    public HodorChannel computeActiveChannel(final Host host, final Function<Host, HodorChannel> function) {
+    public HodorChannel computeIfInActiveChannel(final Host host, final Function<Host, HodorChannel> function) {
         HodorChannel hodorChannel = activeChannels.get(host);
         if (hodorChannel != null && hodorChannel.isOpen()) {
             return hodorChannel;
@@ -100,27 +119,51 @@ public class RemotingClient {
         return attribute;
     }
 
-    private static class JobResponseHandler implements HodorChannelHandler {
-
-        private final CompletableFuture<RemotingMessage> future;
-
-        public JobResponseHandler(final CompletableFuture<RemotingMessage> future) {
-            this.future = future;
-        }
+    private static class SyncResponseHandler implements HodorChannelHandler {
 
         @Override
         public void received(HodorChannel channel, Object message) {
-            if (message instanceof RemotingMessage) {
-                future.complete((RemotingMessage) message);
-                return;
+            if (!(message instanceof RemotingMessage)) {
+                throw new IllegalArgumentException("response message is illegal, " + message);
             }
-            future.completeExceptionally(new IllegalArgumentException("response message is illegal, " + message));
+            final RemotingMessage remotingMessage = (RemotingMessage) message;
+            try {
+                CompletableFuture<RemotingMessage> future = FUTURE_MAP.get(remotingMessage.getHeader().getId());
+                future.complete(remotingMessage);
+            } finally {
+                FUTURE_MAP.remove(remotingMessage.getHeader().getId());
+            }
         }
 
         @Override
         public void exceptionCaught(HodorChannel channel, Throwable cause) {
-            future.completeExceptionally(cause);
+            log.error("hodor client channel [{}] exception caught, msg: {}", channel.getId(), cause.getMessage(), cause);
+            channel.close();
         }
 
     }
+
+    private static class JobExecuteResponseHandler implements HodorChannelHandler {
+
+        private final FutureCallback<RemotingMessage> callback;
+
+        public JobExecuteResponseHandler(FutureCallback<RemotingMessage> callback) {
+            this.callback = callback;
+        }
+
+        @Override
+        public void received(HodorChannel channel, Object message) throws Exception {
+            if (!(message instanceof RemotingMessage)) {
+                throw new IllegalArgumentException("response message is illegal, " + message);
+            }
+            callback.onSuccess((RemotingMessage) message);
+        }
+
+        @Override
+        public void exceptionCaught(HodorChannel channel, Throwable cause) {
+            callback.onFailure(cause);
+        }
+
+    }
+
 }

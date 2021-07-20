@@ -5,9 +5,10 @@ import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
-import org.dromara.hodor.common.IdGenerator;
+import org.dromara.hodor.common.concurrent.FutureCallback;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.core.JobDesc;
+import org.dromara.hodor.remoting.api.RemotingClient;
 import org.dromara.hodor.remoting.api.RemotingConst;
 import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
 import org.dromara.hodor.remoting.api.message.Header;
@@ -17,7 +18,6 @@ import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.server.ServiceProvider;
 import org.dromara.hodor.server.service.RegisterService;
-import org.dromara.hodor.server.service.RemotingClientService;
 
 /**
  * job request executor
@@ -28,15 +28,15 @@ import org.dromara.hodor.server.service.RemotingClientService;
 @Slf4j
 public class HodorJobRequestHandler {
 
-    private final RemotingClientService clientService;
+    private final RemotingClient clientService;
 
     private final RegisterService registerService;
 
     private final RemotingMessageSerializer serializer;
 
     public HodorJobRequestHandler() {
+        this.clientService = RemotingClient.INSTANCE;
         final ServiceProvider serviceProvider = ServiceProvider.getInstance();
-        this.clientService = serviceProvider.getBean(RemotingClientService.class);
         this.registerService = serviceProvider.getBean(RegisterService.class);
         this.serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
     }
@@ -47,7 +47,17 @@ public class HodorJobRequestHandler {
         List<Host> hosts = registerService.getAvailableHosts(context);
         for (int i = hosts.size() - 1; i >= 0; i--) {
             try {
-                clientService.sendAsyncRequest(hosts.get(i), request);
+                clientService.sendDuplexRequest(hosts.get(i), request, new FutureCallback<RemotingMessage>() {
+                    @Override
+                    public void onSuccess(RemotingMessage response) {
+                        ResponseHandlerManager.INSTANCE.fireJobResponseHandler(response);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable cause) {
+                        log.error(cause.getMessage(), cause);
+                    }
+                });
                 break;
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
@@ -63,7 +73,7 @@ public class HodorJobRequestHandler {
     private RemotingMessage getRequestBody(final HodorJobExecutionContext context) {
         byte[] requestBody = serializer.serialize(buildRequestFromContext(context));
         return RemotingMessage.builder()
-            .header(buildHeader(requestBody.length, context.getSchedulerName()))
+            .header(buildHeader(requestBody.length, context.getRequestId(), context.getSchedulerName()))
             .body(requestBody)
             .build();
     }
@@ -85,11 +95,11 @@ public class HodorJobRequestHandler {
             .build();
     }
 
-    private Header buildHeader(int bodyLength, String schedulerName) {
+    private Header buildHeader(int bodyLength, long requestId, String schedulerName) {
         Map<String, Object> attachment = new HashMap<>();
         attachment.put("schedulerName", schedulerName);
         return Header.builder()
-            .id(IdGenerator.defaultGenerator().nextId())
+            .id(requestId)
             .version(RemotingConst.DEFAULT_VERSION)
             .type(MessageType.JOB_EXEC_REQUEST.getCode())
             .attachment(attachment)

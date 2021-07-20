@@ -25,7 +25,7 @@ public class DefaultResponseFuture implements ResponseFuture {
 
     private final long messageId;
 
-    private final RemotingMessage message;
+    private final RemotingMessage requestMessage;
 
     private RemotingMessage responseMessage;
 
@@ -35,9 +35,9 @@ public class DefaultResponseFuture implements ResponseFuture {
 
     private boolean success;
 
-    public DefaultResponseFuture(final RemotingMessage message) {
-        this.messageId = message.getHeader().getId();
-        this.message = message;
+    public DefaultResponseFuture(final RemotingMessage requestMessage) {
+        this.messageId = requestMessage.getHeader().getId();
+        this.requestMessage = requestMessage;
         RESPONSE_FUTURE_MAP.put(messageId, this);
     }
 
@@ -52,12 +52,12 @@ public class DefaultResponseFuture implements ResponseFuture {
             try {
                 this.latch.await(timeout, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
-                log.error("get response timeout, request message: {}", message);
+                log.error("get response timeout, request message: {}", requestMessage);
                 throw new RemoteException("request " + messageId + " timeout.");
             }
         }
         if (!isSuccess()) {
-            log.error("get response exception, request message: {}", message, cause());
+            log.error("get response exception, request message: {}", requestMessage, cause());
             throw new RemoteException("request " + messageId + " exception.", cause());
         }
         return this.responseMessage;
@@ -81,8 +81,8 @@ public class DefaultResponseFuture implements ResponseFuture {
     @Override
     public void receive(RemotingMessage responseMessage) {
         this.responseMessage = responseMessage;
-        this.isDone = true;
         this.latch.countDown();
+        this.setDone(true);
         RESPONSE_FUTURE_MAP.remove(responseMessage.getHeader().getId());
     }
 
