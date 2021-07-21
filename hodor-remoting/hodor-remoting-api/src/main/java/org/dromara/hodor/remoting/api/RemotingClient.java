@@ -23,7 +23,7 @@ import org.dromara.hodor.remoting.api.message.RemotingMessage;
 @Slf4j
 public class RemotingClient {
 
-    public static final RemotingClient INSTANCE = new RemotingClient();
+    private static final RemotingClient INSTANCE = new RemotingClient();
 
     private static final Map<Long, CompletableFuture<RemotingMessage>> FUTURE_MAP = Maps.newConcurrentMap();
 
@@ -33,6 +33,10 @@ public class RemotingClient {
 
     private RemotingClient() {
         this.clientTransport = ExtensionLoader.getExtensionLoader(NetClientTransport.class).getDefaultJoin();
+    }
+
+    public static RemotingClient getInstance() {
+        return INSTANCE;
     }
 
     public void sendDuplexRequest(final Host host, final RemotingMessage request, final FutureCallback<RemotingMessage> callback) throws RemotingException {

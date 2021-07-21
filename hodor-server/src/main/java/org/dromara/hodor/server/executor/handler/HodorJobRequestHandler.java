@@ -35,9 +35,8 @@ public class HodorJobRequestHandler {
     private final RemotingMessageSerializer serializer;
 
     public HodorJobRequestHandler() {
-        this.clientService = RemotingClient.INSTANCE;
-        final ServiceProvider serviceProvider = ServiceProvider.getInstance();
-        this.registerService = serviceProvider.getBean(RegisterService.class);
+        this.clientService = RemotingClient.getInstance();
+        this.registerService = ServiceProvider.getInstance().getBean(RegisterService.class);
         this.serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
     }
 
@@ -55,7 +54,7 @@ public class HodorJobRequestHandler {
 
                     @Override
                     public void onFailure(Throwable cause) {
-                        log.error(cause.getMessage(), cause);
+                        exceptionCaught(cause);
                     }
                 });
                 break;
@@ -65,7 +64,7 @@ public class HodorJobRequestHandler {
         }
     }
 
-    public void exceptionCaught(Exception e) {
+    public void exceptionCaught(Throwable e) {
         log.error(e.getMessage(), e);
         //TODO: exception handler
     }
