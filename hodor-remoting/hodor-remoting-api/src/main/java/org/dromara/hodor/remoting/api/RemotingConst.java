@@ -60,6 +60,11 @@ public class RemotingConst  {
     public static final String TCP_PROTOCOL = "tcp_protocol";
 
     /**
+     * The constant MAGIC
+     */
+    public static final short MAGIC = (short) 0xf666;
+
+    /**
      * The constant DEFAULT_VERSION
      */
     public static final byte DEFAULT_VERSION = 1;
@@ -67,15 +72,6 @@ public class RemotingConst  {
     /**
      * The constant MAX_FRAME_LENGTH
      */
-    public static final int MAX_FRAME_LENGTH = 32 * 1024 * 1024;
+    public static final int LENGTH_OF_HEADER = 20;
 
-    /**
-     * The constant LENGTH_FIELD_OFFSET
-     */
-    public static final int LENGTH_FIELD_OFFSET = 5;
-
-    /**
-     * The constant LENGTH_FIELD_LENGTH
-     */
-    public static final int LENGTH_FIELD_LENGTH = 4;
 }
