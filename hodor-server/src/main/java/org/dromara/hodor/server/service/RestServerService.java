@@ -14,8 +14,6 @@ import org.springframework.stereotype.Service;
 /**
  * hodor remote service
  *
- * TODO: 后续再实现
- *
  * @author tomgs
  * @since 2020/6/28
  */
