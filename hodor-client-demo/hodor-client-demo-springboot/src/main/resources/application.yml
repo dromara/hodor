@@ -4,14 +4,6 @@ spring:
 server:
   port: 8088
 
-logging:
-  level:
-    root: INFO
-  file: log/hodor-client.log
-#  pattern:
-#    file: '%d{yyyy-MM-dd HH:mm:ss.SSS}  %highlight(%-5level) [%yellow(%thread)] %green(%logger{15}) : %msg%n'
-#    console: '%d{yyyy-MM-dd HH:mm:ss.SSS}  %highlight(%-5level) [%yellow(%thread)] %green(%logger{15}) : %msg%n'
-
 hodor:
   appName: hodor-client
   appKey: 1234567
