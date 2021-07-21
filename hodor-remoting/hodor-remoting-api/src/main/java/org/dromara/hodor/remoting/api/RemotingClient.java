@@ -1,18 +1,15 @@
 package org.dromara.hodor.remoting.api;
 
-import com.google.common.collect.Maps;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.concurrent.FutureCallback;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.remoting.api.exception.RemotingException;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
+
+import java.util.Map;
+import java.util.concurrent.*;
+import java.util.function.Function;
 
 /**
  * remoting client service
@@ -25,9 +22,9 @@ public class RemotingClient {
 
     private static final RemotingClient INSTANCE = new RemotingClient();
 
-    private static final Map<Long, CompletableFuture<RemotingMessage>> FUTURE_MAP = Maps.newConcurrentMap();
+    private static final Map<Long, CompletableFuture<RemotingMessage>> FUTURE_MAP = new ConcurrentHashMap<>();
 
-    private final Map<Host, HodorChannel> activeChannels = Maps.newConcurrentMap();
+    private final Map<Host, HodorChannel> activeChannels = new ConcurrentHashMap<>();
 
     private final NetClientTransport clientTransport;
 
@@ -48,8 +45,8 @@ public class RemotingClient {
             } else {
                 // 异常节点
                 channel.close();
-                String msg = String.format("send request [%s]::[%s] failed.", host.getEndpoint(), request);
-                throw new RemotingException(msg, future.cause());
+                activeChannels.remove(host);
+                throw new RemotingException(String.format("send request [%s]::[%s] failed.", host.getEndpoint(), request), future.cause());
             }
         });
     }
@@ -57,23 +54,23 @@ public class RemotingClient {
     /**
      * send async request
      *
-     * @param host server host
+     * @param host    server host
      * @param request request message
      * @throws RemotingException remoting exception
      */
     public void sendAsyncRequest(final Host host, final RemotingMessage request, final FutureCallback<RemotingMessage> callback) throws RemotingException {
         final CompletableFuture<RemotingMessage> future = sendRequest(host, request);
         future.thenAcceptAsync(callback::onSuccess)
-            .exceptionally(e -> {
-                callback.onFailure(e);
-                return null;
-            });
+                .exceptionally(e -> {
+                    callback.onFailure(e);
+                    return null;
+                });
     }
 
     /**
      * send sync request
      *
-     * @param host server host
+     * @param host    server host
      * @param request request message
      * @param timeout timeout milliseconds
      * @return response message
@@ -87,7 +84,8 @@ public class RemotingClient {
     public CompletableFuture<RemotingMessage> sendRequest(final Host host, final RemotingMessage request) {
         final CompletableFuture<RemotingMessage> future = new CompletableFuture<>();
         FUTURE_MAP.put(request.getHeader().getId(), future);
-        final HodorChannel channel = computeIfInActiveChannel(host, e -> createChannel(e, new SyncResponseHandler()));
+        //final HodorChannel channel = computeIfInActiveChannel(host, e -> createChannel(e, new CommonResponseHandler()));
+        final HodorChannel channel = createChannel(host, new CommonResponseHandler());
         channel.send(request).operationComplete(e -> {
             if (!e.isSuccess()) {
                 FUTURE_MAP.remove(request.getHeader().getId());
@@ -102,19 +100,18 @@ public class RemotingClient {
         if (hodorChannel != null && hodorChannel.isOpen()) {
             return hodorChannel;
         }
-        return function.apply(host);
+        HodorChannel activeChannel = function.apply(host);
+        activeChannels.put(host, activeChannel);
+        return activeChannel;
     }
 
     public HodorChannel createChannel(final Host host, final HodorChannelHandler handler) {
         Attribute attribute = buildAttribute(host);
-        // handle request
         NetClient client = clientTransport.build(attribute, handler);
-        HodorChannel hodorChannel = client.connect();
-        activeChannels.put(host, hodorChannel);
-        return hodorChannel;
+        return client.connect();
     }
 
-    public Attribute buildAttribute(final Host host) {
+    private Attribute buildAttribute(final Host host) {
         Attribute attribute = new Attribute();
         attribute.put(RemotingConst.HOST_KEY, host.getIp());
         attribute.put(RemotingConst.PORT_KEY, host.getPort());
@@ -123,7 +120,10 @@ public class RemotingClient {
         return attribute;
     }
 
-    private static class SyncResponseHandler implements HodorChannelHandler {
+    /**
+     * 这种是适应于一应一答的方式
+     */
+    private static class CommonResponseHandler implements HodorChannelHandler {
 
         @Override
         public void received(HodorChannel channel, Object message) {
@@ -147,6 +147,9 @@ public class RemotingClient {
 
     }
 
+    /**
+     * 这种适应于长连接，双向通信
+     */
     private static class JobExecuteResponseHandler implements HodorChannelHandler {
 
         private final FutureCallback<RemotingMessage> callback;
@@ -156,7 +159,7 @@ public class RemotingClient {
         }
 
         @Override
-        public void received(HodorChannel channel, Object message) throws Exception {
+        public void received(HodorChannel channel, Object message) {
             if (!(message instanceof RemotingMessage)) {
                 throw new IllegalArgumentException("response message is illegal, " + message);
             }
