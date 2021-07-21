@@ -59,7 +59,7 @@ public class NettyServerInitializer extends ChannelInitializer<SocketChannel> {
             channel.pipeline().addLast("chunkedWriter", new ChunkedWriteHandler());
         } else if (serverHandler.isTcpProtocol()) {
             //TODO: impl tcp
-            channel.pipeline().addLast(new RpcMessageDecoder(RemotingConst.MAX_FRAME_LENGTH, RemotingConst.LENGTH_FIELD_OFFSET, RemotingConst.LENGTH_FIELD_LENGTH));
+            channel.pipeline().addLast(new RpcMessageDecoder());
             channel.pipeline().addLast(new RpcMessageEncoder());
         } else {
             throw new UnsupportedOperationException("unsupported protocol.");

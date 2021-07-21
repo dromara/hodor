@@ -13,6 +13,8 @@ import org.dromara.hodor.remoting.api.exception.RemotingException;
 import org.dromara.hodor.remoting.api.message.Header;
 
 /**
+ * codec utils
+ *
  * @author tomgs
  * @since 2020/9/17
  */
@@ -38,6 +40,7 @@ public class CodecUtils {
         if (header == null) {
             throw new RemotingException("message header must be not null.");
         }
+        out.writeShort(RemotingConst.MAGIC);
         out.writeLong(header.getId());
         out.writeByte(header.getVersion());
         out.writeByte(header.getType());
@@ -56,9 +59,9 @@ public class CodecUtils {
     }
 
     public static Header parseHeader(ByteBuf in) {
-        // 18 is header message length
-        if (in.readableBytes() < 18) {
-            throw new RemotingException("Server receive client message, but readableBytes length less than header length!");
+        short magic = in.readShort();
+        if (RemotingConst.MAGIC != magic) {
+            throw new RemotingException("magic number is illegal, " + magic);
         }
 
         long id = in.readLong();
@@ -82,7 +85,7 @@ public class CodecUtils {
             throw new RemotingException("Server receive message length must >= 0.");
         }
 
-        return Header.builder().id(id).type(type).version(version).length(length).attachment(attachment).build();
+        return Header.builder().magic(magic).id(id).type(type).version(version).length(length).attachment(attachment).build();
     }
 
     public static void writeBody(ByteBuf out, byte[] body) {
