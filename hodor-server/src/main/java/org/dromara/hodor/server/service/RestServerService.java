@@ -51,7 +51,6 @@ public class RestServerService implements LifecycleComponent {
         }, "hodor-scheduler-rest-server");
         restServerServiceThread.setDaemon(true);
         restServerServiceThread.start();
-
     }
 
     @Override
