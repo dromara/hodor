@@ -2,11 +2,12 @@ package org.dromara.hodor.server.executor.handler;
 
 import org.dromara.hodor.common.event.AbstractEventPublisher;
 import org.dromara.hodor.common.event.Event;
-import org.dromara.hodor.remoting.api.DefaultResponseFuture;
 import org.dromara.hodor.remoting.api.message.MessageType;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
 
 /**
+ * response handler
+ *
  * @author tomgs
  * @since 2021/4/7
  */
@@ -20,18 +21,11 @@ public class ResponseHandlerManager extends AbstractEventPublisher<RemotingMessa
 
     @Override
     public void registerListener() {
-        registerHeartbeatResponseListener();
         registerJobExecuteResponseListener();
+        registerHeartbeatResponseListener();
         registerKillRunningResponseListener();
         registerFetchJobStatusResponseListener();
         registerFetchJobExecLogResponseListener();
-    }
-
-    private void registerHeartbeatResponseListener() {
-        this.addListener(event -> {
-            RemotingMessage message = event.getValue();
-            DefaultResponseFuture.getResponseFuture(message.getHeader().getId()).receive(message);
-        }, MessageType.HEARTBEAT_REQUEST);
     }
 
     private void registerJobExecuteResponseListener() {
@@ -39,6 +33,13 @@ public class ResponseHandlerManager extends AbstractEventPublisher<RemotingMessa
             RemotingMessage message = event.getValue();
 
         }, MessageType.JOB_EXEC_REQUEST);
+    }
+
+    private void registerHeartbeatResponseListener() {
+        this.addListener(event -> {
+            RemotingMessage message = event.getValue();
+
+        }, MessageType.HEARTBEAT_REQUEST);
     }
 
     private void registerKillRunningResponseListener() {
