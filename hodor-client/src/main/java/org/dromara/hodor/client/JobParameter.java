@@ -13,17 +13,17 @@ import lombok.ToString;
 @ToString
 public class JobParameter {
 
-    private String groupName;
+    private final String groupName;
 
-    private String jobName;
+    private final String jobName;
 
-    private Long requestId;
+    private final Long requestId;
 
-    private String parameters;
+    private final String parameters;
 
-    private Integer shardId;
+    private final Integer shardId;
 
-    private String shardName;
+    private final String shardName;
 
     public JobParameter(String groupName, String jobName, Long requestId, String parameters, Integer shardId, String shardName) {
         this.groupName = groupName;
