@@ -1,4 +1,4 @@
-package org.dromara.hodor.client.annotation;
+package org.dromara.hodor.client.config;
 
 import lombok.Data;
 import org.dromara.hodor.common.storage.db.DataSourceConfig;

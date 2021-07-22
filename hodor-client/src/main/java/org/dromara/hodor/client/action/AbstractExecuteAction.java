@@ -7,7 +7,7 @@ import java.util.Map;
 import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.model.job.JobExecuteStatus;
 import org.dromara.hodor.client.ServiceProvider;
-import org.dromara.hodor.client.annotation.HodorProperties;
+import org.dromara.hodor.client.config.HodorProperties;
 import org.dromara.hodor.client.core.HodorJobExecution;
 import org.dromara.hodor.client.core.JobLoggerManager;
 import org.dromara.hodor.client.core.RequestContext;

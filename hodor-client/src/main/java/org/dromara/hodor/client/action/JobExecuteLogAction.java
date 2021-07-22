@@ -2,7 +2,7 @@ package org.dromara.hodor.client.action;
 
 import java.io.File;
 import org.dromara.hodor.client.ServiceProvider;
-import org.dromara.hodor.client.annotation.HodorProperties;
+import org.dromara.hodor.client.config.HodorProperties;
 import org.dromara.hodor.client.core.JobLoggerManager;
 import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.common.utils.FileIOUtils;

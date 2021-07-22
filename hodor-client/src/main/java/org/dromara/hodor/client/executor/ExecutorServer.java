@@ -2,7 +2,7 @@ package org.dromara.hodor.client.executor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.client.ServiceProvider;
-import org.dromara.hodor.client.annotation.HodorProperties;
+import org.dromara.hodor.client.config.HodorProperties;
 import org.dromara.hodor.client.handler.JobRequestHandler;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.remoting.api.Attribute;

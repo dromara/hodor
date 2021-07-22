@@ -3,7 +3,7 @@ package org.dromara.hodor.client;
 import cn.hutool.http.HttpUtil;
 import java.util.Collection;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.client.annotation.HodorProperties;
+import org.dromara.hodor.client.config.HodorProperties;
 import org.dromara.hodor.model.node.NodeInfo;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.common.utils.GsonUtils;

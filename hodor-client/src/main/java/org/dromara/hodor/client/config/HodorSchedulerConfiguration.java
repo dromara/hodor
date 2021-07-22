@@ -1,9 +1,10 @@
-package org.dromara.hodor.client.annotation;
+package org.dromara.hodor.client.config;
 
 import org.dromara.hodor.client.HodorApiClient;
 import org.dromara.hodor.client.HodorClientInit;
 import org.dromara.hodor.client.JobRegistrar;
 import org.dromara.hodor.client.ServiceProvider;
+import org.dromara.hodor.client.annotation.HodorSchedulerAnnotationBeanPostProcessor;
 import org.dromara.hodor.client.executor.JobExecutionPersistence;
 import org.dromara.hodor.client.executor.RequestHandleManager;
 import org.dromara.hodor.common.extension.ExtensionLoader;
