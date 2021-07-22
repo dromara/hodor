@@ -5,14 +5,14 @@ import org.dromara.hodor.model.node.NodeInfo;
 import org.dromara.hodor.server.restservice.HodorRestService;
 
 /**
- * register service
+ * actuator service
  *
  * @author tomgs
  * @since 2021/2/5
  */
-@HodorRestService(value = "worker", desc = "work rest service")
+@HodorRestService(value = "actuator", desc = "actuator rest service")
 @SuppressWarnings("unused")
-public class WorkerService {
+public class ActuatorService {
 
     public HodorResult<String> heartbeat(NodeInfo nodeInfo) {
         System.out.println(nodeInfo);

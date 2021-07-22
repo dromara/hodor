@@ -42,7 +42,7 @@ public class HodorApiClient {
     }
 
     public void sendHeartbeat(NodeInfo msg) {
-        String result = HttpUtil.createPost(registryAddress + "/worker/heartbeat")
+        String result = HttpUtil.createPost(registryAddress + "/actuator/heartbeat")
             .body(gsonUtils.toJson(msg))
             .header("appName", appName)
             .header("appKey", appKey)
@@ -52,7 +52,7 @@ public class HodorApiClient {
     }
 
     public void sendOfflineMsg(NodeInfo msg) {
-        String result = HttpUtil.createPost(registryAddress + "/worker/offline")
+        String result = HttpUtil.createPost(registryAddress + "/actuator/offline")
             .body(gsonUtils.toJson(msg))
             .header("appName", appName)
             .header("appKey", appKey)
