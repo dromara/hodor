@@ -1,6 +1,7 @@
 package org.dromara.hodor.server.restservice;
 
 import java.lang.reflect.Method;
+import org.dromara.hodor.common.utils.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
@@ -20,7 +21,14 @@ public class HodorRestServiceProcessor implements BeanPostProcessor {
         }
         Method[] declaredMethods = beanClass.getDeclaredMethods();
         for (Method declaredMethod : declaredMethods) {
-            RestServiceRequestHandler.REST_SERVICES.put(beanName + "/" + declaredMethod.getName(), new HandlerMethod(bean, declaredMethod));
+            RestMethod restMethod = declaredMethod.getDeclaredAnnotation(RestMethod.class);
+            String path;
+            if (restMethod == null || StringUtils.isBlank(restMethod.value())) {
+                path = beanName + "/" + declaredMethod.getName();
+            } else {
+                path = beanName + "/" + restMethod.value();
+            }
+            RestServiceRequestHandler.REST_SERVICES.put(path, new HandlerMethod(bean, declaredMethod));
         }
         return bean;
     }
