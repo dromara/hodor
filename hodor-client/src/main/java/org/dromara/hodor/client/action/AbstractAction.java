@@ -54,7 +54,7 @@ public abstract class AbstractAction<I extends RequestBody, O extends ResponseBo
     public void exceptionCaught(Exception e) {
         // send failed execute response
         log.error("execute has exception, {}.", e.getMessage(), e);
-        RemotingResponse response = RemotingResponse.failed(requestId, e.getMessage(), ThreadUtils.getStackTraceInfo(e));
+        RemotingResponse<O> response = RemotingResponse.failed(requestId, ThreadUtils.getStackTraceInfo(e));
         retryableSendMessage(buildResponseMessage(response));
     }
 
@@ -62,7 +62,7 @@ public abstract class AbstractAction<I extends RequestBody, O extends ResponseBo
         return serializer.deserialize(context.rawRequestBody(), requestBodyClass);
     }
 
-    public RemotingMessage buildResponseMessage(RemotingResponse response) {
+    public RemotingMessage buildResponseMessage(RemotingResponse<O> response) {
         byte[] body = serializer.serialize(response);
         Header header = Header.builder()
             .id(context.requestHeader().getId())

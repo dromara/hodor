@@ -14,7 +14,7 @@ public enum Priority {
 
   HIGHER(2);
 
-  private int priority;
+  private final int priority;
 
   Priority(int priority) {
     this.priority = priority;

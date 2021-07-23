@@ -3,8 +3,8 @@ package org.dromara.hodor.client.core;
 import java.util.Date;
 import lombok.Builder;
 import lombok.Data;
-import org.dromara.hodor.model.job.JobExecuteStatus;
 import org.dromara.hodor.common.utils.HostUtils;
+import org.dromara.hodor.model.enums.JobExecuteStatus;
 
 /**
  * hodor_job_execution table entity
@@ -34,8 +34,7 @@ public class HodorJobExecution {
 
     private Date completeTime;
 
-    /** @see JobExecuteStatus */
-    private Integer status;
+    private JobExecuteStatus status;
 
     private String comments;
 

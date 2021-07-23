@@ -3,6 +3,7 @@ package org.dromara.hodor.remoting.api.message.response;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.dromara.hodor.model.enums.JobExecuteStatus;
 
 /**
  *  kill running job response
@@ -17,7 +18,7 @@ public class KillRunningJobResponse extends AbstractResponseBody {
 
     private static final long serialVersionUID = 6568410342583057026L;
 
-    private int status;
+    private JobExecuteStatus status;
 
     private String completeTime;
 

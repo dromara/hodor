@@ -3,7 +3,6 @@ package org.dromara.hodor.client.action;
 import cn.hutool.core.date.DateUtil;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-import org.dromara.hodor.model.job.JobExecuteStatus;
 import org.dromara.hodor.client.JobExecutionContext;
 import org.dromara.hodor.client.JobParameter;
 import org.dromara.hodor.client.JobRegistrar;
@@ -11,6 +10,7 @@ import org.dromara.hodor.client.ServiceProvider;
 import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.client.core.ScheduledMethodRunnable;
 import org.dromara.hodor.common.utils.ThreadUtils;
+import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
 
@@ -59,7 +59,7 @@ public class JobExecuteAction extends AbstractExecuteAction {
 
         // to set job return result to response
         JobExecuteResponse response = buildResponse(request);
-        response.setStatus(JobExecuteStatus.SUCCESS);
+        response.setStatus(JobExecuteStatus.SUCCEEDED);
         response.setCompleteTime(DateUtil.formatDateTime(new Date()));
         return response;
     }

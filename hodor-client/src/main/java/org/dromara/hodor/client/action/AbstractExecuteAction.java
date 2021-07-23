@@ -5,7 +5,6 @@ import java.io.File;
 import java.util.Date;
 import java.util.Map;
 import org.apache.logging.log4j.Logger;
-import org.dromara.hodor.model.job.JobExecuteStatus;
 import org.dromara.hodor.client.ServiceProvider;
 import org.dromara.hodor.client.config.HodorProperties;
 import org.dromara.hodor.client.core.HodorJobExecution;
@@ -14,6 +13,7 @@ import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.client.executor.ExecutorManager;
 import org.dromara.hodor.client.executor.JobExecutionPersistence;
 import org.dromara.hodor.common.utils.ThreadUtils;
+import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.remoting.api.message.RemotingResponse;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
@@ -80,7 +80,12 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
         String exceptionStack = ThreadUtils.getStackTraceInfo(e);
         HodorJobExecution failureJobExecution = HodorJobExecution.createFailureJobExecution(requestId, exceptionStack);
         jobExecutionPersistence.fireJobExecutionEvent(failureJobExecution);
-        super.exceptionCaught(e);
+
+        JobExecuteResponse response = new JobExecuteResponse();
+        response.setStatus(JobExecuteStatus.FAILED);
+        response.setCompleteTime(DateUtil.formatDateTime(new Date()));
+        response.setComments(exceptionStack);
+        retryableSendMessage(buildResponseMessage(RemotingResponse.succeeded(requestId, response)));
     }
 
     public void sendStartExecuteResponse(JobExecuteRequest request) {

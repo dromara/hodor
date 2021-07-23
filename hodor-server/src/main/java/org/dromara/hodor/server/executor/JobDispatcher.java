@@ -54,8 +54,8 @@ public class JobDispatcher {
             public void execute() {
                 try {
                     hodorJobRequestHandler.handle(context);
-                } catch (Exception e) {
-                    hodorJobRequestHandler.exceptionCaught(e);
+                } catch (Throwable t) {
+                    hodorJobRequestHandler.exceptionCaught(context, t);
                 }
             }
         });

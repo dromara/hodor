@@ -3,6 +3,7 @@ package org.dromara.hodor.remoting.api.message.response;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.dromara.hodor.model.enums.JobExecuteStatus;
 
 /**
  * scheduled response
@@ -17,7 +18,7 @@ public class JobExecuteResponse extends AbstractResponseBody {
 
     private static final long serialVersionUID = 8889407473710885893L;
 
-    private Integer status;
+    private JobExecuteStatus status;
 
     private String startTime;
 
@@ -28,6 +29,8 @@ public class JobExecuteResponse extends AbstractResponseBody {
     private Integer shardId;
 
     private String shardName;
+
+    private String comments;
 
     private String result;
 
@@ -41,6 +44,7 @@ public class JobExecuteResponse extends AbstractResponseBody {
             ", processTime=" + processTime +
             ", shardId=" + shardId +
             ", shardName='" + shardName + '\'' +
+            ", comments='" + comments + '\'' +
             ", result='" + result + '\'' +
             '}';
     }

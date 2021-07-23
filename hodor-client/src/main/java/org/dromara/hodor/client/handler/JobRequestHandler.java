@@ -32,7 +32,7 @@ public class JobRequestHandler implements HodorChannelHandler {
     @Override
     public void exceptionCaught(HodorChannel channel, Throwable cause) {
         log.error("handler the request message has exception, message: {}.", cause.getMessage(), cause);
-        channel.send(cause).operationComplete(future -> future.channel().close());
+        //channel.send(cause).operationComplete(future -> future.channel().close());
     }
 
 }

@@ -6,17 +6,20 @@ package org.dromara.hodor.remoting.api.message;
  * @author tomgs
  * @since 2021/3/4
  */
-public class RemotingResponse implements ResponseBody {
+public class RemotingResponse<T> implements ResponseBody {
 
     private static final long serialVersionUID = -544536043615257748L;
 
     private Long requestId;
 
+    /**
+     * @see RemotingStatus
+     * */
     private Integer code;
 
     private String msg;
 
-    private Object data;
+    private T data;
 
     public RemotingResponse(Integer code, String msg) {
         this(0L, code, msg);
@@ -26,31 +29,31 @@ public class RemotingResponse implements ResponseBody {
         this(requestId, code, msg, null);
     }
 
-    public RemotingResponse(Long requestId, Integer code, String msg, Object data) {
+    public RemotingResponse(Long requestId, Integer code, String msg, T data) {
         this.requestId = requestId;
         this.code = code;
         this.msg = msg;
         this.data = data;
     }
 
-    public static RemotingResponse succeeded(Object data) {
+    public static <T> RemotingResponse<T> succeeded(T data) {
         return succeeded(0L, data);
     }
 
-    public static RemotingResponse succeeded(Long requestId, Object data) {
-        return new RemotingResponse(requestId, RemotingStatus.SUCCEEDED, "success", data);
+    public static <T> RemotingResponse<T> succeeded(Long requestId, T data) {
+        return new RemotingResponse<>(requestId, RemotingStatus.SUCCEEDED, "success", data);
     }
 
-    public static RemotingResponse failed(String msg) {
+    public static <T> RemotingResponse<T>  failed(String msg) {
         return failed(0L, msg);
     }
 
-    public static RemotingResponse failed(Long requestId, String msg) {
+    public static <T> RemotingResponse<T> failed(Long requestId, String msg) {
         return failed(requestId, msg, null);
     }
 
-    public static RemotingResponse failed(Long requestId, String msg, Object data) {
-        return new RemotingResponse(requestId, RemotingStatus.FAILED, msg, data);
+    public static <T> RemotingResponse<T>  failed(Long requestId, String msg, T data) {
+        return new RemotingResponse<>(requestId, RemotingStatus.FAILED, msg, data);
     }
 
     public void setRequestId(Long requestId) {
@@ -65,7 +68,7 @@ public class RemotingResponse implements ResponseBody {
         this.msg = msg;
     }
 
-    public void setData(Object data) {
+    public void setData(T data) {
         this.data = data;
     }
 
@@ -77,13 +80,17 @@ public class RemotingResponse implements ResponseBody {
         return msg;
     }
 
-    public Object getData() {
+    public T getData() {
         return data;
     }
 
     @Override
     public Long getRequestId() {
         return requestId;
+    }
+
+    public boolean isSuccess() {
+        return code == RemotingStatus.SUCCEEDED;
     }
 
     @Override
