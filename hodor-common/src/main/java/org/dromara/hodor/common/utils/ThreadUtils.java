@@ -49,7 +49,7 @@ public class ThreadUtils {
      * @param e 异常
      * @return 堆栈信息
      */
-    public static String getStackTraceInfo(Exception e) {
+    public static String getStackTraceInfo(Throwable e) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         try {
