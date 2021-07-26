@@ -1,6 +1,7 @@
 package org.dromara.hodor.server.restservice;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.text.StrSplitter;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
@@ -39,14 +40,14 @@ public class RestServiceRequestHandler implements HodorChannelHandler {
             HodorHttpRequest httpRequest = (HodorHttpRequest) message;
             // /hodor/{serviceName}/{methodName}
             String uri = httpRequest.getUri();
-            String[] requestPath = uri.split("/", 3);
-            if (requestPath.length != 3) {
+            List<String> requestPath = StrSplitter.splitPath(uri, 3);
+            if (requestPath.size() != 3) {
                 responseError(404, "not found path -> " + uri, channel);
                 return;
             }
 
-            String appName = requestPath[1];
-            String serviceFullName = requestPath[2];
+            String appName = requestPath.get(1);
+            String serviceFullName = requestPath.get(2);
             if (!properties.getNetServerName().equals(appName)) {
                 responseError(400, "Request appName invalid -> " + appName, channel);
                 return;
