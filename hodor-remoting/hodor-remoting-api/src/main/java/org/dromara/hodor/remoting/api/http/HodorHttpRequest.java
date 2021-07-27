@@ -5,6 +5,11 @@ import java.util.List;
 import java.util.Map;
 import lombok.Data;
 
+/**
+ * hodor http request
+ *
+ * @author tomgs
+ */
 @Data
 public class HodorHttpRequest implements Serializable {
 
@@ -16,10 +21,14 @@ public class HodorHttpRequest implements Serializable {
 
     private String method;
 
-    private byte[] content;
+    private byte[] content = new byte[0];
 
-    private List<Map.Entry<String, String>> header;
+    private HodorHttpHeaders headers = new HodorHttpHeaders();
 
     private Map<String, List<String>> queryParameters;
+
+    public void addHeader(String key, String value) {
+        headers.addHeader(key, value);
+    }
 
 }
