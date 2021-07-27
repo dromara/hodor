@@ -30,6 +30,7 @@ import org.dromara.hodor.remoting.api.Attribute;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.HodorChannelHandler;
 import org.dromara.hodor.remoting.api.RemotingConst;
+import org.dromara.hodor.remoting.api.exception.RemotingException;
 import org.dromara.hodor.remoting.api.http.HodorHttpRequest;
 import org.dromara.hodor.remoting.api.http.HodorHttpResponse;
 import org.dromara.hodor.remoting.netty.http.HttpMessageWrapper;
@@ -64,7 +65,7 @@ public class NettyChannelHandler extends ChannelDuplexHandler {
     }
 
     public boolean isTcpProtocol() {
-        return attribute.getProperty(RemotingConst.TCP_PROTOCOL, true);
+        return attribute.getProperty(RemotingConst.TCP_PROTOCOL, false);
     }
 
     @Override
@@ -84,26 +85,44 @@ public class NettyChannelHandler extends ChannelDuplexHandler {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         HodorChannel channel = new NettyChannel(ctx.channel());
-        if (isHttpProtocol()) {
+        if (isTcpProtocol()) {
+            super.channelRead(ctx, msg);
+            channelHandler.received(channel, msg);
+            return;
+        }
+        if (isHttpProtocol() && msg instanceof FullHttpRequest) {
             HodorHttpRequest hodorHttpRequest = HttpMessageWrapper.requestWrapper((FullHttpRequest) msg);
             channelHandler.received(channel, hodorHttpRequest);
             return;
         }
-        super.channelRead(ctx, msg);
-        channelHandler.received(channel, msg);
+        if (isHttpProtocol() && msg instanceof FullHttpResponse) {
+            HodorHttpResponse hodorHttpResponse = HttpMessageWrapper.responseWrapper((FullHttpResponse) msg);
+            channelHandler.received(channel, hodorHttpResponse);
+            return;
+        }
+        throw new RemotingException("check the protocol set.");
     }
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
         HodorChannel channel = new NettyChannel(ctx.channel());
-        if (isHttpProtocol()) {
-            FullHttpResponse httpResponse = HttpMessageWrapper.responseWrapper((HodorHttpResponse) msg);
+        if (isTcpProtocol()) {
+            super.write(ctx, msg, promise);
+            channelHandler.send(channel, msg);
+            return;
+        }
+        if (isHttpProtocol() && msg instanceof HodorHttpRequest) {
+            FullHttpRequest rawHttpRequest = HttpMessageWrapper.requestRawWrapper((HodorHttpRequest) msg);
+            ctx.writeAndFlush(rawHttpRequest);
+            return;
+        }
+        if (isHttpProtocol() && msg instanceof HodorHttpResponse) {
+            FullHttpResponse httpResponse = HttpMessageWrapper.responseRawWrapper((HodorHttpResponse) msg);
             ctx.write(httpResponse);
             ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
             return;
         }
-        super.write(ctx, msg, promise);
-        channelHandler.send(channel, msg);
+        throw new RemotingException("check the protocol set.");
     }
 
     @Override
