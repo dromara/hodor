@@ -40,14 +40,14 @@ public class RestServiceRequestHandler implements HodorChannelHandler {
             HodorHttpRequest httpRequest = (HodorHttpRequest) message;
             // /hodor/{serviceName}/{methodName}
             String uri = httpRequest.getUri();
-            List<String> requestPath = StrSplitter.splitPath(uri, 3);
-            if (requestPath.size() != 3) {
+            List<String> requestPath = StrSplitter.splitPath(uri, 2);
+            if (requestPath.size() != 2) {
                 responseError(404, "not found path -> " + uri, channel);
                 return;
             }
 
-            String appName = requestPath.get(1);
-            String serviceFullName = requestPath.get(2);
+            String appName = requestPath.get(0);
+            String serviceFullName = requestPath.get(1);
             if (!properties.getNetServerName().equals(appName)) {
                 responseError(400, "Request appName invalid -> " + appName, channel);
                 return;

@@ -4,6 +4,7 @@ import java.util.List;
 import org.dromara.hodor.model.common.HodorResult;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.server.restservice.HodorRestService;
+import org.dromara.hodor.server.service.LeaderService;
 
 /**
  * scheduler controller
@@ -15,11 +16,22 @@ import org.dromara.hodor.server.restservice.HodorRestService;
 @SuppressWarnings("unused")
 public class SchedulerService {
 
+    private final LeaderService leaderService;
+
+    public SchedulerService(final LeaderService leaderService) {
+        this.leaderService = leaderService;
+    }
+
     public HodorResult<String> isAlive() {
         return HodorResult.success("success");
     }
 
     public HodorResult<String> createJob(List<JobDesc> jobs) {
+        if (!leaderService.isLeader()) {
+            // redirect request to leader
+            String leaderServerId = leaderService.getLeaderEndpoint();
+            
+        }
         for (JobDesc job : jobs) {
             System.out.println(job);
         }
