@@ -19,7 +19,7 @@ import java.util.List;
 public class RemotingMessageCodec extends ByteToMessageCodec<RemotingMessage> {
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, RemotingMessage request, ByteBuf out) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, RemotingMessage request, ByteBuf out) {
         Header header = request.getHeader();
         byte[] body = request.getBody();
 
@@ -38,7 +38,7 @@ public class RemotingMessageCodec extends ByteToMessageCodec<RemotingMessage> {
     }
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         // 20 is header message length
         if (in.readableBytes() < RemotingConst.LENGTH_OF_HEADER) {
             return;
