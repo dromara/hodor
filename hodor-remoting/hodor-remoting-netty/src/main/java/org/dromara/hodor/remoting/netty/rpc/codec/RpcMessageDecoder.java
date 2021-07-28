@@ -3,12 +3,11 @@ package org.dromara.hodor.remoting.netty.rpc.codec;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
-import io.netty.util.ReferenceCountUtil;
-import java.util.List;
 import org.dromara.hodor.remoting.api.RemotingConst;
-import org.dromara.hodor.remoting.api.exception.RemotingException;
 import org.dromara.hodor.remoting.api.message.Header;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
+
+import java.util.List;
 
 /**
  * rpc request decoder for rpc server
@@ -32,20 +31,9 @@ public class RpcMessageDecoder extends ByteToMessageDecoder {
             in.resetReaderIndex();
             return;
         }
-        ByteBuf buf = in.readBytes(bodyLength);
-        try {
-            byte[] requestBody = new byte[bodyLength];
-            buf.readBytes(requestBody);
-
-            // 反序列化放到业务线程当中去
-            //Object requestBody = SerializeUtils.deserialize(req, Object.class);
-
-            out.add(RemotingMessage.builder().header(header).body(requestBody).build());
-        } catch (Exception e) {
-            throw new RemotingException("MessageDecoder parse data body exception: " + e.getMessage(), e);
-        } finally {
-            ReferenceCountUtil.release(buf);
-        }
+        byte[] requestBody = new byte[bodyLength];
+        in.readBytes(requestBody);
+        out.add(RemotingMessage.builder().header(header).body(requestBody).build());
     }
 
 }

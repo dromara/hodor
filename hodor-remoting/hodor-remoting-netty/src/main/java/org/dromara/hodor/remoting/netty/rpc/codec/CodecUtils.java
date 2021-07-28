@@ -2,8 +2,6 @@ package org.dromara.hodor.remoting.netty.rpc.codec;
 
 import com.google.common.collect.Maps;
 import io.netty.buffer.ByteBuf;
-import io.netty.util.ReferenceCountUtil;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.dromara.hodor.common.extension.ExtensionLoader;
@@ -11,6 +9,8 @@ import org.dromara.hodor.remoting.api.RemotingConst;
 import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
 import org.dromara.hodor.remoting.api.exception.RemotingException;
 import org.dromara.hodor.remoting.api.message.Header;
+
+import java.util.Map;
 
 /**
  * codec utils
@@ -27,11 +27,9 @@ public class CodecUtils {
     public static Map<String, Object> parseAttachment(ByteBuf in, int attachmentSize) {
         Map<String, Object> attachment = Maps.newHashMap();
         if (attachmentSize != 0) {
-            ByteBuf buf = in.readBytes(attachmentSize);
-            byte[] req = new byte[buf.readableBytes()];
-            buf.readBytes(req);
+            byte[] req = new byte[attachmentSize];
+            in.readBytes(req);
             attachment = (Map<String, Object>) serializer.deserialize(req, Map.class);
-            ReferenceCountUtil.release(buf);
         }
         return attachment;
     }
