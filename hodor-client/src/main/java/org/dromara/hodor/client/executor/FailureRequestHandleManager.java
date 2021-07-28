@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import org.dromara.hodor.common.concurrent.HodorThreadFactory;
 import org.dromara.hodor.common.event.AbstractAsyncEventPublisher;
 import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.executor.HodorRunnable;
@@ -27,12 +32,20 @@ public class FailureRequestHandleManager extends AbstractAsyncEventPublisher<Tup
 
     private final ExecutorManager executorManager;
 
+    private final ScheduledExecutorService failureRequestCheckService;
+
     //TODO: to persistence
     private final Map<String, List<RemotingMessage>> resendMessageMap;
 
     private FailureRequestHandleManager() {
         this.executorManager = ExecutorManager.getInstance();
         this.resendMessageMap = new HashMap<>();
+        this.failureRequestCheckService = new ScheduledThreadPoolExecutor(1,
+            HodorThreadFactory.create("hodor-failure-request-checker", true),
+            new ThreadPoolExecutor.DiscardOldestPolicy());
+        this.failureRequestCheckService.scheduleAtFixedRate(() -> {
+
+        }, 3_000, 30_000, TimeUnit.MILLISECONDS);
     }
 
     public static FailureRequestHandleManager getInstance() {
