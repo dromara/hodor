@@ -1,10 +1,8 @@
 package org.dromara.hodor.client.executor;
 
 import cn.hutool.core.lang.Tuple;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -66,13 +64,14 @@ public class FailureRequestHandleManager extends AbstractAsyncEventPublisher<Tup
                     String remoteIp = activeChannelTuple.get(0);
                     HodorChannel activeChannel = activeChannelTuple.get(1);
                     List<RemotingMessage> remotingMessages = resendMessageMap.get(remoteIp);
-                    for (RemotingMessage remotingMessage : remotingMessages) {
+                    Optional.ofNullable(remotingMessages).ifPresent(msgList -> msgList.forEach(remotingMessage -> {
                         activeChannel.send(remotingMessage).operationComplete(e -> {
                             if (e.cause() == null && e.isSuccess()) {
                                 remotingMessages.remove(remotingMessage);
                             }
                         });
-                    }
+                    }));
+
                 }
             });
         }, REQUEST_RESEND_EVENT); // RESEND_EVENT
