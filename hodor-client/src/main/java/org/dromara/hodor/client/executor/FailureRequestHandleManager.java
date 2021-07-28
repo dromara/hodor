@@ -1,14 +1,13 @@
 package org.dromara.hodor.client.executor;
 
+import cn.hutool.core.lang.Tuple;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.dromara.hodor.common.event.AbstractEventPublisher;
+import org.dromara.hodor.common.event.AbstractAsyncEventPublisher;
 import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.executor.HodorRunnable;
-import org.dromara.hodor.common.utils.HostUtils;
-import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
 
@@ -18,9 +17,13 @@ import org.dromara.hodor.remoting.api.message.RemotingMessage;
  * @author tomgs
  * @since 2021/3/22
  */
-public class FailureRequestHandleManager extends AbstractEventPublisher<HodorChannel> {
+public class FailureRequestHandleManager extends AbstractAsyncEventPublisher<Tuple> {
 
     private static final FailureRequestHandleManager INSTANCE = new FailureRequestHandleManager();
+
+    private static final String REQUEST_RESEND_EVENT = "REQUEST_RESEND_EVENT";
+
+    private long lastFireTime = System.currentTimeMillis();
 
     private final ExecutorManager executorManager;
 
@@ -43,11 +46,12 @@ public class FailureRequestHandleManager extends AbstractEventPublisher<HodorCha
 
     private void registerFailureHandlerListener() {
         this.addListener(e -> {
-            HodorChannel activeChannel = e.getValue();
+            Tuple activeChannelTuple = e.getValue();
             executorManager.commonExecute(new HodorRunnable() {
                 @Override
                 public void execute() {
-                    String remoteIp = HostUtils.getIp(activeChannel.remoteAddress());
+                    String remoteIp = activeChannelTuple.get(0);
+                    HodorChannel activeChannel = activeChannelTuple.get(1);
                     List<RemotingMessage> remotingMessages = resendMessageMap.get(remoteIp);
                     for (RemotingMessage remotingMessage : remotingMessages) {
                         activeChannel.send(remotingMessage).operationComplete(e -> {
@@ -58,18 +62,27 @@ public class FailureRequestHandleManager extends AbstractEventPublisher<HodorCha
                     }
                 }
             });
-        }, JobExecuteStatus.FAILED); // RESEND_EVENT
+        }, REQUEST_RESEND_EVENT); // RESEND_EVENT
     }
 
-    public void fireFailureRequestHandler(String remoteIp, HodorChannel activeChannel, RemotingMessage message) {
+    public void fireFailureRequestHandler(String remoteIp, HodorChannel activeChannel) {
+        // 30s 触发一次
+        long currentTimeMillis = System.currentTimeMillis();
+        if (currentTimeMillis - lastFireTime < 30 * 1000) {
+            return;
+        }
+        lastFireTime = currentTimeMillis;
+        publish(new Event<>(new Tuple(remoteIp, activeChannel), REQUEST_RESEND_EVENT)); // RESEND_EVENT
+    }
+
+    public void addFailureRequest(String remoteIp, HodorChannel activeChannel, RemotingMessage message) {
         List<RemotingMessage> remotingMessages = resendMessageMap.computeIfAbsent(remoteIp, k -> new ArrayList<>());
         remotingMessages.add(message);
 
         if (activeChannel == null || !activeChannel.isOpen()) {
             return;
         }
-
-        publish(new Event<>(activeChannel, JobExecuteStatus.FAILED)); // RESEND_EVENT
+        fireFailureRequestHandler(remoteIp, activeChannel);
     }
 
 }

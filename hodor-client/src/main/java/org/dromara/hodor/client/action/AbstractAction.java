@@ -87,7 +87,7 @@ public abstract class AbstractAction<I extends RequestBody, O extends ResponseBo
             RequestHandleManager requestHandleManager = ServiceProvider.getInstance().getBean(RequestHandleManager.class);
             if (!future.isSuccess() || future.cause() != null) {
                 log.warn("response failed.", future.cause());
-                requestHandleManager.fireRetrySendMessage(future.channel().remoteAddress(), message);
+                requestHandleManager.addRetrySendMessage(future.channel().remoteAddress(), message);
             } else {
                 requestHandleManager.recordActiveChannel(future.channel());
             }

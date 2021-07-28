@@ -108,11 +108,23 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
         publish(event);
     }
 
-    public void fireRetrySendMessage(SocketAddress socketAddress, RemotingMessage message) {
+    public void addRetrySendMessage(SocketAddress socketAddress, RemotingMessage message) {
         // persistence to db
         String remoteIp = HostUtils.getIp(socketAddress);
+        /*
+         * 优先发送到对应remoteIp的Channel，如果没有则可以随便发送到一个activeChannel，由调度端去转发响应的请求即可。
+         */
         HodorChannel activeChannel = activeChannels.get(remoteIp);
-        failureRequestHandleManager.fireFailureRequestHandler(remoteIp, activeChannel, message);
+        if (activeChannel == null || !activeChannel.isOpen()) {
+            activeChannels.remove(remoteIp);
+        }
+        for (HodorChannel backupChannel : activeChannels.values()) {
+            if (backupChannel.isOpen()) {
+                activeChannel = backupChannel;
+                break;
+            }
+        }
+        failureRequestHandleManager.addFailureRequest(remoteIp, activeChannel, message);
     }
 
     public void recordActiveChannel(HodorChannel activeChannel) {
@@ -120,6 +132,7 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
         InetSocketAddress inetSocketAddress = (InetSocketAddress) remoteAddress;
         String remoteIp = inetSocketAddress.getAddress().getHostAddress();
         activeChannels.put(remoteIp, activeChannel);
+        failureRequestHandleManager.fireFailureRequestHandler(remoteIp, activeChannel);
     }
 
 }
