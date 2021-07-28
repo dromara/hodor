@@ -13,7 +13,7 @@ import org.dromara.hodor.common.executor.HodorRunnable;
  * @author tomgs
  * @since 2021/3/18
  */
-public class AbstractAsyncEventPublisher<V> extends AbstractEventPublisher<V> {
+public abstract class AbstractAsyncEventPublisher<V> extends AbstractEventPublisher<V> {
 
     private final HodorExecutor eventExecutor;
 
