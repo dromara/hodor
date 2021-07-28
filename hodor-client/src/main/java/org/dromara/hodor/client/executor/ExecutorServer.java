@@ -24,13 +24,13 @@ public class ExecutorServer {
     private final HodorProperties properties = ServiceProvider.getInstance().getBean(HodorProperties.class);
 
     public ExecutorServer() {
-        Attribute attribute = new Attribute();
+        final Attribute attribute = new Attribute();
         attribute.put(RemotingConst.HOST_KEY, properties.getHost());
         attribute.put(RemotingConst.PORT_KEY, properties.getPort());
         attribute.put(RemotingConst.TCP_PROTOCOL, true);
 
-        JobRequestHandler handler = new JobRequestHandler();
-        NetServerTransport netServerTransport = ExtensionLoader.getExtensionLoader(NetServerTransport.class).getDefaultJoin();
+        final JobRequestHandler handler = new JobRequestHandler();
+        final NetServerTransport netServerTransport = ExtensionLoader.getExtensionLoader(NetServerTransport.class).getDefaultJoin();
         this.netServer = netServerTransport.build(attribute, handler);
     }
 

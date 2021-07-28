@@ -11,6 +11,7 @@ import org.dromara.hodor.client.action.JobExecuteAction;
 import org.dromara.hodor.client.action.JobExecuteLogAction;
 import org.dromara.hodor.client.action.JobExecuteStatusAction;
 import org.dromara.hodor.client.action.KillRunningJobAction;
+import org.dromara.hodor.client.config.HodorProperties;
 import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.common.event.AbstractEventPublisher;
 import org.dromara.hodor.common.event.Event;
@@ -40,11 +41,17 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
 
     private final JobRegistrar jobRegistrar;
 
+    private final JobExecutionPersistence jobExecutionPersistence;
+
+    private final HodorProperties properties;
+
     public RequestHandleManager() {
         this.executorManager = ExecutorManager.getInstance();
         this.failureRequestHandleManager = FailureRequestHandleManager.getInstance();
         this.activeChannels = new ConcurrentHashMap<>();
         this.jobRegistrar = ServiceProvider.getInstance().getBean(JobRegistrar.class);
+        this.jobExecutionPersistence = ServiceProvider.getInstance().getBean(JobExecutionPersistence.class);
+        this.properties = ServiceProvider.getInstance().getBean(HodorProperties.class);
     }
 
     @Override
@@ -60,7 +67,7 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
         this.addListener(e -> {
             RequestContext context = e.getValue();
             context.setRequestType(JobExecuteLogRequest.class);
-            executorManager.commonExecute(new JobExecuteLogAction(context));
+            executorManager.commonExecute(new JobExecuteLogAction(context, properties));
         }, MessageType.FETCH_JOB_LOG_REQUEST);
     }
 
@@ -68,7 +75,7 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
         this.addListener(e -> {
             RequestContext context = e.getValue();
             context.setRequestType(JobExecuteStatusRequest.class);
-            executorManager.commonExecute(new JobExecuteStatusAction(context));
+            executorManager.commonExecute(new JobExecuteStatusAction(context, jobExecutionPersistence));
         }, MessageType.FETCH_JOB_STATUS_REQUEST);
     }
 
@@ -76,7 +83,7 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
         this.addListener(e -> {
             RequestContext context = e.getValue();
             context.setRequestType(KillRunningJobRequest.class);
-            executorManager.commonExecute(new KillRunningJobAction(context));
+            executorManager.commonExecute(new KillRunningJobAction(context, jobExecutionPersistence));
         }, MessageType.KILL_JOB_REQUEST);
     }
 
@@ -84,7 +91,7 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
         this.addListener(e -> {
             RequestContext context = e.getValue();
             context.setRequestType(JobExecuteRequest.class);
-            executorManager.execute(new JobExecuteAction(context, jobRegistrar));
+            executorManager.execute(new JobExecuteAction(context, properties, jobExecutionPersistence, jobRegistrar));
         }, MessageType.JOB_EXEC_REQUEST);
     }
 

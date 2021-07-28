@@ -5,7 +5,6 @@ import java.io.File;
 import java.util.Date;
 import java.util.Map;
 import org.apache.logging.log4j.Logger;
-import org.dromara.hodor.client.ServiceProvider;
 import org.dromara.hodor.client.config.HodorProperties;
 import org.dromara.hodor.client.core.HodorJobExecution;
 import org.dromara.hodor.client.core.JobLoggerManager;
@@ -38,17 +37,18 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
 
     private final JobLoggerManager jobLoggerManager;
 
-    public AbstractExecuteAction(RequestContext context) {
+    public AbstractExecuteAction(final RequestContext context, final HodorProperties properties,
+                                 final JobExecutionPersistence jobExecutionPersistence) {
         super(context);
-        this.properties = ServiceProvider.getInstance().getBean(HodorProperties.class);
-        this.jobExecutionPersistence = ServiceProvider.getInstance().getBean(JobExecutionPersistence.class);
+        this.properties = properties;
+        this.jobExecutionPersistence = jobExecutionPersistence;
         this.jobLoggerManager = JobLoggerManager.getInstance();
     }
 
-    public abstract JobExecuteResponse executeRequest0(JobExecuteRequest request) throws Exception;
+    public abstract JobExecuteResponse executeRequest0(final JobExecuteRequest request) throws Exception;
 
     @Override
-    public JobExecuteResponse executeRequest(JobExecuteRequest request) throws Exception {
+    public JobExecuteResponse executeRequest(final JobExecuteRequest request) throws Exception {
         requestId = request.getRequestId();
         // create job logger
         File jobLoggerFile = jobLoggerManager.buildJobLoggerFile(properties.getRootJobLogPath(), request.getGroupName(), request.getJobName(), requestId);
@@ -88,7 +88,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
         retryableSendMessage(buildResponseMessage(RemotingResponse.succeeded(requestId, response)));
     }
 
-    public void sendStartExecuteResponse(JobExecuteRequest request) {
+    public void sendStartExecuteResponse(final JobExecuteRequest request) {
         JobExecuteResponse response = buildResponse(request);
         response.setStatus(JobExecuteStatus.RUNNING);
         response.setStartTime(DateUtil.formatDateTime(new Date()));
@@ -101,7 +101,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
         retryableSendMessage(buildResponseMessage(RemotingResponse.succeeded(requestId, response)));
     }
 
-    public JobExecuteResponse buildResponse(JobExecuteRequest request) {
+    public JobExecuteResponse buildResponse(final JobExecuteRequest request) {
         JobExecuteResponse response = new JobExecuteResponse();
         response.setRequestId(request.getRequestId());
         response.setShardId(request.getShardId());

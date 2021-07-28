@@ -31,7 +31,7 @@ public abstract class AbstractAction<I extends RequestBody, O extends ResponseBo
 
     public AbstractAction(final RequestContext context) {
         this.context = context;
-        this.serializer = ServiceProvider.getInstance().getBean(RemotingMessageSerializer.class);
+        this.serializer = context.serializer();
     }
 
     public RequestContext getRequestContext() {

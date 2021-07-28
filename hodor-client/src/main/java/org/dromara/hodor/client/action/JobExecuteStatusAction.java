@@ -18,9 +18,9 @@ public class JobExecuteStatusAction extends AbstractAction<JobExecuteStatusReque
 
     private final JobExecutionPersistence jobExecutionPersistence;
 
-    public JobExecuteStatusAction(RequestContext context) {
+    public JobExecuteStatusAction(final RequestContext context, final JobExecutionPersistence jobExecutionPersistence) {
         super(context);
-        this.jobExecutionPersistence = ServiceProvider.getInstance().getBean(JobExecutionPersistence.class);
+        this.jobExecutionPersistence = jobExecutionPersistence;
     }
 
     @Override

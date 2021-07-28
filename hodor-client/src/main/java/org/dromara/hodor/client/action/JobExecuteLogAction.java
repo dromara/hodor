@@ -1,7 +1,6 @@
 package org.dromara.hodor.client.action;
 
 import java.io.File;
-import org.dromara.hodor.client.ServiceProvider;
 import org.dromara.hodor.client.config.HodorProperties;
 import org.dromara.hodor.client.core.JobLoggerManager;
 import org.dromara.hodor.client.core.RequestContext;
@@ -17,14 +16,14 @@ import org.dromara.hodor.remoting.api.message.response.JobExecuteLogResponse;
  */
 public class JobExecuteLogAction extends AbstractAction<JobExecuteLogRequest, JobExecuteLogResponse> {
 
-    private final JobLoggerManager jobLoggerManager;
-
     private final HodorProperties properties;
 
-    public JobExecuteLogAction(RequestContext context) {
+    private final JobLoggerManager jobLoggerManager;
+
+    public JobExecuteLogAction(final RequestContext context, final HodorProperties properties) {
         super(context);
+        this.properties = properties;
         this.jobLoggerManager = JobLoggerManager.getInstance();
-        this.properties = ServiceProvider.getInstance().getBean(HodorProperties.class);
     }
 
     @Override

@@ -6,6 +6,7 @@ import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.client.executor.RequestHandleManager;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.HodorChannelHandler;
+import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
 
 /**
@@ -19,14 +20,13 @@ public class JobRequestHandler implements HodorChannelHandler {
 
     private final RequestHandleManager requestHandleManager = ServiceProvider.getInstance().getBean(RequestHandleManager.class);
 
+    private final RemotingMessageSerializer serializer = ServiceProvider.getInstance().getBean(RemotingMessageSerializer.class);
+
     @Override
     public void received(HodorChannel channel, Object message) {
-        RemotingMessage request = (RemotingMessage) message;
-
-        log.info("request message: {}.", request);
-
-        final RequestContext context = new RequestContext(channel, request);
-        requestHandleManager.notifyRequestHandler(context);
+        final RemotingMessage request = (RemotingMessage) message;
+        final RequestContext context = new RequestContext(channel, request, serializer);
+        this.requestHandleManager.notifyRequestHandler(context);
     }
 
     @Override

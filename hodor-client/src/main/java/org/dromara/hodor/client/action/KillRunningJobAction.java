@@ -2,7 +2,6 @@ package org.dromara.hodor.client.action;
 
 import cn.hutool.core.date.DateUtil;
 import java.util.Date;
-import org.dromara.hodor.client.ServiceProvider;
 import org.dromara.hodor.client.core.HodorJobExecution;
 import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.client.executor.ExecutorManager;
@@ -23,10 +22,10 @@ public class KillRunningJobAction extends AbstractAction<KillRunningJobRequest, 
 
     private final JobExecutionPersistence jobExecutionPersistence;
 
-    public KillRunningJobAction(final RequestContext context) {
+    public KillRunningJobAction(final RequestContext context, final JobExecutionPersistence jobExecutionPersistence) {
         super(context);
         this.executorManager = ExecutorManager.getInstance();
-        this.jobExecutionPersistence = ServiceProvider.getInstance().getBean(JobExecutionPersistence.class);
+        this.jobExecutionPersistence = jobExecutionPersistence;
     }
 
     @Override
