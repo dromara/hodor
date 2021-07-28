@@ -4,6 +4,8 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.dromara.hodor.client.JobRegistrar;
+import org.dromara.hodor.client.ServiceProvider;
 import org.dromara.hodor.client.action.HeartbeatAction;
 import org.dromara.hodor.client.action.JobExecuteAction;
 import org.dromara.hodor.client.action.JobExecuteLogAction;
@@ -36,10 +38,13 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
 
     private final Map<String, HodorChannel> activeChannels;
 
+    private final JobRegistrar jobRegistrar;
+
     public RequestHandleManager() {
         this.executorManager = ExecutorManager.getInstance();
         this.failureRequestHandleManager = FailureRequestHandleManager.getInstance();
         this.activeChannels = new ConcurrentHashMap<>();
+        this.jobRegistrar = ServiceProvider.getInstance().getBean(JobRegistrar.class);
     }
 
     @Override
@@ -79,7 +84,7 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
         this.addListener(e -> {
             RequestContext context = e.getValue();
             context.setRequestType(JobExecuteRequest.class);
-            executorManager.execute(new JobExecuteAction(context));
+            executorManager.execute(new JobExecuteAction(context, jobRegistrar));
         }, MessageType.JOB_EXEC_REQUEST);
     }
 

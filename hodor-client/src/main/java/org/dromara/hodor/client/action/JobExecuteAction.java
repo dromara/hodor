@@ -6,7 +6,6 @@ import java.util.concurrent.TimeUnit;
 import org.dromara.hodor.client.JobExecutionContext;
 import org.dromara.hodor.client.JobParameter;
 import org.dromara.hodor.client.JobRegistrar;
-import org.dromara.hodor.client.ServiceProvider;
 import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.client.core.ScheduledMethodRunnable;
 import org.dromara.hodor.common.utils.ThreadUtils;
@@ -24,9 +23,9 @@ public class JobExecuteAction extends AbstractExecuteAction {
 
     private final JobRegistrar jobRegistrar;
 
-    public JobExecuteAction(RequestContext context) {
+    public JobExecuteAction(final RequestContext context, final JobRegistrar jobRegistrar) {
         super(context);
-        this.jobRegistrar = ServiceProvider.getInstance().getBean(JobRegistrar.class);
+        this.jobRegistrar = jobRegistrar;
     }
 
     @Override

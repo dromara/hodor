@@ -115,6 +115,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
 
     @Override
     public void afterProcess() {
+        jobLogger.info("job execution finished.");
         ExecutorManager.getInstance().removeRunningThread(requestId);
         jobLoggerManager.stopJobLogger(loggerName);
     }
