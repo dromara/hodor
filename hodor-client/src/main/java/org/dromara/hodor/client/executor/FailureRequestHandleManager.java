@@ -8,6 +8,7 @@ import org.dromara.hodor.common.event.AbstractEventPublisher;
 import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.executor.HodorRunnable;
 import org.dromara.hodor.common.utils.HostUtils;
+import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
 
@@ -57,7 +58,7 @@ public class FailureRequestHandleManager extends AbstractEventPublisher<HodorCha
                     }
                 }
             });
-        }, 0); // 0 RESEND_EVENT
+        }, JobExecuteStatus.FAILED); // RESEND_EVENT
     }
 
     public void fireFailureRequestHandler(String remoteIp, HodorChannel activeChannel, RemotingMessage message) {
@@ -68,7 +69,7 @@ public class FailureRequestHandleManager extends AbstractEventPublisher<HodorCha
             return;
         }
 
-        publish(new Event<>(activeChannel, 0)); // 0 RESEND_EVENT
+        publish(new Event<>(activeChannel, JobExecuteStatus.FAILED)); // RESEND_EVENT
     }
 
 }
