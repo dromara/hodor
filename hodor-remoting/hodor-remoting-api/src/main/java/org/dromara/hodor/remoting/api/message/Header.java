@@ -31,6 +31,7 @@ public class Header {
 
     /**
      * 消息类型
+     * @see MessageType
      */
     private byte type;
 
