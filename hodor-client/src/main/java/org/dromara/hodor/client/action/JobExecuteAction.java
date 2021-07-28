@@ -29,7 +29,7 @@ public class JobExecuteAction extends AbstractExecuteAction {
     }
 
     @Override
-    public JobExecuteResponse executeRequest0(JobExecuteRequest request) {
+    public JobExecuteResponse executeRequest0(final JobExecuteRequest request) {
         ScheduledMethodRunnable jobRunnable = jobRegistrar.getJobRunnable(request.getGroupName(), request.getJobName());
         if (jobRunnable == null) {
             throw new IllegalArgumentException(String.format("not found job %s_%s.", request.getGroupName(), request.getJobName()));
