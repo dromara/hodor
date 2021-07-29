@@ -22,7 +22,7 @@ public class LogUtil {
 
     private static final LogUtil INSTANCE = new LogUtil();
 
-    private static final String DEFAULT_LAYOUT = "[%d{yyyy-MM-dd HH:mm:ss}] [%X{requestId}] [%thread] %-5level %logger{40} [%L] %msg%n";
+    private static final String DEFAULT_LAYOUT = "[%d{yyyy-MM-dd HH:mm:ss}] [%thread] %-5level %class{40}:%L %msg%n";
 
     private final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
     private final Configuration config = ctx.getConfiguration();
