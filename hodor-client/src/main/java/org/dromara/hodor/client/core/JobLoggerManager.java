@@ -1,7 +1,7 @@
 package org.dromara.hodor.client.core;
 
+import cn.hutool.core.util.StrUtil;
 import java.io.File;
-import java.text.MessageFormat;
 import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.common.log.LogUtil;
 
@@ -27,14 +27,14 @@ public class JobLoggerManager {
     }
 
     public String createLoggerName(String groupName, String jobName, Long requestId) {
-        return MessageFormat.format("{0}_{1}_{2}_{3}", System.currentTimeMillis(),
+        return StrUtil.format("{}_{}_{}_{}", System.currentTimeMillis(),
             groupName,
             jobName,
             requestId);
     }
 
     public String createLogFileName(String groupName, String jobName, Long requestId) {
-        return MessageFormat.format("_job.{0}.{1}.{2}.log",
+        return StrUtil.format("_job.{}.{}.{}.log",
             groupName,
             jobName,
             requestId);
