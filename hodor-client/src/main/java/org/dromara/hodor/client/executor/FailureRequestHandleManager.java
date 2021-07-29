@@ -15,7 +15,7 @@ import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
 
 /**
- *  failure request handler manager
+ * failure request handler manager
  *
  * @author tomgs
  * @since 2021/3/22
@@ -64,14 +64,13 @@ public class FailureRequestHandleManager extends AbstractAsyncEventPublisher<Tup
                     String remoteIp = activeChannelTuple.get(0);
                     HodorChannel activeChannel = activeChannelTuple.get(1);
                     List<RemotingMessage> remotingMessages = resendMessageMap.get(remoteIp);
-                    Optional.ofNullable(remotingMessages).ifPresent(msgList -> msgList.forEach(remotingMessage -> {
-                        activeChannel.send(remotingMessage).operationComplete(e -> {
-                            if (e.cause() == null && e.isSuccess()) {
-                                remotingMessages.remove(remotingMessage);
-                            }
-                        });
-                    }));
-
+                    Optional.ofNullable(remotingMessages)
+                        .ifPresent(msgList -> msgList.forEach(remotingMessage -> activeChannel.send(remotingMessage)
+                            .operationComplete(e -> {
+                                if (e.cause() == null && e.isSuccess()) {
+                                    remotingMessages.remove(remotingMessage);
+                                }
+                            })));
                 }
             });
         }, REQUEST_RESEND_EVENT); // RESEND_EVENT
