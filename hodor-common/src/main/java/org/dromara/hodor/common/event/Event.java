@@ -22,6 +22,10 @@ public class Event<V> {
         this.eventType = eventType;
     }
 
+    public static <V> Event<V> create(V value, Object eventType) {
+        return new Event<>(value, eventType);
+    }
+
     public Object getEventType() {
         return eventType;
     }
