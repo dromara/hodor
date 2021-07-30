@@ -19,6 +19,8 @@ public class HodorDatabaseSetup {
 
     private static final String JOB_EXECUTION_TABLE_NAME = "hodor_job_execution";
 
+    private static final String RETRYABLE_MESSAGE_TABLE_NAME = "hodor_retryable_message";
+
     public HodorDatabaseSetup() {
         this.dbOperator = ServiceProvider.getInstance().getBean(DBOperator.class);
     }
@@ -28,6 +30,7 @@ public class HodorDatabaseSetup {
      */
     public void initTables() throws SQLException {
         createJobExecutionTable();
+        createRetryableMessageTable();
     }
 
     /**
@@ -40,6 +43,19 @@ public class HodorDatabaseSetup {
     private void createJobExecutionTable() throws SQLException {
         String tableSql = buildCreateJobExecutionTableSql();
         String indexSql = buildJobExecutionTableIndex();
+
+        log.info("create table sql: {}", tableSql);
+        log.info("create index sql: {}", indexSql);
+
+        if (!dbOperator.createTableIfNeeded(JOB_EXECUTION_TABLE_NAME, tableSql)) {
+            // create index
+            dbOperator.update(indexSql);
+        }
+    }
+
+    private void createRetryableMessageTable() throws SQLException {
+        String tableSql = buildCreateRetryableMessageTableSql();
+        String indexSql = buildRetryableMessageTableIndex();
 
         log.info("create table sql: {}", tableSql);
         log.info("create index sql: {}", indexSql);
@@ -70,9 +86,29 @@ public class HodorDatabaseSetup {
             JOB_EXECUTION_TABLE_NAME);
     }
 
+    private String buildCreateRetryableMessageTableSql() {
+        return MessageFormat.format("create table {0}\n" +
+            "(\n" +
+            "    id          LONG auto_increment,\n" +
+            "    request_id  LONG,\n" +
+            "    remote_ip   VARCHAR2,\n" +
+            "    raw_message LONGBLOB,\n" +
+            "    status      BOOL,\n" +
+            "    retry_count INT,\n" +
+            "    create_time TIMESTAMP,\n" +
+            "    update_time TIMESTAMP,\n" +
+            "    CONSTRAINT {0}_pk PRIMARY KEY (id)\n" +
+            ");", RETRYABLE_MESSAGE_TABLE_NAME);
+    }
+
     private String buildJobExecutionTableIndex() {
         return MessageFormat.format("CREATE UNIQUE INDEX {0}_request_id_uindex ON {0} (request_id);",
             JOB_EXECUTION_TABLE_NAME);
+    }
+
+    private String buildRetryableMessageTableIndex() {
+        return MessageFormat.format("CREATE UNIQUE INDEX {0}_request_id_uindex ON {0} (request_id);",
+            RETRYABLE_MESSAGE_TABLE_NAME);
     }
 
 }

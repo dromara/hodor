@@ -1,16 +1,22 @@
 package org.dromara.hodor.client.executor;
 
-import cn.hutool.core.lang.Tuple;
-
-import java.util.*;
+import cn.hutool.core.collection.CollectionUtil;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.client.ServiceProvider;
+import org.dromara.hodor.client.core.RetryableMessage;
 import org.dromara.hodor.common.concurrent.HodorThreadFactory;
 import org.dromara.hodor.common.event.AbstractAsyncEventPublisher;
 import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.executor.HodorRunnable;
+import org.dromara.hodor.common.storage.db.DBOperator;
+import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
 
@@ -20,30 +26,38 @@ import org.dromara.hodor.remoting.api.message.RemotingMessage;
  * @author tomgs
  * @since 2021/3/22
  */
-public class FailureRequestHandleManager extends AbstractAsyncEventPublisher<Tuple> {
+@Slf4j
+public class FailureRequestHandleManager extends AbstractAsyncEventPublisher<RetryableMessage> {
 
     private static final FailureRequestHandleManager INSTANCE = new FailureRequestHandleManager();
 
-    private static final String REQUEST_RESEND_EVENT = "REQUEST_RESEND_EVENT";
+    private static final String MESSAGE_INSERT_EVENT = "MESSAGE_INSERT_EVENT";
 
-    private long lastFireTime = System.currentTimeMillis();
+    private static final String MESSAGE_UPDATE_EVENT = "MESSAGE_UPDATE_EVENT";
+
+    private static final String MESSAGE_DELETE_EVENT = "MESSAGE_DELETE_EVENT";
+
+    private final ClientChannelManager clientChannelManager;
 
     private final ExecutorManager executorManager;
 
     private final ScheduledExecutorService failureRequestCheckService;
 
-    //TODO: to persistence
-    private final Map<String, List<RemotingMessage>> resendMessageMap;
+    private final DBOperator dbOperator;
 
     private FailureRequestHandleManager() {
+        this.clientChannelManager = ClientChannelManager.getInstance();
         this.executorManager = ExecutorManager.getInstance();
-        this.resendMessageMap = new HashMap<>();
+        this.dbOperator = ServiceProvider.getInstance().getBean(DBOperator.class);
         this.failureRequestCheckService = new ScheduledThreadPoolExecutor(1,
             HodorThreadFactory.create("hodor-failure-request-checker", true),
             new ThreadPoolExecutor.DiscardOldestPolicy());
-        this.failureRequestCheckService.scheduleAtFixedRate(() -> {
+        startCheck();
+    }
 
-        }, 3_000, 30_000, TimeUnit.MILLISECONDS);
+    private void startCheck() {
+        this.failureRequestCheckService.scheduleAtFixedRate(this::fireFailureRequestHandler,
+            10_000, 10_000, TimeUnit.MILLISECONDS);
     }
 
     public static FailureRequestHandleManager getInstance() {
@@ -52,48 +66,85 @@ public class FailureRequestHandleManager extends AbstractAsyncEventPublisher<Tup
 
     @Override
     public void registerListener() {
-        registerFailureHandlerListener();
+        registerAddFailureMessageListener();
+        registerUpdateFailureMessageListener();
+        registerDeleteFailureMessageListener();
     }
 
-    private void registerFailureHandlerListener() {
+    private void registerAddFailureMessageListener() {
         this.addListener(e -> {
-            Tuple activeChannelTuple = e.getValue();
-            executorManager.commonExecute(new HodorRunnable() {
-                @Override
-                public void execute() {
-                    String remoteIp = activeChannelTuple.get(0);
-                    HodorChannel activeChannel = activeChannelTuple.get(1);
-                    List<RemotingMessage> remotingMessages = resendMessageMap.get(remoteIp);
-                    Optional.ofNullable(remotingMessages)
-                        .ifPresent(msgList -> msgList.forEach(remotingMessage -> activeChannel.send(remotingMessage)
-                            .operationComplete(e -> {
-                                if (e.cause() == null && e.isSuccess()) {
-                                    remotingMessages.remove(remotingMessage);
-                                }
-                            })));
+            RetryableMessage retryableMessage = e.getValue();
+            try {
+                dbOperator.update(insertSql, retryableMessage.getRequestId(), retryableMessage.getRemoteIp(), retryableMessage.getRawMessage(),
+                    retryableMessage.getCreateTime(), retryableMessage.getStatus());
+            } catch (SQLException ex) {
+                log.error("insert retry message exception, {}", ex.getMessage(), ex);
+            }
+        }, MESSAGE_INSERT_EVENT);
+    }
+
+    private void registerUpdateFailureMessageListener() {
+        this.addListener(e -> {
+            RetryableMessage retryableMessage = e.getValue();
+            try {
+                dbOperator.update(updateSql, retryableMessage.getStatus(), new Date(), retryableMessage.getId());
+            } catch (SQLException ex) {
+                log.error("update retry message exception, {}", ex.getMessage(), ex);
+            }
+        }, MESSAGE_UPDATE_EVENT);
+    }
+
+    private void registerDeleteFailureMessageListener() {
+        this.addListener(e -> {
+            RetryableMessage retryableMessage = e.getValue();
+            try {
+                dbOperator.update(deleteSql, retryableMessage.getId());
+            } catch (SQLException ex) {
+                log.error("insert retry message exception, {}", ex.getMessage(), ex);
+            }
+        }, MESSAGE_DELETE_EVENT);
+    }
+
+    public void fireFailureRequestHandler() {
+        executorManager.commonExecute(new HodorRunnable() {
+            @Override
+            public void execute() {
+                List<RetryableMessage> retryableMessages = null;
+                try {
+                    retryableMessages = dbOperator.queryList(querySql, RetryableMessage.class);
+                } catch (SQLException ex) {
+                    log.error("select retry message exception, {}", ex.getMessage(), ex);
                 }
-            });
-        }, REQUEST_RESEND_EVENT); // RESEND_EVENT
+                if (CollectionUtil.isEmpty(retryableMessages)) {
+                    return;
+                }
+                retryableMessages.forEach(retryableMessage -> {
+                    String remoteIp = retryableMessage.getRemoteIp();
+                    RemotingMessage remotingMessage = SerializeUtils.deserialize(retryableMessage.getRawMessage(), RemotingMessage.class);
+                    HodorChannel activeChannel = clientChannelManager.getActiveOrBackupChannel(remoteIp);
+                    activeChannel.send(remotingMessage)
+                        .operationComplete(e -> {
+                            if (e.cause() == null && e.isSuccess()) {
+                                publish(Event.create(retryableMessage, MESSAGE_DELETE_EVENT));
+                            } else {
+                                retryableMessage.setStatus(false);
+                                retryableMessage.setUpdateTime(new Date());
+                                publish(Event.create(retryableMessage, MESSAGE_UPDATE_EVENT));
+                            }
+                        });
+                });
+
+            }
+        });
     }
 
-    public void fireFailureRequestHandler(String remoteIp, HodorChannel activeChannel) {
-        // 30s 触发一次
-        long currentTimeMillis = System.currentTimeMillis();
-        if (currentTimeMillis - lastFireTime < 30 * 1000) {
-            return;
-        }
-        lastFireTime = currentTimeMillis;
-        publish(new Event<>(new Tuple(remoteIp, activeChannel), REQUEST_RESEND_EVENT)); // RESEND_EVENT
+    public void addFailureRequest(String remoteIp, RemotingMessage message) {
+        RetryableMessage retryableMessage = RetryableMessage.createRetryableMessage(remoteIp, message);
+        publish(Event.create(retryableMessage, MESSAGE_INSERT_EVENT)); // RESEND_EVENT
     }
 
-    public void addFailureRequest(String remoteIp, HodorChannel activeChannel, RemotingMessage message) {
-        List<RemotingMessage> remotingMessages = resendMessageMap.computeIfAbsent(remoteIp, k -> new ArrayList<>());
-        remotingMessages.add(message);
-
-        if (activeChannel == null || !activeChannel.isOpen()) {
-            return;
-        }
-        fireFailureRequestHandler(remoteIp, activeChannel);
-    }
-
+    final String insertSql = "INSERT INTO hodor_retryable_message (request_id, remote_ip, raw_message, create_time, status) VALUES (?, ?, ?, ?, ?)";
+    final String updateSql = "UPDATE hodor_retryable_message SET status = ?, update_time = ?, retry_count = retry_count + 1 WHERE id = ?";
+    final String querySql = "SELECT * FROM hodor_retryable_message";
+    final String deleteSql = "DELETE FROM hodor_retryable_message WHERE id = ?";
 }

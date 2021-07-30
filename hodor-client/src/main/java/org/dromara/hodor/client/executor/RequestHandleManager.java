@@ -1,9 +1,6 @@
 package org.dromara.hodor.client.executor;
 
-import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import org.dromara.hodor.client.JobRegistrar;
 import org.dromara.hodor.client.ServiceProvider;
 import org.dromara.hodor.client.action.HeartbeatAction;
@@ -26,18 +23,18 @@ import org.dromara.hodor.remoting.api.message.request.JobExecuteStatusRequest;
 import org.dromara.hodor.remoting.api.message.request.KillRunningJobRequest;
 
 /**
- *  请求事件处理manager
+ * 请求事件处理manager
  *
  * @author tomgs
- * @version 2021/2/26 1.0 
+ * @version 2021/2/26 1.0
  */
 public class RequestHandleManager extends AbstractEventPublisher<RequestContext> {
 
     private final ExecutorManager executorManager;
 
-    private final FailureRequestHandleManager failureRequestHandleManager;
+    private final ClientChannelManager clientChannelManager;
 
-    private final Map<String, HodorChannel> activeChannels;
+    private final FailureRequestHandleManager failureRequestHandleManager;
 
     private final JobRegistrar jobRegistrar;
 
@@ -47,8 +44,8 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
 
     public RequestHandleManager() {
         this.executorManager = ExecutorManager.getInstance();
+        this.clientChannelManager = ClientChannelManager.getInstance();
         this.failureRequestHandleManager = FailureRequestHandleManager.getInstance();
-        this.activeChannels = new ConcurrentHashMap<>();
         this.jobRegistrar = ServiceProvider.getInstance().getBean(JobRegistrar.class);
         this.jobExecutionPersistence = ServiceProvider.getInstance().getBean(JobExecutionPersistence.class);
         this.properties = ServiceProvider.getInstance().getBean(HodorProperties.class);
@@ -111,28 +108,11 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
     public void addRetrySendMessage(SocketAddress socketAddress, RemotingMessage message) {
         // persistence to db
         String remoteIp = HostUtils.getIp(socketAddress);
-        /*
-         * 优先发送到对应remoteIp的Channel，如果没有则可以随便发送到一个activeChannel，由调度端去转发响应的请求即可。
-         */
-        HodorChannel activeChannel = activeChannels.get(remoteIp);
-        if (activeChannel == null || !activeChannel.isOpen()) {
-            activeChannels.remove(remoteIp);
-        }
-        for (HodorChannel backupChannel : activeChannels.values()) {
-            if (backupChannel.isOpen()) {
-                activeChannel = backupChannel;
-                break;
-            }
-        }
-        failureRequestHandleManager.addFailureRequest(remoteIp, activeChannel, message);
+        failureRequestHandleManager.addFailureRequest(remoteIp, message);
     }
 
     public void recordActiveChannel(HodorChannel activeChannel) {
-        SocketAddress remoteAddress = activeChannel.remoteAddress();
-        InetSocketAddress inetSocketAddress = (InetSocketAddress) remoteAddress;
-        String remoteIp = inetSocketAddress.getAddress().getHostAddress();
-        activeChannels.put(remoteIp, activeChannel);
-        failureRequestHandleManager.fireFailureRequestHandler(remoteIp, activeChannel);
+        clientChannelManager.addActiveChannel(activeChannel);
     }
 
 }
