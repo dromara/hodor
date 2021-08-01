@@ -17,5 +17,7 @@ public class ActuatorInfo {
     private NodeInfo nodeInfo;
 
     private Set<String> groupNames;
-    
+
+    private long lastHeartbeat;
+
 }
