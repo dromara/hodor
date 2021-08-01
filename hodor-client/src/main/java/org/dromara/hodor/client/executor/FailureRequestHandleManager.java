@@ -143,8 +143,8 @@ public class FailureRequestHandleManager extends AbstractAsyncEventPublisher<Ret
         publish(Event.create(retryableMessage, MESSAGE_INSERT_EVENT)); // RESEND_EVENT
     }
 
-    final String insertSql = "INSERT INTO hodor_retryable_message (request_id, remote_ip, raw_message, create_time, status) VALUES (?, ?, ?, ?, ?)";
-    final String updateSql = "UPDATE hodor_retryable_message SET status = ?, update_time = ?, retry_count = retry_count + 1 WHERE id = ?";
-    final String querySql = "SELECT * FROM hodor_retryable_message";
-    final String deleteSql = "DELETE FROM hodor_retryable_message WHERE id = ?";
+    private final String insertSql = "INSERT INTO hodor_retryable_message (request_id, remote_ip, raw_message, create_time, status) VALUES (?, ?, ?, ?, ?)";
+    private final String updateSql = "UPDATE hodor_retryable_message SET status = ?, update_time = ?, retry_count = retry_count + 1 WHERE id = ?";
+    private final String querySql = "SELECT * FROM hodor_retryable_message";
+    private final String deleteSql = "DELETE FROM hodor_retryable_message WHERE id = ?";
 }
