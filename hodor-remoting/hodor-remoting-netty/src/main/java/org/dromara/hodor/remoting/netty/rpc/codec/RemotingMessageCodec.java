@@ -11,7 +11,7 @@ import org.dromara.hodor.remoting.api.message.RemotingMessage;
 import java.util.List;
 
 /**
- *  
+ *  remoting message encode and decode
  *
  * @author tomgs
  * @version 2021/7/28 1.0 
@@ -19,10 +19,9 @@ import java.util.List;
 public class RemotingMessageCodec extends ByteToMessageCodec<RemotingMessage> {
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, RemotingMessage request, ByteBuf out) {
-        Header header = request.getHeader();
-        byte[] body = request.getBody();
-
+    protected void encode(ChannelHandlerContext ctx, RemotingMessage message, ByteBuf out) {
+        Header header = message.getHeader();
+        byte[] body = message.getBody();
         // write body
         if (body == null) {
             // write header
@@ -32,8 +31,6 @@ public class RemotingMessageCodec extends ByteToMessageCodec<RemotingMessage> {
             throw new RemotingException(msg);
         }
         CodecUtils.writeHeader(out, header);
-        // 放到业务线程当中去
-        //byte[] dataByte = SerializeUtils.serialize(body);
         CodecUtils.writeBody(out, body);
     }
 
