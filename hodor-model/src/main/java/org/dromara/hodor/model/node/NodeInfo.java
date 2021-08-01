@@ -2,6 +2,8 @@ package org.dromara.hodor.model.node;
 
 import lombok.Data;
 
+import java.util.Objects;
+
 /**
  * node info
  *
@@ -65,5 +67,20 @@ public class NodeInfo {
      * 任务执行次数
      */
     private Integer executeCount;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NodeInfo nodeInfo = (NodeInfo) o;
+        return ip.equals(nodeInfo.ip) &&
+                port.equals(nodeInfo.port) &&
+                hostname.equals(nodeInfo.hostname);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ip, port, hostname);
+    }
 
 }
