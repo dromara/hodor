@@ -1,30 +1,60 @@
 package org.dromara.hodor.model.job;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import java.util.Date;
+import lombok.Data;
+import org.dromara.hodor.model.enums.CommandType;
+import org.dromara.hodor.model.enums.JobType;
+import org.dromara.hodor.model.enums.Priority;
 
-/**
- * job describe
- *
- * @author tomgs
- * @since 2021/1/5
- */
-@Builder
-@Getter
-@ToString
+@Data
 public class JobDesc {
 
-    private String groupName;
+  private Long id;
 
-    private String jobName;
+  private Long hashId;
 
-    private String cron;
+  private String jobCategory;
 
-    private boolean fireNow;
+  private String groupName;
 
-    private Integer timeout;
+  private String jobName;
 
-    private boolean broadcast;
+  private JobType jobType;
+
+  private String jobPath;
+
+  private CommandType jobCommandType;
+
+  private String jobCommand;
+
+  private Priority priority;
+
+  private Boolean isDependence;
+
+  private String cronExpression;
+
+  private Integer shardingCount;
+
+  private String jobParameters;
+
+  private String extensibleParameters;
+
+  private Boolean failover;
+
+  private Boolean misfire;
+
+  private Boolean fireNow;
+
+  private Boolean isOnce;
+
+  private Boolean isBroadcast;
+
+  private String slaveIp;
+
+  private Integer timeout;
+
+  private Date endTime;
+
+  private Integer retryCount;
 
 }

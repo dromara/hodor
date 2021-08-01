@@ -1,4 +1,4 @@
-package org.dromara.hodor.core.manager;
+package org.dromara.hodor.server.manager;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -13,6 +13,7 @@ import java.util.Set;
  * @since 2020/7/28
  */
 public enum WorkerNodeManager {
+
     INSTANCE;
 
     private final Map<String, Set<String>> workerNodes = Maps.newConcurrentMap();

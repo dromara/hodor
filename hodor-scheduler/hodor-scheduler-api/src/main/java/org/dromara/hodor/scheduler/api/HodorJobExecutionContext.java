@@ -1,8 +1,9 @@
 package org.dromara.hodor.scheduler.api;
 
-import java.util.Date;
 import org.dromara.hodor.common.IdGenerator;
-import org.dromara.hodor.core.JobDesc;
+import org.dromara.hodor.model.job.JobDesc;
+
+import java.util.Date;
 
 /**
  *  hodor scheduler context

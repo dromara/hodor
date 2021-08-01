@@ -1,4 +1,4 @@
-package org.dromara.hodor.core;
+package org.dromara.hodor.model.scheduler;
 
 import java.util.List;
 import lombok.Builder;

@@ -1,7 +1,7 @@
-package org.dromara.hodor.core.manager;
+package org.dromara.hodor.server.manager;
 
 import java.util.concurrent.locks.ReentrantLock;
-import org.dromara.hodor.core.HodorMetadata;
+import org.dromara.hodor.model.scheduler.HodorMetadata;
 
 /**
  * metadata manager
@@ -10,6 +10,7 @@ import org.dromara.hodor.core.HodorMetadata;
  * @since 2020/7/28
  */
 public enum MetadataManager {
+
     INSTANCE;
 
     private volatile HodorMetadata metadata;

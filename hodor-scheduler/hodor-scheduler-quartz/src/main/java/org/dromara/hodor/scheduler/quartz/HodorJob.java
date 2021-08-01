@@ -1,12 +1,13 @@
 package org.dromara.hodor.scheduler.quartz;
 
-import java.util.Date;
 import lombok.Setter;
-import org.dromara.hodor.core.JobDesc;
+import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.scheduler.api.JobExecutor;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
+
+import java.util.Date;
 
 /**
  *  hodor job

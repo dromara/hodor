@@ -1,4 +1,4 @@
-package org.dromara.hodor.core.manager;
+package org.dromara.hodor.server.manager;
 
 import com.google.common.collect.Sets;
 import java.util.Set;
@@ -10,6 +10,7 @@ import java.util.Set;
  * @since 2020/7/28
  */
 public enum NodeServerManager {
+
     INSTANCE;
 
     private final Set<String> nodeIps = Sets.newConcurrentHashSet();

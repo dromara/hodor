@@ -1,9 +1,9 @@
-package org.dromara.hodor.core.manager;
+package org.dromara.hodor.server.manager;
 
 import com.google.common.collect.Maps;
 import java.util.List;
 import java.util.Map;
-import org.dromara.hodor.core.CopySet;
+import org.dromara.hodor.model.scheduler.CopySet;
 
 /**
  * copy set manager
@@ -12,6 +12,7 @@ import org.dromara.hodor.core.CopySet;
  * @since 2020/7/28
  */
 public enum CopySetManager {
+
     INSTANCE;
 
     private final Map<String, CopySet> leaderCopySet = Maps.newConcurrentMap();

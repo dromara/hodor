@@ -5,7 +5,7 @@ import java.util.Date;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.dromara.hodor.model.enums.JobStatus;
-import org.dromara.hodor.core.JobDesc;
+import org.dromara.hodor.model.job.JobDesc;
 
 /**
  * hodor job info

@@ -3,9 +3,9 @@ package org.dromara.hodor.server.listener;
 import java.util.List;
 import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.event.HodorEventListener;
-import org.dromara.hodor.core.CopySet;
-import org.dromara.hodor.core.HodorMetadata;
-import org.dromara.hodor.core.manager.CopySetManager;
+import org.dromara.hodor.model.scheduler.CopySet;
+import org.dromara.hodor.model.scheduler.HodorMetadata;
+import org.dromara.hodor.server.manager.CopySetManager;
 import org.dromara.hodor.server.service.HodorService;
 
 /**

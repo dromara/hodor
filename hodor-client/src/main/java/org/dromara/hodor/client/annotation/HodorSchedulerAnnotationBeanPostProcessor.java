@@ -10,7 +10,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.client.JobExecutionContext;
 import org.dromara.hodor.client.JobRegistrar;
-import org.dromara.hodor.model.job.JobDesc;
+import org.dromara.hodor.model.job.JobInstance;
 import org.dromara.hodor.client.core.ScheduledMethodRunnable;
 import org.springframework.aop.framework.AopInfrastructureBean;
 import org.springframework.aop.framework.AopProxyUtils;
@@ -149,7 +149,7 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
         boolean broadcast = job.isBroadcast();
         int timeout = job.timeout();
 
-        JobDesc jobDesc = JobDesc.builder()
+        JobInstance jobInstance = JobInstance.builder()
             .groupName(groupName)
             .jobName(jobName)
             .cron(cron)
@@ -158,7 +158,7 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
             .timeout(timeout)
             .build();
 
-        registrar.addJob(jobDesc, runnable);
+        registrar.addJob(jobInstance, runnable);
     }
 
 }

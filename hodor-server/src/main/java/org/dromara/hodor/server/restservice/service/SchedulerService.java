@@ -2,7 +2,7 @@ package org.dromara.hodor.server.restservice.service;
 
 import java.util.List;
 import org.dromara.hodor.model.common.HodorResult;
-import org.dromara.hodor.model.job.JobDesc;
+import org.dromara.hodor.model.job.JobInstance;
 import org.dromara.hodor.server.restservice.HodorRestService;
 import org.dromara.hodor.server.service.LeaderService;
 
@@ -26,13 +26,13 @@ public class SchedulerService {
         return HodorResult.success("success");
     }
 
-    public HodorResult<String> createJob(List<JobDesc> jobs) {
+    public HodorResult<String> createJob(List<JobInstance> jobs) {
         if (!leaderService.isLeader()) {
             // redirect request to leader
             String leaderServerId = leaderService.getLeaderEndpoint();
             
         }
-        for (JobDesc job : jobs) {
+        for (JobInstance job : jobs) {
             System.out.println(job);
         }
         return HodorResult.success("success");

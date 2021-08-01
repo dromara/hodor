@@ -1,7 +1,7 @@
 package org.dromara.hodor.server.listener;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.core.manager.NodeServerManager;
+import org.dromara.hodor.server.manager.NodeServerManager;
 import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.node.ServerNode;

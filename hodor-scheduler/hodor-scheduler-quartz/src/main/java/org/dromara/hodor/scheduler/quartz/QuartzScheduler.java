@@ -1,24 +1,17 @@
 package org.dromara.hodor.scheduler.quartz;
 
-import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.locks.ReentrantLock;
 import org.dromara.hodor.common.extension.Join;
-import org.dromara.hodor.core.JobDesc;
+import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.scheduler.api.HodorScheduler;
 import org.dromara.hodor.scheduler.api.JobExecutor;
 import org.dromara.hodor.scheduler.api.common.SchedulerConfig;
 import org.dromara.hodor.scheduler.api.exception.HodorSchedulerException;
-import org.quartz.CronScheduleBuilder;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
-import org.quartz.TriggerKey;
+import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
+
+import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  *  implements scheduler by quartz
