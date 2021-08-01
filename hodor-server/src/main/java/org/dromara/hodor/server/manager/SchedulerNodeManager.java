@@ -9,13 +9,13 @@ import java.util.Set;
  * @author tomgs
  * @since 2020/7/28
  */
-public enum NodeServerManager {
+public enum SchedulerNodeManager {
 
     INSTANCE;
 
     private final Set<String> nodeIps = Sets.newConcurrentHashSet();
 
-    public static NodeServerManager getInstance() {
+    public static SchedulerNodeManager getInstance() {
         return INSTANCE;
     }
 

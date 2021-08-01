@@ -1,20 +1,15 @@
 package org.dromara.hodor.server.service;
 
 import com.google.common.collect.Lists;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.hodor.common.exception.HodorException;
 import org.dromara.hodor.common.utils.CopySets;
 import org.dromara.hodor.common.utils.ThreadUtils;
+import org.dromara.hodor.core.entity.JobInfo;
+import org.dromara.hodor.core.service.JobInfoService;
 import org.dromara.hodor.model.scheduler.CopySet;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
-import org.dromara.hodor.core.entity.JobInfo;
-import org.dromara.hodor.server.manager.CopySetManager;
-import org.dromara.hodor.server.manager.NodeServerManager;
-import org.dromara.hodor.server.manager.WorkerNodeManager;
-import org.dromara.hodor.core.service.JobInfoService;
 import org.dromara.hodor.scheduler.api.HodorScheduler;
 import org.dromara.hodor.scheduler.api.SchedulerManager;
 import org.dromara.hodor.scheduler.api.common.SchedulerConfig;
@@ -23,9 +18,15 @@ import org.dromara.hodor.server.component.LifecycleComponent;
 import org.dromara.hodor.server.executor.JobExecutorTypeManager;
 import org.dromara.hodor.server.listener.LeaderElectChangeListener;
 import org.dromara.hodor.server.listener.MetadataChangeListener;
-import org.dromara.hodor.server.listener.ServerNodeChangeListener;
+import org.dromara.hodor.server.listener.SchedulerNodeChangeListener;
 import org.dromara.hodor.server.listener.WorkerNodeChangeListener;
+import org.dromara.hodor.server.manager.CopySetManager;
+import org.dromara.hodor.server.manager.SchedulerNodeManager;
+import org.dromara.hodor.server.manager.WorkerNodeManager;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * hodor service
@@ -43,7 +44,7 @@ public class HodorService implements LifecycleComponent {
 
     private final JobInfoService jobInfoService;
 
-    private final NodeServerManager nodeServerManager;
+    private final SchedulerNodeManager schedulerNodeManager;
 
     private final WorkerNodeManager workerNodeManager;
 
@@ -55,7 +56,7 @@ public class HodorService implements LifecycleComponent {
         this.leaderService = leaderService;
         this.registerService = registerService;
         this.jobInfoService = jobInfoService;
-        this.nodeServerManager = NodeServerManager.getInstance();
+        this.schedulerNodeManager = SchedulerNodeManager.getInstance();
         this.copySetManager = CopySetManager.getInstance();
         this.schedulerManager = SchedulerManager.getInstance();
         this.workerNodeManager = WorkerNodeManager.getInstance();
@@ -74,7 +75,7 @@ public class HodorService implements LifecycleComponent {
         }
 
         //init data
-        registerService.registryServerNodeListener(new ServerNodeChangeListener(nodeServerManager));
+        registerService.registrySchedulerNodeListener(new SchedulerNodeChangeListener(schedulerNodeManager));
         registerService.registryWorkerNodeListener(new WorkerNodeChangeListener(workerNodeManager));
         registerService.registryMetadataListener(new MetadataChangeListener(this));
         registerService.registryElectLeaderListener(new LeaderElectChangeListener(this));
@@ -87,7 +88,7 @@ public class HodorService implements LifecycleComponent {
     public void stop() {
         registerService.stop();
         copySetManager.clearCopySet();
-        nodeServerManager.clearNodeServer();
+        schedulerNodeManager.clearNodeServer();
         workerNodeManager.clearWorkerNodes();
     }
 

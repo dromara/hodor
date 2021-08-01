@@ -1,7 +1,7 @@
 package org.dromara.hodor.server.listener;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.server.manager.NodeServerManager;
+import org.dromara.hodor.server.manager.SchedulerNodeManager;
 import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.node.ServerNode;
@@ -13,12 +13,12 @@ import org.dromara.hodor.register.api.node.ServerNode;
  * @since 2020/7/23
  */
 @Slf4j
-public class ServerNodeChangeListener implements DataChangeListener {
+public class SchedulerNodeChangeListener implements DataChangeListener {
 
-    private final NodeServerManager manager;
+    private final SchedulerNodeManager manager;
 
-    public ServerNodeChangeListener(final NodeServerManager nodeServerManager) {
-        this.manager = nodeServerManager;
+    public SchedulerNodeChangeListener(final SchedulerNodeManager schedulerNodeManager) {
+        this.manager = schedulerNodeManager;
     }
 
     @Override

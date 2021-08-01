@@ -102,7 +102,7 @@ public class RegisterService implements LifecycleComponent {
         registryListener(ServerNode.METADATA_PATH, listener);
     }
 
-    public void registryServerNodeListener(DataChangeListener listener) {
+    public void registrySchedulerNodeListener(DataChangeListener listener) {
         registryListener(ServerNode.NODES_PATH, listener);
     }
 
