@@ -2,9 +2,9 @@ package org.dromara.hodor.server.restservice.service;
 
 import org.dromara.hodor.model.actuator.ActuatorInfo;
 import org.dromara.hodor.model.common.HodorResult;
+import org.dromara.hodor.server.manager.ActuatorManager;
 import org.dromara.hodor.server.restservice.HodorRestService;
 import org.dromara.hodor.server.restservice.RestMethod;
-import org.dromara.hodor.server.service.RegisterService;
 
 /**
  * actuator service
@@ -16,21 +16,22 @@ import org.dromara.hodor.server.service.RegisterService;
 @SuppressWarnings("unused")
 public class ActuatorService {
 
-    private final RegisterService registerService;
+    private final ActuatorManager actuatorManager;
 
-    public ActuatorService(final RegisterService registerService) {
-        this.registerService = registerService;
+    public ActuatorService() {
+        this.actuatorManager = ActuatorManager.getInstance();
     }
 
     @RestMethod("heartbeat")
     public HodorResult<String> heartbeat(ActuatorInfo actuatorInfo) {
-        //registerService.refreshAvailableWorkNodes();
+        actuatorInfo.setLastHeartbeat(System.currentTimeMillis());
+        actuatorManager.addActuator(actuatorInfo);
         return HodorResult.success("success");
     }
 
     @RestMethod("offline")
     public HodorResult<String> offline(ActuatorInfo actuatorInfo) {
-        System.out.println(actuatorInfo);
+        actuatorManager.removeActuator(actuatorInfo);
         return HodorResult.success("success");
     }
 
