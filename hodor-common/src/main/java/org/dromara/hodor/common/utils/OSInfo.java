@@ -1,7 +1,8 @@
 package org.dromara.hodor.common.utils;
 
 public class OSInfo {
-    private static String OS = System.getProperty("os.name").toLowerCase();
+
+    private static final String OS = System.getProperty("os.name").toLowerCase();
 
     private OSInfo() {
     }
@@ -27,4 +28,3 @@ public class OSInfo {
     }
 
 }
-

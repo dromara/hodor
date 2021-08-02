@@ -1,5 +1,6 @@
 package org.dromara.hodor.common.utils;
 
+import cn.hutool.core.text.StrSplitter;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -19,22 +20,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 
 @Slf4j
-public final class LinuxResourceUtil {
+public final class MachineUtils {
+
     /**
      * cpu的使用率
-     * TODO.
      *
-     * @return
+     * @return cpu usage percent
      */
     public static Double getCpuUsage() {
         if (!OSInfo.isLinux()) {
             return 0.0;
         }
-
         double value;
         String output = null;
         try {
-            String pid = process_pid();
+            String pid = getPID();
             String command = String.format("top -b -n 1 -p %s | grep -w %s", pid, pid);
             output = exec(command);
             String subStr = output.substring(output.indexOf("S") + 1);
@@ -54,12 +54,11 @@ public final class LinuxResourceUtil {
             }
             value = 0.0;
         }
-
         return value;
     }
 
     /**
-     * 得到磁盘的使用率
+     * 磁盘的使用率
      */
     public static Double getDiskUsage() {
         if (!OSInfo.isLinux() && !OSInfo.isMac()) {
@@ -90,12 +89,10 @@ public final class LinuxResourceUtil {
     /**
      * 得到内存的总使用率
      */
-
     public static double getTotalMemUsage() {
         if (!OSInfo.isLinux()) {
             return 0.0;
         }
-
         try {
             List<String> lines = IOUtils.readLines(new FileInputStream("/proc/meminfo"), Charset.defaultCharset());
             String total = lines.get(0).split("\\s+")[1];
@@ -144,10 +141,9 @@ public final class LinuxResourceUtil {
         if (OSInfo.isLinux()) {
             try {
                 double value;
-                String pid = process_pid();
+                String pid = getPID();
                 String command = String.format("top -b -n 1 -p %s | grep -w %s", pid, pid);
                 String output = exec(command);
-
                 int m = 0;
                 String[] strArray = output.split(" ");
                 for (String info : strArray) {
@@ -203,29 +199,24 @@ public final class LinuxResourceUtil {
         return (double) memoryUsage.getUsed();
     }
 
-    public static String launchProcess(final String command, final List<String> cmdlist,
+    public static String launchProcess(final String command, final List<String> cmdList,
                                        final Map<String, String> environment, boolean backend) throws IOException {
         if (backend) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    List<String> cmdWrapper = new ArrayList<String>();
-
-                    cmdWrapper.add("nohup");
-                    cmdWrapper.addAll(cmdlist);
-                    cmdWrapper.add("&");
-
-                    try {
-                        launchProcess(cmdWrapper, environment);
-                    } catch (IOException e) {
-                        log.error("Failed to run nohup " + command + " &," + e.getCause(), e);
-                    }
+            new Thread(() -> {
+                List<String> cmdWrapper = new ArrayList<>();
+                cmdWrapper.add("nohup");
+                cmdWrapper.addAll(cmdList);
+                cmdWrapper.add("&");
+                try {
+                    launchProcess(cmdWrapper, environment);
+                } catch (IOException e) {
+                    log.error("Failed to run nohup " + command + " &," + e.getCause(), e);
                 }
             }).start();
             return null;
         } else {
             try {
-                Process process = launchProcess(cmdlist, environment);
+                Process process = launchProcess(cmdList, environment);
 
                 StringBuilder sb = new StringBuilder();
                 String output = getOutput(process.getInputStream());
@@ -260,34 +251,32 @@ public final class LinuxResourceUtil {
     }
 
     /**
-     * 执行一条命令
+     * 执行命令
      *
-     * @param cmd
-     * @return
-     * @throws IOException
+     * @param cmd command
+     * @return execute result
+     * @throws IOException execute exception
      */
     public static String exec(String cmd) throws IOException {
-        List<String> commands = new ArrayList<String>();
+        List<String> commands = new ArrayList<>();
         commands.add("/bin/bash");
         commands.add("-c");
         commands.add(cmd);
-
-        return launchProcess(cmd, commands, new HashMap<String, String>(), false);
+        return launchProcess(cmd, commands, new HashMap<>(), false);
     }
 
     /**
      * 得到当前进程号
      *
-     * @return
+     * @return pid
      */
-    public static String process_pid() {
+    public static String getPID() {
         String name = ManagementFactory.getRuntimeMXBean().getName();
-        String[] split = name.split("@");
-        if (split.length != 2) {
+        List<String> split = StrSplitter.split(name, "@", 2, true, true);
+        if (split.size() != 2) {
             throw new RuntimeException("Got unexpected process name: " + name);
         }
-
-        return split[0];
+        return split.get(0);
     }
 
     public static String getOutput(InputStream input) {
@@ -309,4 +298,5 @@ public final class LinuxResourceUtil {
         }
         return sb.toString();
     }
+
 }

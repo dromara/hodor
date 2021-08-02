@@ -16,6 +16,8 @@ public final class HostUtils {
 
     private static volatile String cachedIpAddress;
 
+    private static volatile String hostName;
+
     /**
      * 获取本机IP地址.
      * 优先获取外网IP地址. 也有可能是链接着路由器的最终IP地址.
@@ -58,7 +60,10 @@ public final class HostUtils {
      * @return 本机Host名称
      */
     public static String getLocalHostName() {
-        return getLocalHost().getHostName();
+        if (hostName == null) {
+            hostName = getLocalHost().getHostName();
+        }
+        return hostName;
     }
 
     private static boolean isPublicIpAddress(final InetAddress ipAddress) {
