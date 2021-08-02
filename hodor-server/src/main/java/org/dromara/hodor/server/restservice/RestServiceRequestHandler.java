@@ -1,6 +1,7 @@
 package org.dromara.hodor.server.restservice;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.text.StrSplitter;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -30,6 +31,7 @@ public class RestServiceRequestHandler implements HodorChannelHandler {
     private final GsonUtils serializer;
 
     public RestServiceRequestHandler(final HodorServerProperties properties) {
+        Assert.notNull(properties, "properties must be not null.");
         this.properties = properties;
         this.serializer = GsonUtils.getInstance();
     }

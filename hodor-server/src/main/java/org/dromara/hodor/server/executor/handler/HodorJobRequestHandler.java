@@ -2,17 +2,13 @@ package org.dromara.hodor.server.executor.handler;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.TypeReference;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.concurrent.FutureCallback;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.utils.ThreadUtils;
-import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
+import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.remoting.api.RemotingClient;
 import org.dromara.hodor.remoting.api.RemotingConst;
 import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
@@ -23,8 +19,12 @@ import org.dromara.hodor.remoting.api.message.RemotingResponse;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
-import org.dromara.hodor.server.ServiceProvider;
-import org.dromara.hodor.server.service.RegisterService;
+import org.dromara.hodor.server.manager.WorkerNodeManager;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * job request executor
@@ -37,7 +37,7 @@ public class HodorJobRequestHandler {
 
     private final RemotingClient clientService;
 
-    private final RegisterService registerService;
+    private final WorkerNodeManager workerNodeManager;
 
     private final RemotingMessageSerializer serializer;
 
@@ -45,7 +45,7 @@ public class HodorJobRequestHandler {
 
     public HodorJobRequestHandler() {
         this.clientService = RemotingClient.getInstance();
-        this.registerService = ServiceProvider.getInstance().getBean(RegisterService.class);
+        this.workerNodeManager = WorkerNodeManager.getInstance();
         this.serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
         this.typeReference = new TypeReference<RemotingResponse<JobExecuteResponse>>() {};
     }
@@ -53,7 +53,7 @@ public class HodorJobRequestHandler {
     public void handle(final HodorJobExecutionContext context) {
         log.info("hodor job request handler, info {}.", context);
         RemotingMessage request = getRequestBody(context);
-        List<Host> hosts = registerService.getAvailableHosts(context);
+        List<Host> hosts = workerNodeManager.getAvailableHosts(context.getJobDesc().getGroupName());
         Exception jobException = null;
         for (int i = hosts.size() - 1; i >= 0; i--) {
             try {

@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.concurrent.HodorThreadFactory;
 import org.dromara.hodor.model.actuator.ActuatorInfo;
 import org.dromara.hodor.model.node.NodeInfo;
+import org.dromara.hodor.server.ServiceProvider;
+import org.dromara.hodor.server.service.RegisterService;
 
 /**
  *  actuator manager
@@ -33,7 +35,10 @@ public class ActuatorManager {
 
     private static final int HEARTBEAT_THRESHOLD = 5000;
 
+    private RegisterService registerService;
+
     private ActuatorManager() {
+        this.registerService = ServiceProvider.getInstance().getBean(RegisterService.class);
         ScheduledExecutorService schedule = Executors.newSingleThreadScheduledExecutor(HodorThreadFactory.create("offline-actuator-cleaner", false));
         schedule.scheduleAtFixedRate(this::offlineActuatorClean, 30,60, TimeUnit.SECONDS);
     }
@@ -66,6 +71,8 @@ public class ActuatorManager {
             Set<String> endpoints = actuatorEndpoints.computeIfAbsent(groupName, e -> Sets.newConcurrentHashSet());
             endpoints.add(buildActuatorEndpoint(actuatorInfo.getNodeInfo()));
         });
+
+        // 同步信息到其他节点，基于registerService来进行
     }
 
     public Set<NodeInfo> getActuatorsByGroupName(final String groupName) {
