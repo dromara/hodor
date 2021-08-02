@@ -1,8 +1,11 @@
 package org.dromara.hodor.model.node;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.Objects;
+import lombok.NoArgsConstructor;
 
 /**
  * node info
@@ -11,6 +14,9 @@ import java.util.Objects;
  * @since 2021/1/6
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class NodeInfo {
 
     /**
@@ -56,7 +62,7 @@ public class NodeInfo {
     /**
      * 任务队列大小
      */
-    private Integer queueSize;
+    private Long queueSize;
 
     /**
      * 在队列等待的任务大小
@@ -66,7 +72,7 @@ public class NodeInfo {
     /**
      * 任务执行次数
      */
-    private Integer executeCount;
+    private Long executeCount;
 
     @Override
     public boolean equals(Object o) {
@@ -74,13 +80,12 @@ public class NodeInfo {
         if (o == null || getClass() != o.getClass()) return false;
         NodeInfo nodeInfo = (NodeInfo) o;
         return ip.equals(nodeInfo.ip) &&
-                port.equals(nodeInfo.port) &&
-                hostname.equals(nodeInfo.hostname);
+                port.equals(nodeInfo.port);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ip, port, hostname);
+        return Objects.hash(ip, port);
     }
 
 }
