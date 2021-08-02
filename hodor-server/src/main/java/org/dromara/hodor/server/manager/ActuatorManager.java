@@ -1,17 +1,17 @@
 package org.dromara.hodor.server.manager;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.common.concurrent.HodorThreadFactory;
-import org.dromara.hodor.model.actuator.ActuatorInfo;
-import org.dromara.hodor.model.node.NodeInfo;
-
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.common.concurrent.HodorThreadFactory;
+import org.dromara.hodor.model.actuator.ActuatorInfo;
+import org.dromara.hodor.model.node.NodeInfo;
 
 /**
  *  actuator manager
@@ -24,6 +24,7 @@ public class ActuatorManager {
 
     private static final ActuatorManager INSTANCE = new ActuatorManager();
 
+    // TODO: 下面存储需要改成分布式存储
     private final Map<String, Set<NodeInfo>> actuatorNodes = Maps.newConcurrentMap();
 
     private final Map<String, Set<String>> actuatorEndpoints = Maps.newConcurrentMap();
@@ -34,7 +35,7 @@ public class ActuatorManager {
 
     private ActuatorManager() {
         ScheduledExecutorService schedule = Executors.newSingleThreadScheduledExecutor(HodorThreadFactory.create("offline-actuator-cleaner", false));
-        schedule.scheduleAtFixedRate(this::offlineActuatorClean, 5,60, TimeUnit.SECONDS);
+        schedule.scheduleAtFixedRate(this::offlineActuatorClean, 30,60, TimeUnit.SECONDS);
     }
 
     public static ActuatorManager getInstance() {
@@ -55,6 +56,8 @@ public class ActuatorManager {
     }
 
     public void addActuator(final ActuatorInfo actuatorInfo) {
+        Preconditions.checkNotNull(actuatorInfo.getNodeInfo(), "actuator node info must be not null.");
+        Preconditions.checkNotNull(actuatorInfo.getGroupNames(), "actuator group names must be not null.");
         actuatorNodeLastHeartbeat.put(actuatorInfo.getNodeInfo(), actuatorInfo.getLastHeartbeat());
         actuatorInfo.getGroupNames().forEach(groupName -> {
             Set<NodeInfo> nodeInfos = actuatorNodes.computeIfAbsent(groupName, e -> Sets.newConcurrentHashSet());

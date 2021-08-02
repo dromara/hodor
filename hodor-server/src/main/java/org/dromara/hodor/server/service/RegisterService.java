@@ -20,6 +20,7 @@ import org.dromara.hodor.register.api.node.ServerNode;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.server.component.LifecycleComponent;
 import org.dromara.hodor.server.config.HodorServerProperties;
+import org.dromara.hodor.server.manager.ActuatorManager;
 import org.springframework.stereotype.Service;
 
 /**
@@ -39,10 +40,13 @@ public class RegisterService implements LifecycleComponent {
 
     private final String serverId;
 
+    private final ActuatorManager actuatorManager;
+
     public RegisterService(final HodorServerProperties properties) {
         this.properties = properties;
         this.registryCenter = ExtensionLoader.getExtensionLoader(RegistryCenter.class).getDefaultJoin();
         this.gsonUtils = GsonUtils.getInstance();
+        this.actuatorManager = ActuatorManager.getInstance();
         this.serverId = HostUtils.getLocalIp() + ":" + properties.getNetServerPort();
     }
 
@@ -128,11 +132,12 @@ public class RegisterService implements LifecycleComponent {
     }
 
     public List<String> getAllWorkNodes(String groupName) {
-        List<String> children = registryCenter.getChildren(ServerNode.WORKER_PATH + "/" + groupName);
+        return Lists.newArrayList(actuatorManager.getActuatorEndpointsByGroupName(groupName));
+        /*List<String> children = registryCenter.getChildren(ServerNode.WORKER_PATH + "/" + groupName);
         if (children == null) {
             children = Lists.newArrayList();
         }
-        return children;
+        return children;*/
     }
 
     public List<Host> getAvailableHosts(String groupName) {
