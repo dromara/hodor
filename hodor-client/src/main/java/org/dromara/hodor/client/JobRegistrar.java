@@ -1,7 +1,9 @@
 package org.dromara.hodor.client;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.model.job.JobInstance;
@@ -24,6 +26,8 @@ public class JobRegistrar {
 
     private final Map<String, ScheduledMethodRunnable> jobRunnableCache = new ConcurrentHashMap<>(32);
 
+    private final Set<String> groupNames = new HashSet<>();
+
     public void registerJobs() {
         log.info("register jobs.");
         Collection<JobInstance> jobs = jobCache.values();
@@ -38,12 +42,17 @@ public class JobRegistrar {
     public void addJob(JobInstance jobInstance, ScheduledMethodRunnable runnable) {
         log.info("add job {}", jobInstance);
         String jobKey = createJobKey(jobInstance.getGroupName(), jobInstance.getJobName());
+        groupNames.add(jobInstance.getGroupName());
         jobCache.putIfAbsent(jobKey, jobInstance);
         jobRunnableCache.putIfAbsent(jobKey, runnable);
     }
 
     private String createJobKey(String groupName, String jobName) {
         return groupName + "-" + jobName;
+    }
+
+    public Set<String> getGroupNames() {
+        return groupNames;
     }
 
 }

@@ -55,13 +55,13 @@ public class HodorClientInit implements ApplicationRunner {
         log.info("HodorClient starting executor server...");
         startExecutorServer();
 
-        // start heartbeat sender server
-        log.info("HodorClient starting heartbeat sender server...");
-        startHeartbeatSender();
-
         // start register jobs after executor server start success
         log.info("HodorClient starting register jobs...");
         registerJobs();
+
+        // start heartbeat sender server
+        log.info("HodorClient starting heartbeat sender server...");
+        startHeartbeatSender();
 
         // add close shutdown hook
         Runtime.getRuntime().addShutdownHook(new Thread(this::close));

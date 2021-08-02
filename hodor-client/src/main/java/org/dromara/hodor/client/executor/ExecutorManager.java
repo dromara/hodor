@@ -24,9 +24,9 @@ public class ExecutorManager {
 
     private ExecutorManager() {
         final int threadSize = Runtime.getRuntime().availableProcessors() * 2;
-        // request job, heartbeat
+        // request job
         hodorExecutor = HodorExecutorFactory.createDefaultExecutor("job-exec", threadSize, false);
-        // fetch log, job status, kill job
+        // heartbeat, fetch log, job status, kill job
         commonExecutor = HodorExecutorFactory.createDefaultExecutor("common-exec", threadSize / 4, true);
     }
 

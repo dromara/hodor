@@ -96,7 +96,7 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
         this.addListener(e -> {
             RequestContext context = e.getValue();
             context.setRequestType(HeartbeatRequest.class);
-            executorManager.execute(new HeartbeatAction(context));
+            executorManager.commonExecute(new HeartbeatAction(context));
         }, MessageType.HEARTBEAT_REQUEST);
     }
 
