@@ -3,14 +3,12 @@ package org.dromara.hodor.register.api.node;
 import org.dromara.hodor.common.utils.StringUtils;
 
 /**
- * server node
+ * scheduler node
  *
  * @author tomgs
  * @since 2020/7/6
  */
-public class ServerNode {
-
-    public static final String PATH_SEPARATOR = "/";
+public class SchedulerNode {
 
     public static final String METADATA_PATH = "/scheduler/metadata";
 
@@ -31,11 +29,11 @@ public class ServerNode {
     }
 
     public static boolean isWorkerPath(String path) {
-        return StringUtils.isNotBlank(path) && path.startsWith(WORKER_PATH + PATH_SEPARATOR);
+        return StringUtils.isNotBlank(path) && path.startsWith(WORKER_PATH + StringUtils.PATH_SEPARATOR);
     }
 
     public static boolean isNodePath(String path) {
-        return StringUtils.isNotBlank(path) && path.startsWith(NODES_PATH + PATH_SEPARATOR);
+        return StringUtils.isNotBlank(path) && path.startsWith(NODES_PATH + StringUtils.PATH_SEPARATOR);
     }
 
     public static boolean isMasterActivePath(String path) {
