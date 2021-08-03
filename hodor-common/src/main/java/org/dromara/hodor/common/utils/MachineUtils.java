@@ -1,6 +1,5 @@
 package org.dromara.hodor.common.utils;
 
-import cn.hutool.core.text.StrSplitter;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -272,7 +271,7 @@ public final class MachineUtils {
      */
     public static String getPID() {
         String name = ManagementFactory.getRuntimeMXBean().getName();
-        List<String> split = StrSplitter.split(name, "@", 2, true, true);
+        List<String> split = StringUtils.splitLimit(name, "@", 2);
         if (split.size() != 2) {
             throw new RuntimeException("Got unexpected process name: " + name);
         }
