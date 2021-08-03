@@ -121,24 +121,24 @@ public class HodorService implements LifecycleComponent {
             // get metadata and update
             int jobCount = jobInfoService.queryAssignableJobCount();
             int offset = (int) Math.ceil((double) jobCount / setsNum);
-            List<Long> interval = Lists.newArrayList();
+            List<Long> intervalOffsets = Lists.newArrayList();
             for (int i = 0; i < setsNum; i++) {
                 Long hashId = jobInfoService.queryJobHashIdByOffset(offset * i);
-                interval.add(hashId);
+                intervalOffsets.add(hashId);
             }
-            for (int i = 0; i < interval.size(); i++) {
+            for (int i = 0; i < intervalOffsets.size(); i++) {
                 CopySet copySet = copySets.get(i);
-                if (i == interval.size() - 1) { // last one
-                    copySet.setDataInterval(DataInterval.create(interval.get(i), Long.MAX_VALUE));
+                if (i == intervalOffsets.size() - 1) { // last one interval offset
+                    copySet.setDataInterval(DataInterval.create(intervalOffsets.get(i), Long.MAX_VALUE));
                 } else {
-                    copySet.setDataInterval(DataInterval.create(interval.get(i), interval.get(i + 1)));
+                    copySet.setDataInterval(DataInterval.create(intervalOffsets.get(i), intervalOffsets.get(i + 1)));
                 }
                 copySet.setLeader(copySetManager.selectLeaderCopySet(copySet));
             }
 
             final HodorMetadata metadata = HodorMetadata.builder()
                 .nodes(currRunningNodes)
-                .interval(interval)
+                .intervalOffsets(intervalOffsets)
                 .copySets(copySets)
                 .build();
             registerService.createMetadata(metadata);

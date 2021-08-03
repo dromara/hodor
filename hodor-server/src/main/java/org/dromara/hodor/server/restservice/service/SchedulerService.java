@@ -41,14 +41,18 @@ public class SchedulerService {
     public HodorResult<String> createJob(List<JobInstance> jobs) {
         if (!leaderService.isLeader()) {
             // redirect request to leader
-            String leaderServerId = leaderService.getLeaderEndpoint();
+            String leaderEndpoint = leaderService.getLeaderEndpoint();
             
         }
         for (JobInstance jobInstance : jobs) {
             JobInfo jobInfo = convertJobInfo(jobInstance);
+            if (jobInfoService.isExists(jobInfo)) {
+                continue;
+            }
             jobInfoService.addJobIfAbsent(jobInfo);
 
             //schedulerManager.get
+            Long hashId = jobInfo.getHashId();
 
         }
         return HodorResult.success("success");

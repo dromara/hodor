@@ -65,7 +65,7 @@ public class RegisterService implements LifecycleComponent {
         //registryCenter.makeDirs(ServerNode.WORK_PATH);
 
         // init data
-        registryCenter.createEphemeral(SchedulerNode.getServerNodePath(getServerId()), getServerId());
+        createServerNode(SchedulerNode.getServerNodePath(getServerId()), getServerId());
 
     }
 
@@ -83,6 +83,10 @@ public class RegisterService implements LifecycleComponent {
         for (String server : copySet.getServers()) {
             registryCenter.createEphemeral(serversPath, server);
         }
+    }
+
+    public void createServerNode(String serverNodePath, String serverId) {
+        registryCenter.createEphemeral(serverNodePath, serverId);
     }
 
     public void createMetadata(HodorMetadata metadata) {

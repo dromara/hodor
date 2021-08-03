@@ -16,7 +16,7 @@ public class HodorMetadata {
 
     private List<String> nodes;
 
-    private List<Long> interval;
+    private List<Long> intervalOffsets;
 
     private List<CopySet> copySets;
 

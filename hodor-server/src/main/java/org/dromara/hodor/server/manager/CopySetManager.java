@@ -21,6 +21,12 @@ public enum CopySetManager {
         return INSTANCE;
     }
 
+    /**
+     * 从copySet中选出一个leader
+     *
+     * @param copySet copy set
+     * @return leader endpoint
+     */
     public String selectLeaderCopySet(CopySet copySet) {
         List<String> servers = copySet.getServers();
         // copy set leader election.

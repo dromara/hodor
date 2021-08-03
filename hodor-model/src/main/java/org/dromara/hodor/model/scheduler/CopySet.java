@@ -30,4 +30,14 @@ public class CopySet {
      * copy set 节点列表
      */
     private List<String> servers;
+
+    /**
+     * 获取服务id
+     *
+     * @return 服务id
+     */
+    public String getServerId() {
+        return this.leader + "_" + id;
+    }
+
 }

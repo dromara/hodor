@@ -30,18 +30,18 @@ public class JobDistributeListener implements HodorEventListener<HodorMetadata> 
     public void onEvent(final Event<HodorMetadata> event) {
         final HodorMetadata metadata = event.getValue();
         List<CopySet> copySets = metadata.getCopySets();
-        copySets.forEach(e -> {
-            if (!hodorService.getServerId().equals(e.getLeader())) {
+        copySets.forEach(copySet -> {
+            if (!hodorService.getServerId().equals(copySet.getLeader())) {
                 return;
             }
             // 主节点数据区间
-            DataInterval dataInterval = e.getDataInterval();
-            hodorService.createActiveScheduler(e.getLeader(), dataInterval);
+            DataInterval dataInterval = copySet.getDataInterval();
+            hodorService.createActiveScheduler(copySet.getServerId(), dataInterval);
             // 备用节点数据
-            List<String> servers = e.getServers();
+            List<String> servers = copySet.getServers();
             servers.forEach(server -> {
                 // 排除主节点
-                if (e.getLeader().equals(server)) {
+                if (copySet.getLeader().equals(server)) {
                     return;
                 }
                 CopySet standbyCopySet = copySetManager.getCopySet(server);
