@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS `hodor_job_info`;
 DROP TABLE IF EXISTS `hodor_job_exec_detail`;
 
 CREATE TABLE `hodor_job_info` (
-  `id` bigint(32) NOT NULL COMMENT '任务id',
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '任务id',
   `hash_id` bigint(32) NOT NULL DEFAULT -1 COMMENT '任务hash id',
   `group_name` varchar(64) CHARACTER SET utf8 NOT NULL COMMENT '任务组名称',
   `job_name` varchar(64) CHARACTER SET utf8 NOT NULL COMMENT '任务名称',
@@ -19,7 +19,7 @@ CREATE TABLE `hodor_job_info` (
   `job_command` varchar(255) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '任务执行的命令，Java任务即执行的方法',
   `job_status` int(11) NOT NULL DEFAULT 0 COMMENT '任务状态0未激活 1可运行 2正在运行 3暂停',
   `is_dependence` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0:表示改job没有依赖；1：有相关依赖；',
-  `cron_expression` varchar(64) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '任务运行时间表达式',
+  `cron` varchar(64) CHARACTER SET utf8 NOT NULL DEFAULT '-' COMMENT '任务运行时间表达式',
   `sharding_count` int(11) NOT NULL DEFAULT 0 COMMENT '任务分片数',
   `job_parameters` varchar(512) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '分片参数',
   `extensible_parameters` varchar(512) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '可扩展任务参数，用于针对不是常规任务的扩展',
