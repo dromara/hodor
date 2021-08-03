@@ -1,6 +1,5 @@
 package org.dromara.hodor.server.service;
 
-import com.google.common.base.Preconditions;
 import java.util.List;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.utils.GsonUtils;
@@ -121,13 +120,17 @@ public class RegisterService implements LifecycleComponent {
     }
 
     public void createActuator(final ActuatorInfo actuatorInfo) {
-        Preconditions.checkNotNull(actuatorInfo.getNodeInfo(), "actuator node info must be not null.");
-        Preconditions.checkNotNull(actuatorInfo.getGroupNames(), "actuator group names must be not null.");
-
         String endpoint = actuatorInfo.getNodeInfo().getEndpoint();
         registryCenter.createPersistent(ActuatorNode.createNodePath(endpoint), gsonUtils.toJson(actuatorInfo.getNodeInfo()));
         actuatorInfo.getGroupNames().forEach(groupName ->
             registryCenter.createPersistent(ActuatorNode.createGroupPath(groupName, endpoint), String.valueOf(actuatorInfo.getLastHeartbeat())));
+    }
+
+    public void removeActuator(final ActuatorInfo actuatorInfo) {
+        String endpoint = actuatorInfo.getNodeInfo().getEndpoint();
+        registryCenter.remove(ActuatorNode.createNodePath(endpoint));
+        actuatorInfo.getGroupNames().forEach(groupName ->
+            registryCenter.remove(ActuatorNode.createGroupPath(groupName, endpoint)));
     }
 
 }
