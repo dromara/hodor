@@ -95,7 +95,7 @@ public class HodorService implements LifecycleComponent {
 
     public void electLeader() {
         leaderService.electLeader(() -> {
-            log.info("{} to be leader.", registerService.getServerId());
+            log.info("{} to be leader.", registerService.getServerEndpoint());
             // after to be leader write here
             List<String> currRunningNodes = registerService.getRunningNodes();
             if (CollectionUtils.isEmpty(currRunningNodes)) {
@@ -172,8 +172,8 @@ public class HodorService implements LifecycleComponent {
         return scheduler;
     }
 
-    public String getServerId() {
-        return registerService.getServerId();
+    public String getServerEndpoint() {
+        return registerService.getServerEndpoint();
     }
 
 }

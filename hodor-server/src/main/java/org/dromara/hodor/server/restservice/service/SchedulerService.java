@@ -8,9 +8,15 @@ import org.dromara.hodor.model.common.HodorResult;
 import org.dromara.hodor.model.enums.JobStatus;
 import org.dromara.hodor.model.enums.JobType;
 import org.dromara.hodor.model.job.JobInstance;
+import org.dromara.hodor.model.scheduler.CopySet;
+import org.dromara.hodor.model.scheduler.DataInterval;
 import org.dromara.hodor.scheduler.api.SchedulerManager;
+import org.dromara.hodor.server.manager.CopySetManager;
+import org.dromara.hodor.server.manager.MetadataManager;
 import org.dromara.hodor.server.restservice.HodorRestService;
+import org.dromara.hodor.server.restservice.RestMethod;
 import org.dromara.hodor.server.service.LeaderService;
+import org.dromara.hodor.server.service.RegisterService;
 
 /**
  * scheduler controller
@@ -24,26 +30,39 @@ public class SchedulerService {
 
     private final LeaderService leaderService;
 
+    private final RegisterService registerService;
+
     private final JobInfoService jobInfoService;
 
     private final SchedulerManager schedulerManager;
 
-    public SchedulerService(final LeaderService leaderService, final JobInfoService jobInfoService) {
+    private final MetadataManager metadataManager;
+
+    public SchedulerService(final RegisterService registerService, final LeaderService leaderService,
+                            final JobInfoService jobInfoService) {
+        this.registerService = registerService;
         this.leaderService = leaderService;
         this.jobInfoService = jobInfoService;
         this.schedulerManager = SchedulerManager.getInstance();
+        this.metadataManager = MetadataManager.getInstance();
     }
 
+    @RestMethod("isAlive")
     public HodorResult<String> isAlive() {
         return HodorResult.success("success");
     }
 
+    @RestMethod("createJob")
     public HodorResult<String> createJob(List<JobInstance> jobs) {
         if (!leaderService.isLeader()) {
             // redirect request to leader
             String leaderEndpoint = leaderService.getLeaderEndpoint();
-            
+
         }
+
+        String serverEndpoint = registerService.getServerEndpoint();
+        CopySet activeCopySet = CopySetManager.getInstance().getCopySet(serverEndpoint);
+        DataInterval activeDataInterval = activeCopySet.getDataInterval();
         for (JobInstance jobInstance : jobs) {
             JobInfo jobInfo = convertJobInfo(jobInstance);
             if (jobInfoService.isExists(jobInfo)) {
@@ -51,9 +70,9 @@ public class SchedulerService {
             }
             jobInfoService.addJobIfAbsent(jobInfo);
 
-            //schedulerManager.get
-            Long hashId = jobInfo.getHashId();
+            if (activeDataInterval.containsInterval(jobInfo.getHashId())) {
 
+            }
         }
         return HodorResult.success("success");
     }

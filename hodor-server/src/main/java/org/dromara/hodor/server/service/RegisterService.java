@@ -1,11 +1,9 @@
 package org.dromara.hodor.server.service;
 
-import java.util.List;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.utils.GsonUtils;
 import org.dromara.hodor.common.utils.HostUtils;
 import org.dromara.hodor.model.actuator.ActuatorInfo;
-import org.dromara.hodor.model.scheduler.CopySet;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
 import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.RegistryCenter;
@@ -15,6 +13,8 @@ import org.dromara.hodor.register.api.node.SchedulerNode;
 import org.dromara.hodor.server.component.LifecycleComponent;
 import org.dromara.hodor.server.config.HodorServerProperties;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * register service
@@ -31,13 +31,13 @@ public class RegisterService implements LifecycleComponent {
 
     private final GsonUtils gsonUtils;
 
-    private final String serverId;
+    private final String serverEndpoint;
 
     public RegisterService(final HodorServerProperties properties) {
         this.properties = properties;
         this.registryCenter = ExtensionLoader.getExtensionLoader(RegistryCenter.class).getDefaultJoin();
         this.gsonUtils = GsonUtils.getInstance();
-        this.serverId = HostUtils.getLocalIp() + ":" + properties.getNetServerPort();
+        this.serverEndpoint = HostUtils.getLocalIp() + ":" + properties.getNetServerPort();
     }
 
     @Override
@@ -58,15 +58,8 @@ public class RegisterService implements LifecycleComponent {
 
     private void initNode() {
         // init path
-        //registryCenter.makeDirs(ServerNode.METADATA_PATH);
-        //registryCenter.makeDirs(ServerNode.NODES_PATH);
-        //registryCenter.makeDirs(ServerNode.COPY_SETS_PATH);
-        //registryCenter.makeDirs(ServerNode.MASTER_PATH);
-        //registryCenter.makeDirs(ServerNode.WORK_PATH);
-
         // init data
-        createServerNode(SchedulerNode.getServerNodePath(getServerId()), getServerId());
-
+        createServerNode(SchedulerNode.getServerNodePath(getServerEndpoint()), getServerEndpoint());
     }
 
     public Integer getRunningNodeCount() {
@@ -75,14 +68,6 @@ public class RegisterService implements LifecycleComponent {
 
     public List<String> getRunningNodes() {
         return registryCenter.getChildren(SchedulerNode.NODES_PATH);
-    }
-
-    @Deprecated
-    public void createCopySet(CopySet copySet) {
-        String serversPath = registryCenter.makePath(SchedulerNode.COPY_SETS_PATH, String.valueOf(copySet.getId()), "servers");
-        for (String server : copySet.getServers()) {
-            registryCenter.createEphemeral(serversPath, server);
-        }
     }
 
     public void createServerNode(String serverNodePath, String serverId) {
@@ -102,7 +87,7 @@ public class RegisterService implements LifecycleComponent {
     }
 
     public void registryElectLeaderListener(DataChangeListener listener) {
-        registryListener(SchedulerNode.ACTIVE_PATH, listener);
+        registryListener(SchedulerNode.MASTER_ACTIVE_PATH, listener);
     }
 
     public void registryActuatorNodeListener(DataChangeListener listener) {
@@ -114,8 +99,8 @@ public class RegisterService implements LifecycleComponent {
         registryCenter.addDataCacheListener(path, listener);
     }
 
-    public String getServerId() {
-        return serverId;
+    public String getServerEndpoint() {
+        return serverEndpoint;
     }
 
     public Integer getLeastNodeCount() {

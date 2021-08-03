@@ -41,25 +41,25 @@ public class LeaderService {
      * 创建主节点
      */
     public void createLeaderNode() {
-        registryCenter.createEphemeral(SchedulerNode.ACTIVE_PATH, registerService.getServerId());
+        registryCenter.createEphemeral(SchedulerNode.MASTER_ACTIVE_PATH, registerService.getServerEndpoint());
     }
 
     /**
      *是否存在主节点
      */
     public boolean hasLeader() {
-        return registryCenter.checkExists(SchedulerNode.ACTIVE_PATH);
+        return registryCenter.checkExists(SchedulerNode.MASTER_ACTIVE_PATH);
     }
 
     /**
      * 当期节点是否为主节点
      */
     public boolean isLeader() {
-        return !registerService.getServerId().equals(getLeaderEndpoint());
+        return !registerService.getServerEndpoint().equals(getLeaderEndpoint());
     }
 
     public String getLeaderEndpoint() {
-        return registryCenter.get(SchedulerNode.ACTIVE_PATH);
+        return registryCenter.get(SchedulerNode.MASTER_ACTIVE_PATH);
     }
 
 }

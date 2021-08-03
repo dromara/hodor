@@ -12,24 +12,14 @@ public class SchedulerNode {
 
     public static final String METADATA_PATH = "/scheduler/metadata";
 
-    public static final String COPY_SETS_PATH = "/scheduler/copysets";
-
     public static final String NODES_PATH = "/scheduler/nodes";
-
-    public static final String MASTER_PATH = "/scheduler/master";
 
     public static final String LATCH_PATH = "/scheduler/latch";
 
-    public static final String ACTIVE_PATH = "/scheduler/master/active";
-
-    public static final String WORKER_PATH = "/worker";
+    public static final String MASTER_ACTIVE_PATH = "/scheduler/master/active";
 
     public static String getServerNodePath(String serverId) {
         return String.format("%s/%s", NODES_PATH, serverId);
-    }
-
-    public static boolean isWorkerPath(String path) {
-        return StringUtils.isNotBlank(path) && path.startsWith(WORKER_PATH + StringUtils.PATH_SEPARATOR);
     }
 
     public static boolean isNodePath(String path) {
@@ -37,10 +27,11 @@ public class SchedulerNode {
     }
 
     public static boolean isMasterActivePath(String path) {
-        return StringUtils.isNotBlank(path) && path.startsWith(ACTIVE_PATH);
+        return StringUtils.isNotBlank(path) && path.startsWith(MASTER_ACTIVE_PATH);
     }
 
     public static boolean isMetadataPath(String path) {
         return StringUtils.isNotBlank(path) && path.equals(METADATA_PATH);
     }
+
 }

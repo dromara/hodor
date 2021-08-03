@@ -31,7 +31,7 @@ public class JobDistributeListener implements HodorEventListener<HodorMetadata> 
         final HodorMetadata metadata = event.getValue();
         List<CopySet> copySets = metadata.getCopySets();
         copySets.forEach(copySet -> {
-            if (!hodorService.getServerId().equals(copySet.getLeader())) {
+            if (!hodorService.getServerEndpoint().equals(copySet.getLeader())) {
                 return;
             }
             // 主节点数据区间
