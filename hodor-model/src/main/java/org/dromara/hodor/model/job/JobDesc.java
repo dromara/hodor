@@ -31,7 +31,7 @@ public class JobDesc {
 
   private Boolean isDependence;
 
-  private String cronExpression;
+  private String cron;
 
   private Integer shardingCount;
 

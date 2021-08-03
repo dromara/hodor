@@ -3,6 +3,7 @@ package org.dromara.hodor.model.job;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+import org.dromara.hodor.model.enums.CommandType;
 
 /**
  * job instance
@@ -15,16 +16,18 @@ import lombok.ToString;
 @ToString
 public class JobInstance {
 
-    private String groupName;
+    private final String groupName;
 
-    private String jobName;
+    private final String jobName;
 
-    private String cron;
+    private final CommandType commandType;
 
-    private boolean fireNow;
+    private final String cron;
 
-    private Integer timeout;
+    private final boolean fireNow;
 
-    private boolean broadcast;
+    private final Integer timeout;
+
+    private final boolean broadcast;
 
 }

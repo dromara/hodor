@@ -4,6 +4,7 @@ import java.util.List;
 import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.event.HodorEventListener;
 import org.dromara.hodor.model.scheduler.CopySet;
+import org.dromara.hodor.model.scheduler.DataInterval;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
 import org.dromara.hodor.server.manager.CopySetManager;
 import org.dromara.hodor.server.service.HodorService;
@@ -34,7 +35,7 @@ public class JobDistributeListener implements HodorEventListener<HodorMetadata> 
                 return;
             }
             // 主节点数据区间
-            List<Long> dataInterval = e.getDataInterval();
+            DataInterval dataInterval = e.getDataInterval();
             hodorService.createActiveScheduler(e.getLeader(), dataInterval);
             // 备用节点数据
             List<String> servers = e.getServers();
@@ -44,7 +45,7 @@ public class JobDistributeListener implements HodorEventListener<HodorMetadata> 
                     return;
                 }
                 CopySet standbyCopySet = copySetManager.getCopySet(server);
-                List<Long> standbyDataInterval = standbyCopySet.getDataInterval();
+                DataInterval standbyDataInterval = standbyCopySet.getDataInterval();
                 hodorService.createStandbyScheduler(standbyCopySet.getLeader(), standbyDataInterval);
             });
         });
