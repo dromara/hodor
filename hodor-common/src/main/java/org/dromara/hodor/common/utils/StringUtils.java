@@ -17,6 +17,10 @@
 
 package org.dromara.hodor.common.utils;
 
+import cn.hutool.core.text.StrSplitter;
+import cn.hutool.core.util.StrUtil;
+import java.util.List;
+
 /**
  * StringUtils .
  *
@@ -24,15 +28,15 @@ package org.dromara.hodor.common.utils;
  */
 public final class StringUtils extends org.apache.commons.lang3.StringUtils {
 
-    private static final String FOLDER_SEPARATOR = "/";
+    public static final String PATH_SEPARATOR = "/";
 
-    private static final String WINDOWS_FOLDER_SEPARATOR = "\\";
+    public static final String WINDOWS_FOLDER_SEPARATOR = "\\";
 
-    private static final String TOP_PATH = "..";
+    public static final String TOP_PATH = "..";
 
-    private static final String CURRENT_PATH = ".";
+    public static final String CURRENT_PATH = ".";
 
-    private static final char EXTENSION_SEPARATOR = '.';
+    public static final char EXTENSION_SEPARATOR = '.';
 
     /**
      * 判断字符串是否为空.
@@ -62,5 +66,21 @@ public final class StringUtils extends org.apache.commons.lang3.StringUtils {
      */
     public static boolean hasLength(CharSequence str) {
         return (str != null && str.length() > 0);
+    }
+
+    public static String format(String format, Object... args) {
+        return StrUtil.format(format, args);
+    }
+
+    public static List<String> splitPath(String path) {
+        return StrSplitter.splitPath(path);
+    }
+
+    public static List<String> splitToList(String str, String delimit) {
+        return StrSplitter.split(str, delimit, true, true);
+    }
+
+    public static List<String> splitLimit(String str, String delimit, int limit) {
+        return StrSplitter.split(str, delimit, limit, true, true);
     }
 }
