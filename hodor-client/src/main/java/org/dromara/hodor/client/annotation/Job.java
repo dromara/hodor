@@ -4,6 +4,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.dromara.hodor.common.cron.CronUtils;
+import org.dromara.hodor.model.enums.CommandType;
 
 /**
  * 调度任务描述
@@ -16,11 +18,6 @@ import java.lang.annotation.Target;
 public @interface Job {
 
     /**
-     * cron disabled这个用于不需要调度，但是需要注册的任务，可能用于任务的关联任务
-     */
-    String CRON_DISABLED = "-";
-
-    /**
      * group name, default is class short name decapitate
      */
     String group() default "";
@@ -30,10 +27,12 @@ public @interface Job {
      */
     String jobName() default "";
 
+    CommandType commandType() default CommandType.JAVA;
+
     /**
      * cron 表达式
      */
-    String cron() default CRON_DISABLED;
+    String cron() default CronUtils.CRON_DISABLED;
 
     /**
      * 在配置了 cron 的基础上，如果需要立即执行，则设置为true, 默认是不立即执行的
