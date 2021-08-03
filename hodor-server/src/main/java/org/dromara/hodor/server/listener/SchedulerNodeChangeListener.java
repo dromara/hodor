@@ -1,10 +1,12 @@
 package org.dromara.hodor.server.listener;
 
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.server.manager.SchedulerNodeManager;
+import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;
-import org.dromara.hodor.register.api.node.ServerNode;
+import org.dromara.hodor.register.api.node.SchedulerNode;
+import org.dromara.hodor.server.manager.SchedulerNodeManager;
 
 /**
  * server node change listener
@@ -25,18 +27,18 @@ public class SchedulerNodeChangeListener implements DataChangeListener {
     public void dataChanged(DataChangeEvent event) {
         // path /scheduler/nodes/${node_ip}
         String nodePath = event.getPath();
-        if (!ServerNode.isNodePath(nodePath)) {
+        if (!SchedulerNode.isNodePath(nodePath)) {
             return;
         }
 
         log.info("ServerNodeChange, eventType: {}, path: {}", event.getType(), nodePath);
 
-        String[] nodePathArr = nodePath.split(ServerNode.PATH_SEPARATOR);
-        if (nodePathArr.length != 4) {
+        List<String> schedulerNodePath = StringUtils.splitPath(nodePath);
+        if (schedulerNodePath.size() != 3) {
             return;
         }
 
-        String nodeIp = nodePathArr[3];
+        String nodeIp = schedulerNodePath.get(2);
         if (event.getType() == DataChangeEvent.Type.NODE_ADDED) {
             manager.addNodeServer(nodeIp);
         } else if (event.getType() == DataChangeEvent.Type.NODE_REMOVED) {

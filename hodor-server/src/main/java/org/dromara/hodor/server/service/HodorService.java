@@ -1,6 +1,8 @@
 package org.dromara.hodor.server.service;
 
 import com.google.common.collect.Lists;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.hodor.common.exception.HodorException;
@@ -16,17 +18,14 @@ import org.dromara.hodor.scheduler.api.common.SchedulerConfig;
 import org.dromara.hodor.server.component.Constants;
 import org.dromara.hodor.server.component.LifecycleComponent;
 import org.dromara.hodor.server.executor.JobExecutorTypeManager;
+import org.dromara.hodor.server.listener.ActuatorNodeChangeListener;
 import org.dromara.hodor.server.listener.LeaderElectChangeListener;
 import org.dromara.hodor.server.listener.MetadataChangeListener;
 import org.dromara.hodor.server.listener.SchedulerNodeChangeListener;
-import org.dromara.hodor.server.listener.WorkerNodeChangeListener;
+import org.dromara.hodor.server.manager.ActuatorNodeManager;
 import org.dromara.hodor.server.manager.CopySetManager;
 import org.dromara.hodor.server.manager.SchedulerNodeManager;
-import org.dromara.hodor.server.manager.WorkerNodeManager;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * hodor service
@@ -46,7 +45,7 @@ public class HodorService implements LifecycleComponent {
 
     private final SchedulerNodeManager schedulerNodeManager;
 
-    private final WorkerNodeManager workerNodeManager;
+    private final ActuatorNodeManager actuatorNodeManager;
 
     private final CopySetManager copySetManager;
 
@@ -59,7 +58,7 @@ public class HodorService implements LifecycleComponent {
         this.schedulerNodeManager = SchedulerNodeManager.getInstance();
         this.copySetManager = CopySetManager.getInstance();
         this.schedulerManager = SchedulerManager.getInstance();
-        this.workerNodeManager = WorkerNodeManager.getInstance();
+        this.actuatorNodeManager = ActuatorNodeManager.getInstance();
     }
 
     @Override
@@ -76,7 +75,7 @@ public class HodorService implements LifecycleComponent {
 
         //init data
         registerService.registrySchedulerNodeListener(new SchedulerNodeChangeListener(schedulerNodeManager));
-        registerService.registryWorkerNodeListener(new WorkerNodeChangeListener(workerNodeManager));
+        registerService.registryActuatorNodeListener(new ActuatorNodeChangeListener(actuatorNodeManager));
         registerService.registryMetadataListener(new MetadataChangeListener(this));
         registerService.registryElectLeaderListener(new LeaderElectChangeListener(this));
 
@@ -89,7 +88,8 @@ public class HodorService implements LifecycleComponent {
         registerService.stop();
         copySetManager.clearCopySet();
         schedulerNodeManager.clearNodeServer();
-        workerNodeManager.clearWorkerNodes();
+        actuatorNodeManager.clearActuatorNodes();
+        actuatorNodeManager.stopOfflineActuatorClean();
     }
 
     public void electLeader() {
@@ -100,6 +100,8 @@ public class HodorService implements LifecycleComponent {
             if (CollectionUtils.isEmpty(currRunningNodes)) {
                 throw new HodorException("running node count is 0.");
             }
+
+            actuatorNodeManager.startOfflineActuatorClean();
 
             // 至少3个节点才可以使用copy set
             List<List<String>> copySetNodes = CopySets.buildCopySets(currRunningNodes, Constants.REPLICA_COUNT, Constants.SCATTER_WIDTH);

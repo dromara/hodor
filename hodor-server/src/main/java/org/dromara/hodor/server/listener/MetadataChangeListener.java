@@ -7,7 +7,7 @@ import org.dromara.hodor.model.scheduler.HodorMetadata;
 import org.dromara.hodor.server.manager.MetadataManager;
 import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;
-import org.dromara.hodor.register.api.node.ServerNode;
+import org.dromara.hodor.register.api.node.SchedulerNode;
 import org.dromara.hodor.server.component.EventType;
 import org.dromara.hodor.server.service.HodorService;
 
@@ -32,7 +32,7 @@ public class MetadataChangeListener extends AbstractEventPublisher<HodorMetadata
 
     @Override
     public void dataChanged(DataChangeEvent event) {
-        if (!ServerNode.isMetadataPath(event.getPath())) {
+        if (!SchedulerNode.isMetadataPath(event.getPath())) {
             return;
         }
 

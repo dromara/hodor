@@ -1,20 +1,21 @@
 package org.dromara.hodor.server.service;
 
-import com.google.common.collect.Lists;
+import com.google.common.base.Preconditions;
+import java.util.List;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.utils.GsonUtils;
 import org.dromara.hodor.common.utils.HostUtils;
+import org.dromara.hodor.model.actuator.ActuatorInfo;
 import org.dromara.hodor.model.scheduler.CopySet;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
 import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.RegistryCenter;
 import org.dromara.hodor.register.api.RegistryConfig;
-import org.dromara.hodor.register.api.node.ServerNode;
+import org.dromara.hodor.register.api.node.ActuatorNode;
+import org.dromara.hodor.register.api.node.SchedulerNode;
 import org.dromara.hodor.server.component.LifecycleComponent;
 import org.dromara.hodor.server.config.HodorServerProperties;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * register service
@@ -65,7 +66,7 @@ public class RegisterService implements LifecycleComponent {
         //registryCenter.makeDirs(ServerNode.WORK_PATH);
 
         // init data
-        registryCenter.createEphemeral(ServerNode.getServerNodePath(getServerId()), getServerId());
+        registryCenter.createEphemeral(SchedulerNode.getServerNodePath(getServerId()), getServerId());
 
     }
 
@@ -74,38 +75,36 @@ public class RegisterService implements LifecycleComponent {
     }
 
     public List<String> getRunningNodes() {
-        return registryCenter.getChildren(ServerNode.NODES_PATH);
+        return registryCenter.getChildren(SchedulerNode.NODES_PATH);
     }
 
     @Deprecated
     public void createCopySet(CopySet copySet) {
-        String serversPath = registryCenter.makePath(ServerNode.COPY_SETS_PATH, String.valueOf(copySet.getId()), "servers");
+        String serversPath = registryCenter.makePath(SchedulerNode.COPY_SETS_PATH, String.valueOf(copySet.getId()), "servers");
         for (String server : copySet.getServers()) {
             registryCenter.createEphemeral(serversPath, server);
         }
     }
 
     public void createMetadata(HodorMetadata metadata) {
-        registryCenter.createPersistent(ServerNode.METADATA_PATH, gsonUtils.toJson(metadata));
-        //for (CopySet copyset : metadata.getCopySets()) {
-        //    createCopySet(copyset);
-        //}
+        registryCenter.createPersistent(SchedulerNode.METADATA_PATH, gsonUtils.toJson(metadata));
     }
 
     public void registryMetadataListener(DataChangeListener listener) {
-        registryListener(ServerNode.METADATA_PATH, listener);
+        registryListener(SchedulerNode.METADATA_PATH, listener);
     }
 
     public void registrySchedulerNodeListener(DataChangeListener listener) {
-        registryListener(ServerNode.NODES_PATH, listener);
+        registryListener(SchedulerNode.NODES_PATH, listener);
     }
 
     public void registryElectLeaderListener(DataChangeListener listener) {
-        registryListener(ServerNode.ACTIVE_PATH, listener);
+        registryListener(SchedulerNode.ACTIVE_PATH, listener);
     }
 
-    public void registryWorkerNodeListener(DataChangeListener listener) {
-        registryListener(ServerNode.WORKER_PATH, listener);
+    public void registryActuatorNodeListener(DataChangeListener listener) {
+        registryListener(ActuatorNode.ACTUATOR_NODES_PATH, listener);
+        registryListener(ActuatorNode.ACTUATOR_GROUPS_PATH, listener);
     }
 
     public void registryListener(String path, DataChangeListener listener) {
@@ -121,12 +120,14 @@ public class RegisterService implements LifecycleComponent {
         return Integer.parseInt(System.getProperty("clusters", "1"));
     }
 
-    public List<String> getAllWorkNodes(String groupName) {
-        List<String> children = registryCenter.getChildren(ServerNode.WORKER_PATH + "/" + groupName);
-        if (children == null) {
-            children = Lists.newArrayList();
-        }
-        return children;
+    public void createActuator(final ActuatorInfo actuatorInfo) {
+        Preconditions.checkNotNull(actuatorInfo.getNodeInfo(), "actuator node info must be not null.");
+        Preconditions.checkNotNull(actuatorInfo.getGroupNames(), "actuator group names must be not null.");
+
+        String endpoint = actuatorInfo.getNodeInfo().getEndpoint();
+        registryCenter.createPersistent(ActuatorNode.createNodePath(endpoint), gsonUtils.toJson(actuatorInfo.getNodeInfo()));
+        actuatorInfo.getGroupNames().forEach(groupName ->
+            registryCenter.createPersistent(ActuatorNode.createGroupPath(groupName, endpoint), String.valueOf(actuatorInfo.getLastHeartbeat())));
     }
 
 }

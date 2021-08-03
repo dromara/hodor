@@ -19,12 +19,12 @@ import org.dromara.hodor.remoting.api.message.RemotingResponse;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
-import org.dromara.hodor.server.manager.WorkerNodeManager;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.dromara.hodor.server.manager.ActuatorNodeManager;
 
 /**
  * job request executor
@@ -37,7 +37,7 @@ public class HodorJobRequestHandler {
 
     private final RemotingClient clientService;
 
-    private final WorkerNodeManager workerNodeManager;
+    private final ActuatorNodeManager actuatorNodeManager;
 
     private final RemotingMessageSerializer serializer;
 
@@ -45,7 +45,7 @@ public class HodorJobRequestHandler {
 
     public HodorJobRequestHandler() {
         this.clientService = RemotingClient.getInstance();
-        this.workerNodeManager = WorkerNodeManager.getInstance();
+        this.actuatorNodeManager = ActuatorNodeManager.getInstance();
         this.serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
         this.typeReference = new TypeReference<RemotingResponse<JobExecuteResponse>>() {};
     }
@@ -53,7 +53,7 @@ public class HodorJobRequestHandler {
     public void handle(final HodorJobExecutionContext context) {
         log.info("hodor job request handler, info {}.", context);
         RemotingMessage request = getRequestBody(context);
-        List<Host> hosts = workerNodeManager.getAvailableHosts(context.getJobDesc().getGroupName());
+        List<Host> hosts = actuatorNodeManager.getAvailableHosts(context.getJobDesc().getGroupName());
         Exception jobException = null;
         for (int i = hosts.size() - 1; i >= 0; i--) {
             try {
