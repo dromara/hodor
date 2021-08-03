@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.common.cron.CronUtils;
 import org.dromara.hodor.model.enums.JobStatus;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.core.mapper.JobInfoMapper;
@@ -28,6 +29,19 @@ public class JobInfoServiceImpl implements JobInfoService {
     @Override
     public void addJob(JobInfo jobInfo) {
         jobInfoMapper.insert(jobInfo);
+    }
+
+    @Override
+    public void addJobIfAbsent(JobInfo jobInfo) {
+        if (!isExists(jobInfo)) {
+            addJob(jobInfo);
+        }
+    }
+
+    public boolean isExists(JobInfo jobInfo) {
+        return jobInfoMapper.selectCount(Wrappers.<JobInfo>lambdaQuery()
+            .eq(JobInfo::getGroupName, jobInfo.getGroupName())
+            .eq(JobInfo::getJobName, jobInfo.getJobName())) > 0;
     }
 
     @Override
@@ -60,7 +74,7 @@ public class JobInfoServiceImpl implements JobInfoService {
     public List<JobInfo> queryJobInfoByHashIdOffset(Long startHashId, Long endHashId) {
         return jobInfoMapper.selectList(Wrappers.<JobInfo>lambdaQuery()
             .eq(JobInfo::getJobStatus, JobStatus.RUNNING)
-            .ne(JobInfo::getCronExpression, "") // cron expression is not null
+            .ne(JobInfo::getCron, CronUtils.CRON_DISABLED) // cron expression is not null
             .ge(JobInfo::getHashId, startHashId)
             .lt(JobInfo::getHashId, endHashId));
     }

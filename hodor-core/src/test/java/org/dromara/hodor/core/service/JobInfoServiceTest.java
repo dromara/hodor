@@ -23,11 +23,11 @@ public class JobInfoServiceTest extends BaseTest {
         JobInfo jobInfo = new JobInfo();
         jobInfo.setGroupName("test");
         jobInfo.setJobName("1234");
-        jobInfo.setCronExpression("*/5 * * * * ?");
+        jobInfo.setCron("*/5 * * * * ?");
         jobInfo.setJobStatus(JobStatus.READY);
         jobInfo.setHashId(HashUtils.hash(jobInfo.getGroupName() + jobInfo.getJobName()));
 
-        jobInfoService.addJob(jobInfo);
+        jobInfoService.addJobIfAbsent(jobInfo);
     }
 
 }

@@ -19,6 +19,21 @@ public interface JobInfoService {
     void addJob(JobInfo jobInfo);
 
     /**
+     * 如果不存在则新增任务，存在则跳过
+     *
+     * @param jobInfo 任务信息
+     */
+    void addJobIfAbsent(JobInfo jobInfo);
+
+    /**
+     * 检查任务是否存在
+     *
+     * @param jobInfo 任务信息
+     * @return true 存在， false不存在
+     */
+    boolean isExists(JobInfo jobInfo);
+
+    /**
      * 查询可分配任务数量
      *
      * @return 可分配任务数量
@@ -49,4 +64,5 @@ public interface JobInfoService {
      * @return job info list
      */
     List<JobInfo> queryJobInfoByHashIdOffset(Long startHashId, Long endHashId);
+
 }
