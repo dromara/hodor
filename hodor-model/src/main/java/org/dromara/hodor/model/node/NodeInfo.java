@@ -74,6 +74,10 @@ public class NodeInfo {
      */
     private Long executeCount;
 
+    public String getEndpoint() {
+        return this.ip + ":" + this.port;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
