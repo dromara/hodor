@@ -21,7 +21,6 @@ public class LeaderElectChangeListener implements DataChangeListener {
 
     @Override
     public void dataChanged(DataChangeEvent event) {
-        //TODO: 判断是否为主节点删除了，目前发现有节点删除就会触发这个监听，需要排查一下
         if (!SchedulerNode.isMasterActivePath(event.getPath())) {
             return;
         }

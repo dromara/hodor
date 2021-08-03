@@ -1,10 +1,10 @@
 package org.dromara.hodor.scheduler.api;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 import org.dromara.hodor.common.extension.ExtensionLoader;
+import org.dromara.hodor.model.scheduler.DataInterval;
 import org.dromara.hodor.scheduler.api.common.SchedulerConfig;
 
 /**
@@ -23,7 +23,7 @@ public final class SchedulerManager {
 
     private final Map<String, HodorScheduler> standBySchedulerMap;
 
-    private final Map<String, List<Long>> schedulerDataInterval;
+    private final Map<String, DataInterval> schedulerDataInterval;
 
     private final ExtensionLoader<HodorScheduler> extensionLoader;
 
@@ -89,11 +89,11 @@ public final class SchedulerManager {
         return scheduler;
     }
 
-    public List<Long> getSchedulerDataInterval(String schedulerName) {
+    public DataInterval getSchedulerDataInterval(String schedulerName) {
         return schedulerDataInterval.get(schedulerName);
     }
 
-    public void addSchedulerDataInterval(String schedulerName, List<Long> dataInterval) {
+    public void addSchedulerDataInterval(String schedulerName, DataInterval dataInterval) {
         schedulerDataInterval.put(schedulerName, dataInterval);
     }
 

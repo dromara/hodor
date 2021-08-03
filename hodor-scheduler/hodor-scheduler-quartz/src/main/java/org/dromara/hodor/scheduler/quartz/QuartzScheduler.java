@@ -107,7 +107,7 @@ public class QuartzScheduler implements HodorScheduler {
 
         Trigger trigger = TriggerBuilder.newTrigger()
                 .withIdentity(jobDesc.getJobName(), jobDesc.getGroupName())
-                .withSchedule(CronScheduleBuilder.cronSchedule(jobDesc.getCronExpression()).withMisfireHandlingInstructionDoNothing())
+                .withSchedule(CronScheduleBuilder.cronSchedule(jobDesc.getCron()).withMisfireHandlingInstructionDoNothing())
                 .withPriority(jobDesc.getPriority().getValue())
                 .forJob(jobDetail)
                 .build();

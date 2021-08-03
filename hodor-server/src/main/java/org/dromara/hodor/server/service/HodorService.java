@@ -14,6 +14,7 @@ import org.dromara.hodor.model.scheduler.CopySet;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
 import org.dromara.hodor.scheduler.api.HodorScheduler;
 import org.dromara.hodor.scheduler.api.SchedulerManager;
+import org.dromara.hodor.model.scheduler.DataInterval;
 import org.dromara.hodor.scheduler.api.common.SchedulerConfig;
 import org.dromara.hodor.server.component.Constants;
 import org.dromara.hodor.server.component.LifecycleComponent;
@@ -128,9 +129,9 @@ public class HodorService implements LifecycleComponent {
             for (int i = 0; i < interval.size(); i++) {
                 CopySet copySet = copySets.get(i);
                 if (i == interval.size() - 1) { // last one
-                    copySet.setDataInterval(Lists.newArrayList(interval.get(i), Long.MAX_VALUE));
+                    copySet.setDataInterval(DataInterval.create(interval.get(i), Long.MAX_VALUE));
                 } else {
-                    copySet.setDataInterval(Lists.newArrayList(interval.get(i), interval.get(i + 1)));
+                    copySet.setDataInterval(DataInterval.create(interval.get(i), interval.get(i + 1)));
                 }
                 copySet.setLeader(copySetManager.selectLeaderCopySet(copySet));
             }
@@ -144,28 +145,28 @@ public class HodorService implements LifecycleComponent {
         });
     }
 
-    public void createActiveScheduler(String serverId, List<Long> dataInterval) {
+    public void createActiveScheduler(String serverId, DataInterval dataInterval) {
         HodorScheduler activeScheduler = buildScheduler(serverId, dataInterval);
         schedulerManager.addActiveScheduler(activeScheduler);
         schedulerManager.addSchedulerDataInterval(activeScheduler.getSchedulerName(), dataInterval);
     }
 
-    public void createStandbyScheduler(String serverId, List<Long> standbyDataInterval) {
+    public void createStandbyScheduler(String serverId, DataInterval standbyDataInterval) {
         HodorScheduler standbyScheduler = buildScheduler(serverId, standbyDataInterval);
         schedulerManager.addStandByScheduler(standbyScheduler);
         schedulerManager.addSchedulerDataInterval(standbyScheduler.getSchedulerName(), standbyDataInterval);
     }
 
-    public HodorScheduler buildScheduler(String serverId, List<Long> dataInterval) {
+    public HodorScheduler buildScheduler(String serverId, DataInterval dataInterval) {
         final SchedulerConfig config = SchedulerConfig.builder()
             .schedulerName("HodorScheduler_" + serverId)
             .threadCount(ThreadUtils.availableProcessors() * 2)
             .misfireThreshold(3000)
             .build();
         final HodorScheduler scheduler = schedulerManager.getOrCreateScheduler(config);
-        final List<Long> schedulerDataInterval = schedulerManager.getSchedulerDataInterval(config.getSchedulerName());
-        if (CollectionUtils.isEmpty(schedulerDataInterval) || !CollectionUtils.isEqualCollection(schedulerDataInterval, dataInterval)) {
-            List<JobInfo> jobInfoList = jobInfoService.queryJobInfoByHashIdOffset(dataInterval.get(0), dataInterval.get(1));
+        final DataInterval schedulerDataInterval = schedulerManager.getSchedulerDataInterval(config.getSchedulerName());
+        if (!dataInterval.equals(schedulerDataInterval)) {
+            List<JobInfo> jobInfoList = jobInfoService.queryJobInfoByHashIdOffset(dataInterval.getStartInterval(), dataInterval.getEndInterval());
             jobInfoList.forEach(job -> scheduler.addJob(job, JobExecutorTypeManager.getInstance().getJobExecutor(job.getJobType())));
         }
         return scheduler;
