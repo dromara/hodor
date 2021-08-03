@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 
 /**
+ * hodor metadata
+ *
  * @author tomgs
  * @since 2020/7/7
  */
@@ -13,7 +15,9 @@ import lombok.Data;
 public class HodorMetadata {
 
     private List<String> nodes;
+
     private List<Long> interval;
+
     private List<CopySet> copySets;
 
 }

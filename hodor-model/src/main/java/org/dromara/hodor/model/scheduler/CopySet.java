@@ -19,7 +19,7 @@ public class CopySet {
     /**
      * copy set 数据区间
      */
-    private List<Long> dataInterval;
+    private DataInterval dataInterval;
 
     /**
      * copy set 主节点
