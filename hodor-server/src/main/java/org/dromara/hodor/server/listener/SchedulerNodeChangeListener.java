@@ -41,8 +41,10 @@ public class SchedulerNodeChangeListener implements DataChangeListener {
         String nodeIp = schedulerNodePath.get(2);
         if (event.getType() == DataChangeEvent.Type.NODE_ADDED) {
             manager.addNodeServer(nodeIp);
+            //TODO: 更新元数据
         } else if (event.getType() == DataChangeEvent.Type.NODE_REMOVED) {
             manager.removeNodeServer(nodeIp);
+            //TODO: 更新元数据
         }
 
     }
