@@ -1,7 +1,6 @@
 package org.dromara.hodor.client;
 
 import java.sql.SQLException;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -28,7 +27,7 @@ public class HodorClientInit implements ApplicationRunner {
 
     private final MsgSender msgSender;
 
-    private final ScheduledExecutorService heartbeatSenderService;
+    private final ScheduledThreadPoolExecutor heartbeatSenderService;
 
     private final HodorDatabaseSetup hodorDatabaseSetup;
 
@@ -82,7 +81,13 @@ public class HodorClientInit implements ApplicationRunner {
         // 第一次初始化
         MsgSender.HeartbeatSender heartbeatSender = msgSender.getHeartbeatSender();
         heartbeatSender.run();
-        heartbeatSenderService.scheduleAtFixedRate(heartbeatSender, 3_000, Integer.parseInt(interval), TimeUnit.MILLISECONDS);
+        heartbeatSenderService.scheduleWithFixedDelay(() -> {
+            // 可能会出现大量的不必要任务，产生心跳风暴，直接丢弃
+            while (heartbeatSenderService.getQueue().size() > 1) {
+                heartbeatSenderService.getQueue().poll();
+            }
+            heartbeatSender.run();
+        }, 3_000, Integer.parseInt(interval), TimeUnit.MILLISECONDS);
     }
 
     private void registerJobs() {
