@@ -1,6 +1,7 @@
 package org.dromara.hodor.server.restservice.service;
 
 import java.util.List;
+import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.utils.HashUtils;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.core.service.JobInfoService;
@@ -10,6 +11,7 @@ import org.dromara.hodor.model.enums.JobType;
 import org.dromara.hodor.model.job.JobInstance;
 import org.dromara.hodor.model.scheduler.CopySet;
 import org.dromara.hodor.model.scheduler.DataInterval;
+import org.dromara.hodor.remoting.api.RemotingClient;
 import org.dromara.hodor.scheduler.api.SchedulerManager;
 import org.dromara.hodor.server.manager.CopySetManager;
 import org.dromara.hodor.server.manager.MetadataManager;
@@ -53,27 +55,34 @@ public class SchedulerService {
     }
 
     @RestMethod("createJob")
-    public HodorResult<String> createJob(List<JobInstance> jobs) {
-        if (!leaderService.isLeader()) {
-            // redirect request to leader
-            String leaderEndpoint = leaderService.getLeaderEndpoint();
+    public HodorResult<String> createJob(JobInstance jobInstance) {
+        JobInfo jobInfo = convertJobInfo(jobInstance);
+        jobInfoService.addJobIfAbsent(jobInfo);
+        fireJobCreateEvent();
+        return HodorResult.success("success");
+    }
 
+    @RestMethod("batchCreateJob")
+    public HodorResult<String> batchCreateJob(List<JobInstance> jobs) {
+        for (JobInstance jobInstance : jobs) {
+            JobInfo jobInfo = convertJobInfo(jobInstance);
+            jobInfoService.addJobIfAbsent(jobInfo);
         }
+        fireJobCreateEvent();
+        return HodorResult.success("success");
+    }
 
+    private void fireJobCreateEvent() {
+        RemotingClient client = RemotingClient.getInstance();
+        //client.sendHttpRequest();
+    }
+
+    @RestMethod("onEvent")
+    public HodorResult<String> onEvent(Event<Object> event) {
         String serverEndpoint = registerService.getServerEndpoint();
         CopySet activeCopySet = CopySetManager.getInstance().getCopySet(serverEndpoint);
         DataInterval activeDataInterval = activeCopySet.getDataInterval();
-        for (JobInstance jobInstance : jobs) {
-            JobInfo jobInfo = convertJobInfo(jobInstance);
-            if (jobInfoService.isExists(jobInfo)) {
-                continue;
-            }
-            jobInfoService.addJobIfAbsent(jobInfo);
 
-            if (activeDataInterval.containsInterval(jobInfo.getHashId())) {
-
-            }
-        }
         return HodorResult.success("success");
     }
 
