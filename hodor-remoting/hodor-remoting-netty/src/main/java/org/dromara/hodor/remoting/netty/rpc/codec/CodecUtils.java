@@ -24,9 +24,13 @@ public class CodecUtils {
     private static final RemotingMessageSerializer serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
 
     @SuppressWarnings("unchecked")
-    public static Map<String, Object> parseAttachment(ByteBuf in, int attachmentSize) {
+    public static Map<String, Object> parseAttachment(ByteBuf in, int attachmentSize) throws ResetReaderIndexException {
         Map<String, Object> attachment = Maps.newHashMap();
         if (attachmentSize != 0) {
+            if (in.readableBytes() < attachmentSize) {
+                in.resetReaderIndex();
+                throw new ResetReaderIndexException("reader attachment index reset");
+            }
             byte[] req = new byte[attachmentSize];
             in.readBytes(req);
             attachment = (Map<String, Object>) serializer.deserialize(req, Map.class);
@@ -56,7 +60,7 @@ public class CodecUtils {
         out.writeInt(header.getLength());
     }
 
-    public static Header parseHeader(ByteBuf in) {
+    public static Header parseHeader(ByteBuf in) throws ResetReaderIndexException {
         short magic = in.readShort();
         if (RemotingConst.MAGIC != magic) {
             throw new RemotingException("magic number is illegal, " + magic);

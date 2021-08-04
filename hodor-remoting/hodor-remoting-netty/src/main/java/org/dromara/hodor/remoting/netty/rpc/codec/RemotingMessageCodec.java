@@ -41,7 +41,12 @@ public class RemotingMessageCodec extends ByteToMessageCodec<RemotingMessage> {
             return;
         }
         in.markReaderIndex();
-        Header header = CodecUtils.parseHeader(in);
+        Header header;
+        try {
+            header = CodecUtils.parseHeader(in);
+        } catch (ResetReaderIndexException e) {
+            return;
+        }
         // parse body
         int bodyLength = header.getLength();
         if (in.readableBytes() < bodyLength) {
