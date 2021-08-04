@@ -33,7 +33,7 @@ public class HodorApiClient {
     }
 
     public void registerJobs(Collection<JobInstance> jobs) {
-        String result = HttpUtil.createPost(registryAddress + "/scheduler/createJob")
+        String result = HttpUtil.createPost(registryAddress + "/scheduler/batchCreateJob")
             .body(gsonUtils.toJson(jobs))
             .header("appName", appName)
             .header("appKey", appKey)
