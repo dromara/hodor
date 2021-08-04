@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollectionUtil;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -41,7 +40,7 @@ public class FailureRequestHandleManager extends AbstractAsyncEventPublisher<Ret
 
     private final ExecutorManager executorManager;
 
-    private final ScheduledExecutorService failureRequestCheckService;
+    private final ScheduledThreadPoolExecutor failureRequestCheckService;
 
     private final DBOperator dbOperator;
 
@@ -56,7 +55,7 @@ public class FailureRequestHandleManager extends AbstractAsyncEventPublisher<Ret
     }
 
     private void startCheck() {
-        this.failureRequestCheckService.scheduleAtFixedRate(this::fireFailureRequestHandler,
+        this.failureRequestCheckService.scheduleWithFixedDelay(this::fireFailureRequestHandler,
             10_000, 10_000, TimeUnit.MILLISECONDS);
     }
 

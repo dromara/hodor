@@ -1,8 +1,10 @@
 package org.dromara.hodor.client.core;
 
 import java.util.Date;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
 
@@ -14,6 +16,8 @@ import org.dromara.hodor.remoting.api.message.RemotingMessage;
  */
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RetryableMessage {
 
    private Long id;
