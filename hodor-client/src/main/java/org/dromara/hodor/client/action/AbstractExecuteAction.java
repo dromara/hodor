@@ -85,7 +85,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
         response.setStatus(JobExecuteStatus.FAILED);
         response.setCompleteTime(DateUtil.formatDateTime(new Date()));
         response.setComments(exceptionStack);
-        retryableSendMessage(buildResponseMessage(RemotingResponse.succeeded(requestId, response)));
+        retryableSendMessage(buildResponseMessage(RemotingResponse.succeeded(response)));
     }
 
     public void sendStartExecuteResponse(final JobExecuteRequest request) {
@@ -98,7 +98,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
             request.getJobName(), request.getJobParameters(),
             attachment == null ? getRequestContext().channel().remoteAddress().toString() : attachment.get("schedulerName").toString());
         jobExecutionPersistence.fireJobExecutionEvent(runningJobExecution);
-        retryableSendMessage(buildResponseMessage(RemotingResponse.succeeded(requestId, response)));
+        retryableSendMessage(buildResponseMessage(RemotingResponse.succeeded(response)));
     }
 
     public JobExecuteResponse buildResponse(final JobExecuteRequest request) {

@@ -39,7 +39,7 @@ public class JobResponseHandlerManager extends AbstractEventPublisher<RemotingRe
     private void registerJobExecuteFailureResponseListener() {
         this.addListener(event -> {
             RemotingResponse<JobExecuteResponse> remotingResponse = event.getValue();
-            Long requestId = remotingResponse.getRequestId();
+            Long requestId = remotingResponse.getData().getRequestId();
             String errorMsg = remotingResponse.getMsg();
             // TODO: 记录失败的任务请求
             log.error("job request {} execute failure, msg: {}.", requestId, errorMsg);
@@ -52,7 +52,7 @@ public class JobResponseHandlerManager extends AbstractEventPublisher<RemotingRe
     }
 
     public void fireJobExecuteInnerErrorHandler(final JobExecuteResponse jobExecuteResponse) {
-        RemotingResponse<JobExecuteResponse> remotingResponse = RemotingResponse.succeeded(jobExecuteResponse.getRequestId(), jobExecuteResponse);
+        RemotingResponse<JobExecuteResponse> remotingResponse = RemotingResponse.succeeded(jobExecuteResponse);
         fireJobResponseHandler(remotingResponse);
     }
 

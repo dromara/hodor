@@ -27,8 +27,6 @@ public abstract class AbstractAction<I extends RequestBody, O extends ResponseBo
 
     private final RemotingMessageSerializer serializer;
 
-    private Long requestId;
-
     public AbstractAction(final RequestContext context) {
         this.context = context;
         this.serializer = context.serializer();
@@ -44,17 +42,17 @@ public abstract class AbstractAction<I extends RequestBody, O extends ResponseBo
     @SuppressWarnings("unchecked")
     public void execute() throws Exception {
         I request = (I) buildRequestMessage(getRequestContext().getRequestType());
-        requestId = request.getRequestId();
+        Long requestId = request.getRequestId();
         O response = executeRequest(request);
         response.setRequestId(requestId);
-        retryableSendMessage(buildResponseMessage(RemotingResponse.succeeded(requestId, response)));
+        retryableSendMessage(buildResponseMessage(RemotingResponse.succeeded(response)));
     }
 
     @Override
     public void exceptionCaught(Exception e) {
         // send failed execute response
         log.error("execute has exception, {}.", e.getMessage(), e);
-        RemotingResponse<O> response = RemotingResponse.failed(requestId, ThreadUtils.getStackTraceInfo(e));
+        RemotingResponse<O> response = RemotingResponse.failed(ThreadUtils.getStackTraceInfo(e));
         retryableSendMessage(buildResponseMessage(response));
     }
 
