@@ -37,8 +37,8 @@ public class NettyClient extends AbstractNetClient {
     }
 
     @Override
-    @SneakyThrows({ConnectException.class, InterruptedException.class})
-    public HodorChannel connect() {
+    @SneakyThrows({InterruptedException.class})
+    public HodorChannel connect() throws ConnectException {
         ChannelFuture future = bootstrap.connect(getHost(), getPort()).sync();
         if (!future.isSuccess()) {
             throw new ConnectException(String.format("connect %s:%s failure.", getHost(), getPort()));

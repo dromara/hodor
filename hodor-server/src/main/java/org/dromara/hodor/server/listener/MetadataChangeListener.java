@@ -1,14 +1,15 @@
 package org.dromara.hodor.server.listener;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.common.event.AbstractEventPublisher;
+import org.dromara.hodor.common.event.AbstractAsyncEventPublisher;
 import org.dromara.hodor.common.utils.GsonUtils;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
-import org.dromara.hodor.server.manager.MetadataManager;
 import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.node.SchedulerNode;
 import org.dromara.hodor.server.component.EventType;
+import org.dromara.hodor.server.manager.CopySetManager;
+import org.dromara.hodor.server.manager.MetadataManager;
 import org.dromara.hodor.server.service.HodorService;
 
 /**
@@ -18,7 +19,7 @@ import org.dromara.hodor.server.service.HodorService;
  * @since 2020/7/23
  */
 @Slf4j
-public class MetadataChangeListener extends AbstractEventPublisher<HodorMetadata> implements DataChangeListener {
+public class MetadataChangeListener extends AbstractAsyncEventPublisher<HodorMetadata> implements DataChangeListener {
 
     private final MetadataManager metadataManager;
 
@@ -27,7 +28,7 @@ public class MetadataChangeListener extends AbstractEventPublisher<HodorMetadata
     public MetadataChangeListener(final HodorService hodorService) {
         this.metadataManager = MetadataManager.getInstance();
         this.gsonUtils = GsonUtils.getInstance();
-        this.addListener(new JobDistributeListener(hodorService), EventType.JOB_DISTRIBUTE);
+        this.addListener(new JobInitDistributeListener(hodorService), EventType.JOB_INIT_DISTRIBUTE);
     }
 
     @Override
@@ -45,6 +46,7 @@ public class MetadataChangeListener extends AbstractEventPublisher<HodorMetadata
                 return;
             }
             metadataManager.loadData(hodorMetadata);
+            CopySetManager.getInstance().syncWithMetadata(hodorMetadata);
             notifyJobDistribute(metadataManager);
         } else if (event.getType() == DataChangeEvent.Type.NODE_REMOVED) {
             log.warn("metadata path {} removed.", event.getPath());
@@ -53,7 +55,7 @@ public class MetadataChangeListener extends AbstractEventPublisher<HodorMetadata
     }
 
     private void notifyJobDistribute(MetadataManager metadataManager) {
-        this.publish(metadataManager.getMetadata(), EventType.JOB_DISTRIBUTE);
+        this.publish(metadataManager.getMetadata(), EventType.JOB_INIT_DISTRIBUTE);
     }
 
 }

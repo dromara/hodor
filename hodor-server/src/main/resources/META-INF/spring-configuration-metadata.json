@@ -46,6 +46,19 @@
       "type": "java.lang.String",
       "sourceType": "org.dromara.hodor.server.config.HodorServerProperties$RegistryProperties",
       "description": "hodor registry server servers config"
+    },
+    {
+      "name": "database.url",
+      "type": "java.lang.String",
+      "description": "database.url."
+    }, {
+      "name": "database.username",
+      "type": "java.lang.String",
+      "description": "database.username."
+    }, {
+      "name": "database.password",
+      "type": "java.lang.String",
+      "description": "database.password."
     }
   ],
   "hints": []

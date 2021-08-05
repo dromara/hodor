@@ -1,5 +1,6 @@
 package org.dromara.hodor.client.demo;
 
+import java.net.ConnectException;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.IdGenerator;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
@@ -23,7 +24,7 @@ public class RemotingClientTest {
 
     private final static CountDownLatch downLatch = new CountDownLatch(1);
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, ConnectException {
         Attribute attribute = new Attribute();
         attribute.put(RemotingConst.HOST_KEY, HostUtils.getLocalIp());
         attribute.put(RemotingConst.PORT_KEY, 46367);

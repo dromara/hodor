@@ -6,6 +6,8 @@ import org.dromara.hodor.common.event.HodorEventListener;
 import org.dromara.hodor.model.scheduler.CopySet;
 import org.dromara.hodor.model.scheduler.DataInterval;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
+import org.dromara.hodor.scheduler.api.HodorScheduler;
+import org.dromara.hodor.scheduler.api.SchedulerManager;
 import org.dromara.hodor.server.manager.CopySetManager;
 import org.dromara.hodor.server.service.HodorService;
 
@@ -15,15 +17,18 @@ import org.dromara.hodor.server.service.HodorService;
  * @author tomgs
  * @since 2020/7/30
  */
-public class JobDistributeListener implements HodorEventListener<HodorMetadata> {
+public class JobInitDistributeListener implements HodorEventListener<HodorMetadata> {
 
     private final CopySetManager copySetManager;
 
     private final HodorService hodorService;
 
-    public JobDistributeListener(final HodorService hodorService) {
+    private final SchedulerManager schedulerManager;
+
+    public JobInitDistributeListener(final HodorService hodorService) {
         this.hodorService = hodorService;
         this.copySetManager = CopySetManager.getInstance();
+        this.schedulerManager = SchedulerManager.getInstance();
     }
 
     @Override
@@ -36,7 +41,8 @@ public class JobDistributeListener implements HodorEventListener<HodorMetadata> 
             }
             // 主节点数据区间
             DataInterval dataInterval = copySet.getDataInterval();
-            hodorService.createActiveScheduler(copySet.getServerId(), dataInterval);
+            HodorScheduler activeScheduler = schedulerManager.createActiveScheduler(copySet.getServerId(), dataInterval);
+            hodorService.addRunningJob(activeScheduler, dataInterval);
             // 备用节点数据
             List<String> servers = copySet.getServers();
             servers.forEach(server -> {
@@ -45,8 +51,12 @@ public class JobDistributeListener implements HodorEventListener<HodorMetadata> 
                     return;
                 }
                 CopySet standbyCopySet = copySetManager.getCopySet(server);
+                if (standbyCopySet == null) {
+                    return;
+                }
                 DataInterval standbyDataInterval = standbyCopySet.getDataInterval();
-                hodorService.createStandbyScheduler(standbyCopySet.getLeader(), standbyDataInterval);
+                HodorScheduler standbyScheduler = schedulerManager.createStandbyScheduler(standbyCopySet.getServerId(), standbyDataInterval);
+                hodorService.addRunningJob(standbyScheduler, standbyDataInterval);
             });
         });
     }

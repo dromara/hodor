@@ -8,7 +8,18 @@ package org.dromara.hodor.server.component;
 public interface EventType {
 
     /**
-     * 任务分发
+     * 任务初始化分发
      */
-    String JOB_DISTRIBUTE = "jobDistribute";
+    String JOB_INIT_DISTRIBUTE = "jobInitDistribute";
+
+    /**
+     * 任务创建事件
+     */
+    String JOB_CREATE_DISTRIBUTE = "jobUpdateDistribute";
+
+    /**
+     * 任务更新事件
+     */
+    String JOB_UPDATE_DISTRIBUTE = "jobUpdateDistribute";
+
 }

@@ -1,8 +1,10 @@
 package org.dromara.hodor.common;
 
+import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.dromara.hodor.common.utils.StringUtils;
 
 /**
  * host info
@@ -26,12 +28,15 @@ public class Host {
             throw new IllegalArgumentException("endpoint must not be null.");
         }
 
-        String[] split = endpoint.split(":");
-        if (split.length != 2) {
-            throw new IllegalArgumentException("endpoint format is illegal.");
+        List<String> hostSplit = StringUtils.splitToList(endpoint, ":");
+        if (hostSplit.size() == 1) {
+            return Host.builder().endpoint(endpoint).ip(hostSplit.get(0)).port(80).build();
         }
+        if (hostSplit.size() != 2) {
+            throw new IllegalArgumentException("endpoint format is illegal.");
 
-        return Host.builder().endpoint(endpoint).ip(split[0]).port(Integer.parseInt(split[1])).build();
+        }
+        return Host.builder().endpoint(endpoint).ip(hostSplit.get(0)).port(Integer.parseInt(hostSplit.get(1))).build();
     }
 
 }

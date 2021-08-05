@@ -11,11 +11,10 @@ import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.core.service.JobInfoService;
 import org.dromara.hodor.model.scheduler.CopySet;
+import org.dromara.hodor.model.scheduler.DataInterval;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
 import org.dromara.hodor.scheduler.api.HodorScheduler;
 import org.dromara.hodor.scheduler.api.SchedulerManager;
-import org.dromara.hodor.model.scheduler.DataInterval;
-import org.dromara.hodor.scheduler.api.common.SchedulerConfig;
 import org.dromara.hodor.server.component.Constants;
 import org.dromara.hodor.server.component.LifecycleComponent;
 import org.dromara.hodor.server.executor.JobExecutorTypeManager;
@@ -110,7 +109,7 @@ public class HodorService implements LifecycleComponent {
             // distribution copySet
             List<CopySet> copySets = Lists.newArrayList();
             for (int i = 0; i < setsNum; i++) {
-                int setsIndex = setsNum % copySetNodes.size();
+                int setsIndex = i % copySetNodes.size();
                 List<String> copySetNode = copySetNodes.get(setsIndex);
                 CopySet copySet = new CopySet();
                 copySet.setId(setsIndex);
@@ -121,10 +120,14 @@ public class HodorService implements LifecycleComponent {
             // get metadata and update
             int jobCount = jobInfoService.queryAssignableJobCount();
             int offset = (int) Math.ceil((double) jobCount / setsNum);
-            List<Long> intervalOffsets = Lists.newArrayList();
+            List<Long> intervalOffsets = Lists.newArrayListWithCapacity(setsNum);
             for (int i = 0; i < setsNum; i++) {
                 Long hashId = jobInfoService.queryJobHashIdByOffset(offset * i);
-                intervalOffsets.add(hashId);
+                if (hashId < 0 && i > 0) {
+                    Long preMin = intervalOffsets.get(i - 1);
+                    hashId = preMin + ((Long.MAX_VALUE - preMin) >> 1);
+                }
+                intervalOffsets.add(Math.max(Math.abs(hashId), 0));
             }
             for (int i = 0; i < intervalOffsets.size(); i++) {
                 CopySet copySet = copySets.get(i);
@@ -141,35 +144,19 @@ public class HodorService implements LifecycleComponent {
                 .intervalOffsets(intervalOffsets)
                 .copySets(copySets)
                 .build();
+
+            log.info("HodorMetadata: {}", metadata);
+
             registerService.createMetadata(metadata);
         });
     }
 
-    public void createActiveScheduler(String serverId, DataInterval dataInterval) {
-        HodorScheduler activeScheduler = buildScheduler(serverId, dataInterval);
-        schedulerManager.addActiveScheduler(activeScheduler);
-        schedulerManager.addSchedulerDataInterval(activeScheduler.getSchedulerName(), dataInterval);
-    }
-
-    public void createStandbyScheduler(String serverId, DataInterval standbyDataInterval) {
-        HodorScheduler standbyScheduler = buildScheduler(serverId, standbyDataInterval);
-        schedulerManager.addStandByScheduler(standbyScheduler);
-        schedulerManager.addSchedulerDataInterval(standbyScheduler.getSchedulerName(), standbyDataInterval);
-    }
-
-    public HodorScheduler buildScheduler(String serverId, DataInterval dataInterval) {
-        final SchedulerConfig config = SchedulerConfig.builder()
-            .schedulerName("HodorScheduler_" + serverId)
-            .threadCount(ThreadUtils.availableProcessors() * 2)
-            .misfireThreshold(3000)
-            .build();
-        final HodorScheduler scheduler = schedulerManager.getOrCreateScheduler(config);
-        final DataInterval schedulerDataInterval = schedulerManager.getSchedulerDataInterval(config.getSchedulerName());
-        if (!dataInterval.equals(schedulerDataInterval)) {
-            List<JobInfo> jobInfoList = jobInfoService.queryJobInfoByHashIdOffset(dataInterval.getStartInterval(), dataInterval.getEndInterval());
+    public void addRunningJob(final HodorScheduler scheduler, DataInterval dataInterval) {
+        final DataInterval schedulerDataInterval = schedulerManager.getSchedulerDataInterval(scheduler.getSchedulerName());
+        if (dataInterval.equals(schedulerDataInterval)) { // 如果区间不相等表示数据有交叉，会产生重复
+            List<JobInfo> jobInfoList = jobInfoService.queryRunningJobInfoByDataInterval(dataInterval);
             jobInfoList.forEach(job -> scheduler.addJob(job, JobExecutorTypeManager.getInstance().getJobExecutor(job.getJobType())));
         }
-        return scheduler;
     }
 
     public String getServerEndpoint() {

@@ -18,6 +18,8 @@
 
 package org.dromara.hodor.remoting.api;
 
+import java.net.ConnectException;
+
 /**
  * NetClient.
  *
@@ -28,5 +30,5 @@ public interface NetClient {
     /**
      * client connect.
      */
-    HodorChannel connect();
+    HodorChannel connect() throws ConnectException;
 }

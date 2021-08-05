@@ -10,6 +10,7 @@ import org.dromara.hodor.model.enums.JobStatus;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.core.mapper.JobInfoMapper;
 import org.dromara.hodor.core.service.JobInfoService;
+import org.dromara.hodor.model.scheduler.DataInterval;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
@@ -71,12 +72,22 @@ public class JobInfoServiceImpl implements JobInfoService {
     }
 
     @Override
-    public List<JobInfo> queryJobInfoByHashIdOffset(Long startHashId, Long endHashId) {
+    public List<JobInfo> queryJobInfoByDataInterval(DataInterval dataInterval, JobStatus jobStatus) {
         return jobInfoMapper.selectList(Wrappers.<JobInfo>lambdaQuery()
-            .eq(JobInfo::getJobStatus, JobStatus.RUNNING)
+            .eq(JobInfo::getJobStatus, jobStatus)
             .ne(JobInfo::getCron, CronUtils.CRON_DISABLED) // cron expression is not null
-            .ge(JobInfo::getHashId, startHashId)
-            .lt(JobInfo::getHashId, endHashId));
+            .ge(JobInfo::getHashId, dataInterval.getStartInterval())
+            .lt(JobInfo::getHashId, dataInterval.getEndInterval()));
+    }
+
+    @Override
+    public List<JobInfo> queryRunningJobInfoByDataInterval(DataInterval dataInterval) {
+        return queryJobInfoByDataInterval(dataInterval, JobStatus.RUNNING);
+    }
+
+    @Override
+    public List<JobInfo> queryReadyJobInfoByDataInterval(DataInterval dataInterval) {
+        return queryJobInfoByDataInterval(dataInterval, JobStatus.READY);
     }
 
 }

@@ -3,7 +3,9 @@ package org.dromara.hodor.server.manager;
 import com.google.common.collect.Maps;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.dromara.hodor.model.scheduler.CopySet;
+import org.dromara.hodor.model.scheduler.HodorMetadata;
 
 /**
  * copy set manager
@@ -41,6 +43,12 @@ public enum CopySetManager {
         return servers.get(0);
     }
 
+    public void syncWithMetadata(HodorMetadata metadata) {
+        /*Optional.ofNullable(metadata.getCopySets()).ifPresent(copySets -> copySets.forEach(copySet -> {
+            leaderCopySet.put(copySet.getLeader(), copySet);
+        }));*/
+    }
+
     public boolean isCopySetLeader(String leader) {
         return leaderCopySet.containsKey(leader);
     }
@@ -52,4 +60,9 @@ public enum CopySetManager {
     public void clearCopySet() {
         leaderCopySet.clear();
     }
+
+    public CopySet getCopySetByInterval(Long hashId) {
+        return null;
+    }
+
 }

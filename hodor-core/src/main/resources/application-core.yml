@@ -1,11 +1,9 @@
 spring:
-   profiles:
-     active: local
    datasource:
      driver-class-name: com.mysql.cj.jdbc.Driver
-     url: jdbc:mysql://localhost:3306/hodor?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
-     username: root
-     password: tomgs
+     url: ${database.url}
+     username: ${database.username}
+     password: ${database.password}
 
 # mybatis-plus
 mybatis-plus:

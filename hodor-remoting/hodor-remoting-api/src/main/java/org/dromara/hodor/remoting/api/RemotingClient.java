@@ -1,15 +1,19 @@
 package org.dromara.hodor.remoting.api;
 
+import java.net.ConnectException;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.concurrent.FutureCallback;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.remoting.api.exception.RemotingException;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
-
-import java.util.Map;
-import java.util.concurrent.*;
-import java.util.function.Function;
 
 /**
  * remoting client service
@@ -36,8 +40,8 @@ public class RemotingClient {
         return INSTANCE;
     }
 
-    public void sendDuplexRequest(final Host host, final RemotingMessage request, final FutureCallback<RemotingMessage> callback) throws RemotingException {
-        HodorChannel channel = computeIfInActiveChannel(host, e -> createChannel(e, new JobExecuteResponseHandler(callback)));
+    public void sendDuplexRequest(final Host host, final RemotingMessage request, final FutureCallback<RemotingMessage> responseCallback) throws RemotingException {
+        HodorChannel channel = computeIfInActiveChannel(host, e -> createChannel(e, new JobExecuteResponseHandler(responseCallback)));
         HodorChannelFuture hodorChannelFuture = channel.send(request);
         hodorChannelFuture.operationComplete(future -> {
             if (future.isSuccess()) {
@@ -61,10 +65,10 @@ public class RemotingClient {
     public void sendAsyncRequest(final Host host, final RemotingMessage request, final FutureCallback<RemotingMessage> callback) throws RemotingException {
         final CompletableFuture<RemotingMessage> future = sendRequest(host, request);
         future.thenAcceptAsync(callback::onSuccess)
-                .exceptionally(e -> {
-                    callback.onFailure(e);
-                    return null;
-                });
+            .exceptionally(e -> {
+                callback.onFailure(e);
+                return null;
+            });
     }
 
     /**
@@ -76,7 +80,7 @@ public class RemotingClient {
      * @return response message
      */
     public RemotingMessage sendSyncRequest(final Host host, final RemotingMessage request, final int timeout)
-            throws InterruptedException, ExecutionException, TimeoutException {
+        throws InterruptedException, ExecutionException, TimeoutException {
         final CompletableFuture<RemotingMessage> future = sendRequest(host, request);
         return future.get(timeout, TimeUnit.MILLISECONDS);
     }
@@ -85,13 +89,18 @@ public class RemotingClient {
         final CompletableFuture<RemotingMessage> future = new CompletableFuture<>();
         FUTURE_MAP.put(request.getHeader().getId(), future);
         //final HodorChannel channel = computeIfInActiveChannel(host, e -> createChannel(e, new CommonResponseHandler()));
-        final HodorChannel channel = createChannel(host, new CommonResponseHandler());
-        channel.send(request).operationComplete(e -> {
-            if (!e.isSuccess()) {
-                FUTURE_MAP.remove(request.getHeader().getId());
-                future.completeExceptionally(e.cause());
-            }
-        });
+        try {
+            final HodorChannel channel = createChannel(host, new CommonResponseHandler());
+            channel.send(request).operationComplete(e -> {
+                if (!e.isSuccess()) {
+                    FUTURE_MAP.remove(request.getHeader().getId());
+                    future.completeExceptionally(e.cause());
+                }
+            });
+        } catch (Exception e) {
+            FUTURE_MAP.remove(request.getHeader().getId());
+            future.completeExceptionally(e);
+        }
         return future;
     }
 
@@ -108,7 +117,11 @@ public class RemotingClient {
     public HodorChannel createChannel(final Host host, final HodorChannelHandler handler) {
         Attribute attribute = buildAttribute(host);
         NetClient client = clientTransport.build(attribute, handler);
-        return client.connect();
+        try {
+            return client.connect();
+        } catch (ConnectException exception) {
+            throw new RemotingException(String.format("host %s connect exception", host), exception);
+        }
     }
 
     private Attribute buildAttribute(final Host host) {

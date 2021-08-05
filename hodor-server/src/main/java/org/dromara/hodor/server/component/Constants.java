@@ -12,7 +12,7 @@ public interface Constants {
     /**
      * 副本数量，不超过节点数量
      */
-    Integer REPLICA_COUNT = 3;
+    Integer REPLICA_COUNT = 2;
 
     /**
      * 副本散布宽度，小于节点数量

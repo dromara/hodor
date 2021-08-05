@@ -2,6 +2,8 @@ package org.dromara.hodor.core.service;
 
 import java.util.List;
 import org.dromara.hodor.core.entity.JobInfo;
+import org.dromara.hodor.model.enums.JobStatus;
+import org.dromara.hodor.model.scheduler.DataInterval;
 
 /**
  * job service
@@ -57,12 +59,27 @@ public interface JobInfoService {
     Long queryJobIdByOffset(Integer offset);
 
     /**
+     * 获取指定位置的任务
+     *
+     * @param dataInterval 数据区间范围
+     * @param jobStatus 任务状态
+     * @return 任务列表
+     */
+    List<JobInfo> queryJobInfoByDataInterval(DataInterval dataInterval, JobStatus jobStatus);
+
+    /**
      * 获取指定位置可运行的任务
      *
-     * @param startHashId 起始位置
-     * @param endHashId 结束位置
-     * @return job info list
+     * @param dataInterval 数据区间范围
+     * @return running job info list
      */
-    List<JobInfo> queryJobInfoByHashIdOffset(Long startHashId, Long endHashId);
+    List<JobInfo> queryRunningJobInfoByDataInterval(DataInterval dataInterval);
 
+    /**
+     * 获取指定位置Ready状态的任务
+     *
+     * @param dataInterval 数据区间范围
+     * @return ready job info list
+     */
+    List<JobInfo> queryReadyJobInfoByDataInterval(DataInterval dataInterval);
 }

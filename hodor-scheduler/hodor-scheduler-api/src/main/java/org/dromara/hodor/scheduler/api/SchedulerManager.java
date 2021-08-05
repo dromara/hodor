@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 import org.dromara.hodor.common.extension.ExtensionLoader;
+import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.model.scheduler.DataInterval;
 import org.dromara.hodor.scheduler.api.common.SchedulerConfig;
 
@@ -45,6 +46,10 @@ public final class SchedulerManager {
 
     public HodorScheduler createScheduler(String schedulerName, SchedulerConfig config) {
         return extensionLoader.getProtoJoin(schedulerName, config);
+    }
+
+    public String createSchedulerName(String serverId) {
+        return "HodorScheduler_" + serverId;
     }
 
     public void addActiveScheduler(HodorScheduler scheduler) {
@@ -103,6 +108,29 @@ public final class SchedulerManager {
             return scheduler;
         }
         return createScheduler(config);
+    }
+
+    public HodorScheduler createActiveScheduler(String serverId, DataInterval dataInterval) {
+        HodorScheduler activeScheduler = buildScheduler(serverId);
+        this.addActiveScheduler(activeScheduler);
+        this.addSchedulerDataInterval(activeScheduler.getSchedulerName(), dataInterval);
+        return activeScheduler;
+    }
+
+    public HodorScheduler createStandbyScheduler(String serverId, DataInterval standbyDataInterval) {
+        HodorScheduler standbyScheduler = buildScheduler(serverId);
+        this.addStandByScheduler(standbyScheduler);
+        this.addSchedulerDataInterval(standbyScheduler.getSchedulerName(), standbyDataInterval);
+        return standbyScheduler;
+    }
+
+    public HodorScheduler buildScheduler(String serverId) {
+        final SchedulerConfig config = SchedulerConfig.builder()
+            .schedulerName(this.createSchedulerName(serverId))
+            .threadCount(ThreadUtils.availableProcessors() * 2)
+            .misfireThreshold(3000)
+            .build();
+        return this.getOrCreateScheduler(config);
     }
 
 }
