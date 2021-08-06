@@ -1,6 +1,7 @@
 package org.dromara.hodor.server.restservice.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import org.dromara.hodor.common.Host;
@@ -14,7 +15,6 @@ import org.dromara.hodor.model.enums.JobStatus;
 import org.dromara.hodor.model.enums.JobType;
 import org.dromara.hodor.model.job.JobInstance;
 import org.dromara.hodor.model.scheduler.CopySet;
-import org.dromara.hodor.model.scheduler.DataInterval;
 import org.dromara.hodor.remoting.api.http.HodorHttpRequest;
 import org.dromara.hodor.remoting.api.http.HodorHttpResponse;
 import org.dromara.hodor.remoting.api.http.HodorRestClient;
@@ -66,7 +66,11 @@ public class SchedulerService {
         JobInfo jobInfo = convertJobInfo(jobInstance);
         jobInfoService.addJobIfAbsent(jobInfo);
         String serverEndpoint = registerService.getServerEndpoint();
-        CopySet activeCopySet = CopySetManager.getInstance().getCopySetByInterval(jobInfo.getHashId());
+        Optional<CopySet> activeCopySetOptional = CopySetManager.getInstance().getCopySetByInterval(jobInfo.getHashId());
+        if (!activeCopySetOptional.isPresent()) {
+            return HodorResult.failure("not found active copy set by hash id " + jobInfo.getHashId());
+        }
+        CopySet activeCopySet = activeCopySetOptional.get();
         // 在当前节点增加
         if (activeCopySet.getLeader().equals(serverEndpoint)) {
             // 直接触发新增任务
@@ -95,6 +99,14 @@ public class SchedulerService {
         return HodorResult.success("success");
     }
 
+    @RestMethod("onEvent")
+    public HodorResult<String> onEvent(Event<Object> event) {
+        String serverEndpoint = registerService.getServerEndpoint();
+        List<CopySet> copySets = CopySetManager.getInstance().getCopySet(serverEndpoint);
+
+        return HodorResult.success("success");
+    }
+
     private void fireJobCreateEvent() {
         HodorRestClient hodorRestClient = HodorRestClient.getInstance();
         //client.sendHttpRequest();
@@ -106,15 +118,6 @@ public class SchedulerService {
             request.setContent(SerializeUtils.serialize(Event.create("create_job", EventType.JOB_CREATE_DISTRIBUTE)));
             CompletableFuture<HodorHttpResponse> future = hodorRestClient.sendHttpRequest(Host.of(endpoint), request);
         }
-    }
-
-    @RestMethod("onEvent")
-    public HodorResult<String> onEvent(Event<Object> event) {
-        String serverEndpoint = registerService.getServerEndpoint();
-        CopySet activeCopySet = CopySetManager.getInstance().getCopySet(serverEndpoint);
-        DataInterval activeDataInterval = activeCopySet.getDataInterval();
-
-        return HodorResult.success("success");
     }
 
     private JobInfo convertJobInfo(JobInstance job) {

@@ -51,7 +51,6 @@ public class MetadataChangeListener extends AbstractAsyncEventPublisher<HodorMet
         } else if (event.getType() == DataChangeEvent.Type.NODE_REMOVED) {
             log.warn("metadata path {} removed.", event.getPath());
         }
-
     }
 
     private void notifyJobDistribute(MetadataManager metadataManager) {
