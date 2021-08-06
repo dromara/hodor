@@ -45,7 +45,7 @@ public class CopySetsTest {
         nodes.add("127.0.0.7");
         nodes.add("127.0.0.8");
         nodes.add("127.0.0.9");
-        List<List<String>> copySets = CopySets.buildCopySets(nodes, 3, 2);
+        List<List<String>> copySets = CopySets.buildCopySets(nodes, 3, 4);
         System.out.println(copySets);
     }
 
