@@ -7,10 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.function.Function;
+import org.dromara.hodor.common.concurrent.LockUtil;
 import org.dromara.hodor.model.scheduler.CopySet;
 import org.dromara.hodor.model.scheduler.DataInterval;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
@@ -59,21 +58,18 @@ public enum CopySetManager {
     }
 
     public void syncWithMetadata(HodorMetadata metadata) {
-        Lock lock = this.lock.writeLock();
-        lock.lock();
-        try {
+        LockUtil.lockMethod(lock.writeLock(), md -> {
             dataIntervalCopySetMap.clear();
             endpointCopySetListMap.clear();
-            Optional.ofNullable(metadata.getCopySets()).ifPresent(copySets -> copySets.forEach(copySet -> {
+            Optional.ofNullable(md.getCopySets()).ifPresent(copySets -> copySets.forEach(copySet -> {
                 dataIntervalCopySetMap.put(copySet.getDataInterval(), copySet);
                 copySet.getServers().forEach(server -> {
-                    Set<CopySet> sets = endpointCopySetListMap.computeIfAbsent(server, k -> Sets.newHashSet());
+                    Set<CopySet> sets = endpointCopySetListMap.computeIfAbsent(server, key -> Sets.newHashSet());
                     sets.add(copySet);
                 });
             }));
-        } finally {
-            lock.unlock();
-        }
+            return null;
+        }, metadata);
     }
 
     public boolean isCopySetLeader(String leader) {
@@ -89,28 +85,18 @@ public enum CopySetManager {
     }
 
     public Optional<CopySet> getCopySetByInterval(Long hashId) {
-        return readLockMethod(k -> dataIntervalCopySetMap.entrySet().stream()
+        return LockUtil.lockMethod(lock.readLock(), k -> dataIntervalCopySetMap.entrySet().stream()
             .filter(entry -> entry.getKey().containsInterval(k))
             .map(Map.Entry::getValue)
             .findAny(), hashId);
     }
 
     public Optional<CopySet> getCopySetByInterval(DataInterval dataInterval) {
-        return readLockMethod((k) -> Optional.ofNullable(dataIntervalCopySetMap.get(k)), dataInterval);
+        return LockUtil.lockMethod(lock.readLock(), (k) -> Optional.ofNullable(dataIntervalCopySetMap.get(k)), dataInterval);
     }
 
     public List<CopySet> getCopySet(String endpoint) {
-        return readLockMethod((k) -> ImmutableList.copyOf(endpointCopySetListMap.get(k)), endpoint);
-    }
-
-    private <T, R> R readLockMethod(Function<T, R> function, T t) {
-        Lock lock = this.lock.readLock();
-        lock.lock();
-        try {
-            return function.apply(t);
-        } finally {
-            lock.unlock();
-        }
+        return LockUtil.lockMethod(lock.readLock(), (k) -> ImmutableList.copyOf(endpointCopySetListMap.get(k)), endpoint);
     }
 
 }
