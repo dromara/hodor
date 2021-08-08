@@ -59,6 +59,10 @@
       "name": "database.password",
       "type": "java.lang.String",
       "description": "database.password."
+    }, {
+      "name": "database.driverClass",
+      "type": "java.lang.String",
+      "description": "database.driverClass."
     }
   ],
   "hints": []

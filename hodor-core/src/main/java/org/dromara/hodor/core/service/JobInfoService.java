@@ -36,6 +36,14 @@ public interface JobInfoService {
     boolean isExists(JobInfo jobInfo);
 
     /**
+     * 查询任务信息
+     * @param groupName 任务组
+     * @param jobName 任务名称
+     * @return 任务信息
+     */
+    JobInfo queryJobByKey(String groupName, String jobName);
+
+    /**
      * 查询可分配任务数量
      *
      * @return 可分配任务数量
@@ -82,4 +90,12 @@ public interface JobInfoService {
      * @return ready job info list
      */
     List<JobInfo> queryReadyJobInfoByDataInterval(DataInterval dataInterval);
+
+    /**
+     * 更新任务状态
+     *
+     * @param jobInfo 任务信息
+     * @param jobStatus 任务状态
+     */
+    void updateJobStatus(JobInfo jobInfo, JobStatus jobStatus);
 }

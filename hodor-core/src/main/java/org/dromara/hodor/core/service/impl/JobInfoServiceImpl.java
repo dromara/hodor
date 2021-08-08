@@ -2,17 +2,18 @@ package org.dromara.hodor.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.cron.CronUtils;
-import org.dromara.hodor.model.enums.JobStatus;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.core.mapper.JobInfoMapper;
 import org.dromara.hodor.core.service.JobInfoService;
+import org.dromara.hodor.model.enums.JobStatus;
 import org.dromara.hodor.model.scheduler.DataInterval;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * job info service
@@ -43,6 +44,13 @@ public class JobInfoServiceImpl implements JobInfoService {
         return jobInfoMapper.selectCount(Wrappers.<JobInfo>lambdaQuery()
             .eq(JobInfo::getGroupName, jobInfo.getGroupName())
             .eq(JobInfo::getJobName, jobInfo.getJobName())) > 0;
+    }
+
+    @Override
+    public JobInfo queryJobByKey(String groupName, String jobName) {
+        return jobInfoMapper.selectOne(Wrappers.<JobInfo>lambdaQuery()
+                .eq(JobInfo::getGroupName, groupName)
+                .eq(JobInfo::getJobName, jobName));
     }
 
     @Override
@@ -88,6 +96,11 @@ public class JobInfoServiceImpl implements JobInfoService {
     @Override
     public List<JobInfo> queryReadyJobInfoByDataInterval(DataInterval dataInterval) {
         return queryJobInfoByDataInterval(dataInterval, JobStatus.READY);
+    }
+
+    @Override
+    public void updateJobStatus(JobInfo jobInfo, JobStatus jobStatus) {
+        jobInfoMapper.update(jobInfo, Wrappers.lambdaUpdate());
     }
 
 }

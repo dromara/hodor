@@ -1,6 +1,6 @@
 spring:
    datasource:
-     driver-class-name: com.mysql.cj.jdbc.Driver
+     driver-class-name: ${database.driverClass}
      url: ${database.url}
      username: ${database.username}
      password: ${database.password}
