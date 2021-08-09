@@ -39,7 +39,7 @@ public class HodorApiClient {
             .header("appKey", appKey)
             .execute()
             .body();
-        log.info("Register jobs result: {}", result);
+        log.debug("Register jobs result: {}", result);
     }
 
     public void sendHeartbeat(ActuatorInfo actuatorInfo) {
@@ -49,7 +49,7 @@ public class HodorApiClient {
             .header("appKey", appKey)
             .execute()
             .body();
-        log.info("Send heartbeat result: {}", result);
+        log.debug("Send heartbeat result: {}", result);
     }
 
     public void sendOfflineMsg(ActuatorInfo actuatorInfo) {
@@ -59,7 +59,7 @@ public class HodorApiClient {
             .header("appKey", appKey)
             .execute()
             .body();
-        //log.info("Send heartbeat result: {}", result);
+        //log.debug("Send heartbeat result: {}", result);
     }
 
 }
