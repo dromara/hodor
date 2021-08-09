@@ -66,7 +66,7 @@ public class DBOperator {
   public <T> T query(String querySql, Class<T> clazz, Object... params) throws SQLException {
     T result = queryRunner.query(querySql, new BeanHandler<>(clazz, rowProcessor), params);
 
-    log.info("query result: {}", result);
+    log.debug("query result: {}", result);
 
     return result;
   }
@@ -74,7 +74,7 @@ public class DBOperator {
   public <T> List<T> queryList(String querySql, Class<T> clazz, Object... params) throws SQLException {
     List<T> result = queryRunner.query(querySql, new BeanListHandler<>(clazz, rowProcessor), params);
 
-    log.info("query list result: {}", result);
+    log.debug("query list result: {}", result);
 
     return result;
   }
@@ -82,7 +82,7 @@ public class DBOperator {
   public int update(String updateSql, Object... params) throws SQLException {
     int update = queryRunner.update(updateSql, params);
 
-    log.info("update result: {}", update);
+    log.debug("update result: {}", update);
 
     return update;
   }
