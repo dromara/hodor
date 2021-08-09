@@ -100,7 +100,20 @@ public class JobInfoServiceImpl implements JobInfoService {
 
     @Override
     public void updateJobStatus(JobInfo jobInfo, JobStatus jobStatus) {
-        jobInfoMapper.update(jobInfo, Wrappers.lambdaUpdate());
+        JobInfo update = new JobInfo();
+        update.setJobStatus(jobStatus);
+        jobInfoMapper.update(update, Wrappers.<JobInfo>lambdaUpdate()
+            .eq(JobInfo::getGroupName, jobInfo.getGroupName())
+            .eq(JobInfo::getJobName, jobInfo.getJobName())
+            .eq(JobInfo::getJobStatus, jobInfo.getJobStatus()));
+    }
+
+    @Override
+    public boolean isRunningJob(JobInfo jobInfo) {
+        return jobInfoMapper.selectCount(Wrappers.<JobInfo>lambdaQuery()
+            .eq(JobInfo::getGroupName, jobInfo.getGroupName())
+            .eq(JobInfo::getJobName, jobInfo.getJobName())
+            .eq(JobInfo::getJobStatus, JobStatus.RUNNING)) > 0;
     }
 
 }

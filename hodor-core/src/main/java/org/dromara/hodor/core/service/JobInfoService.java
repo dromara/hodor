@@ -98,4 +98,11 @@ public interface JobInfoService {
      * @param jobStatus 任务状态
      */
     void updateJobStatus(JobInfo jobInfo, JobStatus jobStatus);
+
+    /**
+     * 是否正在运行的任务
+     * @param jobInfo 任务信息
+     * @return true正在运行，false为正在运行
+     */
+    boolean isRunningJob(JobInfo jobInfo);
 }
