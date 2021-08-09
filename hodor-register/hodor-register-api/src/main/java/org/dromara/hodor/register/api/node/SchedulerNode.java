@@ -18,6 +18,8 @@ public class SchedulerNode {
 
     public static final String MASTER_ACTIVE_PATH = "/scheduler/master/active";
 
+    public static final String JOB_EVENT = "/scheduler/job-event";
+
     public static String getServerNodePath(String serverId) {
         return String.format("%s/%s", NODES_PATH, serverId);
     }
