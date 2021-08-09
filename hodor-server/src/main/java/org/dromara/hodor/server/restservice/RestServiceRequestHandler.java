@@ -72,10 +72,8 @@ public class RestServiceRequestHandler implements HodorChannelHandler {
                 if (CollectionUtil.isNotEmpty(queryParameters)) {
                     for (int i = 0; i < parameters.length; i++) {
                         String parameterName = parameters[i].getParameterName();
-                        if (CollectionUtil.isNotEmpty(queryParameters)) {
-                            List<String> values = queryParameters.get(parameterName);
-                            args[i] =values.size() == 1 ? values.get(0) : values;
-                        }
+                        List<String> values = queryParameters.get(parameterName);
+                        args[i] =values.size() == 1 ? values.get(0) : values;
                     }
                 }
                 byte[] content = httpRequest.getContent();

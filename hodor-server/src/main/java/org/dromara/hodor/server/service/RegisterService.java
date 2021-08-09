@@ -1,5 +1,7 @@
 package org.dromara.hodor.server.service;
 
+import java.util.List;
+import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.utils.GsonUtils;
 import org.dromara.hodor.common.utils.HostUtils;
@@ -12,9 +14,8 @@ import org.dromara.hodor.register.api.node.ActuatorNode;
 import org.dromara.hodor.register.api.node.SchedulerNode;
 import org.dromara.hodor.server.component.LifecycleComponent;
 import org.dromara.hodor.server.config.HodorServerProperties;
+import org.dromara.hodor.server.listener.JobEventDispatchListener;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * register service
@@ -120,6 +121,14 @@ public class RegisterService implements LifecycleComponent {
         registryCenter.remove(ActuatorNode.createNodePath(endpoint));
         actuatorInfo.getGroupNames().forEach(groupName ->
             registryCenter.remove(ActuatorNode.createGroupPath(groupName, endpoint)));
+    }
+
+    public void registryJobEventListener(JobEventDispatchListener jobEventDispatchListener) {
+        registryListener(SchedulerNode.JOB_EVENT, jobEventDispatchListener);
+    }
+
+    public <T> void notifyJobEvent(Event<T> event) {
+        registryCenter.createPersistent(String.valueOf(event.getEventType()), gsonUtils.toJson(event.getValue()));
     }
 
 }
