@@ -56,6 +56,7 @@ public final class HttpMessageWrapper {
         byte[] content = Optional.ofNullable(hodorRequest.getContent()).orElse(EMPTY_BYTE);
         FullHttpRequest httpRequest = new DefaultFullHttpRequest(HttpVersion.valueOf(hodorRequest.getProtocolVersion()),
             HttpMethod.valueOf(hodorRequest.getMethod()), hodorRequest.getUri(), Unpooled.copiedBuffer(content));
+        httpRequest.headers().add(HttpHeaderNames.CONTENT_LENGTH, content.length);
         Optional.ofNullable(hodorRequest.getHeaders()).ifPresent(headers -> {
             for (Map.Entry<String, String> entry : headers.entries()) {
                 httpRequest.headers().add(entry.getKey(), entry.getValue());
