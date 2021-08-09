@@ -96,6 +96,9 @@ public class QuartzScheduler implements HodorScheduler {
 
     @Override
     public void addJob(JobDesc jobDesc, JobExecutor jobExecutor) {
+        if (checkExists(jobDesc)) {
+            return;
+        }
         JobDetail jobDetail = JobBuilder.newJob(HodorJob.class)
                 .withIdentity(jobDesc.getJobName(), jobDesc.getGroupName())
                 .requestRecovery(true)
