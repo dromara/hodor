@@ -121,6 +121,23 @@ public class ZookeeperRegistryCenter implements RegistryCenter {
     }
 
     @Override
+    public void createPersistentSequential(String key, String value) {
+        try {
+            if (value == null) {
+                makeDirs(key);
+                return;
+            }
+            if (!checkExists(key)) {
+                client.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT_SEQUENTIAL).forPath(key, value.getBytes(Charsets.UTF_8));
+            } else {
+                update(key, value);
+            }
+        } catch (final Exception e) {
+            RegExceptionHandler.handleException(e);
+        }
+    }
+
+    @Override
     public void createEphemeral(final String key, final String value) {
         try {
             if (checkExists(key)) {
