@@ -11,13 +11,13 @@ import lombok.Getter;
 public class DataChangeEvent {
 
     @Getter
-    private DataChangeEvent.Type type;
+    private final DataChangeEvent.Type type;
 
     @Getter
-    private String path;
+    private final String path;
 
     @Getter
-    private byte[] data;
+    private final byte[] data;
 
     public DataChangeEvent(String typeName, String path, byte[] data) {
         this.type = Type.valueOf(typeName);
@@ -25,8 +25,7 @@ public class DataChangeEvent {
         this.data = data;
     }
 
-    public static enum Type {
-
+    public enum Type {
         NODE_ADDED,
         NODE_UPDATED,
         NODE_REMOVED,
