@@ -127,8 +127,8 @@ public class RegisterService implements LifecycleComponent {
         registryListener(SchedulerNode.JOB_EVENT, jobEventDispatchListener);
     }
 
-    public <T> void notifyJobEvent(Event<T> event) {
-        registryCenter.createPersistent(String.valueOf(event.getEventType()), gsonUtils.toJson(event.getValue()));
+    public <T> void createJobEvent(Event<T> event) {
+        registryCenter.createPersistentSequential(String.valueOf(event.getEventType()), gsonUtils.toJson(event.getValue()));
     }
 
 }

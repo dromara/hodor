@@ -15,7 +15,7 @@ public interface EventType {
     /**
      * 任务创建事件
      */
-    String JOB_CREATE_DISTRIBUTE = "jobUpdateDistribute";
+    String JOB_CREATE_DISTRIBUTE = "jobCreateDistribute";
 
     /**
      * 任务更新事件

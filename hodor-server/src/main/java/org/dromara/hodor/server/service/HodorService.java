@@ -19,7 +19,6 @@ import org.dromara.hodor.server.component.Constants;
 import org.dromara.hodor.server.component.LifecycleComponent;
 import org.dromara.hodor.server.executor.JobExecutorTypeManager;
 import org.dromara.hodor.server.listener.ActuatorNodeChangeListener;
-import org.dromara.hodor.server.listener.JobEventDispatchListener;
 import org.dromara.hodor.server.listener.LeaderElectChangeListener;
 import org.dromara.hodor.server.listener.MetadataChangeListener;
 import org.dromara.hodor.server.listener.SchedulerNodeChangeListener;
@@ -79,7 +78,7 @@ public class HodorService implements LifecycleComponent {
         registerService.registryActuatorNodeListener(new ActuatorNodeChangeListener(actuatorNodeManager));
         registerService.registryMetadataListener(new MetadataChangeListener(this));
         registerService.registryElectLeaderListener(new LeaderElectChangeListener(this));
-        registerService.registryJobEventListener(new JobEventDispatchListener(this));
+        //registerService.registryJobEventListener(new JobEventDispatchListener(this));
 
         //select leader
         electLeader();

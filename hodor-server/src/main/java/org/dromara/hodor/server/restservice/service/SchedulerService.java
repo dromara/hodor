@@ -128,7 +128,6 @@ public class SchedulerService {
                 createJob(jobInfo);
             }
         }
-        // TODO: 待优化，先使用一个一个的创建方式...
         // fireBatchJobCreateEvent();
         return HodorResult.success("batch create job success");
     }
@@ -179,7 +178,7 @@ public class SchedulerService {
     }
 
     private void fireBatchJobCreateEvent() {
-        registerService.notifyJobEvent(Event.create("", EventType.JOB_CREATE_DISTRIBUTE));
+        registerService.createJobEvent(Event.create("", EventType.JOB_CREATE_DISTRIBUTE));
     }
 
     private JobInfo convertJobInfo(JobInstance job) {
