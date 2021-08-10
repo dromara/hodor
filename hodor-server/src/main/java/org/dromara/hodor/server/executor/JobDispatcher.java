@@ -53,6 +53,7 @@ public class JobDispatcher {
             @Override
             public void execute() {
                 try {
+                    hodorJobRequestHandler.preHandle(context);
                     hodorJobRequestHandler.handle(context);
                 } catch (Throwable t) {
                     hodorJobRequestHandler.exceptionCaught(context, t);

@@ -24,7 +24,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.dromara.hodor.server.executor.IllegalJobExecuteStateException;
 import org.dromara.hodor.server.manager.ActuatorNodeManager;
+import org.dromara.hodor.server.manager.JobExecuteStatusManager;
 
 /**
  * job request executor
@@ -48,6 +50,14 @@ public class HodorJobRequestHandler {
         this.actuatorNodeManager = ActuatorNodeManager.getInstance();
         this.serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
         this.typeReference = new TypeReference<RemotingResponse<JobExecuteResponse>>() {};
+    }
+
+    public void preHandle(HodorJobExecutionContext context) {
+        // check job is running
+        if (JobExecuteStatusManager.getInstance().isRunning(context.getJobKey())) {
+            throw new IllegalJobExecuteStateException("job {} is running.", context.getJobKey());
+        }
+        JobExecuteStatusManager.getInstance().addRunningJob(context);
     }
 
     public void handle(final HodorJobExecutionContext context) {
@@ -82,6 +92,7 @@ public class HodorJobRequestHandler {
 
     public void exceptionCaught(final HodorJobExecutionContext context, final Throwable t) {
         log.error("job {} request [id:{}] execute exception, msg: {}.", context.getRequestId(), context.getJobKey(), t.getMessage(), t);
+        JobExecuteStatusManager.getInstance().addFailureJob(context);
         JobExecuteResponse jobExecuteResponse = new JobExecuteResponse();
         jobExecuteResponse.setRequestId(context.getRequestId());
         jobExecuteResponse.setCompleteTime(DateUtil.formatDateTime(new Date()));

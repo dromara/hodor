@@ -6,6 +6,7 @@ import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.remoting.api.message.RemotingResponse;
 import org.dromara.hodor.remoting.api.message.RemotingStatus;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
+import org.dromara.hodor.server.manager.JobExecuteStatusManager;
 
 /**
  * response handler
@@ -32,6 +33,7 @@ public class JobResponseHandlerManager extends AbstractEventPublisher<RemotingRe
             RemotingResponse<JobExecuteResponse> remotingResponse = event.getValue();
             JobExecuteResponse jobExecuteResponse = remotingResponse.getData();
             // TODO: 记录成功的任务请求
+            JobExecuteStatusManager.getInstance().addFinishJob(jobExecuteResponse.getRequestId());
             log.info("job request execute response {}.", jobExecuteResponse);
         }, RemotingStatus.SUCCEEDED);
     }
@@ -42,6 +44,7 @@ public class JobResponseHandlerManager extends AbstractEventPublisher<RemotingRe
             Long requestId = remotingResponse.getData().getRequestId();
             String errorMsg = remotingResponse.getMsg();
             // TODO: 记录失败的任务请求
+            JobExecuteStatusManager.getInstance().addFinishJob(requestId);
             log.error("job request {} execute failure, msg: {}.", requestId, errorMsg);
         }, RemotingStatus.FAILED);
     }
