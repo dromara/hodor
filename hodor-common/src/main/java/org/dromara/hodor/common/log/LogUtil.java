@@ -36,14 +36,18 @@ public class LogUtil {
     }
 
     public Logger createLogger(String loggerName, File logFile) {
+        return this.createLogger(loggerName, logFile, DEFAULT_LAYOUT);
+    }
+
+    public Logger createLogger(String loggerName, File logFile, String layoutPattern) {
         Logger logger = LogManager.getLogger(loggerName);
-        attachFileAppender(logger, logFile);
+        attachFileAppender(logger, logFile, layoutPattern);
         return logger;
     }
 
-    public void attachFileAppender(Logger logger, File logFile) {
+    public void attachFileAppender(Logger logger, File logFile, String layoutPattern) {
         String loggerName = logger.getName();
-        Layout<String> layout = PatternLayout.newBuilder().withPattern(DEFAULT_LAYOUT).build();
+        Layout<String> layout = PatternLayout.newBuilder().withPattern(layoutPattern).build();
         FileAppender fileAppender = FileAppender.newBuilder()
             .setConfiguration(config)
             .withAppend(true)
