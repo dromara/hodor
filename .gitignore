@@ -28,6 +28,8 @@ disconf
 target
 
 # other ignore
+logs/
+log/
 *.log
 *.log_*
 *.tmp
