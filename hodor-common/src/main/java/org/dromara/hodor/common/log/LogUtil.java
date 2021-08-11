@@ -93,14 +93,14 @@ public class LogUtil {
             .withAppend(true)
             .withName(loggerName)
             .withFileName(fileName)
-            .withFilePattern(fileName + "_%d{yyyy-MM-dd-HH-mm-ss}_%i")
+            .withFilePattern(fileName + "_%d{yyyyMMddHHmmss}")
             .withLayout(layout)
             .withPolicy(TimeBasedTriggeringPolicy.newBuilder()
                 .withInterval(interval) // unit seconds
                 .withModulate(true)
                 .build())
             .withStrategy(DefaultRolloverStrategy.newBuilder()
-                .withMax("10")
+                .withMax(String.valueOf((60 / interval) * 60 * 24))
                 .build())
             .build();
     }
