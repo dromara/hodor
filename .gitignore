@@ -29,6 +29,7 @@ target
 
 # other ignore
 *.log
+*.log_*
 *.tmp
 Thumbs.db
 *.DS_Store
