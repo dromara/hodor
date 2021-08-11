@@ -26,9 +26,8 @@ public class LogUtilTest {
     @Test
     public void testCreateRollingLogFile() {
         File logFile = new File(System.getProperty("user.dir") + "/log/test-rolling.log");
-        Logger logger = LogUtil.getInstance().createRollingLogger("log-test", logFile, "%msg%n", 1);
-        for (int i = 0; i < 3; i++) {
-            logger.info("12312312");
+        Logger logger = LogUtil.getInstance().createRollingLogger("log-test", logFile, "%msg%n", 3);
+        for (int i = 0; i < 9; i++) {
             logger.info("12312312");
             ThreadUtils.sleep(TimeUnit.SECONDS, 1);
         }
