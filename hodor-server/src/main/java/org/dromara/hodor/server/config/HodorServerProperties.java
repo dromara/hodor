@@ -15,6 +15,8 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "hodor")
 public class HodorServerProperties {
 
+    private String logDir;
+
     private NetServerProperties netServer;
 
     private RegistryProperties registry;

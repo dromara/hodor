@@ -7,7 +7,7 @@ import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;
-import org.dromara.hodor.server.component.EventType;
+import org.dromara.hodor.server.common.EventType;
 import org.dromara.hodor.server.service.HodorService;
 
 /**

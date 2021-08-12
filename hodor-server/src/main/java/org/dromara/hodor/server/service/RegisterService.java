@@ -12,7 +12,7 @@ import org.dromara.hodor.register.api.RegistryCenter;
 import org.dromara.hodor.register.api.RegistryConfig;
 import org.dromara.hodor.register.api.node.ActuatorNode;
 import org.dromara.hodor.register.api.node.SchedulerNode;
-import org.dromara.hodor.server.component.LifecycleComponent;
+import org.dromara.hodor.server.common.HodorLifecycle;
 import org.dromara.hodor.server.config.HodorServerProperties;
 import org.dromara.hodor.server.listener.JobEventDispatchListener;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
  * @version 2020/6/29 1.0
  */
 @Service
-public class RegisterService implements LifecycleComponent {
+public class RegisterService implements HodorLifecycle {
 
     private final RegistryCenter registryCenter;
 

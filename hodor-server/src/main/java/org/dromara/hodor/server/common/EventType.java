@@ -1,4 +1,4 @@
-package org.dromara.hodor.server.component;
+package org.dromara.hodor.server.common;
 
 /**
  * event type

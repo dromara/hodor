@@ -27,7 +27,7 @@ import org.dromara.hodor.remoting.api.http.HodorRestClient;
 import org.dromara.hodor.scheduler.api.HodorScheduler;
 import org.dromara.hodor.scheduler.api.SchedulerManager;
 import org.dromara.hodor.scheduler.api.exception.CreateJobException;
-import org.dromara.hodor.server.component.EventType;
+import org.dromara.hodor.server.common.EventType;
 import org.dromara.hodor.server.executor.JobExecutorTypeManager;
 import org.dromara.hodor.server.manager.CopySetManager;
 import org.dromara.hodor.server.restservice.HodorRestService;

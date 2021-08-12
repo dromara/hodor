@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.dromara.hodor.server.executor.IllegalJobExecuteStateException;
+import org.dromara.hodor.server.executor.job.IllegalJobExecuteStateException;
 import org.dromara.hodor.server.manager.ActuatorNodeManager;
 import org.dromara.hodor.server.manager.JobExecuteStatusManager;
 
@@ -57,7 +57,6 @@ public class HodorJobRequestHandler {
         if (JobExecuteStatusManager.getInstance().isRunning(context.getJobKey())) {
             throw new IllegalJobExecuteStateException("job {} is running.", context.getJobKey());
         }
-        JobExecuteStatusManager.getInstance().addRunningJob(context);
     }
 
     public void handle(final HodorJobExecutionContext context) {
@@ -67,7 +66,9 @@ public class HodorJobRequestHandler {
         Exception jobException = null;
         for (int i = hosts.size() - 1; i >= 0; i--) {
             try {
-                clientService.sendDuplexRequest(hosts.get(i), request, new FutureCallback<RemotingMessage>() {
+                Host host = hosts.get(i);
+                JobExecuteStatusManager.getInstance().addRunningJob(context, host);
+                clientService.sendDuplexRequest(host, request, new FutureCallback<RemotingMessage>() {
                     @Override
                     public void onSuccess(RemotingMessage response) {
                         RemotingResponse<JobExecuteResponse> remotingResponse = serializer.deserialize(response.getBody(), typeReference.getType());
@@ -92,7 +93,7 @@ public class HodorJobRequestHandler {
 
     public void exceptionCaught(final HodorJobExecutionContext context, final Throwable t) {
         log.error("job {} request [id:{}] execute exception, msg: {}.", context.getRequestId(), context.getJobKey(), t.getMessage(), t);
-        JobExecuteStatusManager.getInstance().addFailureJob(context);
+        JobExecuteStatusManager.getInstance().addFailureJob(context, t);
         JobExecuteResponse jobExecuteResponse = new JobExecuteResponse();
         jobExecuteResponse.setRequestId(context.getRequestId());
         jobExecuteResponse.setCompleteTime(DateUtil.formatDateTime(new Date()));

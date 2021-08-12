@@ -15,8 +15,8 @@ import org.dromara.hodor.model.scheduler.DataInterval;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
 import org.dromara.hodor.scheduler.api.HodorScheduler;
 import org.dromara.hodor.scheduler.api.SchedulerManager;
-import org.dromara.hodor.server.component.Constants;
-import org.dromara.hodor.server.component.LifecycleComponent;
+import org.dromara.hodor.server.common.Constants;
+import org.dromara.hodor.server.common.HodorLifecycle;
 import org.dromara.hodor.server.executor.JobExecutorTypeManager;
 import org.dromara.hodor.server.listener.ActuatorNodeChangeListener;
 import org.dromara.hodor.server.listener.LeaderElectChangeListener;
@@ -35,7 +35,7 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class HodorService implements LifecycleComponent {
+public class HodorService implements HodorLifecycle {
 
     private final LeaderService leaderService;
 
