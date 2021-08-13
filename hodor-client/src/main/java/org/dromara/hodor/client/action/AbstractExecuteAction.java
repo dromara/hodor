@@ -13,6 +13,7 @@ import org.dromara.hodor.client.executor.ExecutorManager;
 import org.dromara.hodor.client.executor.JobExecutionPersistence;
 import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
+import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.remoting.api.message.RemotingResponse;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
@@ -30,6 +31,8 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
     private Logger jobLogger;
 
     private Long requestId;
+
+    private JobKey jobKey;
 
     private final HodorProperties properties;
 
@@ -50,6 +53,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
     @Override
     public JobExecuteResponse executeRequest(final JobExecuteRequest request) throws Exception {
         requestId = request.getRequestId();
+        jobKey = JobKey.of(request.getGroupName(), request.getJobName());
         // create job logger
         File jobLoggerFile = jobLoggerManager.buildJobLoggerFile(properties.getRootJobLogPath(), request.getGroupName(), request.getJobName(), requestId);
         this.loggerName = jobLoggerManager.createLoggerName(request.getGroupName(), request.getJobName(), requestId);
@@ -82,6 +86,8 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
         jobExecutionPersistence.fireJobExecutionEvent(failureJobExecution);
 
         JobExecuteResponse response = new JobExecuteResponse();
+        response.setRequestId(requestId);
+        response.setJobKey(jobKey);
         response.setStatus(JobExecuteStatus.FAILED);
         response.setCompleteTime(DateUtil.formatDateTime(new Date()));
         response.setComments(exceptionStack);
@@ -104,6 +110,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
     public JobExecuteResponse buildResponse(final JobExecuteRequest request) {
         JobExecuteResponse response = new JobExecuteResponse();
         response.setRequestId(request.getRequestId());
+        response.setJobKey(jobKey);
         response.setShardId(request.getShardId());
         response.setShardName(request.getShardName());
         return response;
