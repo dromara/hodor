@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
+import org.dromara.hodor.model.job.JobKey;
 
 /**
  * scheduled response
@@ -17,6 +18,8 @@ import org.dromara.hodor.model.enums.JobExecuteStatus;
 public class JobExecuteResponse extends AbstractResponseBody {
 
     private static final long serialVersionUID = 8889407473710885893L;
+
+    private JobKey jobKey;
 
     private JobExecuteStatus status;
 
@@ -37,8 +40,8 @@ public class JobExecuteResponse extends AbstractResponseBody {
     @Override
     public String toString() {
         return "JobExecuteResponse{" +
-            "requestId=" + getRequestId() + '\'' +
-            ",status=" + status + '\'' +
+            "jobKey=" + jobKey +
+            ", status=" + status +
             ", startTime='" + startTime + '\'' +
             ", completeTime='" + completeTime + '\'' +
             ", processTime=" + processTime +
@@ -48,4 +51,5 @@ public class JobExecuteResponse extends AbstractResponseBody {
             ", result='" + result + '\'' +
             '}';
     }
+
 }

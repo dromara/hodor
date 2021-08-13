@@ -4,6 +4,7 @@ import org.dromara.hodor.common.IdGenerator;
 import org.dromara.hodor.model.job.JobDesc;
 
 import java.util.Date;
+import org.dromara.hodor.model.job.JobKey;
 
 /**
  *  hodor scheduler context
@@ -15,7 +16,7 @@ public class HodorJobExecutionContext {
 
     private final long requestId;
     private final String schedulerName;
-    private final String jobKey;
+    private final JobKey jobKey;
     private final JobDesc jobDesc;
     private final Date fireTime;
     private final Date scheduledFireTime;
@@ -31,7 +32,7 @@ public class HodorJobExecutionContext {
         this.requestId = IdGenerator.defaultGenerator().nextId();
         this.schedulerName = schedulerName;
         this.jobDesc = jobDesc;
-        this.jobKey = jobDesc.getGroupName() + "_" + jobDesc.getJobName();
+        this.jobKey = JobKey.of(jobDesc.getGroupName(), jobDesc.getJobName());
         this.fireTime = fireTime;
         this.scheduledFireTime = scheduledFireTime;
         this.previousFireTime = previousFireTime;
@@ -42,7 +43,7 @@ public class HodorJobExecutionContext {
         return requestId;
     }
 
-    public String getJobKey() {
+    public JobKey getJobKey() {
         return jobKey;
     }
 
