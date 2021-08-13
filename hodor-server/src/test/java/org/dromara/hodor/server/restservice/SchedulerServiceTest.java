@@ -9,6 +9,7 @@ import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.model.enums.Priority;
 import org.dromara.hodor.model.job.JobInstance;
+import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.remoting.api.http.HodorHttpRequest;
 import org.dromara.hodor.remoting.api.http.HodorHttpResponse;
 import org.dromara.hodor.remoting.api.http.HodorRestClient;
@@ -42,8 +43,8 @@ public class SchedulerServiceTest {
             HodorHttpResponse hodorHttpResponse = future.get();
             System.out.println(hodorHttpResponse);
         } catch (Exception e) {
-            throw new CreateJobException(StringUtils.format("create job {}@{} exception, msg: {}.",
-                jobInfo.getGroupName(), jobInfo.getJobName(), e.getMessage()), e);
+            throw new CreateJobException(StringUtils.format("create job {} exception, msg: {}.",
+                JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName()), e.getMessage()), e);
         }
     }
 

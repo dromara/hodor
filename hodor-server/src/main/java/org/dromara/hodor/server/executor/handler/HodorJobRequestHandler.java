@@ -57,6 +57,7 @@ public class HodorJobRequestHandler {
         if (JobExecuteStatusManager.getInstance().isRunning(context.getJobKey())) {
             throw new IllegalJobExecuteStateException("job {} is running.", context.getJobKey());
         }
+        JobExecuteStatusManager.getInstance().addSchedulerStartJob(context);
     }
 
     public void handle(final HodorJobExecutionContext context) {
@@ -65,9 +66,8 @@ public class HodorJobRequestHandler {
         List<Host> hosts = actuatorNodeManager.getAvailableHosts(context.getJobDesc().getGroupName());
         Exception jobException = null;
         for (int i = hosts.size() - 1; i >= 0; i--) {
+            Host host = hosts.get(i);
             try {
-                Host host = hosts.get(i);
-                JobExecuteStatusManager.getInstance().addRunningJob(context, host);
                 clientService.sendDuplexRequest(host, request, new FutureCallback<RemotingMessage>() {
                     @Override
                     public void onSuccess(RemotingMessage response) {
@@ -80,6 +80,7 @@ public class HodorJobRequestHandler {
                         exceptionCaught(context, cause);
                     }
                 });
+                JobExecuteStatusManager.getInstance().addSchedulerEndJob(context, host);
                 jobException = null;
                 break;
             } catch (Exception e) {

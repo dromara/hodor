@@ -1,6 +1,7 @@
 package org.dromara.hodor.server.executor.job;
 
 import org.dromara.hodor.core.entity.JobExecDetail;
+import org.dromara.hodor.model.job.JobKey;
 
 /**
  * JobExecuteRecorder
@@ -42,4 +43,9 @@ public interface JobExecuteRecorder {
         return sb.toString();
     }
 
+    JobExecDetail getJobExecDetail(JobKey jobKey);
+
+    void removeRunningJob(JobKey jobKey);
+
+    void addSchedulerRunningJob(JobExecDetail jobExecDetail);
 }

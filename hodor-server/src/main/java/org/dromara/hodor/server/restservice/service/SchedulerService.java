@@ -19,6 +19,7 @@ import org.dromara.hodor.model.enums.JobStatus;
 import org.dromara.hodor.model.enums.JobType;
 import org.dromara.hodor.model.enums.Priority;
 import org.dromara.hodor.model.job.JobInstance;
+import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.model.scheduler.CopySet;
 import org.dromara.hodor.model.scheduler.DataInterval;
 import org.dromara.hodor.remoting.api.http.HodorHttpRequest;
@@ -67,7 +68,7 @@ public class SchedulerService {
         checkJobInfo(jobInfo);
         resetJobInfo(jobInfo);
         if (jobInfoService.isExists(jobInfo)) {
-            return HodorResult.success(StringUtils.format("job {}@{} has exists in scheduler.", jobInfo.getGroupName(), jobInfo.getJobName()));
+            return HodorResult.success(StringUtils.format("job {} has exists in scheduler.", JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName())));
         }
         jobInfoService.addJob(jobInfo);
         if (CronUtils.isDisabledCron(jobInfo.getCron())) {
@@ -97,27 +98,28 @@ public class SchedulerService {
             DataInterval dataInterval = copySet.getDataInterval();
             HodorScheduler activeScheduler = schedulerManager.createActiveScheduler(copySet.getServerId(), dataInterval);
             if (activeScheduler.checkExists(jobInfo)) {
-                return HodorResult.success(StringUtils.format("job {}@{} exist in active scheduler {}",
-                    jobInfo.getGroupName(), jobInfo.getJobName(), activeScheduler.getSchedulerName()));
+                return HodorResult.success(StringUtils.format("job {} exist in active scheduler {}",
+                    JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName()), activeScheduler.getSchedulerName()));
             }
             jobInfoService.updateJobStatus(jobInfo, JobStatus.RUNNING);
             activeScheduler.addJob(jobInfo, JobExecutorTypeManager.getInstance().getJobExecutor(jobInfo.getJobType()));
-            return HodorResult.success(StringUtils.format("add job {}@{} to active scheduler {} success",
-                jobInfo.getGroupName(), jobInfo.getJobName(), activeScheduler.getSchedulerName()));
+            return HodorResult.success(StringUtils.format("add job {} to active scheduler {} success",
+                JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName()), activeScheduler.getSchedulerName()));
         }
         // 备用节点数据
         if (copySet.getServers().contains(serverEndpoint)) {
             DataInterval standbyDataInterval = copySet.getDataInterval();
             HodorScheduler standbyScheduler = schedulerManager.createStandbyScheduler(copySet.getServerId(), standbyDataInterval);
             if (standbyScheduler.checkExists(jobInfo)) {
-                return HodorResult.success(StringUtils.format("job {}@{} exist in standby scheduler {}",
-                    jobInfo.getGroupName(), jobInfo.getJobName(), standbyScheduler.getSchedulerName()));
+                return HodorResult.success(StringUtils.format("job {} exist in standby scheduler {}",
+                    JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName()), standbyScheduler.getSchedulerName()));
             }
             standbyScheduler.addJob(jobInfo, JobExecutorTypeManager.getInstance().getJobExecutor(jobInfo.getJobType()));
-            return HodorResult.success(StringUtils.format("add job {}@{} to standby scheduler {} success",
-                jobInfo.getGroupName(), jobInfo.getJobName(), standbyScheduler.getSchedulerName()));
+            return HodorResult.success(StringUtils.format("add job {} to standby scheduler {} success",
+                JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName()), standbyScheduler.getSchedulerName()));
         }
-        return HodorResult.failure(StringUtils.format("{} add job {}@{} failure", serverEndpoint, jobInfo.getGroupName(), jobInfo.getJobName()));
+        return HodorResult.failure(StringUtils.format("{} add job {} failure",
+            serverEndpoint, JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName())));
     }
 
     @RestMethod("batchCreateJob")
@@ -164,8 +166,8 @@ public class SchedulerService {
             /*if (e.getCause() instanceof IOException) {
                 throw (IOException) e.getCause();
             }*/
-            throw new CreateJobException(StringUtils.format("create job {}@{} exception, msg: {}.",
-                jobInfo.getGroupName(), jobInfo.getJobName(), e.getMessage()), e);
+            throw new CreateJobException(StringUtils.format("create job {} exception, msg: {}.",
+                JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName()), e.getMessage()), e);
         }
         if (hodorHttpResponse.getStatusCode() != 200) {
             throw new CreateJobException(new String(hodorHttpResponse.getBody(), StandardCharsets.UTF_8));

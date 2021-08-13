@@ -11,6 +11,7 @@ import org.dromara.hodor.common.executor.HodorExecutorFactory;
 import org.dromara.hodor.common.executor.HodorRunnable;
 import org.dromara.hodor.common.queue.CircleQueue;
 import org.dromara.hodor.common.queue.DiscardOldestElementPolicy;
+import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.server.executor.handler.HodorJobRequestHandler;
 
@@ -24,7 +25,7 @@ public class JobDispatcher {
 
     private static final JobDispatcher INSTANCE = new JobDispatcher();
 
-    private final Map<String, HodorExecutor> hodorExecutorMap = new ConcurrentHashMap<>();
+    private final Map<JobKey, HodorExecutor> hodorExecutorMap = new ConcurrentHashMap<>();
 
     private final ThreadPoolExecutor threadPoolExecutor;
 
@@ -62,7 +63,7 @@ public class JobDispatcher {
         });
     }
 
-    private HodorExecutor createHodorExecutor(final String key) {
+    private HodorExecutor createHodorExecutor(final JobKey key) {
         final HodorExecutor hodorExecutor = new HodorExecutor();
         hodorExecutor.setCircleQueue(new CircleQueue<>());
         hodorExecutor.setExecutor(threadPoolExecutor);
@@ -76,7 +77,7 @@ public class JobDispatcher {
      * @param key 任务key
      * @return HodorExecutor
      */
-    public HodorExecutor getHodorExecutor(final String key) {
+    public HodorExecutor getHodorExecutor(final JobKey key) {
         return hodorExecutorMap.get(key);
     }
 
@@ -84,7 +85,7 @@ public class JobDispatcher {
      * 删除未使用的队列
      */
     public void clearUnavailableExecutor() {
-        for (Map.Entry<String, HodorExecutor> item : hodorExecutorMap.entrySet()) {
+        for (Map.Entry<JobKey, HodorExecutor> item : hodorExecutorMap.entrySet()) {
             if (item.getValue().getQueue().isEmpty()) {
                 hodorExecutorMap.remove(item.getKey());
             }
