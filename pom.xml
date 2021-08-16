@@ -19,6 +19,7 @@
         <module>hodor-scheduler</module>
         <module>hodor-client-demo</module>
         <module>hodor-model</module>
+        <module>hodor-extension</module>
     </modules>
 
     <organization>
@@ -71,6 +72,7 @@
         <commons-dbutils.version>1.7</commons-dbutils.version>
         <metrics.version>4.2.3</metrics.version>
         <h2.version>1.4.200</h2.version>
+        <commons-text.version>1.9</commons-text.version>
     </properties>
 
     <dependencyManagement>
@@ -206,6 +208,12 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${commons-text.version}</version>
             </dependency>
 
             <dependency>
