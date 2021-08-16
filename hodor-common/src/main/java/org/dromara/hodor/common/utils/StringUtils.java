@@ -20,6 +20,8 @@ package org.dromara.hodor.common.utils;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.StrUtil;
 import java.util.List;
+import org.apache.commons.lang3.text.StrBuilder;
+import org.apache.commons.text.TextStringBuilder;
 
 /**
  * StringUtils .
@@ -35,6 +37,8 @@ public final class StringUtils extends org.apache.commons.lang3.StringUtils {
     public static final String TOP_PATH = "..";
 
     public static final String CURRENT_PATH = ".";
+
+    public static final String UNDER_LINE_SEPARATOR = "_";
 
     public static final char EXTENSION_SEPARATOR = '.';
 
@@ -83,4 +87,9 @@ public final class StringUtils extends org.apache.commons.lang3.StringUtils {
     public static List<String> splitLimit(String str, String delimit, int limit) {
         return StrSplitter.split(str, delimit, limit, true, true);
     }
+
+    public static TextStringBuilder getStringBuilder() {
+        return new TextStringBuilder();
+    }
+
 }
