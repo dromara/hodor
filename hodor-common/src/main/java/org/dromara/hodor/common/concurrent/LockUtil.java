@@ -1,6 +1,7 @@
 package org.dromara.hodor.common.concurrent;
 
 import java.util.concurrent.locks.Lock;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -25,6 +26,15 @@ public class LockUtil {
         rawLock.lock();
         try {
             return function.apply(t);
+        } finally {
+            rawLock.unlock();
+        }
+    }
+
+    public static  <T1, T2, R> R lockMethod(Lock rawLock, BiFunction<T1, T2, R> function, T1 t1, T2 t2) {
+        rawLock.lock();
+        try {
+            return function.apply(t1, t2);
         } finally {
             rawLock.unlock();
         }
