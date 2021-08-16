@@ -96,7 +96,9 @@ public enum CopySetManager {
     }
 
     public List<CopySet> getCopySet(String endpoint) {
-        return LockUtil.lockMethod(lock.readLock(), (k) -> ImmutableList.copyOf(endpointCopySetListMap.get(k)), endpoint);
+        return LockUtil.lockMethod(lock.readLock(),
+            (k) -> ImmutableList.copyOf(Optional.ofNullable(endpointCopySetListMap.get(k)).orElse(Sets.newHashSet())),
+            endpoint);
     }
 
 }

@@ -18,6 +18,12 @@
   ],
   "properties": [
     {
+      "name": "hodor.logDir",
+      "type": "java.lang.String",
+      "sourceType": "org.dromara.hodor.server.config.HodorServerProperties",
+      "description": "log job execute detail info"
+    },
+    {
       "name": "hodor.net-server.appName",
       "type": "java.lang.String",
       "sourceType": "org.dromara.hodor.server.config.HodorServerProperties$NetServerProperties",

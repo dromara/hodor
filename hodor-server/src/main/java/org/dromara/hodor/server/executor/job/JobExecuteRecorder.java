@@ -39,7 +39,17 @@ public interface JobExecuteRecorder {
         sb.append(detail.getId()).append("|");
         sb.append(detail.getGroupName()).append("|");
         sb.append(detail.getJobName()).append("|");
-        sb.append("\n");
+        sb.append(detail.getSchedulerEndpoint()).append("|");
+        sb.append(detail.getActuatorEndpoint()).append("|");
+        sb.append(detail.getScheduleStart()).append("|");
+        sb.append(detail.getScheduleEnd()).append("|");
+        sb.append(detail.getExecuteStart()).append("|");
+        sb.append(detail.getExecuteEnd()).append("|");
+        sb.append(detail.getExecuteStatus()).append("|");
+        sb.append(detail.getElapsedTime()).append("|");
+        sb.append(detail.getIsTimeout()).append("|");
+        sb.append(detail.getParentRequestId()).append("|");
+        sb.append(detail.getComments());
         return sb.toString();
     }
 

@@ -11,6 +11,7 @@ spring:
     include: core
 
 hodor:
+  logDir: E:\\data\\hodor-scheudler\\recordset
   netServer:
     appName: hodor
     host: 0.0.0.0

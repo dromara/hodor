@@ -94,7 +94,6 @@ public class HodorJobRequestHandler {
 
     public void exceptionCaught(final HodorJobExecutionContext context, final Throwable t) {
         log.error("job {} request [id:{}] execute exception, msg: {}.", context.getRequestId(), context.getJobKey(), t.getMessage(), t);
-        JobExecuteStatusManager.getInstance().addFailureJob(context, t);
         JobExecuteResponse jobExecuteResponse = new JobExecuteResponse();
         jobExecuteResponse.setRequestId(context.getRequestId());
         jobExecuteResponse.setCompleteTime(DateUtil.formatDateTime(new Date()));
