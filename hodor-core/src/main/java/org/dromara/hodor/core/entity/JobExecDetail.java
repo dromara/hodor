@@ -33,11 +33,9 @@ public class JobExecDetail {
 
     private Date executeEnd;
 
-    private Integer elapsedTime;
-
     private JobExecuteStatus executeStatus;
 
-    private String comments;
+    private Integer elapsedTime;
 
     private Boolean isTimeout;
 
@@ -48,5 +46,7 @@ public class JobExecDetail {
     private byte[] jobExeData;
 
     private String parentRequestId;
+
+    private String comments;
 
 }
