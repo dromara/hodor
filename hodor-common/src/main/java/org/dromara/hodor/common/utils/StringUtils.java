@@ -20,7 +20,6 @@ package org.dromara.hodor.common.utils;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.StrUtil;
 import java.util.List;
-import org.apache.commons.lang3.text.StrBuilder;
 import org.apache.commons.text.TextStringBuilder;
 
 /**
@@ -49,7 +48,7 @@ public final class StringUtils extends org.apache.commons.lang3.StringUtils {
      * @return bool .
      */
     public static boolean isBlank(final String arg) {
-        return arg == null || arg.length() == 0;
+        return org.apache.commons.lang3.StringUtils.isBlank(arg);
     }
 
     /**
@@ -81,7 +80,7 @@ public final class StringUtils extends org.apache.commons.lang3.StringUtils {
     }
 
     public static List<String> splitToList(String str, String delimit) {
-        return StrSplitter.split(str, delimit, true, true);
+        return StrSplitter.split(str, delimit, true, false);
     }
 
     public static List<String> splitLimit(String str, String delimit, int limit) {

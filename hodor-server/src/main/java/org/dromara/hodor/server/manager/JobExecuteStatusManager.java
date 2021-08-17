@@ -9,6 +9,7 @@ import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.core.entity.JobExecDetail;
+import org.dromara.hodor.core.recoder.JobExecuteRecorder;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.model.job.JobKey;
@@ -24,7 +25,6 @@ import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteStatusResponse;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.server.ServiceProvider;
-import org.dromara.hodor.server.executor.job.JobExecuteRecorder;
 
 /**
  * job status manager

@@ -54,7 +54,7 @@ public class ActuatorNodeManager {
 
     public void startOfflineActuatorClean() {
         this.cleanSchedule = Executors.newSingleThreadScheduledExecutor(HodorThreadFactory.create("offline-actuator-cleaner", false));
-        this.cleanSchedule.scheduleAtFixedRate(this::offlineActuatorClean, 30,60, TimeUnit.SECONDS);
+        this.cleanSchedule.scheduleWithFixedDelay(this::offlineActuatorClean, 30,60, TimeUnit.SECONDS);
     }
 
     public void offlineActuatorClean() {

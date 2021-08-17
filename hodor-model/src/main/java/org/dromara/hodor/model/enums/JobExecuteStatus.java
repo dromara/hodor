@@ -58,6 +58,24 @@ public enum JobExecuteStatus {
         return status;
     }
 
+    public static JobExecuteStatus ofCode(int status) {
+        for (JobExecuteStatus executeStatus : JobExecuteStatus.values()) {
+            if (executeStatus.status == status) {
+                return executeStatus;
+            }
+        }
+        throw new IllegalArgumentException("not found status code:" + status);
+    }
+
+    public static JobExecuteStatus ofName(String name) {
+        for (JobExecuteStatus executeStatus : JobExecuteStatus.values()) {
+            if (executeStatus.name().equals(name)) {
+                return executeStatus;
+            }
+        }
+        throw new IllegalArgumentException("not found status name:" + name);
+    }
+
     public static boolean isFailed(int status) {
         return FAILED.getStatus() == status;
     }

@@ -1,6 +1,7 @@
 package com.dromara.hodor.common;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.common.log.LogUtil;
@@ -33,4 +34,11 @@ public class LogUtilTest {
         }
     }
 
+    @Test
+    public void testWriteByteData() {
+        File logFile = new File(System.getProperty("user.dir") + "/log/test-byte.log");
+        Logger logger = LogUtil.getInstance().createLogger("log-test", logFile);
+        byte[] bytes = "1231312312".getBytes(StandardCharsets.UTF_8);
+        logger.info(bytes);
+    }
 }
