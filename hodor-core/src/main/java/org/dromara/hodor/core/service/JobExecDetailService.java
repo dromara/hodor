@@ -14,4 +14,5 @@ public interface JobExecDetailService {
 
     void update(JobExecDetail jobExecDetail);
 
+    void createIfAbsent(JobExecDetail jobExecDetail);
 }

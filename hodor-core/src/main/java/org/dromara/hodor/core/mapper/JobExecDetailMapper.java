@@ -5,4 +5,6 @@ import org.dromara.hodor.core.entity.JobExecDetail;
 
 public interface JobExecDetailMapper extends BaseMapper<JobExecDetail> {
 
+    void insertIgnore(JobExecDetail jobExecDetail);
+
 }

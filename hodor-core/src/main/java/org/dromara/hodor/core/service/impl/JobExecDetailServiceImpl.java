@@ -29,4 +29,9 @@ public class JobExecDetailServiceImpl implements JobExecDetailService {
         jobExecDetailMapper.updateById(jobExecDetail);
     }
 
+    @Override
+    public void createIfAbsent(JobExecDetail jobExecDetail) {
+        jobExecDetailMapper.insertIgnore(jobExecDetail);
+    }
+
 }

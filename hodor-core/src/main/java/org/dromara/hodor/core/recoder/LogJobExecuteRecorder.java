@@ -90,7 +90,7 @@ public class LogJobExecuteRecorder implements JobExecuteRecorder {
                         lines.forEach(line -> {
                             JobExecDetail jobExecDetail = toRawJobExecDetail(line);
                             if (line.startsWith(OP_INSERT)) {
-                                jobExecDetailService.create(jobExecDetail);
+                                jobExecDetailService.createIfAbsent(jobExecDetail);
                             }
                             if (line.startsWith(OP_UPDATE)) {
                                 jobExecDetailService.update(jobExecDetail);

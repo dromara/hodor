@@ -37,10 +37,18 @@ public interface JobExecuteRecorder {
         List<String> strings = StringUtils.splitToList(detailString, "|");
         JobExecDetail jobExecDetail = new JobExecDetail();
         jobExecDetail.setId(Long.parseLong(strings.get(1)));
-        jobExecDetail.setGroupName(strings.get(2));
-        jobExecDetail.setJobName(strings.get(3));
-        jobExecDetail.setSchedulerEndpoint(strings.get(4));
-        jobExecDetail.setActuatorEndpoint(strings.get(5));
+        if (StringUtils.isNotBlank(strings.get(2))) {
+            jobExecDetail.setGroupName(strings.get(2));
+        }
+        if (StringUtils.isNotBlank(strings.get(3))) {
+            jobExecDetail.setJobName(strings.get(3));
+        }
+        if (StringUtils.isNotBlank(strings.get(4))) {
+            jobExecDetail.setSchedulerEndpoint(strings.get(4));
+        }
+        if (StringUtils.isNotBlank(strings.get(5))) {
+            jobExecDetail.setActuatorEndpoint(strings.get(5));
+        }
         if (StringUtils.isNotBlank(strings.get(6))) {
             jobExecDetail.setScheduleStart(DateUtil.parse(strings.get(6), DatePattern.NORM_DATETIME_PATTERN));
         }
