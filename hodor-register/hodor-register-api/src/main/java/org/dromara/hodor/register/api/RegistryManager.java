@@ -8,15 +8,15 @@ import org.dromara.hodor.common.Host;
  * @author tomgs
  * @since 2020/9/23
  */
-public final class RegisterManager {
+public final class RegistryManager {
 
-    private static final RegisterManager INSTANCE = new RegisterManager();
+    private static final RegistryManager INSTANCE = new RegistryManager();
 
-    private RegisterManager() {
+    private RegistryManager() {
 
     }
 
-    public static RegisterManager getInstance() {
+    public static RegistryManager getInstance() {
         return INSTANCE;
     }
 
