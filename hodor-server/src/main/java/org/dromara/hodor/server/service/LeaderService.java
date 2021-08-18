@@ -18,11 +18,11 @@ public class LeaderService {
 
     private final RegistryCenter registryCenter;
 
-    private final RegisterService registerService;
+    private final RegistryService registryService;
 
-    public LeaderService(final RegisterService registerService) {
-        this.registerService = registerService;
-        this.registryCenter = registerService.getRegistryCenter();
+    public LeaderService(final RegistryService registryService) {
+        this.registryService = registryService;
+        this.registryCenter = registryService.getRegistryCenter();
     }
 
     /**
@@ -41,7 +41,7 @@ public class LeaderService {
      * 创建主节点
      */
     public void createLeaderNode() {
-        registryCenter.createEphemeral(SchedulerNode.MASTER_ACTIVE_PATH, registerService.getServerEndpoint());
+        registryCenter.createEphemeral(SchedulerNode.MASTER_ACTIVE_PATH, registryService.getServerEndpoint());
     }
 
     /**
@@ -55,7 +55,7 @@ public class LeaderService {
      * 当期节点是否为主节点
      */
     public boolean isLeader() {
-        return !registerService.getServerEndpoint().equals(getLeaderEndpoint());
+        return !registryService.getServerEndpoint().equals(getLeaderEndpoint());
     }
 
     public String getLeaderEndpoint() {

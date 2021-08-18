@@ -21,6 +21,7 @@ import org.dromara.hodor.server.executor.JobExecutorTypeManager;
 import org.dromara.hodor.server.listener.ActuatorNodeChangeListener;
 import org.dromara.hodor.server.listener.LeaderElectChangeListener;
 import org.dromara.hodor.server.listener.MetadataChangeListener;
+import org.dromara.hodor.server.listener.RegistryConnectionStateListener;
 import org.dromara.hodor.server.listener.SchedulerNodeChangeListener;
 import org.dromara.hodor.server.manager.ActuatorNodeManager;
 import org.dromara.hodor.server.manager.CopySetManager;
@@ -39,7 +40,7 @@ public class HodorService implements HodorLifecycle {
 
     private final LeaderService leaderService;
 
-    private final RegisterService registerService;
+    private final RegistryService registryService;
 
     private final JobInfoService jobInfoService;
 
@@ -51,9 +52,9 @@ public class HodorService implements HodorLifecycle {
 
     private final SchedulerManager schedulerManager;
 
-    public HodorService(final LeaderService leaderService, final RegisterService registerService, final JobInfoService jobInfoService) {
+    public HodorService(final LeaderService leaderService, final RegistryService registryService, final JobInfoService jobInfoService) {
         this.leaderService = leaderService;
-        this.registerService = registerService;
+        this.registryService = registryService;
         this.jobInfoService = jobInfoService;
         this.schedulerNodeManager = SchedulerNodeManager.getInstance();
         this.copySetManager = CopySetManager.getInstance();
@@ -64,20 +65,20 @@ public class HodorService implements HodorLifecycle {
     @Override
     public void start() {
         // TODO: 待优化
-        Integer currRunningNodeCount = registerService.getRunningNodeCount();
-        while (currRunningNodeCount < registerService.getLeastNodeCount()) {
+        Integer currRunningNodeCount = registryService.getRunningNodeCount();
+        while (currRunningNodeCount < registryService.getLeastNodeCount()) {
 
             log.warn("waiting for the node to join the cluster ...");
 
             ThreadUtils.sleep(TimeUnit.MILLISECONDS, 1000);
-            currRunningNodeCount = registerService.getRunningNodeCount();
+            currRunningNodeCount = registryService.getRunningNodeCount();
         }
 
         //init data
-        registerService.registrySchedulerNodeListener(new SchedulerNodeChangeListener(schedulerNodeManager));
-        registerService.registryActuatorNodeListener(new ActuatorNodeChangeListener(actuatorNodeManager));
-        registerService.registryMetadataListener(new MetadataChangeListener(this));
-        registerService.registryElectLeaderListener(new LeaderElectChangeListener(this));
+        registryService.registrySchedulerNodeListener(new SchedulerNodeChangeListener(schedulerNodeManager));
+        registryService.registryActuatorNodeListener(new ActuatorNodeChangeListener(actuatorNodeManager));
+        registryService.registryMetadataListener(new MetadataChangeListener(this));
+        registryService.registryElectLeaderListener(new LeaderElectChangeListener(this));
         //registerService.registryJobEventListener(new JobEventDispatchListener(this));
 
         //select leader
@@ -86,7 +87,7 @@ public class HodorService implements HodorLifecycle {
 
     @Override
     public void stop() {
-        registerService.stop();
+        registryService.stop();
         copySetManager.clearCopySet();
         schedulerNodeManager.clearNodeServer();
         actuatorNodeManager.clearActuatorNodes();
@@ -95,9 +96,9 @@ public class HodorService implements HodorLifecycle {
 
     public void electLeader() {
         leaderService.electLeader(() -> {
-            log.info("{} to be leader.", registerService.getServerEndpoint());
+            log.info("{} to be leader.", registryService.getServerEndpoint());
             // after to be leader write here
-            List<String> currRunningNodes = registerService.getRunningNodes();
+            List<String> currRunningNodes = registryService.getRunningNodes();
             if (CollectionUtils.isEmpty(currRunningNodes)) {
                 throw new HodorException("running node count is 0.");
             }
@@ -148,7 +149,7 @@ public class HodorService implements HodorLifecycle {
 
             log.info("HodorMetadata: {}", metadata);
 
-            registerService.createMetadata(metadata);
+            registryService.createMetadata(metadata);
         });
     }
 
@@ -161,7 +162,7 @@ public class HodorService implements HodorLifecycle {
     }
 
     public String getServerEndpoint() {
-        return registerService.getServerEndpoint();
+        return registryService.getServerEndpoint();
     }
 
 }

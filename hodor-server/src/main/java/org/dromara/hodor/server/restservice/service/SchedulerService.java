@@ -33,7 +33,7 @@ import org.dromara.hodor.server.executor.JobExecutorTypeManager;
 import org.dromara.hodor.server.manager.CopySetManager;
 import org.dromara.hodor.server.restservice.HodorRestService;
 import org.dromara.hodor.server.restservice.RestMethod;
-import org.dromara.hodor.server.service.RegisterService;
+import org.dromara.hodor.server.service.RegistryService;
 
 /**
  * scheduler controller
@@ -45,14 +45,14 @@ import org.dromara.hodor.server.service.RegisterService;
 @SuppressWarnings("unused")
 public class SchedulerService {
 
-    private final RegisterService registerService;
+    private final RegistryService registryService;
 
     private final JobInfoService jobInfoService;
 
     private final SchedulerManager schedulerManager;
 
-    public SchedulerService(final RegisterService registerService, final JobInfoService jobInfoService) {
-        this.registerService = registerService;
+    public SchedulerService(final RegistryService registryService, final JobInfoService jobInfoService) {
+        this.registryService = registryService;
         this.jobInfoService = jobInfoService;
         this.schedulerManager = SchedulerManager.getInstance();
     }
@@ -87,7 +87,7 @@ public class SchedulerService {
 
     @RestMethod("doCreateJob")
     public HodorResult<String> doCreateJob(JobInfo jobInfo) {
-        String serverEndpoint = registerService.getServerEndpoint();
+        String serverEndpoint = registryService.getServerEndpoint();
         Optional<CopySet> copySetOptional = CopySetManager.getInstance().getCopySetByInterval(jobInfo.getHashId());
         if (!copySetOptional.isPresent()) {
             return HodorResult.failure("not found active copy set by hash id " + jobInfo.getHashId());
@@ -180,7 +180,7 @@ public class SchedulerService {
     }
 
     private void fireBatchJobCreateEvent() {
-        registerService.createJobEvent(Event.create("", EventType.JOB_CREATE_DISTRIBUTE));
+        registryService.createJobEvent(Event.create("", EventType.JOB_CREATE_DISTRIBUTE));
     }
 
     private JobInfo convertJobInfo(JobInstance job) {

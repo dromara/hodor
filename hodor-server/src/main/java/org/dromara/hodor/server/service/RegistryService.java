@@ -7,6 +7,7 @@ import org.dromara.hodor.common.utils.GsonUtils;
 import org.dromara.hodor.common.utils.HostUtils;
 import org.dromara.hodor.model.actuator.ActuatorInfo;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
+import org.dromara.hodor.register.api.ConnectionStateChangeListener;
 import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.RegistryCenter;
 import org.dromara.hodor.register.api.RegistryConfig;
@@ -15,6 +16,7 @@ import org.dromara.hodor.register.api.node.SchedulerNode;
 import org.dromara.hodor.server.common.HodorLifecycle;
 import org.dromara.hodor.server.config.HodorServerProperties;
 import org.dromara.hodor.server.listener.JobEventDispatchListener;
+import org.dromara.hodor.server.listener.RegistryConnectionStateListener;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,7 +26,7 @@ import org.springframework.stereotype.Service;
  * @version 2020/6/29 1.0
  */
 @Service
-public class RegisterService implements HodorLifecycle {
+public class RegistryService implements HodorLifecycle {
 
     private final RegistryCenter registryCenter;
 
@@ -34,7 +36,7 @@ public class RegisterService implements HodorLifecycle {
 
     private final String serverEndpoint;
 
-    public RegisterService(final HodorServerProperties properties) {
+    public RegistryService(final HodorServerProperties properties) {
         this.properties = properties;
         this.registryCenter = ExtensionLoader.getExtensionLoader(RegistryCenter.class).getDefaultJoin();
         this.gsonUtils = GsonUtils.getInstance();
@@ -45,6 +47,7 @@ public class RegisterService implements HodorLifecycle {
     public void start() {
         RegistryConfig config = RegistryConfig.builder().servers(properties.getRegistryServers()).namespace(properties.getRegistryNamespace()).build();
         registryCenter.init(config);
+        this.registryConnectionStateListener(new RegistryConnectionStateListener(this));
         initNode();
     }
 
@@ -57,7 +60,7 @@ public class RegisterService implements HodorLifecycle {
         return registryCenter;
     }
 
-    private void initNode() {
+    public void initNode() {
         // init path
         // init data
         createServerNode(SchedulerNode.getServerNodePath(getServerEndpoint()), getServerEndpoint());
@@ -77,6 +80,10 @@ public class RegisterService implements HodorLifecycle {
 
     public void createMetadata(HodorMetadata metadata) {
         registryCenter.createPersistent(SchedulerNode.METADATA_PATH, gsonUtils.toJson(metadata));
+    }
+
+    public void registryConnectionStateListener(ConnectionStateChangeListener connectionStateChangeListener) {
+        registryCenter.addConnectionStateListener(connectionStateChangeListener);
     }
 
     public void registryMetadataListener(DataChangeListener listener) {

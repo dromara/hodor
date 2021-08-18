@@ -2,7 +2,7 @@ package org.dromara.hodor.server;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.server.service.HodorService;
-import org.dromara.hodor.server.service.RegisterService;
+import org.dromara.hodor.server.service.RegistryService;
 import org.dromara.hodor.server.service.RestServerService;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.ApplicationArguments;
@@ -23,14 +23,14 @@ import org.springframework.stereotype.Component;
 public class HodorServerInit implements ApplicationRunner, ApplicationContextAware {
 
     private final RestServerService restServerService;
-    private final RegisterService registerService;
+    private final RegistryService registryService;
     private final HodorService hodorService;
     private final ServiceProvider serviceProvider;
     private ApplicationContext applicationContext;
 
-    public HodorServerInit(final RestServerService restServerService, final RegisterService registerService, final HodorService hodorService) {
+    public HodorServerInit(final RestServerService restServerService, final RegistryService registryService, final HodorService hodorService) {
         this.restServerService = restServerService;
-        this.registerService = registerService;
+        this.registryService = registryService;
         this.hodorService = hodorService;
         this.serviceProvider = ServiceProvider.getInstance();
     }
@@ -41,7 +41,7 @@ public class HodorServerInit implements ApplicationRunner, ApplicationContextAwa
         // start hodor server
         // start remoting server
         restServerService.start();
-        registerService.start();
+        registryService.start();
         hodorService.start();
         // register service
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -49,7 +49,7 @@ public class HodorServerInit implements ApplicationRunner, ApplicationContextAwa
             // stop service
             try {
                 hodorService.stop();
-                registerService.stop();
+                registryService.stop();
                 restServerService.stop();
             } catch (Exception e) {
                 log.error("Error where shutting down remote service.", e);
