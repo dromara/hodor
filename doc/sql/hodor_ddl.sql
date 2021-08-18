@@ -47,26 +47,25 @@ CREATE TABLE `hodor_job_info` (
 -- Table structure for hodor_job_exec_detail
 -- ----------------------------
 CREATE TABLE `hodor_job_exec_detail` (
-  `id` bigint(32) NOT NULL COMMENT '任务唯一标识',
-  `group_name` varchar(100) NOT NULL COMMENT '任务组名称',
-  `job_name` varchar(100) NOT NULL COMMENT '任务名称',
-  `scheduler_endpoint` char(20) DEFAULT NULL COMMENT '调度服务器Endpoint',
-  `actuator_endpoint` char(20) DEFAULT NULL COMMENT '执行服务器Endpoint',
-  `schedule_start` timestamp NULL DEFAULT NULL COMMENT '调度开始时间',
-  `schedule_end` timestamp NULL DEFAULT NULL COMMENT '调度结束时间',
-  `execute_start` timestamp NULL DEFAULT NULL COMMENT '执行开始时间',
-  `execute_end` timestamp NULL DEFAULT NULL COMMENT '执行结束时间',
-  `elapsed_time` int(11) NOT NULL DEFAULT '0' COMMENT '任务执行耗时',
-  `execute_status` char(1) DEFAULT '1' COMMENT '任务执行状态，见JobExecuteStatus',
-  `comments` text COMMENT '详细描述',
-  `is_timeout` int(1) NOT NULL DEFAULT '0' COMMENT '是否超时,0:否,1:是',
-  `enc_type` int(4) DEFAULT NULL COMMENT '1:rar 2:zip 3:tar 4:json  数据保存类型',
-  `detailed_log` blob COMMENT '存储详细日志',
-  `job_exe_data` blob COMMENT 'job执行信息',
-  `parent_request_id` varchar(32) NOT NULL DEFAULT '' COMMENT 'flow上一任务的requestid',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `index_job_group` (`job_name`, `group_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    `id` bigint NOT NULL COMMENT '任务唯一标识',
+    `group_name` varchar(100) NOT NULL COMMENT '任务组名称',
+    `job_name` varchar(100) NOT NULL COMMENT '任务名称',
+    `scheduler_endpoint` char(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '调度服务器IP',
+    `actuator_endpoint` char(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '业务执行服务器IP',
+    `schedule_start` timestamp NULL DEFAULT NULL COMMENT '调度开始时间',
+    `schedule_end` timestamp NULL DEFAULT NULL COMMENT '调度结束时间',
+    `execute_start` timestamp NULL DEFAULT NULL COMMENT '执行开始时间',
+    `execute_end` timestamp NULL DEFAULT NULL COMMENT '执行结束时间',
+    `elapsed_time` int NOT NULL DEFAULT '0' COMMENT '任务执行耗时',
+    `execute_status` char(1) DEFAULT '1' COMMENT '任务执行状态，见JobExecuteStatus',
+    `comments` text CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT '明细描述',
+    `is_timeout` int NOT NULL DEFAULT '0' COMMENT '是否超时,0:否,1:是',
+    `enc_type` int DEFAULT NULL COMMENT '1:rar 2:zip 3:tar 4:json  数据保存类型',
+    `detailed_log` blob COMMENT '存储详细日志',
+    `job_exe_data` blob COMMENT 'job执行信息',
+    `parent_request_id` varchar(32) NOT NULL DEFAULT '' COMMENT 'flow上一任务的requestid',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
 
 CREATE TABLE `hodor_job_dependencies` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
