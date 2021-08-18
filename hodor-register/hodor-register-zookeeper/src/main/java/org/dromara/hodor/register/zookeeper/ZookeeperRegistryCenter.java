@@ -19,6 +19,8 @@ import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooKeeper;
 import org.dromara.hodor.common.extension.Join;
+import org.dromara.hodor.register.api.ConnectionState;
+import org.dromara.hodor.register.api.ConnectionStateChangeListener;
 import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.LeaderExecutionCallback;
@@ -195,6 +197,9 @@ public class ZookeeperRegistryCenter implements RegistryCenter {
 
     @Override
     public void addDataCacheListener(final String path, final DataChangeListener listener) {
+        if (listener == null) {
+            return;
+        }
         TreeCache cache = TreeCache.newBuilder(client, path).build();
         try {
             cache.start();
@@ -202,9 +207,6 @@ public class ZookeeperRegistryCenter implements RegistryCenter {
             throw new RegistryException(e);
         }
         cache.getListenable().addListener((curatorFramework, event) -> {
-            if (listener == null) {
-                return;
-            }
             String dataPath = null == event.getData() ? "" : event.getData().getPath();
             if (dataPath.isEmpty()) {
                 return;
@@ -213,6 +215,17 @@ public class ZookeeperRegistryCenter implements RegistryCenter {
             listener.dataChanged(changeEvent);
         });
         caches.put(path, cache);
+    }
+
+    @Override
+    public void addConnectionStateListener(ConnectionStateChangeListener listener) {
+        if (listener == null) {
+            return;
+        }
+        client.getConnectionStateListenable().addListener(((curatorFramework, connectionState) -> {
+            ConnectionState state = ConnectionState.valueOf(connectionState.name());
+            listener.stateChanged(state);
+        }));
     }
 
     @Override
