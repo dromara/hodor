@@ -23,6 +23,10 @@ public enum SchedulerNodeManager {
         return nodeIps;
     }
 
+    public String getMasterServer() {
+        return "";
+    }
+
     public void addNodeServer(String nodeIp) {
         nodeIps.add(nodeIp);
     }

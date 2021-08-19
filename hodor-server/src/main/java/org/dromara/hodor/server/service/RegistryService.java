@@ -78,6 +78,11 @@ public class RegistryService implements HodorLifecycle {
         registryCenter.createEphemeral(serverNodePath, serverId);
     }
 
+    public HodorMetadata getMetadata() {
+        String metadataStr = registryCenter.get(SchedulerNode.METADATA_PATH);
+        return gsonUtils.fromJson(metadataStr, HodorMetadata.class);
+    }
+
     public void createMetadata(HodorMetadata metadata) {
         registryCenter.createPersistent(SchedulerNode.METADATA_PATH, gsonUtils.toJson(metadata));
     }
