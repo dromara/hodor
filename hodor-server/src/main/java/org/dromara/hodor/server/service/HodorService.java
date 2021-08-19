@@ -76,7 +76,7 @@ public class HodorService implements HodorLifecycle {
 
         //init data
         registryService.registrySchedulerNodeListener(new SchedulerNodeChangeListener(schedulerNodeManager));
-        registryService.registryActuatorNodeListener(new ActuatorNodeChangeListener(actuatorNodeManager));
+        registryService.registryActuatorNodeListener(new ActuatorNodeChangeListener(actuatorNodeManager, registryService));
         registryService.registryMetadataListener(new MetadataChangeListener(this));
         registryService.registryElectLeaderListener(new LeaderElectChangeListener(this));
         //registerService.registryJobEventListener(new JobEventDispatchListener(this));

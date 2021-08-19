@@ -3,13 +3,17 @@ package org.dromara.hodor.server.listener;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.common.event.Event;
+import org.dromara.hodor.common.event.HodorEventListener;
 import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.common.utils.StringUtils;
+import org.dromara.hodor.model.actuator.ActuatorInfo;
 import org.dromara.hodor.model.node.NodeInfo;
 import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.node.ActuatorNode;
 import org.dromara.hodor.server.manager.ActuatorNodeManager;
+import org.dromara.hodor.server.service.RegistryService;
 
 /**
  * actuator node listener
@@ -18,12 +22,16 @@ import org.dromara.hodor.server.manager.ActuatorNodeManager;
  * @since 2020/11/27
  */
 @Slf4j
-public class ActuatorNodeChangeListener implements DataChangeListener {
+public class ActuatorNodeChangeListener implements DataChangeListener, HodorEventListener<ActuatorInfo> {
 
     private final ActuatorNodeManager actuatorNodeManager;
 
-    public ActuatorNodeChangeListener(final ActuatorNodeManager actuatorNodeManager) {
+    private final RegistryService registryService;
+
+    public ActuatorNodeChangeListener(final ActuatorNodeManager actuatorNodeManager, final RegistryService registryService) {
         this.actuatorNodeManager = actuatorNodeManager;
+        this.registryService = registryService;
+        this.actuatorNodeManager.addListener(this);
     }
 
     @Override
@@ -37,7 +45,6 @@ public class ActuatorNodeChangeListener implements DataChangeListener {
         if (ActuatorNode.isGroupPath(actuatorPath)) {
             changeActuatorGroupData(event, actuatorPath);
         }
-
     }
 
     private void changeActuatorGroupData(DataChangeEvent event, String actuatorPath) {
@@ -51,8 +58,9 @@ public class ActuatorNodeChangeListener implements DataChangeListener {
         String groupName = actuatorGroupPath.get(2);
         String nodeEndpoint = actuatorGroupPath.get(3);
         if (event.getType() == DataChangeEvent.Type.NODE_UPDATED || event.getType() == DataChangeEvent.Type.NODE_ADDED) {
+            long lastHeartbeat = Long.parseLong(new String(event.getData(), StandardCharsets.UTF_8));
+            actuatorNodeManager.addActuatorNodeInfo(groupName, nodeEndpoint, lastHeartbeat);
             actuatorNodeManager.addActuatorEndpoint(groupName, nodeEndpoint);
-            actuatorNodeManager.refreshActuatorEndpointHeartbeat(nodeEndpoint, new String(event.getData(), StandardCharsets.UTF_8));
         } else if (event.getType() == DataChangeEvent.Type.NODE_REMOVED) {
             actuatorNodeManager.removeActuatorGroup(groupName, nodeEndpoint);
         }
@@ -74,6 +82,12 @@ public class ActuatorNodeChangeListener implements DataChangeListener {
         } else if (event.getType() == DataChangeEvent.Type.NODE_REMOVED) {
             actuatorNodeManager.removeActuatorNode(nodeEndpoint);
         }
+    }
+
+    @Override
+    public void onEvent(Event<ActuatorInfo> event) {
+        ActuatorInfo actuatorInfo = event.getValue();
+        registryService.removeActuator(actuatorInfo);
     }
 
 }

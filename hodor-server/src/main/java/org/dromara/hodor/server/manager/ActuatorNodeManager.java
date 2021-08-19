@@ -1,5 +1,6 @@
 package org.dromara.hodor.server.manager;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Assert;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -15,9 +16,12 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.concurrent.HodorThreadFactory;
+import org.dromara.hodor.common.event.AbstractAsyncEventPublisher;
+import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.loadbalance.LoadBalance;
 import org.dromara.hodor.common.loadbalance.LoadBalanceEnum;
 import org.dromara.hodor.common.loadbalance.LoadBalanceFactory;
+import org.dromara.hodor.model.actuator.ActuatorInfo;
 import org.dromara.hodor.model.node.NodeInfo;
 
 /**
@@ -27,18 +31,15 @@ import org.dromara.hodor.model.node.NodeInfo;
  * @version 2021/8/1 1.0
  */
 @Slf4j
-public class ActuatorNodeManager {
+public class ActuatorNodeManager extends AbstractAsyncEventPublisher<ActuatorInfo> {
 
     private static final ActuatorNodeManager INSTANCE = new ActuatorNodeManager();
 
-    // endpoint -> nodeInfo
-    private final Map<String, NodeInfo> actuatorNodes = Maps.newConcurrentMap();
-
-    // endpoint -> heartbeat timestamp
-    private final Map<String, Long> actuatorNodeLastHeartbeat = Maps.newConcurrentMap();
-
     // groupName -> endpoint set
     private final Map<String, Set<String>> actuatorEndpoints = Maps.newConcurrentMap();
+
+    // endpoint -> actuatorNodeInfo
+    private final Map<String, ActuatorInfo> actuatorNodeInfos = Maps.newConcurrentMap();
 
     private static final int HEARTBEAT_THRESHOLD = 30_000;
 
@@ -59,10 +60,12 @@ public class ActuatorNodeManager {
 
     public void offlineActuatorClean() {
         log.info("offline actuator clean ...");
-        actuatorNodeLastHeartbeat.entrySet().removeIf(entry -> {
-            Long lastHeartbeat = entry.getValue();
-            if (heartbeatThresholdExceedCheck(lastHeartbeat)) {
+        actuatorNodeInfos.entrySet().removeIf(entry -> {
+            ActuatorInfo actuatorInfo = entry.getValue();
+            if (heartbeatThresholdExceedCheck(actuatorInfo.getLastHeartbeat())) {
                 String endpoint = entry.getKey();
+                ActuatorInfo immutableActuatorInfo = BeanUtil.copyProperties(actuatorInfo, ActuatorInfo.class);
+                notifyRemoveActuatorNode(immutableActuatorInfo);
                 removeNode(endpoint);
                 return true;
             }
@@ -70,10 +73,13 @@ public class ActuatorNodeManager {
         });
     }
 
+    private void notifyRemoveActuatorNode(ActuatorInfo actuatorNodeInfo) {
+        publish(Event.create(actuatorNodeInfo));
+    }
+
     private void removeNode(String endpoint) {
-        actuatorNodes.remove(endpoint);
+        actuatorNodeInfos.remove(endpoint);
         actuatorEndpoints.values().forEach(endpoints -> endpoints.removeIf(e -> e.equals(endpoint)));
-        actuatorNodeLastHeartbeat.remove(endpoint);
     }
 
     public void addActuatorEndpoint(String groupName, String nodeEndpoint) {
@@ -90,7 +96,7 @@ public class ActuatorNodeManager {
     }
 
     public boolean isOffline(String endpoint) {
-        Long lastHeartbeat = actuatorNodeLastHeartbeat.getOrDefault(endpoint, 0L);
+        Long lastHeartbeat = actuatorNodeInfos.get(endpoint).getLastHeartbeat();
         return heartbeatThresholdExceedCheck(lastHeartbeat);
     }
 
@@ -100,7 +106,7 @@ public class ActuatorNodeManager {
 
     public void clearActuatorNodes() {
         actuatorEndpoints.clear();
-        actuatorNodeLastHeartbeat.clear();
+        actuatorNodeInfos.clear();
     }
 
     public void stopOfflineActuatorClean() {
@@ -126,19 +132,30 @@ public class ActuatorNodeManager {
     }
 
     public void addActuatorNode(String nodeEndpoint, NodeInfo nodeInfo) {
-        actuatorNodes.put(nodeEndpoint, nodeInfo);
+        ActuatorInfo actuatorNodeInfo = actuatorNodeInfos.get(nodeEndpoint);
+        actuatorNodeInfo.setNodeInfo(nodeInfo);
     }
 
     public NodeInfo getActuatorNode(String nodeEndpoint) {
-        return actuatorNodes.getOrDefault(nodeEndpoint, new NodeInfo());
+        ActuatorInfo actuatorNodeInfo = Optional.ofNullable(actuatorNodeInfos.get(nodeEndpoint))
+            .orElse(ActuatorInfo.builder()
+                .nodeInfo(new NodeInfo())
+                .build());
+        return actuatorNodeInfo.getNodeInfo();
     }
 
     public void removeActuatorNode(String nodeEndpoint) {
-        actuatorNodes.remove(nodeEndpoint);
+        actuatorNodeInfos.remove(nodeEndpoint);
     }
 
-    public void refreshActuatorEndpointHeartbeat(String nodeEndpoint, String heartbeat) {
-        actuatorNodeLastHeartbeat.put(nodeEndpoint, Long.valueOf(heartbeat));
+    public void addActuatorNodeInfo(String groupName, String nodeEndpoint, long lastHeartbeat) {
+        ActuatorInfo actuatorInfo = actuatorNodeInfos.computeIfAbsent(nodeEndpoint, k -> ActuatorInfo.builder()
+            .nodeEndpoint(nodeEndpoint)
+            .groupNames(Sets.newHashSet(groupName))
+            .lastHeartbeat(lastHeartbeat)
+            .build());
+        actuatorInfo.getGroupNames().add(groupName);
+        actuatorInfo.setLastHeartbeat(lastHeartbeat);
     }
 
 }
