@@ -132,8 +132,10 @@ public class ActuatorNodeManager extends AbstractAsyncEventPublisher<ActuatorInf
     }
 
     public void addActuatorNode(String nodeEndpoint, NodeInfo nodeInfo) {
-        ActuatorInfo actuatorNodeInfo = actuatorNodeInfos.get(nodeEndpoint);
-        actuatorNodeInfo.setNodeInfo(nodeInfo);
+        ActuatorInfo actuatorInfo = actuatorNodeInfos.computeIfAbsent(nodeEndpoint, k -> ActuatorInfo.builder()
+            .nodeEndpoint(nodeEndpoint)
+            .build());
+        actuatorInfo.setNodeInfo(nodeInfo);
     }
 
     public NodeInfo getActuatorNode(String nodeEndpoint) {
