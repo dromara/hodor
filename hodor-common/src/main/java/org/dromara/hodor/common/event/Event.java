@@ -9,6 +9,8 @@ package org.dromara.hodor.common.event;
  */
 public class Event<V> {
 
+    public static final String DEFAULT_TYPE = "DEFAULT";
+
     private V value;
 
     private final Object eventType;
@@ -24,6 +26,10 @@ public class Event<V> {
 
     public static <V> Event<V> create(V value, Object eventType) {
         return new Event<>(value, eventType);
+    }
+
+    public static <V> Event<V> create(V value) {
+        return new Event<>(value, DEFAULT_TYPE);
     }
 
     public Object getEventType() {

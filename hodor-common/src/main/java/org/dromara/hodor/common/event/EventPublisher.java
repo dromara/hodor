@@ -15,7 +15,12 @@ public interface EventPublisher<V> {
     }
 
     /**
-     * 添加某个事件类型的监听器。一个 eventType 可对应多个 object listener
+     * 添加默认事件类型的监听器
+     */
+    void addListener(HodorEventListener<V> objectListener);
+
+    /**
+     * 添加某个事件类型的监听器，一个 eventType 可对应多个 object listener
      */
     void addListener(HodorEventListener<V> objectListener, Object eventType);
 

@@ -27,6 +27,11 @@ public abstract class AbstractEventPublisher<V> implements EventPublisher<V> {
         publish(new Event<>(v, eventType));
     }
 
+    @Override
+    public void addListener(HodorEventListener<V> objectListener) {
+        addListener(objectListener, Event.DEFAULT_TYPE);
+    }
+
     public void addListener(HodorEventListener<V> objectListener, Object eventType) {
         lock.lock();
         try {
