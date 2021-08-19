@@ -21,7 +21,6 @@ import org.dromara.hodor.server.executor.JobExecutorTypeManager;
 import org.dromara.hodor.server.listener.ActuatorNodeChangeListener;
 import org.dromara.hodor.server.listener.LeaderElectChangeListener;
 import org.dromara.hodor.server.listener.MetadataChangeListener;
-import org.dromara.hodor.server.listener.RegistryConnectionStateListener;
 import org.dromara.hodor.server.listener.SchedulerNodeChangeListener;
 import org.dromara.hodor.server.manager.ActuatorNodeManager;
 import org.dromara.hodor.server.manager.CopySetManager;
@@ -75,7 +74,7 @@ public class HodorService implements HodorLifecycle {
         }
 
         //init data
-        registryService.registrySchedulerNodeListener(new SchedulerNodeChangeListener(schedulerNodeManager));
+        registryService.registrySchedulerNodeListener(new SchedulerNodeChangeListener(schedulerNodeManager, leaderService));
         registryService.registryActuatorNodeListener(new ActuatorNodeChangeListener(actuatorNodeManager, registryService));
         registryService.registryMetadataListener(new MetadataChangeListener(this));
         registryService.registryElectLeaderListener(new LeaderElectChangeListener(this));
@@ -97,14 +96,12 @@ public class HodorService implements HodorLifecycle {
     public void electLeader() {
         leaderService.electLeader(() -> {
             log.info("{} to be leader.", registryService.getServerEndpoint());
+            actuatorNodeManager.startOfflineActuatorClean();
             // after to be leader write here
             List<String> currRunningNodes = registryService.getRunningNodes();
             if (CollectionUtils.isEmpty(currRunningNodes)) {
                 throw new HodorException("running node count is 0.");
             }
-
-            actuatorNodeManager.startOfflineActuatorClean();
-
             // 至少3个节点才可以使用copy set
             List<List<String>> copySetNodes = CopySets.buildCopySets(currRunningNodes, Constants.REPLICA_COUNT, Constants.SCATTER_WIDTH);
             int setsNum = Math.max(copySetNodes.size(), currRunningNodes.size());
@@ -131,13 +128,11 @@ public class HodorService implements HodorLifecycle {
                 }
                 intervalOffsets.add(Math.max(Math.abs(hashId), 0));
             }
-            for (int i = 0; i < intervalOffsets.size(); i++) {
+            // add last one interval offset
+            intervalOffsets.add(Long.MAX_VALUE);
+            for (int i = 0; i < intervalOffsets.size() - 1; i++) {
                 CopySet copySet = copySets.get(i);
-                if (i == intervalOffsets.size() - 1) { // last one interval offset
-                    copySet.setDataInterval(DataInterval.create(intervalOffsets.get(i), Long.MAX_VALUE));
-                } else {
-                    copySet.setDataInterval(DataInterval.create(intervalOffsets.get(i), intervalOffsets.get(i + 1)));
-                }
+                copySet.setDataInterval(DataInterval.create(intervalOffsets.get(i), intervalOffsets.get(i + 1)));
                 copySet.setLeader(copySetManager.selectLeaderCopySet(copySet));
             }
 
