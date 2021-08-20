@@ -1,5 +1,6 @@
 package org.dromara.hodor.core.recoder;
 
+import cn.hutool.core.date.DateUtil;
 import java.io.File;
 import java.io.FileFilter;
 import java.nio.charset.StandardCharsets;
@@ -76,7 +77,8 @@ public class LogJobExecuteRecorder implements JobExecuteRecorder {
 
     @Override
     public void startReporterJobExecDetail() {
-        Thread reporterThread = new Thread(() -> {
+        final FileFilter fileFilter = new NotFileFilter(new NameFileFilter(loggerName));
+        final Thread reporterThread = new Thread(() -> {
             while (true) {
                 try {
                     //Map<Long, JobExecDetail> insertMap = Maps.newHashMap();
@@ -84,7 +86,8 @@ public class LogJobExecuteRecorder implements JobExecuteRecorder {
                     if (!logsDir.exists() || !logsDir.isDirectory()) {
                         return;
                     }
-                    File[] files = logsDir.listFiles((FileFilter) new NotFileFilter(new NameFileFilter(loggerName)));
+                    File[] files = logsDir.listFiles(fileFilter);
+                    File backUpCurrentDayRecordFile = new File(backUpDir, DateUtil.today());
                     for (File file : Objects.requireNonNull(files)) {
                         List<String> lines = FileUtils.readLines(file, StandardCharsets.UTF_8);
                         lines.forEach(line -> {
@@ -96,7 +99,7 @@ public class LogJobExecuteRecorder implements JobExecuteRecorder {
                                 jobExecDetailService.update(jobExecDetail);
                             }
                         });
-                        FileUtils.moveFile(file, new File(backUpDir, file.getName()));
+                        FileUtils.moveFile(file, new File(backUpCurrentDayRecordFile, file.getName()));
                     }
                 } catch (Exception e) {
                     log.error("reporter job recorder file error, msg: {}", e.getMessage(), e);
