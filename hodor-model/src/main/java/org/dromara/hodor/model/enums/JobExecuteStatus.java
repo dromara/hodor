@@ -9,6 +9,11 @@ package org.dromara.hodor.model.enums;
 public enum JobExecuteStatus {
 
     /**
+     * 任务准备就绪，开始提交执行
+     */
+    READY(-1),
+
+    /**
      * 任务提交成功，等待运行
      */
     PENDING(0),
@@ -76,32 +81,36 @@ public enum JobExecuteStatus {
         throw new IllegalArgumentException("not found status name:" + name);
     }
 
-    public static boolean isFailed(int status) {
-        return FAILED.getStatus() == status;
+    public static boolean isFailed(JobExecuteStatus status) {
+        return FAILED == status;
     }
 
-    public static boolean isSucceed(int status) {
-        return SUCCEEDED.getStatus() == status;
+    public static boolean isSucceed(JobExecuteStatus status) {
+        return SUCCEEDED == status;
     }
 
-    public static boolean isRunning(int status) {
-        return RUNNING.getStatus() == status;
+    public static boolean isRunning(JobExecuteStatus status) {
+        return RUNNING == status;
     }
 
-    public static boolean isPending(int status) {
-        return PENDING.getStatus() == status;
+    public static boolean isPending(JobExecuteStatus status) {
+        return PENDING == status;
     }
 
-    public static boolean isKilled(int status) {
-        return KILLED.getStatus() == status;
+    public static boolean isKilled(JobExecuteStatus status) {
+        return KILLED == status;
     }
 
-    public static boolean isTimeout(int status) {
-        return TIMEOUT.getStatus() == status;
+    public static boolean isTimeout(JobExecuteStatus status) {
+        return TIMEOUT == status;
     }
 
-    public static boolean isError(int status) {
-        return ERROR.getStatus() == status;
+    public static boolean isError(JobExecuteStatus status) {
+        return ERROR == status;
+    }
+
+    public static boolean isFinished(JobExecuteStatus status) {
+        return FINISHED == status || isSucceed(status) || isFailed(status) || isError(status) || isKilled(status) || isTimeout(status);
     }
 
 }
