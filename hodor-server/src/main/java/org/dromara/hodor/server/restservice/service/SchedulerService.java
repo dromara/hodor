@@ -96,7 +96,7 @@ public class SchedulerService {
         // 主节点数据
         if (serverEndpoint.equals(copySet.getLeader())) {
             DataInterval dataInterval = copySet.getDataInterval();
-            HodorScheduler activeScheduler = schedulerManager.createActiveScheduler(copySet.getServerId(), dataInterval);
+            HodorScheduler activeScheduler = schedulerManager.createActiveScheduler(serverEndpoint, copySet.getId(), dataInterval);
             if (activeScheduler.checkExists(jobInfo)) {
                 return HodorResult.success(StringUtils.format("job {} exist in active scheduler {}",
                     JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName()), activeScheduler.getSchedulerName()));
@@ -109,7 +109,7 @@ public class SchedulerService {
         // 备用节点数据
         if (copySet.getServers().contains(serverEndpoint)) {
             DataInterval standbyDataInterval = copySet.getDataInterval();
-            HodorScheduler standbyScheduler = schedulerManager.createStandbyScheduler(copySet.getServerId(), standbyDataInterval);
+            HodorScheduler standbyScheduler = schedulerManager.createStandbyScheduler(serverEndpoint, copySet.getId(), standbyDataInterval);
             if (standbyScheduler.checkExists(jobInfo)) {
                 return HodorResult.success(StringUtils.format("job {} exist in standby scheduler {}",
                     JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName()), standbyScheduler.getSchedulerName()));
@@ -132,6 +132,24 @@ public class SchedulerService {
         }
         // fireBatchJobCreateEvent();
         return HodorResult.success("batch create job success");
+    }
+
+    @RestMethod("copySetLeaderSwitch")
+    public HodorResult<String> copySetLeaderSwitch(boolean activeOrStandbyShift, CopySet copySet) {
+        String serverEndpoint = registryService.getServerEndpoint();
+        List<String> servers = copySet.getServers();
+        if (!servers.contains(serverEndpoint)) {
+            return HodorResult.failure(StringUtils.format("copySet {} servers not contains server {}.", copySet.getId(), serverEndpoint));
+        }
+        // activeOrStandbyShift true: standby -> active, false: active -> standby
+        if (activeOrStandbyShift) {
+            HodorScheduler standbyScheduler = schedulerManager.getStandbyScheduler(schedulerManager.createSchedulerName(serverEndpoint, copySet.getId()));
+            schedulerManager.addActiveScheduler(standbyScheduler);
+        } else {
+            HodorScheduler activeScheduler = schedulerManager.getActiveScheduler(schedulerManager.createSchedulerName(serverEndpoint, copySet.getId()));
+            schedulerManager.addStandByScheduler(activeScheduler);
+        }
+        return HodorResult.success("copySet leader switch success.");
     }
 
     private void resetJobInfo(JobInfo jobInfo) {

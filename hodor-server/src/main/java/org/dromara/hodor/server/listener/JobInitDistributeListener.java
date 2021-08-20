@@ -47,7 +47,7 @@ public class JobInitDistributeListener implements HodorEventListener<HodorMetada
             // 主节点数据区间
             if (serverEndpoint.equals(copySet.getLeader())) {
                 DataInterval dataInterval = copySet.getDataInterval();
-                HodorScheduler activeScheduler = schedulerManager.createActiveScheduler(copySet.getServerId(), dataInterval);
+                HodorScheduler activeScheduler = schedulerManager.createActiveScheduler(serverEndpoint, copySet.getId(), dataInterval);
                 activeScheduler.clear();
                 hodorService.addRunningJob(activeScheduler, dataInterval);
                 return;
@@ -55,7 +55,7 @@ public class JobInitDistributeListener implements HodorEventListener<HodorMetada
             // 备用节点数据
             if (copySet.getServers().contains(serverEndpoint)) {
                 DataInterval standbyDataInterval = copySet.getDataInterval();
-                HodorScheduler standbyScheduler = schedulerManager.createStandbyScheduler(copySet.getServerId(), standbyDataInterval);
+                HodorScheduler standbyScheduler = schedulerManager.createStandbyScheduler(serverEndpoint, copySet.getId(), standbyDataInterval);
                 standbyScheduler.clear();
                 hodorService.addRunningJob(standbyScheduler, standbyDataInterval);
             }

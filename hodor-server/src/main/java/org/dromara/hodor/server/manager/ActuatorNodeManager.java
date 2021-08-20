@@ -33,7 +33,7 @@ import org.dromara.hodor.model.node.NodeInfo;
 @Slf4j
 public class ActuatorNodeManager extends AbstractAsyncEventPublisher<ActuatorInfo> {
 
-    private static final ActuatorNodeManager INSTANCE = new ActuatorNodeManager();
+    private static volatile ActuatorNodeManager INSTANCE;
 
     // groupName -> endpoint set
     private final Map<String, Set<String>> actuatorEndpoints = Maps.newConcurrentMap();
@@ -50,6 +50,13 @@ public class ActuatorNodeManager extends AbstractAsyncEventPublisher<ActuatorInf
     }
 
     public static ActuatorNodeManager getInstance() {
+        if (INSTANCE == null) {
+            synchronized (ActuatorNodeManager.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new ActuatorNodeManager();
+                }
+            }
+        }
         return INSTANCE;
     }
 
@@ -134,6 +141,7 @@ public class ActuatorNodeManager extends AbstractAsyncEventPublisher<ActuatorInf
     public void addActuatorNode(String nodeEndpoint, NodeInfo nodeInfo) {
         ActuatorInfo actuatorInfo = actuatorNodeInfos.computeIfAbsent(nodeEndpoint, k -> ActuatorInfo.builder()
             .nodeEndpoint(nodeEndpoint)
+            .groupNames(Sets.newHashSet())
             .build());
         actuatorInfo.setNodeInfo(nodeInfo);
     }

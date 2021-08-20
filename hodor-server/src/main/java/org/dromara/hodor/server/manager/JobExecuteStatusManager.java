@@ -50,36 +50,48 @@ public enum JobExecuteStatusManager {
     public boolean isRunning(JobKey jobKey) {
         JobExecDetail jobExecDetail = jobExecuteRecorder.getJobExecDetail(jobKey);
         if (jobExecDetail == null
+            || jobExecDetail.getExecuteStatus() != JobExecuteStatus.READY
             || jobExecDetail.getExecuteStatus() != JobExecuteStatus.PENDING
             || jobExecDetail.getExecuteStatus() != JobExecuteStatus.RUNNING) {
             return false;
         }
-        // 否则去执行端查询状态
+        // TODO: 否则去执行端查询状态，并且更新状态
         Host host = Host.of(jobExecDetail.getActuatorEndpoint());
         JobExecuteStatusRequest statusRequest = new JobExecuteStatusRequest();
         statusRequest.setRequestId(jobExecDetail.getId());
         JobExecuteStatusResponse statusResponse = queryExecuteJobStatus(host, statusRequest);
-        return statusResponse != null && statusResponse.getStatus() == JobExecuteStatus.RUNNING;
+        // 未查询到说明当前执行器上面并没有此任务运行
+        if (statusResponse == null) {
+            return false;
+        }
+        if (JobExecuteStatus.isFinished(statusResponse.getStatus())) {
+            removeRunningJob(jobKey);
+        }
+        return statusResponse.getStatus() == JobExecuteStatus.RUNNING;
     }
 
     public void removeRunningJob(JobKey jobKey) {
-        jobExecuteRecorder.removeRunningJob(jobKey);
+        jobExecuteRecorder.removeJobExecDetail(jobKey);
     }
 
     public void addSchedulerStartJob(HodorJobExecutionContext context) {
-        jobExecuteRecorder.recordJobExecDetail(JobExecuteRecorder.OP_INSERT, buildSchedulerStartJobExecDetail(context));
+        JobExecDetail jobExecDetail = buildSchedulerStartJobExecDetail(context);
+        jobExecuteRecorder.recordJobExecDetail(JobExecuteRecorder.OP_INSERT, jobExecDetail);
+        jobExecuteRecorder.addJobExecDetail(jobExecDetail);
     }
 
     public void addSchedulerEndJob(HodorJobExecutionContext context, Host host) {
         JobExecDetail jobExecDetail = buildSchedulerEndJobExecDetail(context, host);
-        jobExecuteRecorder.addSchedulerRunningJob(jobExecDetail);
+        jobExecuteRecorder.addJobExecDetail(jobExecDetail);
         jobExecuteRecorder.recordJobExecDetail(JobExecuteRecorder.OP_UPDATE, jobExecDetail);
     }
 
     public void addFinishJob(JobExecuteResponse jobExecuteResponse) {
-        removeRunningJob(jobExecuteResponse.getJobKey());
-        jobExecuteRecorder.recordJobExecDetail(JobExecuteRecorder.OP_UPDATE,
-            buildFinishJobExecDetail(jobExecuteResponse));
+        JobExecDetail jobExecDetail = buildFinishJobExecDetail(jobExecuteResponse);
+        if (JobExecuteStatus.isFinished(jobExecDetail.getExecuteStatus())) {
+            removeRunningJob(jobExecuteResponse.getJobKey());
+        }
+        jobExecuteRecorder.recordJobExecDetail(JobExecuteRecorder.OP_UPDATE, jobExecDetail);
     }
 
     public JobExecuteStatusResponse queryExecuteJobStatus(Host host, JobExecuteStatusRequest request) {
@@ -116,7 +128,7 @@ public enum JobExecuteStatusManager {
         jobExecDetail.setJobName(jobDesc.getJobName());
         jobExecDetail.setSchedulerEndpoint(StringUtils.splitToList(context.getSchedulerName(), StringUtils.UNDER_LINE_SEPARATOR).get(1));
         jobExecDetail.setScheduleStart(DateUtil.date(new Date()));
-        jobExecDetail.setExecuteStatus(JobExecuteStatus.PENDING);
+        jobExecDetail.setExecuteStatus(JobExecuteStatus.READY);
         return jobExecDetail;
     }
 
@@ -127,6 +139,7 @@ public enum JobExecuteStatusManager {
         jobExecDetail.setJobName(context.getJobKey().getJobName());
         jobExecDetail.setScheduleEnd(DateUtil.date(new Date()));
         jobExecDetail.setActuatorEndpoint(host.getEndpoint());
+        jobExecDetail.setExecuteStatus(JobExecuteStatus.PENDING);
         return jobExecDetail;
     }
 

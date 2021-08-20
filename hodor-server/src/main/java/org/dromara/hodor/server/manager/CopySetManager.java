@@ -24,7 +24,7 @@ public enum CopySetManager {
 
     INSTANCE;
 
-    private final Map<String, CopySet> leaderCopySetMap = Maps.newConcurrentMap();
+    private final Map<String, Set<CopySet>> leaderCopySetMap = Maps.newConcurrentMap();
 
     private final Map<DataInterval, CopySet> dataIntervalCopySetMap = Maps.newConcurrentMap();
 
@@ -49,7 +49,8 @@ public enum CopySetManager {
         servers.sort(Comparable::compareTo);
         for (String leader : servers) {
             if (!isCopySetLeader(leader)) {
-                leaderCopySetMap.put(leader, copySet);
+                Set<CopySet> copySets = leaderCopySetMap.computeIfAbsent(leader, k -> Sets.newHashSet());
+                copySets.add(copySet);
                 return leader;
             }
         }
@@ -76,7 +77,13 @@ public enum CopySetManager {
         return leaderCopySetMap.containsKey(leader);
     }
 
-    public CopySet getLeaderCopySet(String leader) {
+    /**
+     * 获取leader节点的CopySet，有时候一个节点会充当多个CopySet的主节点，一般情况是一个节点充当一个CopySet主节点
+     *
+     * @param leader copy set leader endpoint
+     * @return CopySet Set
+     */
+    public Set<CopySet> getLeaderCopySet(String leader) {
         return leaderCopySetMap.get(leader);
     }
 
