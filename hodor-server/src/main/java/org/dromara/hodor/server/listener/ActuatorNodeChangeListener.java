@@ -48,7 +48,7 @@ public class ActuatorNodeChangeListener implements DataChangeListener, HodorEven
     }
 
     private void changeActuatorGroupData(DataChangeEvent event, String actuatorPath) {
-        log.info("ActuatorGroupChange, eventType: {}, path: {}", event.getType(), actuatorPath);
+        log.debug("ActuatorGroupChange, eventType: {}, path: {}", event.getType(), actuatorPath);
         // path: /actuator/groups/${groupName}/${endpoint}
         List<String> actuatorGroupPath = StringUtils.splitPath(actuatorPath);
         if (actuatorGroupPath.size() != 4) {
@@ -67,7 +67,7 @@ public class ActuatorNodeChangeListener implements DataChangeListener, HodorEven
     }
 
     private void changeActuatorNodeData(DataChangeEvent event, String actuatorPath) {
-        log.info("ActuatorNodeChange, eventType: {}, path: {}", event.getType(), actuatorPath);
+        log.debug("ActuatorNodeChange, eventType: {}, path: {}", event.getType(), actuatorPath);
         // path: /actuator/nodes/${endpoint}
         List<String> actuatorNodePath = StringUtils.splitPath(actuatorPath);
         if (actuatorNodePath.size() != 3) {
