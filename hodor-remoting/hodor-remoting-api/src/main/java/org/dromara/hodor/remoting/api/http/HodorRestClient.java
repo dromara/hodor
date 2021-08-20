@@ -1,13 +1,11 @@
 package org.dromara.hodor.remoting.api.http;
 
 import java.net.ConnectException;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.extension.ExtensionLoader;
-import org.dromara.hodor.common.utils.GsonUtils;
 import org.dromara.hodor.remoting.api.Attribute;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.HodorChannelHandler;
@@ -21,6 +19,7 @@ import org.dromara.hodor.remoting.api.RemotingConst;
  * @author tomgs
  * @since 2021/8/4
  */
+@Slf4j
 public class HodorRestClient {
 
     private static volatile HodorRestClient INSTANCE;
@@ -38,6 +37,16 @@ public class HodorRestClient {
             }
         }
         return INSTANCE;
+    }
+
+    public HodorHttpResponse sendSynHttRequest(final Host host, final HodorHttpRequest request, final Integer readTimeout) {
+        CompletableFuture<HodorHttpResponse> future = sendHttpRequest(host, request);
+        try {
+            return future.get(readTimeout, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            log.error("send http request error, host: {}, body: {}, msg: {}", host, request, e.getMessage(), e);
+        }
+        return null;
     }
 
     public CompletableFuture<HodorHttpResponse> sendHttpRequest(final Host host, final HodorHttpRequest request) {
