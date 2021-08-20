@@ -3,7 +3,6 @@ package org.dromara.hodor.client.core;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.client.ServiceProvider;
 import org.dromara.hodor.common.storage.db.DBOperator;
 
 /**
@@ -21,8 +20,8 @@ public class HodorDatabaseSetup {
 
     private static final String RETRYABLE_MESSAGE_TABLE_NAME = "hodor_retryable_message";
 
-    public HodorDatabaseSetup() {
-        this.dbOperator = ServiceProvider.getInstance().getBean(DBOperator.class);
+    public HodorDatabaseSetup(final DBOperator dbOperator) {
+        this.dbOperator = dbOperator;
     }
 
     /**

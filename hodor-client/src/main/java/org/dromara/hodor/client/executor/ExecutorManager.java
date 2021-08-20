@@ -14,7 +14,7 @@ import org.dromara.hodor.common.executor.HodorRunnable;
  */
 public class ExecutorManager {
 
-    private static final ExecutorManager INSTANCE = new ExecutorManager();
+    private static volatile ExecutorManager INSTANCE;
 
     private final HodorExecutor hodorExecutor;
 
@@ -31,6 +31,13 @@ public class ExecutorManager {
     }
 
     public static ExecutorManager getInstance() {
+        if (INSTANCE == null) {
+            synchronized (ExecutorManager.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new ExecutorManager();
+                }
+            }
+        }
         return INSTANCE;
     }
 

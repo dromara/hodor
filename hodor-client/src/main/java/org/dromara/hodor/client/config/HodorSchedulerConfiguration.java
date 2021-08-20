@@ -50,8 +50,11 @@ public class HodorSchedulerConfiguration {
     }
 
     @Bean
-    public HodorClientInit hodorClientInit() {
-        return new HodorClientInit();
+    public DBOperator dbOperator() {
+        DataSourceConfig dataSourceConfig = properties.getDataSourceConfig();
+        HodorDataSource datasource = ExtensionLoader.getExtensionLoader(HodorDataSource.class, DataSourceConfig.class)
+            .getProtoJoin("datasource", dataSourceConfig);
+        return new DBOperator(datasource.getDataSource());
     }
 
     @Bean
@@ -70,11 +73,8 @@ public class HodorSchedulerConfiguration {
     }
 
     @Bean
-    public DBOperator dbOperator() {
-        DataSourceConfig dataSourceConfig = properties.getDataSourceConfig();
-        HodorDataSource datasource = ExtensionLoader.getExtensionLoader(HodorDataSource.class, DataSourceConfig.class)
-            .getProtoJoin("datasource", dataSourceConfig);
-        return new DBOperator(datasource.getDataSource());
+    public HodorClientInit hodorClientInit() {
+        return new HodorClientInit(dbOperator(), jobRegistrar());
     }
 
 }

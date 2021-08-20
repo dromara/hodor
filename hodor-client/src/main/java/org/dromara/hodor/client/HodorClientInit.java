@@ -9,6 +9,7 @@ import org.dromara.hodor.client.core.HodorDatabaseSetup;
 import org.dromara.hodor.client.executor.ExecutorServer;
 import org.dromara.hodor.client.executor.MsgSender;
 import org.dromara.hodor.common.concurrent.HodorThreadFactory;
+import org.dromara.hodor.common.storage.db.DBOperator;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
@@ -31,18 +32,17 @@ public class HodorClientInit implements ApplicationRunner {
 
     private final HodorDatabaseSetup hodorDatabaseSetup;
 
-    public HodorClientInit() {
+    private final JobRegistrar jobRegistrar;
+
+    public HodorClientInit(final DBOperator dbOperator, final JobRegistrar jobRegistrar) {
         this.interval = System.getProperty("hodor.heartbeat.interval", "5000");
-
         this.executorServer = new ExecutorServer();
-
         this.msgSender = new MsgSender();
-
         this.heartbeatSenderService = new ScheduledThreadPoolExecutor(2,
             HodorThreadFactory.create("hodor-heartbeat-sender", true),
             new ThreadPoolExecutor.DiscardOldestPolicy());
-
-        this.hodorDatabaseSetup = new HodorDatabaseSetup();
+        this.hodorDatabaseSetup = new HodorDatabaseSetup(dbOperator);
+        this.jobRegistrar = jobRegistrar;
     }
 
     @Override
@@ -56,7 +56,7 @@ public class HodorClientInit implements ApplicationRunner {
 
         // start register jobs after executor server start success
         log.info("HodorClient starting register jobs...");
-        registerJobs();
+        jobRegistrar.registerJobs();
 
         // start heartbeat sender server
         log.info("HodorClient starting heartbeat sender server...");
@@ -88,11 +88,6 @@ public class HodorClientInit implements ApplicationRunner {
             }
             heartbeatSender.run();
         }, 3_000, Integer.parseInt(interval), TimeUnit.MILLISECONDS);
-    }
-
-    private void registerJobs() {
-        JobRegistrar jobRegistrar = ServiceProvider.getInstance().getBean(JobRegistrar.class);
-        jobRegistrar.registerJobs();
     }
 
     public void close() {
