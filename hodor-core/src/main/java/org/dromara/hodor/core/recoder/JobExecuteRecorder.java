@@ -111,9 +111,9 @@ public interface JobExecuteRecorder {
 
     JobExecDetail getJobExecDetail(JobKey jobKey);
 
-    void removeRunningJob(JobKey jobKey);
+    void removeJobExecDetail(JobKey jobKey);
 
-    void addSchedulerRunningJob(JobExecDetail jobExecDetail);
+    void addJobExecDetail(JobExecDetail jobExecDetail);
 
     void startReporterJobExecDetail();
 }

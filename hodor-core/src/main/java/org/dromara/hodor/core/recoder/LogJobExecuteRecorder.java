@@ -65,12 +65,12 @@ public class LogJobExecuteRecorder implements JobExecuteRecorder {
     }
 
     @Override
-    public void removeRunningJob(JobKey jobKey) {
+    public void removeJobExecDetail(JobKey jobKey) {
         hodorCacheSource.<JobKey, JobExecDetail>getCacheSource().remove(jobKey);
     }
 
     @Override
-    public void addSchedulerRunningJob(JobExecDetail jobExecDetail) {
+    public void addJobExecDetail(JobExecDetail jobExecDetail) {
         hodorCacheSource.<JobKey, JobExecDetail>getCacheSource()
             .put(JobKey.of(jobExecDetail.getGroupName(), jobExecDetail.getJobName()), jobExecDetail);
     }
