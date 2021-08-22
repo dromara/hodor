@@ -70,12 +70,12 @@ public class SchedulerNodeChangeListener implements DataChangeListener {
 
         String nodeIp = schedulerNodePath.get(2);
         if (event.getType() == DataChangeEvent.Type.NODE_ADDED) {
-            // is master
             manager.addNodeServer(nodeIp);
             if (!leaderService.hasLeader()) {
                 log.info("not exist leader node.");
                 return;
             }
+            // is master
             if (!leaderService.isLeader()) {
                 return;
             }

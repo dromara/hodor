@@ -45,6 +45,8 @@ public class MetadataChangeListener extends AbstractAsyncEventPublisher<HodorMet
             if (metadataManager.isEqual(metadataManager.getMetadata(), hodorMetadata)) {
                 return;
             }
+            //TODO: 只针对当前节点元数据变化的判断，所以如果当前节点元数据有变化则进行相应的更新，这样可以在节点重新上下线时
+            // 避免集群整体的震荡
             metadataManager.loadData(hodorMetadata);
             CopySetManager.getInstance().syncWithMetadata(hodorMetadata);
             notifyJobDistribute(metadataManager);
