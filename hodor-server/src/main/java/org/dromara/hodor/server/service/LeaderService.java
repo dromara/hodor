@@ -55,7 +55,7 @@ public class LeaderService {
      * 当期节点是否为主节点
      */
     public boolean isLeader() {
-        return !registryService.getServerEndpoint().equals(getLeaderEndpoint());
+        return registryService.getServerEndpoint().equals(getLeaderEndpoint());
     }
 
     public String getLeaderEndpoint() {

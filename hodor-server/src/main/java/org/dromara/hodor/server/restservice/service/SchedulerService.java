@@ -96,7 +96,7 @@ public class SchedulerService {
         // 主节点数据
         if (serverEndpoint.equals(copySet.getLeader())) {
             DataInterval dataInterval = copySet.getDataInterval();
-            HodorScheduler activeScheduler = schedulerManager.createActiveScheduler(serverEndpoint, copySet.getId(), dataInterval);
+            HodorScheduler activeScheduler = schedulerManager.createActiveSchedulerIfAbsent(serverEndpoint, copySet.getId(), dataInterval);
             if (activeScheduler.checkExists(jobInfo)) {
                 return HodorResult.success(StringUtils.format("job {} exist in active scheduler {}",
                     JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName()), activeScheduler.getSchedulerName()));
@@ -109,7 +109,7 @@ public class SchedulerService {
         // 备用节点数据
         if (copySet.getServers().contains(serverEndpoint)) {
             DataInterval standbyDataInterval = copySet.getDataInterval();
-            HodorScheduler standbyScheduler = schedulerManager.createStandbyScheduler(serverEndpoint, copySet.getId(), standbyDataInterval);
+            HodorScheduler standbyScheduler = schedulerManager.createStandbySchedulerIfAbsent(serverEndpoint, copySet.getId(), standbyDataInterval);
             if (standbyScheduler.checkExists(jobInfo)) {
                 return HodorResult.success(StringUtils.format("job {} exist in standby scheduler {}",
                     JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName()), standbyScheduler.getSchedulerName()));

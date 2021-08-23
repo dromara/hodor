@@ -1,5 +1,6 @@
 package org.dromara.hodor.server;
 
+import java.util.concurrent.CountDownLatch;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.server.service.HodorService;
 import org.dromara.hodor.server.service.RegistryService;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class HodorServerInit implements ApplicationRunner, ApplicationContextAware {
 
+    private final CountDownLatch latch = new CountDownLatch(1);
     private final RestServerService restServerService;
     private final RegistryService registryService;
     private final HodorService hodorService;
@@ -36,7 +38,7 @@ public class HodorServerInit implements ApplicationRunner, ApplicationContextAwa
     }
 
     @Override
-    public void run(ApplicationArguments args) {
+    public void run(ApplicationArguments args) throws InterruptedException {
         serviceProvider.setApplicationContext(applicationContext);
         // start hodor server
         // start remoting server
@@ -51,12 +53,14 @@ public class HodorServerInit implements ApplicationRunner, ApplicationContextAwa
                 hodorService.stop();
                 registryService.stop();
                 restServerService.stop();
+                latch.countDown();
             } catch (Exception e) {
                 log.error("Error where shutting down remote service.", e);
             }
         }));
 
         log.info("hodor server staring success.");
+        latch.await();
     }
 
     @Override

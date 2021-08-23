@@ -74,7 +74,7 @@ public class HodorService implements HodorLifecycle {
         }
 
         //init data
-        registryService.registrySchedulerNodeListener(new SchedulerNodeChangeListener(schedulerNodeManager, leaderService));
+        registryService.registrySchedulerNodeListener(new SchedulerNodeChangeListener(schedulerNodeManager, this, leaderService, registryService));
         registryService.registryActuatorNodeListener(new ActuatorNodeChangeListener(actuatorNodeManager, registryService));
         registryService.registryMetadataListener(new MetadataChangeListener(this));
         registryService.registryElectLeaderListener(new LeaderElectChangeListener(this));
@@ -95,57 +95,60 @@ public class HodorService implements HodorLifecycle {
 
     public void electLeader() {
         leaderService.electLeader(() -> {
-            log.info("{} to be leader.", registryService.getServerEndpoint());
             actuatorNodeManager.startOfflineActuatorClean();
-            // after to be leader write here
-            List<String> currRunningNodes = registryService.getRunningNodes();
-            if (CollectionUtils.isEmpty(currRunningNodes)) {
-                throw new HodorException("running node count is 0.");
-            }
-            // 至少3个节点才可以使用copy set
-            List<List<String>> copySetNodes = CopySets.buildCopySets(currRunningNodes, Constants.REPLICA_COUNT, Constants.SCATTER_WIDTH);
-            int setsNum = Math.max(copySetNodes.size(), currRunningNodes.size());
-            // distribution copySet
-            List<CopySet> copySets = Lists.newArrayList();
-            for (int i = 0; i < setsNum; i++) {
-                int setsIndex = i % copySetNodes.size();
-                List<String> copySetNode = copySetNodes.get(setsIndex);
-                CopySet copySet = new CopySet();
-                copySet.setId(setsIndex);
-                copySet.setServers(copySetNode);
-                copySets.add(copySet);
-            }
-
-            // get metadata and update
-            int jobCount = jobInfoService.queryAssignableJobCount();
-            int offset = (int) Math.ceil((double) jobCount / setsNum);
-            List<Long> intervalOffsets = Lists.newArrayListWithCapacity(setsNum);
-            for (int i = 0; i < setsNum; i++) {
-                Long hashId = jobInfoService.queryJobHashIdByOffset(offset * i);
-                if (hashId < 0 && i > 0) {
-                    Long preMin = intervalOffsets.get(i - 1);
-                    hashId = preMin + ((Long.MAX_VALUE - preMin) >> 1);
-                }
-                intervalOffsets.add(Math.max(Math.abs(hashId), 0));
-            }
-            // add last one interval offset
-            intervalOffsets.add(Long.MAX_VALUE);
-            for (int i = 0; i < intervalOffsets.size() - 1; i++) {
-                CopySet copySet = copySets.get(i);
-                copySet.setDataInterval(DataInterval.create(intervalOffsets.get(i), intervalOffsets.get(i + 1)));
-                copySet.setLeader(copySetManager.selectLeaderCopySet(copySet));
-            }
-
-            final HodorMetadata metadata = HodorMetadata.builder()
-                .nodes(currRunningNodes)
-                .intervalOffsets(intervalOffsets)
-                .copySets(copySets)
-                .build();
-
-            log.info("HodorMetadata: {}", metadata);
-
-            registryService.createMetadata(metadata);
+            this.createNewHodorMetadata();
         });
+    }
+
+    public void createNewHodorMetadata() {
+        log.info("{} to be leader.", registryService.getServerEndpoint());
+        // after to be leader write here
+        List<String> currRunningNodes = registryService.getRunningNodes();
+        if (CollectionUtils.isEmpty(currRunningNodes)) {
+            throw new HodorException("running node count is 0.");
+        }
+        // 至少3个节点才可以使用copy set
+        List<List<String>> copySetNodes = CopySets.buildCopySets(currRunningNodes, Constants.REPLICA_COUNT, Constants.SCATTER_WIDTH);
+        int setsNum = Math.max(copySetNodes.size(), currRunningNodes.size());
+        // distribution copySet
+        List<CopySet> copySets = Lists.newArrayList();
+        for (int i = 0; i < setsNum; i++) {
+            int setsIndex = i % copySetNodes.size();
+            List<String> copySetNode = copySetNodes.get(setsIndex);
+            CopySet copySet = new CopySet();
+            copySet.setId(setsIndex);
+            copySet.setServers(copySetNode);
+            copySets.add(copySet);
+        }
+
+        // get metadata and update
+        int jobCount = jobInfoService.queryAssignableJobCount();
+        int offset = (int) Math.ceil((double) jobCount / setsNum);
+        List<Long> intervalOffsets = Lists.newArrayListWithCapacity(setsNum);
+        for (int i = 0; i < setsNum; i++) {
+            Long hashId = jobInfoService.queryJobHashIdByOffset(offset * i);
+            if (hashId < 0 && i > 0) {
+                Long preMin = intervalOffsets.get(i - 1);
+                hashId = preMin + ((Long.MAX_VALUE - preMin) >> 1);
+            }
+            intervalOffsets.add(Math.max(Math.abs(hashId), 0));
+        }
+        // add last one interval offset
+        intervalOffsets.add(Long.MAX_VALUE);
+        for (int i = 0; i < intervalOffsets.size() - 1; i++) {
+            CopySet copySet = copySets.get(i);
+            copySet.setDataInterval(DataInterval.create(intervalOffsets.get(i), intervalOffsets.get(i + 1)));
+            copySet.setLeader(copySetManager.selectLeaderCopySet(copySet));
+        }
+
+        final HodorMetadata metadata = HodorMetadata.builder()
+            .intervalOffsets(intervalOffsets)
+            .copySets(copySets)
+            .build();
+
+        log.info("HodorMetadata: {}", metadata);
+
+        registryService.createMetadata(metadata);
     }
 
     public void addRunningJob(final HodorScheduler scheduler, DataInterval dataInterval) {

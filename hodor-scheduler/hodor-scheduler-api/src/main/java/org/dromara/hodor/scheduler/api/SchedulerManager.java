@@ -111,14 +111,14 @@ public final class SchedulerManager {
         return createScheduler(config);
     }
 
-    public HodorScheduler createActiveScheduler(String serverEndpoint, Integer copySetId, DataInterval activeDataInterval) {
+    public HodorScheduler createActiveSchedulerIfAbsent(String serverEndpoint, Integer copySetId, DataInterval activeDataInterval) {
         HodorScheduler activeScheduler = buildScheduler(serverEndpoint, copySetId);
         this.addActiveScheduler(activeScheduler);
         this.addSchedulerDataInterval(activeScheduler.getSchedulerName(), activeDataInterval);
         return activeScheduler;
     }
 
-    public HodorScheduler createStandbyScheduler(String serverEndpoint, Integer copySetId, DataInterval standbyDataInterval) {
+    public HodorScheduler createStandbySchedulerIfAbsent(String serverEndpoint, Integer copySetId, DataInterval standbyDataInterval) {
         HodorScheduler standbyScheduler = buildScheduler(serverEndpoint, copySetId);
         this.addStandByScheduler(standbyScheduler);
         this.addSchedulerDataInterval(standbyScheduler.getSchedulerName(), standbyDataInterval);

@@ -1,25 +1,25 @@
 package org.dromara.hodor.server.listener;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import com.google.common.collect.Lists;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.common.Host;
-import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.model.scheduler.CopySet;
+import org.dromara.hodor.model.scheduler.DataInterval;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
 import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.node.SchedulerNode;
-import org.dromara.hodor.remoting.api.http.HodorHttpRequest;
-import org.dromara.hodor.remoting.api.http.HodorHttpResponse;
-import org.dromara.hodor.remoting.api.http.HodorRestClient;
 import org.dromara.hodor.server.manager.CopySetManager;
 import org.dromara.hodor.server.manager.MetadataManager;
 import org.dromara.hodor.server.manager.SchedulerNodeManager;
+import org.dromara.hodor.server.service.HodorService;
 import org.dromara.hodor.server.service.LeaderService;
+import org.dromara.hodor.server.service.RegistryService;
 
 /**
  * server node change listener
@@ -32,15 +32,24 @@ public class SchedulerNodeChangeListener implements DataChangeListener {
 
     private final SchedulerNodeManager manager;
 
+    private final HodorService hodorService;
+
     private final LeaderService leaderService;
+
+    private final RegistryService registryService;
 
     private final MetadataManager metadataManager;
 
     private final CopySetManager copySetManager;
 
-    public SchedulerNodeChangeListener(final SchedulerNodeManager schedulerNodeManager, final LeaderService leaderService) {
+    private final Map<String, HodorMetadata> pastHodorMetadataMap = new HashMap<>();
+
+    public SchedulerNodeChangeListener(final SchedulerNodeManager schedulerNodeManager, final HodorService hodorService,
+                                       final LeaderService leaderService, final RegistryService registryService) {
         this.manager = schedulerNodeManager;
+        this.hodorService = hodorService;
         this.leaderService = leaderService;
+        this.registryService = registryService;
         this.metadataManager = MetadataManager.getInstance();
         this.copySetManager = CopySetManager.getInstance();
     }
@@ -69,53 +78,94 @@ public class SchedulerNodeChangeListener implements DataChangeListener {
         }
 
         String nodeIp = schedulerNodePath.get(2);
+        HodorMetadata metadata = metadataManager.getMetadata();
         if (event.getType() == DataChangeEvent.Type.NODE_ADDED) {
             manager.addNodeServer(nodeIp);
-            if (!leaderService.hasLeader()) {
-                log.info("not exist leader node.");
+            if (!isMasterNode()) {
                 return;
             }
-            // is master
-            if (!leaderService.isLeader()) {
-                return;
-            }
-            HodorMetadata metadata = metadataManager.getMetadata();
             List<CopySet> copySet = copySetManager.getCopySet(nodeIp);
-            if (CollectionUtil.isEmpty(copySet)) {
-                // 说明是新增的节点
+            HodorMetadata pastHodorMetadata = pastHodorMetadataMap.get(nodeIp);
+            if (CollectionUtil.isEmpty(copySet) && pastHodorMetadata == null) {
+                log.info("scheduler add new server {}.", nodeIp);
+                hodorService.createNewHodorMetadata();
+                /*
+                // 说明是新增的节点，在Replicate和ScatterWidth均为2的情况下，扩容一个节点，其实是拆分最后一个CopySet。
+                // 3节点 [[127.0.0.1:8081, 127.0.0.1:8082], [127.0.0.1:8082, 127.0.0.1:8083], [127.0.0.1:8081, 127.0.0.1:8083]]
+                // 4节点 [[127.0.0.1:8081, 127.0.0.1:8082], [127.0.0.1:8082, 127.0.0.1:8083], [127.0.0.1:8083, 127.0.0.1:8084], [127.0.0.1:8081, 127.0.0.1:8084]]
+                // 这样可以减少其它节点的影响
+                List<CopySet> copySets = metadata.getCopySets();
+                CopySet lastCopySet = copySets.get(copySets.size() - 1);
+                DataInterval dataInterval = lastCopySet.getDataInterval();
+                String leader = lastCopySet.getLeader();
+                List<String> servers = lastCopySet.getServers();
+                if (leader.equals(servers.get(1))) {
+                    lastCopySet.setLeader(servers.get(1));
+                } else {
+                    lastCopySet.setLeader(nodeIp);
+                }
+                long splitDataInterval = dataInterval.getStartInterval() + (dataInterval.getEndInterval() - dataInterval.getStartInterval()) >> 1;
+                lastCopySet.setDataInterval(DataInterval.builder()
+                    .startInterval(dataInterval.getStartInterval())
+                    .endInterval(splitDataInterval)
+                    .build());
+                lastCopySet.setServers(Lists.newArrayList(servers.get(1), nodeIp));
 
+                CopySet newCopySet = new CopySet();
+                newCopySet.setId(lastCopySet.getId() + 1);
+                if (leader.equals(servers.get(0))) {
+                    newCopySet.setLeader(servers.get(0));
+                } else {
+                    lastCopySet.setLeader(nodeIp);
+                }
+                newCopySet.setDataInterval(DataInterval.builder()
+                    .startInterval(splitDataInterval)
+                    .endInterval(dataInterval.getEndInterval())
+                    .build());
+                newCopySet.setServers(Lists.newArrayList(servers.get(0), nodeIp));
+
+                copySets.add(newCopySet);
+                metadata.getIntervalOffsets().add(metadata.getIntervalOffsets().size() - 1, splitDataInterval);
+                registryService.createMetadata(metadata);*/
             } else {
                 // 说明是下线重新上线的节点，将节点重新切换回来，通知之前的active节点切换为standby状态
-
+                if (pastHodorMetadata != null) {
+                    log.info("scheduler server {} recovery.", nodeIp);
+                    log.info("metadata: {}", pastHodorMetadata);
+                    registryService.createMetadata(pastHodorMetadata);
+                }
             }
-
         } else if (event.getType() == DataChangeEvent.Type.NODE_REMOVED) {
             manager.removeNodeServer(nodeIp);
-            if (!leaderService.hasLeader()) {
-                log.info("not exist leader node.");
+            if (!isMasterNode()) {
                 return;
             }
-            // 节点下线，由主节点通知进行CopySet的主从切换
-            if (!leaderService.isLeader()) {
-                return;
-            }
-            Set<CopySet> leaderCopySets = copySetManager.getLeaderCopySet(nodeIp);
-            leaderCopySets.forEach(copySet -> {
-                Optional<String> serverOptional = copySet.getServers()
-                    .stream()
-                    .filter(server -> !server.equals(copySet.getLeader()))
-                    .findAny();
-                serverOptional.ifPresent(server -> {
-                    HodorHttpRequest request = new HodorHttpRequest();
-                    request.setUri("/hodor/scheduler/copySetLeaderSwitch?activeOrStandbyShift=true");
-                    request.setMethod("POST");
-                    request.setContent(SerializeUtils.serialize(copySet));
-                    HodorHttpResponse hodorHttpResponse = HodorRestClient.getInstance().sendSynHttRequest(Host.of(server), request, 3);
-                    log.info("switch result: {}", hodorHttpResponse);
-                });
+            pastHodorMetadataMap.put(nodeIp, BeanUtil.copyProperties(metadata, HodorMetadata.class));
+            List<CopySet> changedCopySet = copySetManager.getCopySet(nodeIp);
+            changedCopySet.forEach(copySet -> {
+                CopySet metadataCopySet = metadata.getCopySets().get(copySet.getId());
+                metadataCopySet.getServers().removeIf(server -> server.equals(nodeIp));
+                if (copySet.getLeader().equals(nodeIp)) {
+                    //String newLeader = copySetManager.selectLeaderCopySet(copySet);
+                    metadataCopySet.getServers().stream().findAny().ifPresent(newLeader -> {
+                        log.info("new leader: {}", newLeader);
+                        metadataCopySet.setLeader(newLeader);
+                    });
+                }
             });
+            // update metadata
+            registryService.createMetadata(metadata);
         }
 
+    }
+
+    public boolean isMasterNode() {
+        if (!leaderService.hasLeader()) {
+            log.info("not exist leader node.");
+            return false;
+        }
+        // 节点下线，由主节点通知进行CopySet的主从切换
+        return leaderService.isLeader();
     }
 
 }

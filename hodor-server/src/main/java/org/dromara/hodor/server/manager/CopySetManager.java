@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.dromara.hodor.common.concurrent.LockUtil;
+import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.model.scheduler.CopySet;
 import org.dromara.hodor.model.scheduler.DataInterval;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
@@ -47,11 +48,11 @@ public enum CopySetManager {
         List<String> servers = copySet.getServers();
         // copy set leader election.
         servers.sort(Comparable::compareTo);
-        for (String leader : servers) {
-            if (!isCopySetLeader(leader)) {
-                Set<CopySet> copySets = leaderCopySetMap.computeIfAbsent(leader, k -> Sets.newHashSet());
+        for (String server : servers) {
+            if (!isCopySetLeader(server) && !StringUtils.equals(copySet.getLeader(), server)) {
+                Set<CopySet> copySets = leaderCopySetMap.computeIfAbsent(server, k -> Sets.newHashSet());
                 copySets.add(copySet);
-                return leader;
+                return server;
             }
         }
         // default copy sets leader
@@ -62,7 +63,10 @@ public enum CopySetManager {
         LockUtil.lockMethod(lock.writeLock(), md -> {
             dataIntervalCopySetMap.clear();
             endpointCopySetListMap.clear();
+            leaderCopySetMap.clear();
             Optional.ofNullable(md.getCopySets()).ifPresent(copySets -> copySets.forEach(copySet -> {
+                leaderCopySetMap.computeIfAbsent(copySet.getLeader(), k -> Sets.newHashSet())
+                    .add(copySet);
                 dataIntervalCopySetMap.put(copySet.getDataInterval(), copySet);
                 copySet.getServers().forEach(server -> {
                     Set<CopySet> sets = endpointCopySetListMap.computeIfAbsent(server, key -> Sets.newHashSet());
