@@ -14,7 +14,7 @@ import lombok.Data;
 @Builder
 public class HodorMetadata {
 
-    private List<String> nodes;
+    //private List<String> nodes;
 
     private List<Long> intervalOffsets;
 
