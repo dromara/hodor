@@ -28,7 +28,7 @@ public class JobRegistrar {
 
     private final Set<String> groupNames = new HashSet<>();
 
-    public void registerJobs() {
+    public void registerJobs() throws Exception {
         log.info("register jobs.");
         Collection<JobInstance> jobs = jobCache.values();
         hodorApiClient.registerJobs(jobs);

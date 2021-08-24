@@ -4,10 +4,11 @@ import cn.hutool.http.HttpUtil;
 import java.util.Collection;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.client.config.HodorProperties;
-import org.dromara.hodor.model.actuator.ActuatorInfo;
-import org.dromara.hodor.model.node.NodeInfo;
-import org.dromara.hodor.model.job.JobInstance;
+import org.dromara.hodor.client.core.ConnectStringParser;
+import org.dromara.hodor.client.core.TrySender;
 import org.dromara.hodor.common.utils.GsonUtils;
+import org.dromara.hodor.model.actuator.ActuatorInfo;
+import org.dromara.hodor.model.job.JobInstance;
 
 /**
  * hodor api client
@@ -18,48 +19,48 @@ import org.dromara.hodor.common.utils.GsonUtils;
 @Slf4j
 public class HodorApiClient {
 
-    private final String registryAddress;
-
     private final String appName;
 
     private final String appKey;
 
+    private final ConnectStringParser connectStringParser;
+
     private final GsonUtils gsonUtils = GsonUtils.getInstance();
 
     public HodorApiClient(final HodorProperties properties) {
-        this.registryAddress = properties.getRegistryAddress();
+        this.connectStringParser = new ConnectStringParser(properties.getRegistryAddress());
         this.appKey = properties.getAppKey();
         this.appName = properties.getAppName();
     }
 
-    public void registerJobs(Collection<JobInstance> jobs) {
-        String result = HttpUtil.createPost(registryAddress + "/scheduler/batchCreateJob")
+    public void registerJobs(Collection<JobInstance> jobs) throws Exception {
+        String result = TrySender.send(connectStringParser, (url) -> HttpUtil.createPost( url + "/scheduler/batchCreateJob")
             .body(gsonUtils.toJson(jobs))
             .header("appName", appName)
             .header("appKey", appKey)
             .execute()
-            .body();
+            .body());
         log.debug("Register jobs result: {}", result);
     }
 
-    public void sendHeartbeat(ActuatorInfo actuatorInfo) {
-        String result = HttpUtil.createPost(registryAddress + "/actuator/heartbeat")
+    public void sendHeartbeat(ActuatorInfo actuatorInfo) throws Exception {
+        String result = TrySender.send(connectStringParser, (url) -> HttpUtil.createPost(url + "/actuator/heartbeat")
             .body(gsonUtils.toJson(actuatorInfo))
             .header("appName", appName)
             .header("appKey", appKey)
             .execute()
-            .body();
+            .body());
         log.debug("Send heartbeat result: {}", result);
     }
 
-    public void sendOfflineMsg(ActuatorInfo actuatorInfo) {
-        String result = HttpUtil.createPost(registryAddress + "/actuator/offline")
+    public void sendOfflineMsg(ActuatorInfo actuatorInfo) throws Exception {
+        String result = TrySender.send(connectStringParser, (url) -> HttpUtil.createPost(url + "/actuator/offline")
             .body(gsonUtils.toJson(actuatorInfo))
             .header("appName", appName)
             .header("appKey", appKey)
             .execute()
-            .body();
-        //log.debug("Send heartbeat result: {}", result);
+            .body());
+        log.debug("Send Offline result: {}", result);
     }
 
 }
