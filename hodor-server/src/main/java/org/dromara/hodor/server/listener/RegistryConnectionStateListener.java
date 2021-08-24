@@ -3,6 +3,7 @@ package org.dromara.hodor.server.listener;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.register.api.ConnectionState;
 import org.dromara.hodor.register.api.ConnectionStateChangeListener;
+import org.dromara.hodor.server.manager.ActuatorNodeManager;
 import org.dromara.hodor.server.service.RegistryService;
 
 /**
@@ -23,14 +24,10 @@ public class RegistryConnectionStateListener implements ConnectionStateChangeLis
     public void stateChanged(ConnectionState newState) {
         if (ConnectionState.SUSPENDED == newState || ConnectionState.LOST == newState) {
             log.error("scheduler {} connection {} from registry.", registryService.getServerEndpoint(), newState);
-            // reconnect
-            // registryService.start();
-            // pause scheduler
-            // TODO: pause scheduler
+            ActuatorNodeManager.getInstance().stopOfflineActuatorClean();
         } else if (ConnectionState.RECONNECTED == newState) {
             log.info("scheduler {} reconnected registry.", registryService.getServerEndpoint());
             registryService.initNode();
-            // TODO: resume scheduler
         }
     }
 

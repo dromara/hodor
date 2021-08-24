@@ -22,7 +22,7 @@ import org.dromara.hodor.server.service.HodorService;
  * @since 2020/7/30
  */
 @Slf4j
-public class JobInitDistributeListener implements HodorEventListener<HodorMetadata> {
+public class HodorSchedulerChangeListener implements HodorEventListener<HodorMetadata> {
 
     private final CopySetManager copySetManager;
 
@@ -30,7 +30,7 @@ public class JobInitDistributeListener implements HodorEventListener<HodorMetada
 
     private final SchedulerManager schedulerManager;
 
-    public JobInitDistributeListener(final HodorService hodorService) {
+    public HodorSchedulerChangeListener(final HodorService hodorService) {
         this.hodorService = hodorService;
         this.copySetManager = CopySetManager.getInstance();
         this.schedulerManager = SchedulerManager.getInstance();
@@ -48,7 +48,7 @@ public class JobInitDistributeListener implements HodorEventListener<HodorMetada
             if (serverEndpoint.equals(copySet.getLeader())) {
                 DataInterval dataInterval = copySet.getDataInterval();
                 HodorScheduler scheduler = schedulerManager.getScheduler(schedulerManager.createSchedulerName(serverEndpoint, copySet.getId()));
-                if (scheduler != null) {
+                if (scheduler != null && scheduler.getNumberOfJobs() > 0) {
                     // check is changed and switch to active
                     DataInterval schedulerDataInterval = schedulerManager.getSchedulerDataInterval(scheduler.getSchedulerName());
                     if (dataInterval.equals(schedulerDataInterval)) {
@@ -64,6 +64,15 @@ public class JobInitDistributeListener implements HodorEventListener<HodorMetada
             // 备用节点数据
             if (copySet.getServers().contains(serverEndpoint)) {
                 DataInterval standbyDataInterval = copySet.getDataInterval();
+                HodorScheduler scheduler = schedulerManager.getScheduler(schedulerManager.createSchedulerName(serverEndpoint, copySet.getId()));
+                if (scheduler != null && scheduler.getNumberOfJobs() > 0) {
+                    // check is changed and switch to active
+                    DataInterval schedulerDataInterval = schedulerManager.getSchedulerDataInterval(scheduler.getSchedulerName());
+                    if (standbyDataInterval.equals(schedulerDataInterval)) {
+                        schedulerManager.addStandByScheduler(scheduler);
+                        return;
+                    }
+                }
                 HodorScheduler standbyScheduler = schedulerManager.createStandbySchedulerIfAbsent(serverEndpoint, copySet.getId(), standbyDataInterval);
                 hodorService.addRunningJob(standbyScheduler, standbyDataInterval);
             }

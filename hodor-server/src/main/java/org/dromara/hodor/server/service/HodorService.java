@@ -135,12 +135,12 @@ public class HodorService implements HodorLifecycle {
         }
         // add last one interval offset
         intervalOffsets.add(Long.MAX_VALUE);
+        copySetManager.clearLeaderCopySet();
         for (int i = 0; i < intervalOffsets.size() - 1; i++) {
             CopySet copySet = copySets.get(i);
             copySet.setDataInterval(DataInterval.create(intervalOffsets.get(i), intervalOffsets.get(i + 1)));
             copySet.setLeader(copySetManager.selectLeaderCopySet(copySet));
         }
-
         final HodorMetadata metadata = HodorMetadata.builder()
             .intervalOffsets(intervalOffsets)
             .copySets(copySets)

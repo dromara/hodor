@@ -1,15 +1,12 @@
 package org.dromara.hodor.server.listener;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.collection.CollectionUtil;
-import com.google.common.collect.Lists;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.model.scheduler.CopySet;
-import org.dromara.hodor.model.scheduler.DataInterval;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
 import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;
@@ -84,12 +81,15 @@ public class SchedulerNodeChangeListener implements DataChangeListener {
             if (!isMasterNode()) {
                 return;
             }
-            List<CopySet> copySet = copySetManager.getCopySet(nodeIp);
+            log.info("scheduler add new server {}.", nodeIp);
+            hodorService.createNewHodorMetadata();
+
+            /*List<CopySet> copySet = copySetManager.getCopySet(nodeIp);
             HodorMetadata pastHodorMetadata = pastHodorMetadataMap.get(nodeIp);
             if (CollectionUtil.isEmpty(copySet) && pastHodorMetadata == null) {
                 log.info("scheduler add new server {}.", nodeIp);
                 hodorService.createNewHodorMetadata();
-                /*
+                *//*
                 // 说明是新增的节点，在Replicate和ScatterWidth均为2的情况下，扩容一个节点，其实是拆分最后一个CopySet。
                 // 3节点 [[127.0.0.1:8081, 127.0.0.1:8082], [127.0.0.1:8082, 127.0.0.1:8083], [127.0.0.1:8081, 127.0.0.1:8083]]
                 // 4节点 [[127.0.0.1:8081, 127.0.0.1:8082], [127.0.0.1:8082, 127.0.0.1:8083], [127.0.0.1:8083, 127.0.0.1:8084], [127.0.0.1:8081, 127.0.0.1:8084]]
@@ -126,7 +126,7 @@ public class SchedulerNodeChangeListener implements DataChangeListener {
 
                 copySets.add(newCopySet);
                 metadata.getIntervalOffsets().add(metadata.getIntervalOffsets().size() - 1, splitDataInterval);
-                registryService.createMetadata(metadata);*/
+                registryService.createMetadata(metadata);*//*
             } else {
                 // 说明是下线重新上线的节点，将节点重新切换回来，通知之前的active节点切换为standby状态
                 if (pastHodorMetadata != null) {
@@ -134,7 +134,7 @@ public class SchedulerNodeChangeListener implements DataChangeListener {
                     log.info("metadata: {}", pastHodorMetadata);
                     registryService.createMetadata(pastHodorMetadata);
                 }
-            }
+            }*/
         } else if (event.getType() == DataChangeEvent.Type.NODE_REMOVED) {
             manager.removeNodeServer(nodeIp);
             if (!isMasterNode()) {

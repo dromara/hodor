@@ -40,7 +40,7 @@ public class MetadataChangeListener extends AbstractAsyncEventPublisher<HodorMet
         this.metadataManager = MetadataManager.getInstance();
         this.copySetManager = CopySetManager.getInstance();
         this.gsonUtils = GsonUtils.getInstance();
-        this.addListener(new JobInitDistributeListener(hodorService), EventType.JOB_INIT_DISTRIBUTE);
+        this.addListener(new HodorSchedulerChangeListener(hodorService), EventType.JOB_INIT_DISTRIBUTE);
     }
 
     @Override
