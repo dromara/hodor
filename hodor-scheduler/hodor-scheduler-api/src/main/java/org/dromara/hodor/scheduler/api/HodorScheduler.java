@@ -21,6 +21,8 @@ public interface HodorScheduler {
 
     void start();
 
+    void standby();
+
     void shutdown();
 
     void config(SchedulerConfig config);
@@ -46,5 +48,7 @@ public interface HodorScheduler {
     boolean isStarted();
 
     boolean isShutdown();
+
+    int getNumberOfJobs();
 
 }

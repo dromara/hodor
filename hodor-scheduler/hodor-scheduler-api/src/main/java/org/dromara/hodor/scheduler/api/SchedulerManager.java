@@ -72,7 +72,7 @@ public final class SchedulerManager {
             activeSchedulerMap.remove(scheduler.getSchedulerName());
             standBySchedulerMap.putIfAbsent(scheduler.getSchedulerName(), scheduler);
             if (scheduler.isStarted()) {
-                scheduler.shutdown();
+                scheduler.standby();
             }
         } finally {
             lock.unlock();

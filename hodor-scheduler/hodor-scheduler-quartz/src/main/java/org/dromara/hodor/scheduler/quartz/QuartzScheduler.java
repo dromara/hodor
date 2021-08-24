@@ -1,5 +1,6 @@
 package org.dromara.hodor.scheduler.quartz;
 
+import cn.hutool.core.util.ReflectUtil;
 import org.dromara.hodor.common.extension.Join;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.scheduler.api.HodorScheduler;
@@ -7,6 +8,7 @@ import org.dromara.hodor.scheduler.api.JobExecutor;
 import org.dromara.hodor.scheduler.api.common.SchedulerConfig;
 import org.dromara.hodor.scheduler.api.exception.HodorSchedulerException;
 import org.quartz.*;
+import org.quartz.core.QuartzSchedulerResources;
 import org.quartz.impl.StdSchedulerFactory;
 
 import java.util.List;
@@ -24,8 +26,9 @@ public class QuartzScheduler implements HodorScheduler {
 
     private String schedulerName;
     private Scheduler scheduler;
-    private final StdSchedulerFactory factory;
+    private org.quartz.core.QuartzScheduler rawScheduler;
     private final ReentrantLock lock;
+    private final StdSchedulerFactory factory;
 
     public QuartzScheduler() {
         factory = new StdSchedulerFactory();
@@ -43,6 +46,7 @@ public class QuartzScheduler implements HodorScheduler {
             this.factory.initialize(getBaseProperties(config));
             this.scheduler = factory.getScheduler();
             this.schedulerName = config.getSchedulerName();
+            this.rawScheduler = (org.quartz.core.QuartzScheduler) ReflectUtil.getFieldValue(scheduler, "sched");
         } catch (SchedulerException e) {
             throw new HodorSchedulerException(e);
         }
@@ -73,6 +77,15 @@ public class QuartzScheduler implements HodorScheduler {
             throw new HodorSchedulerException(e);
         } finally {
             lock.unlock();
+        }
+    }
+
+    @Override
+    public void standby() {
+        try {
+            scheduler.standby();
+        } catch (SchedulerException e) {
+            throw new HodorSchedulerException(e);
         }
     }
 
@@ -201,6 +214,16 @@ public class QuartzScheduler implements HodorScheduler {
     public boolean isShutdown() {
         try {
             return scheduler.isShutdown();
+        } catch (SchedulerException e) {
+            throw new HodorSchedulerException(e);
+        }
+    }
+
+    @Override
+    public int getNumberOfJobs() {
+        try {
+            QuartzSchedulerResources resources = (QuartzSchedulerResources) ReflectUtil.getFieldValue(rawScheduler, "resources");
+            return resources.getJobStore().getNumberOfJobs();
         } catch (SchedulerException e) {
             throw new HodorSchedulerException(e);
         }
