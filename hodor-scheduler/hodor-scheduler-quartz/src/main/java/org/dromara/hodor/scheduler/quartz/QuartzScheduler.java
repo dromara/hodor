@@ -70,9 +70,7 @@ public class QuartzScheduler implements HodorScheduler {
     public void start() {
         lock.lock();
         try {
-            if (!scheduler.isStarted()) {
-                scheduler.start();
-            }
+            scheduler.start();
         } catch (SchedulerException e) {
             throw new HodorSchedulerException(e);
         } finally {
@@ -214,6 +212,15 @@ public class QuartzScheduler implements HodorScheduler {
     public boolean isShutdown() {
         try {
             return scheduler.isShutdown();
+        } catch (SchedulerException e) {
+            throw new HodorSchedulerException(e);
+        }
+    }
+
+    @Override
+    public boolean isStandby() {
+        try {
+            return scheduler.isInStandbyMode();
         } catch (SchedulerException e) {
             throw new HodorSchedulerException(e);
         }

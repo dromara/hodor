@@ -49,6 +49,8 @@ public interface HodorScheduler {
 
     boolean isShutdown();
 
+    boolean isStandby();
+
     int getNumberOfJobs();
 
 }
