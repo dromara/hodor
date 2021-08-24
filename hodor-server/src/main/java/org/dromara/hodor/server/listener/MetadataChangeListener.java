@@ -25,7 +25,7 @@ import org.dromara.hodor.server.service.HodorService;
  * @since 2020/7/23
  */
 @Slf4j
-public class MetadataChangeListener extends AbstractAsyncEventPublisher<HodorMetadata> implements DataChangeListener {
+public class MetadataChangeListener extends AbstractAsyncEventPublisher<List<CopySet>> implements DataChangeListener {
 
     private final HodorService hodorService;
 
@@ -60,7 +60,7 @@ public class MetadataChangeListener extends AbstractAsyncEventPublisher<HodorMet
             // 只针对当前节点元数据变化的判断，所以如果当前节点元数据有变化则进行相应的更新，这样可以在节点重新上下线时
             // 避免集群整体的震荡
             String serverEndpoint = hodorService.getServerEndpoint();
-            List<CopySet> preCopySet = copySetManager.getCopySet(serverEndpoint);
+            List<CopySet> historyCopySet = copySetManager.getCopySet(serverEndpoint);
             // 获取当前节点元数据，校验元数据是否变化
             Map<String, Set<CopySet>> parseMetadata = metadataManager.parseMetadata(hodorMetadata);
             Set<CopySet> copySets = parseMetadata.get(serverEndpoint);
@@ -68,21 +68,21 @@ public class MetadataChangeListener extends AbstractAsyncEventPublisher<HodorMet
                 return;
             }
             List<CopySet> changedCopySet = Lists.newArrayList(copySets);
-            boolean unChanged = CollectionUtil.isEqualList(preCopySet, changedCopySet);
-
+            boolean unChanged = CollectionUtil.isEqualList(historyCopySet, changedCopySet);
+            // 其他节点可能会有变化，所以这里还是需要进行数据的同步处理
             metadataManager.loadData(hodorMetadata);
             copySetManager.syncWithMetadata(hodorMetadata);
             if (!unChanged) {
-                log.info("Server {} copySet metadata is changed, pre:{}, changed:{}.", serverEndpoint, preCopySet, changedCopySet);
-                notifyJobDistribute(metadataManager);
+                log.info("Server {} copySet metadata is changed, pre:{}, changed:{}.", serverEndpoint, historyCopySet, changedCopySet);
+                notifyDispatchJob(changedCopySet);
             }
         } else if (event.getType() == DataChangeEvent.Type.NODE_REMOVED) {
             log.warn("metadata path {} removed.", event.getPath());
         }
     }
 
-    private void notifyJobDistribute(MetadataManager metadataManager) {
-        this.publish(metadataManager.getMetadata(), EventType.JOB_INIT_DISTRIBUTE);
+    private void notifyDispatchJob(List<CopySet> changedCopySet) {
+        this.publish(changedCopySet, EventType.JOB_INIT_DISTRIBUTE);
     }
 
 }

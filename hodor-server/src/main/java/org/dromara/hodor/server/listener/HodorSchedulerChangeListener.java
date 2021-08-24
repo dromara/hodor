@@ -1,19 +1,18 @@
 package org.dromara.hodor.server.listener;
 
 import cn.hutool.core.collection.CollectionUtil;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.event.HodorEventListener;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.model.scheduler.CopySet;
 import org.dromara.hodor.model.scheduler.DataInterval;
-import org.dromara.hodor.model.scheduler.HodorMetadata;
 import org.dromara.hodor.scheduler.api.HodorScheduler;
 import org.dromara.hodor.scheduler.api.SchedulerManager;
 import org.dromara.hodor.scheduler.api.exception.HodorSchedulerException;
-import org.dromara.hodor.server.manager.CopySetManager;
 import org.dromara.hodor.server.service.HodorService;
+
+import java.util.List;
 
 /**
  * job distribute listener
@@ -22,9 +21,7 @@ import org.dromara.hodor.server.service.HodorService;
  * @since 2020/7/30
  */
 @Slf4j
-public class HodorSchedulerChangeListener implements HodorEventListener<HodorMetadata> {
-
-    private final CopySetManager copySetManager;
+public class HodorSchedulerChangeListener implements HodorEventListener<List<CopySet>> {
 
     private final HodorService hodorService;
 
@@ -32,14 +29,13 @@ public class HodorSchedulerChangeListener implements HodorEventListener<HodorMet
 
     public HodorSchedulerChangeListener(final HodorService hodorService) {
         this.hodorService = hodorService;
-        this.copySetManager = CopySetManager.getInstance();
         this.schedulerManager = SchedulerManager.getInstance();
     }
 
     @Override
-    public void onEvent(final Event<HodorMetadata> event) {
+    public void onEvent(final Event<List<CopySet>> event) {
+        List<CopySet> copySetList = event.getValue();
         String serverEndpoint = hodorService.getServerEndpoint();
-        List<CopySet> copySetList = copySetManager.getCopySet(serverEndpoint);
         if (CollectionUtil.isEmpty(copySetList)) {
             throw new HodorSchedulerException(StringUtils.format("not found copy set by endpoint {}.", serverEndpoint));
         }
