@@ -22,4 +22,9 @@ public interface EventType {
      */
     String JOB_UPDATE_DISTRIBUTE = "jobUpdateDistribute";
 
+    /**
+     * 任务删除事件
+     */
+    String JOB_DELETE_DISTRIBUTE = "jobDeleteDistribute";
+
 }
