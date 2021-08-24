@@ -2,21 +2,22 @@ package org.dromara.hodor.server.listener;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.Lists;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.event.AbstractAsyncEventPublisher;
+import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.utils.GsonUtils;
 import org.dromara.hodor.model.scheduler.CopySet;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
 import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.node.SchedulerNode;
-import org.dromara.hodor.server.common.EventType;
 import org.dromara.hodor.server.manager.CopySetManager;
 import org.dromara.hodor.server.manager.MetadataManager;
 import org.dromara.hodor.server.service.HodorService;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * metadata change listener
@@ -40,7 +41,7 @@ public class MetadataChangeListener extends AbstractAsyncEventPublisher<List<Cop
         this.metadataManager = MetadataManager.getInstance();
         this.copySetManager = CopySetManager.getInstance();
         this.gsonUtils = GsonUtils.getInstance();
-        this.addListener(new HodorSchedulerChangeListener(hodorService), EventType.JOB_INIT_DISTRIBUTE);
+        this.addListener(new HodorSchedulerChangeListener(hodorService));
     }
 
     @Override
@@ -82,7 +83,7 @@ public class MetadataChangeListener extends AbstractAsyncEventPublisher<List<Cop
     }
 
     private void notifyDispatchJob(List<CopySet> changedCopySet) {
-        this.publish(changedCopySet, EventType.JOB_INIT_DISTRIBUTE);
+        this.publish(Event.create(changedCopySet));
     }
 
 }
