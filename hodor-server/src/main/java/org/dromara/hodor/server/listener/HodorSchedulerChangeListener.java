@@ -46,19 +46,20 @@ public class HodorSchedulerChangeListener implements HodorEventListener<HodorMet
         copySetList.forEach(copySet -> {
             // 主节点数据区间
             if (serverEndpoint.equals(copySet.getLeader())) {
-                DataInterval dataInterval = copySet.getDataInterval();
+                DataInterval activeDataInterval = copySet.getDataInterval();
                 HodorScheduler scheduler = schedulerManager.getScheduler(schedulerManager.createSchedulerName(serverEndpoint, copySet.getId()));
                 if (scheduler != null && scheduler.getNumberOfJobs() > 0) {
                     // check is changed and switch to active
                     DataInterval schedulerDataInterval = schedulerManager.getSchedulerDataInterval(scheduler.getSchedulerName());
-                    if (dataInterval.equals(schedulerDataInterval)) {
+                    if (activeDataInterval.equals(schedulerDataInterval)) {
                         schedulerManager.addActiveScheduler(scheduler);
                         return;
                     }
                 }
-                HodorScheduler activeScheduler = schedulerManager.createActiveSchedulerIfAbsent(serverEndpoint, copySet.getId(), dataInterval);
+                // rebuild scheduler
+                HodorScheduler activeScheduler = schedulerManager.createActiveSchedulerIfAbsent(serverEndpoint, copySet.getId(), activeDataInterval);
                 activeScheduler.clear();
-                hodorService.addRunningJob(activeScheduler, dataInterval);
+                hodorService.addRunningJob(activeScheduler, activeDataInterval);
                 return;
             }
             // 备用节点数据
@@ -73,7 +74,9 @@ public class HodorSchedulerChangeListener implements HodorEventListener<HodorMet
                         return;
                     }
                 }
+                // rebuild scheduler
                 HodorScheduler standbyScheduler = schedulerManager.createStandbySchedulerIfAbsent(serverEndpoint, copySet.getId(), standbyDataInterval);
+                standbyScheduler.clear();
                 hodorService.addRunningJob(standbyScheduler, standbyDataInterval);
             }
         });

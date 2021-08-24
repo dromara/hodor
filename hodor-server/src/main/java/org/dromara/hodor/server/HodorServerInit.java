@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class HodorServerInit implements ApplicationRunner, ApplicationContextAware {
 
-    private final CountDownLatch latch = new CountDownLatch(1);
+    private final CountDownLatch aliveLatch = new CountDownLatch(1);
     private final RestServerService restServerService;
     private final RegistryService registryService;
     private final HodorService hodorService;
@@ -53,14 +53,14 @@ public class HodorServerInit implements ApplicationRunner, ApplicationContextAwa
                 hodorService.stop();
                 registryService.stop();
                 restServerService.stop();
-                latch.countDown();
+                aliveLatch.countDown();
             } catch (Exception e) {
                 log.error("Error where shutting down remote service.", e);
             }
         }));
 
         log.info("hodor server staring success.");
-        latch.await();
+        aliveLatch.await();
     }
 
     @Override
