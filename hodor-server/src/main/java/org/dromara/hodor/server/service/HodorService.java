@@ -116,7 +116,8 @@ public class HodorService implements HodorLifecycle {
             int setsIndex = i % copySetNodes.size();
             List<String> copySetNode = copySetNodes.get(setsIndex);
             CopySet copySet = new CopySet();
-            copySet.setId(setsIndex);
+            // FixBug: 这个地方CopySet的数量可能会小于setsNum的大小，所以可能会重用同一个CopySet节点，所以这里的id不能使用setsIndex，而应该使用setsNum下标
+            copySet.setId(i);
             copySet.setServers(copySetNode);
             copySets.add(copySet);
         }
