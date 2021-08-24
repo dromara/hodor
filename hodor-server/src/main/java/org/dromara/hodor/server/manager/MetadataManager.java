@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
+import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.model.scheduler.CopySet;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
 
@@ -45,12 +46,12 @@ public enum MetadataManager {
 
     public Map<String, Set<CopySet>> parseMetadata(final HodorMetadata metadata) {
         Map<String, Set<CopySet>> endpointCopySetListMap = new HashMap<>();
-        Optional.ofNullable(metadata.getCopySets()).ifPresent(copySets -> copySets.forEach(copySet -> {
-            copySet.getServers().forEach(server -> {
-                Set<CopySet> sets = endpointCopySetListMap.computeIfAbsent(server, key -> Sets.newHashSet());
-                sets.add(copySet);
-            });
-        }));
+        Optional.ofNullable(metadata.getCopySets())
+            .ifPresent(copySets -> copySets.forEach(copySet ->
+                copySet.getServers().forEach(server -> {
+                    Set<CopySet> sets = endpointCopySetListMap.computeIfAbsent(server, key -> Sets.newHashSet());
+                    sets.add(copySet);
+                })));
         return endpointCopySetListMap;
     }
 
@@ -64,6 +65,10 @@ public enum MetadataManager {
         }
 
         return oldValue.equals(newValue);
+    }
+
+    public HodorMetadata cloneHodorMetadata() {
+        return SerializeUtils.deserialize(SerializeUtils.serialize(metadata), HodorMetadata.class);
     }
 
 }
