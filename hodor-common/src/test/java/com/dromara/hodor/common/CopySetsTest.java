@@ -14,6 +14,14 @@ import org.junit.Test;
 public class CopySetsTest {
 
     @Test
+    public void testUseCopySets0() {
+        List<String> nodes = new ArrayList<>();
+        nodes.add("127.0.0.1:8081");
+        List<List<String>> copySets = CopySets.buildCopySets(nodes, 2, 2);
+        System.out.println(copySets); // [[127.0.0.1, 127.0.0.2], [127.0.0.2, 127.0.0.3], [127.0.0.1, 127.0.0.3]]
+    }
+
+    @Test
     public void testUseCopySets1() {
         List<String> nodes = new ArrayList<>();
         nodes.add("127.0.0.1:8081");
@@ -29,6 +37,7 @@ public class CopySetsTest {
         nodes.add("127.0.0.1");
         nodes.add("127.0.0.2");
         nodes.add("127.0.0.3");
+        nodes.add("127.0.0.4");
         List<List<String>> copySets = CopySets.buildCopySets(nodes, 2, 2);
         System.out.println(copySets); // [[127.0.0.1, 127.0.0.2], [127.0.0.2, 127.0.0.3], [127.0.0.1, 127.0.0.3]]
     }
