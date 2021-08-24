@@ -112,4 +112,8 @@ public enum CopySetManager {
             endpoint);
     }
 
+    public void clearLeaderCopySet() {
+        leaderCopySetMap.clear();
+    }
+
 }
