@@ -1,9 +1,6 @@
 package org.dromara.hodor.server.listener;
 
-import cn.hutool.core.bean.BeanUtil;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.model.scheduler.CopySet;
@@ -39,8 +36,6 @@ public class SchedulerNodeChangeListener implements DataChangeListener {
 
     private final CopySetManager copySetManager;
 
-    private final Map<String, HodorMetadata> pastHodorMetadataMap = new HashMap<>();
-
     public SchedulerNodeChangeListener(final SchedulerNodeManager schedulerNodeManager, final HodorService hodorService,
                                        final LeaderService leaderService, final RegistryService registryService) {
         this.manager = schedulerNodeManager;
@@ -60,6 +55,11 @@ public class SchedulerNodeChangeListener implements DataChangeListener {
          * 4、这里采用高可用的方式，在切换的时候为了让任务快速恢复继续执行，则可能会出现元数据的不一致性，此后根据异常检测线程去执行任务的异常检测进行任务补偿
          * 5、在恢复时为了保证任务的继续执行，可能会两个任务同时执行，但是通过在执行检测任务是否正在执行，去保证任务同一时间执行一次
          * 6、如果有主节点说明集群已经启动成功，否则集群为失效状态
+         *
+         *  说明是新增的节点，在Replicate和ScatterWidth均为2的情况下，扩容一个节点，其实是拆分最后一个CopySet。
+         *  3节点 [[127.0.0.1:8081, 127.0.0.1:8082], [127.0.0.1:8082, 127.0.0.1:8083], [127.0.0.1:8081, 127.0.0.1:8083]]
+         *  4节点 [[127.0.0.1:8081, 127.0.0.1:8082], [127.0.0.1:8082, 127.0.0.1:8083], [127.0.0.1:8083, 127.0.0.1:8084], [127.0.0.1:8081, 127.0.0.1:8084]]
+         *  这样可以减少其它节点的影响
          */
         // path /scheduler/nodes/${node_ip}
         String nodePath = event.getPath();
@@ -75,7 +75,6 @@ public class SchedulerNodeChangeListener implements DataChangeListener {
         }
 
         String nodeIp = schedulerNodePath.get(2);
-        HodorMetadata metadata = metadataManager.getMetadata();
         if (event.getType() == DataChangeEvent.Type.NODE_ADDED) {
             manager.addNodeServer(nodeIp);
             if (!isMasterNode()) {
@@ -83,74 +82,20 @@ public class SchedulerNodeChangeListener implements DataChangeListener {
             }
             log.info("scheduler add new server {}.", nodeIp);
             hodorService.createNewHodorMetadata();
-
-            /*List<CopySet> copySet = copySetManager.getCopySet(nodeIp);
-            HodorMetadata pastHodorMetadata = pastHodorMetadataMap.get(nodeIp);
-            if (CollectionUtil.isEmpty(copySet) && pastHodorMetadata == null) {
-                log.info("scheduler add new server {}.", nodeIp);
-                hodorService.createNewHodorMetadata();
-                *//*
-                // 说明是新增的节点，在Replicate和ScatterWidth均为2的情况下，扩容一个节点，其实是拆分最后一个CopySet。
-                // 3节点 [[127.0.0.1:8081, 127.0.0.1:8082], [127.0.0.1:8082, 127.0.0.1:8083], [127.0.0.1:8081, 127.0.0.1:8083]]
-                // 4节点 [[127.0.0.1:8081, 127.0.0.1:8082], [127.0.0.1:8082, 127.0.0.1:8083], [127.0.0.1:8083, 127.0.0.1:8084], [127.0.0.1:8081, 127.0.0.1:8084]]
-                // 这样可以减少其它节点的影响
-                List<CopySet> copySets = metadata.getCopySets();
-                CopySet lastCopySet = copySets.get(copySets.size() - 1);
-                DataInterval dataInterval = lastCopySet.getDataInterval();
-                String leader = lastCopySet.getLeader();
-                List<String> servers = lastCopySet.getServers();
-                if (leader.equals(servers.get(1))) {
-                    lastCopySet.setLeader(servers.get(1));
-                } else {
-                    lastCopySet.setLeader(nodeIp);
-                }
-                long splitDataInterval = dataInterval.getStartInterval() + (dataInterval.getEndInterval() - dataInterval.getStartInterval()) >> 1;
-                lastCopySet.setDataInterval(DataInterval.builder()
-                    .startInterval(dataInterval.getStartInterval())
-                    .endInterval(splitDataInterval)
-                    .build());
-                lastCopySet.setServers(Lists.newArrayList(servers.get(1), nodeIp));
-
-                CopySet newCopySet = new CopySet();
-                newCopySet.setId(lastCopySet.getId() + 1);
-                if (leader.equals(servers.get(0))) {
-                    newCopySet.setLeader(servers.get(0));
-                } else {
-                    lastCopySet.setLeader(nodeIp);
-                }
-                newCopySet.setDataInterval(DataInterval.builder()
-                    .startInterval(splitDataInterval)
-                    .endInterval(dataInterval.getEndInterval())
-                    .build());
-                newCopySet.setServers(Lists.newArrayList(servers.get(0), nodeIp));
-
-                copySets.add(newCopySet);
-                metadata.getIntervalOffsets().add(metadata.getIntervalOffsets().size() - 1, splitDataInterval);
-                registryService.createMetadata(metadata);*//*
-            } else {
-                // 说明是下线重新上线的节点，将节点重新切换回来，通知之前的active节点切换为standby状态
-                if (pastHodorMetadata != null) {
-                    log.info("scheduler server {} recovery.", nodeIp);
-                    log.info("metadata: {}", pastHodorMetadata);
-                    registryService.createMetadata(pastHodorMetadata);
-                }
-            }*/
         } else if (event.getType() == DataChangeEvent.Type.NODE_REMOVED) {
             manager.removeNodeServer(nodeIp);
             if (!isMasterNode()) {
                 return;
             }
-            pastHodorMetadataMap.put(nodeIp, BeanUtil.copyProperties(metadata, HodorMetadata.class));
+            log.info("scheduler remove server {}.", nodeIp);
+            HodorMetadata metadata = metadataManager.cloneHodorMetadata();
             List<CopySet> changedCopySet = copySetManager.getCopySet(nodeIp);
             changedCopySet.forEach(copySet -> {
                 CopySet metadataCopySet = metadata.getCopySets().get(copySet.getId());
                 metadataCopySet.getServers().removeIf(server -> server.equals(nodeIp));
                 if (copySet.getLeader().equals(nodeIp)) {
-                    //String newLeader = copySetManager.selectLeaderCopySet(copySet);
-                    metadataCopySet.getServers().stream().findAny().ifPresent(newLeader -> {
-                        log.info("new leader: {}", newLeader);
-                        metadataCopySet.setLeader(newLeader);
-                    });
+                    // String newLeader = copySetManager.selectLeaderCopySet(copySet);
+                    metadataCopySet.getServers().stream().findAny().ifPresent(metadataCopySet::setLeader);
                 }
             });
             // update metadata
