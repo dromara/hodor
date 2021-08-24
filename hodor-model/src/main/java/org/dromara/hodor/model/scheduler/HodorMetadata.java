@@ -2,7 +2,7 @@ package org.dromara.hodor.model.scheduler;
 
 import java.util.List;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
 /**
  * hodor metadata
@@ -10,14 +10,12 @@ import lombok.Data;
  * @author tomgs
  * @since 2020/7/7
  */
-@Data
+@Getter
 @Builder
 public class HodorMetadata {
 
-    //private List<String> nodes;
+    private final List<Long> intervalOffsets;
 
-    private List<Long> intervalOffsets;
-
-    private List<CopySet> copySets;
+    private final List<CopySet> copySets;
 
 }
