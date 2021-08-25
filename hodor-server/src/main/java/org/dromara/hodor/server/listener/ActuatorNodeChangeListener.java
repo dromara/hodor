@@ -1,6 +1,5 @@
 package org.dromara.hodor.server.listener;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.event.Event;
@@ -58,7 +57,7 @@ public class ActuatorNodeChangeListener implements DataChangeListener, HodorEven
         String groupName = actuatorGroupPath.get(2);
         String nodeEndpoint = actuatorGroupPath.get(3);
         if (event.getType() == DataChangeEvent.Type.NODE_UPDATED || event.getType() == DataChangeEvent.Type.NODE_ADDED) {
-            long lastHeartbeat = Long.parseLong(new String(event.getData(), StandardCharsets.UTF_8));
+            long lastHeartbeat = Long.parseLong(StringUtils.decodeString(event.getData()));
             actuatorNodeManager.addActuatorNodeInfo(groupName, nodeEndpoint, lastHeartbeat);
             actuatorNodeManager.addActuatorEndpoint(groupName, nodeEndpoint);
         } else if (event.getType() == DataChangeEvent.Type.NODE_REMOVED) {
