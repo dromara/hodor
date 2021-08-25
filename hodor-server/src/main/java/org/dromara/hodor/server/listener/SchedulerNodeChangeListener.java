@@ -12,7 +12,6 @@ import org.dromara.hodor.server.manager.CopySetManager;
 import org.dromara.hodor.server.manager.MetadataManager;
 import org.dromara.hodor.server.manager.SchedulerNodeManager;
 import org.dromara.hodor.server.service.HodorService;
-import org.dromara.hodor.server.service.LeaderService;
 import org.dromara.hodor.server.service.RegistryService;
 
 /**
@@ -28,19 +27,15 @@ public class SchedulerNodeChangeListener implements DataChangeListener {
 
     private final HodorService hodorService;
 
-    private final LeaderService leaderService;
-
     private final RegistryService registryService;
 
     private final MetadataManager metadataManager;
 
     private final CopySetManager copySetManager;
 
-    public SchedulerNodeChangeListener(final SchedulerNodeManager schedulerNodeManager, final HodorService hodorService,
-                                       final LeaderService leaderService, final RegistryService registryService) {
+    public SchedulerNodeChangeListener(final SchedulerNodeManager schedulerNodeManager, final HodorService hodorService, final RegistryService registryService) {
         this.manager = schedulerNodeManager;
         this.hodorService = hodorService;
-        this.leaderService = leaderService;
         this.registryService = registryService;
         this.metadataManager = MetadataManager.getInstance();
         this.copySetManager = CopySetManager.getInstance();
@@ -77,14 +72,14 @@ public class SchedulerNodeChangeListener implements DataChangeListener {
         String nodeIp = schedulerNodePath.get(2);
         if (event.getType() == DataChangeEvent.Type.NODE_ADDED) {
             manager.addNodeServer(nodeIp);
-            if (!isMasterNode()) {
+            if (!hodorService.isMasterNode()) {
                 return;
             }
             log.info("scheduler add new server {}.", nodeIp);
             hodorService.createNewHodorMetadata();
         } else if (event.getType() == DataChangeEvent.Type.NODE_REMOVED) {
             manager.removeNodeServer(nodeIp);
-            if (!isMasterNode()) {
+            if (!hodorService.isMasterNode()) {
                 return;
             }
             log.info("scheduler remove server {}.", nodeIp);
@@ -102,15 +97,6 @@ public class SchedulerNodeChangeListener implements DataChangeListener {
             registryService.createMetadata(metadata);
         }
 
-    }
-
-    public boolean isMasterNode() {
-        if (!leaderService.hasLeader()) {
-            log.info("not exist leader node.");
-            return false;
-        }
-        // 节点下线，由主节点通知进行CopySet的主从切换
-        return leaderService.isLeader();
     }
 
 }

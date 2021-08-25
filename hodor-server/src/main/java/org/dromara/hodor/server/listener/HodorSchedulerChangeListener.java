@@ -1,6 +1,6 @@
 package org.dromara.hodor.server.listener;
 
-import cn.hutool.core.collection.CollectionUtil;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.event.HodorEventListener;
@@ -9,10 +9,8 @@ import org.dromara.hodor.model.scheduler.CopySet;
 import org.dromara.hodor.model.scheduler.DataInterval;
 import org.dromara.hodor.scheduler.api.HodorScheduler;
 import org.dromara.hodor.scheduler.api.SchedulerManager;
-import org.dromara.hodor.scheduler.api.exception.HodorSchedulerException;
+import org.dromara.hodor.server.common.EventType;
 import org.dromara.hodor.server.service.HodorService;
-
-import java.util.List;
 
 /**
  * job distribute listener
@@ -34,11 +32,26 @@ public class HodorSchedulerChangeListener implements HodorEventListener<List<Cop
 
     @Override
     public void onEvent(final Event<List<CopySet>> event) {
+        if (EventType.SCHEDULER_DELETE.equals(event.getEventType())) {
+            schedulerDelete(event);
+            return;
+        }
+        if (EventType.SCHEDULER_UPDATE.equals(event.getEventType())) {
+            schedulerUpdate(event);
+            return;
+        }
+        throw new IllegalArgumentException(StringUtils.format("event type {} for HodorSchedulerChangeListener is illegal.", event.getEventType()));
+    }
+
+    private void schedulerDelete(Event<List<CopySet>> event) {
+        List<CopySet> purgeCopySets = event.getValue();
+        String serverEndpoint = hodorService.getServerEndpoint();
+        purgeCopySets.forEach(copySet -> schedulerManager.shutdownScheduler(schedulerManager.createSchedulerName(serverEndpoint, copySet.getId())));
+    }
+
+    private void schedulerUpdate(Event<List<CopySet>> event) {
         List<CopySet> copySetList = event.getValue();
         String serverEndpoint = hodorService.getServerEndpoint();
-        if (CollectionUtil.isEmpty(copySetList)) {
-            throw new HodorSchedulerException(StringUtils.format("not found copy set by endpoint {}.", serverEndpoint));
-        }
         copySetList.forEach(copySet -> {
             // 主节点数据区间
             if (serverEndpoint.equals(copySet.getLeader())) {
