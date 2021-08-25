@@ -43,6 +43,8 @@ public class LogJobExecuteRecorder implements JobExecuteRecorder {
 
     private final int interval = 3;
 
+    private boolean isStart = false;
+
     public LogJobExecuteRecorder(final String logDir,
                                  final JobExecDetailService jobExecDetailService,
                                  final HodorCacheSource hodorCacheSource) {
@@ -77,9 +79,10 @@ public class LogJobExecuteRecorder implements JobExecuteRecorder {
 
     @Override
     public void startReporterJobExecDetail() {
+        isStart = true;
         final FileFilter fileFilter = new NotFileFilter(new NameFileFilter(loggerName));
         final Thread reporterThread = new Thread(() -> {
-            while (true) {
+            while (isStart) {
                 try {
                     //Map<Long, JobExecDetail> insertMap = Maps.newHashMap();
                     //Map<Long, JobExecDetail> updateMap = Maps.newHashMap();
@@ -107,8 +110,13 @@ public class LogJobExecuteRecorder implements JobExecuteRecorder {
                 ThreadUtils.sleep(TimeUnit.SECONDS, interval);
             }
         }, "job-exec-detail-reporter");
-        reporterThread.setDaemon(true);
         reporterThread.start();
+    }
+
+    @Override
+    public void stopReporterJobExecDetail() {
+        log.info("stop reporter job exec detail record ....");
+        this.isStart = false;
     }
 
 }

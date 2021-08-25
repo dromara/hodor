@@ -116,4 +116,6 @@ public interface JobExecuteRecorder {
     void addJobExecDetail(JobExecDetail jobExecDetail);
 
     void startReporterJobExecDetail();
+
+    void stopReporterJobExecDetail();
 }
