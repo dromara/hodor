@@ -19,6 +19,7 @@ package org.dromara.hodor.common.utils;
 
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.StrUtil;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.apache.commons.text.TextStringBuilder;
 
@@ -89,6 +90,10 @@ public final class StringUtils extends org.apache.commons.lang3.StringUtils {
 
     public static TextStringBuilder getStringBuilder() {
         return new TextStringBuilder();
+    }
+
+    public static String decodeString(byte[] data) {
+        return toEncodedString(data, StandardCharsets.UTF_8);
     }
 
 }
