@@ -26,6 +26,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.util.ReferenceCountUtil;
+import java.util.function.Function;
 import org.dromara.hodor.remoting.api.Attribute;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.HodorChannelHandler;
@@ -91,12 +93,12 @@ public class NettyChannelHandler extends ChannelDuplexHandler {
             return;
         }
         if (isHttpProtocol() && msg instanceof FullHttpRequest) {
-            HodorHttpRequest hodorHttpRequest = HttpMessageWrapper.requestWrapper((FullHttpRequest) msg);
+            HodorHttpRequest hodorHttpRequest = getAutoReleaseMsg(e -> HttpMessageWrapper.requestWrapper((FullHttpRequest) e), msg);
             channelHandler.received(channel, hodorHttpRequest);
             return;
         }
         if (isHttpProtocol() && msg instanceof FullHttpResponse) {
-            HodorHttpResponse hodorHttpResponse = HttpMessageWrapper.responseWrapper((FullHttpResponse) msg);
+            HodorHttpResponse hodorHttpResponse = getAutoReleaseMsg(e -> HttpMessageWrapper.responseWrapper((FullHttpResponse) e), msg);
             channelHandler.received(channel, hodorHttpResponse);
             return;
         }
@@ -112,12 +114,12 @@ public class NettyChannelHandler extends ChannelDuplexHandler {
             return;
         }
         if (isHttpProtocol() && msg instanceof HodorHttpRequest) {
-            FullHttpRequest rawHttpRequest = HttpMessageWrapper.requestRawWrapper((HodorHttpRequest) msg);
+            FullHttpRequest rawHttpRequest = getAutoReleaseMsg(e -> HttpMessageWrapper.requestRawWrapper((HodorHttpRequest) e), msg);
             ctx.writeAndFlush(rawHttpRequest);
             return;
         }
         if (isHttpProtocol() && msg instanceof HodorHttpResponse) {
-            FullHttpResponse httpResponse = HttpMessageWrapper.responseRawWrapper((HodorHttpResponse) msg);
+            FullHttpResponse httpResponse = getAutoReleaseMsg(e -> HttpMessageWrapper.responseRawWrapper((HodorHttpResponse) e), msg);
             ctx.write(httpResponse);
             ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
             return;
@@ -130,6 +132,14 @@ public class NettyChannelHandler extends ChannelDuplexHandler {
         super.exceptionCaught(ctx, cause);
         HodorChannel channel = new NettyChannel(ctx.channel());
         channelHandler.exceptionCaught(channel, cause);
+    }
+
+    public <T, R> R getAutoReleaseMsg(Function<T, R> function, T msg) {
+        try {
+            return function.apply(msg);
+        } finally {
+            ReferenceCountUtil.release(msg);
+        }
     }
 
 }
