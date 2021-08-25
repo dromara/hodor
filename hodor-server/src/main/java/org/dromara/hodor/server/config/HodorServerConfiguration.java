@@ -33,7 +33,7 @@ public class HodorServerConfiguration {
         return ExtensionLoader.getExtensionLoader(HodorCacheSource.class, CacheSourceConfig.class).getProtoJoin("cachesource", sourceConfig);
     }
 
-    @Bean
+    @Bean(destroyMethod = "stopReporterJobExecDetail")
     public JobExecuteRecorder jobExecuteRecorder() {
         LogJobExecuteRecorder logJobExecuteRecorder = new LogJobExecuteRecorder(properties.getLogDir(), jobExecDetailService, hodorCacheSource());
         logJobExecuteRecorder.startReporterJobExecDetail();

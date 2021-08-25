@@ -63,24 +63,22 @@ public class HodorService implements HodorLifecycle {
 
     @Override
     public void start() {
-        // TODO: 待优化
+        // waiting node ready
         Integer currRunningNodeCount = registryService.getRunningNodeCount();
         while (currRunningNodeCount < registryService.getLeastNodeCount()) {
-
             log.warn("waiting for the node to join the cluster ...");
-
             ThreadUtils.sleep(TimeUnit.MILLISECONDS, 1000);
             currRunningNodeCount = registryService.getRunningNodeCount();
         }
 
-        //init data
-        registryService.registrySchedulerNodeListener(new SchedulerNodeChangeListener(schedulerNodeManager, this, leaderService, registryService));
+        // init data
+        registryService.registrySchedulerNodeListener(new SchedulerNodeChangeListener(schedulerNodeManager, this, registryService));
         registryService.registryActuatorNodeListener(new ActuatorNodeChangeListener(actuatorNodeManager, registryService));
         registryService.registryMetadataListener(new MetadataChangeListener(this));
         registryService.registryElectLeaderListener(new LeaderElectChangeListener(this));
         //registerService.registryJobEventListener(new JobEventDispatchListener(this));
 
-        //select leader
+        // select leader
         electLeader();
     }
 
@@ -101,7 +99,7 @@ public class HodorService implements HodorLifecycle {
     }
 
     public void createNewHodorMetadata() {
-        log.info("{} to be leader.", registryService.getServerEndpoint());
+        log.info("server {} to be leader.", registryService.getServerEndpoint());
         // after to be leader write here
         List<String> currRunningNodes = registryService.getRunningNodes();
         if (CollectionUtils.isEmpty(currRunningNodes)) {
@@ -147,7 +145,7 @@ public class HodorService implements HodorLifecycle {
             .copySets(copySets)
             .build();
 
-        log.info("HodorMetadata: {}", metadata);
+        log.info("Create new metadata: {}", metadata);
 
         registryService.createMetadata(metadata);
     }
@@ -162,6 +160,15 @@ public class HodorService implements HodorLifecycle {
 
     public String getServerEndpoint() {
         return registryService.getServerEndpoint();
+    }
+
+    public boolean isMasterNode() {
+        if (!leaderService.hasLeader()) {
+            log.info("not exist leader node.");
+            return false;
+        }
+        // 节点下线，由主节点通知进行CopySet的主从切换
+        return leaderService.isLeader();
     }
 
 }
