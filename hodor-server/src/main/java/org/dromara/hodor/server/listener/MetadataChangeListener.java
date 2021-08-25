@@ -79,7 +79,7 @@ public class MetadataChangeListener extends AbstractAsyncEventPublisher<List<Cop
     }
 
     private List<CopySet> getPurgeCopySets(List<CopySet> historyCopySets, List<CopySet> changedCopySets) {
-        if (CollectionUtil.isEmpty(historyCopySets)
+        if (CollectionUtil.isEmpty(historyCopySets) || CollectionUtil.isEmpty(changedCopySets)
             || historyCopySets.size() <= changedCopySets.size()) {
             return CollectionUtil.empty(List.class);
         }
