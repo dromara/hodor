@@ -27,4 +27,14 @@ public interface EventType {
      */
     String JOB_DELETE_DISTRIBUTE = "jobDeleteDistribute";
 
+    /**
+     * scheduler 更新事件
+     */
+    String SCHEDULER_UPDATE = "schedulerUpdate";
+
+    /**
+     * scheduler 删除事件
+     */
+    String SCHEDULER_DELETE = "schedulerDelete";
+
 }
