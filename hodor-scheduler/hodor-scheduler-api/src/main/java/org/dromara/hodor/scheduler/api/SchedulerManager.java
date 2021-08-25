@@ -134,4 +134,15 @@ public final class SchedulerManager {
         return this.getOrCreateScheduler(config);
     }
 
+    public void shutdownScheduler(String schedulerName) {
+        lock.lock();
+        try {
+            activeSchedulerMap.remove(schedulerName);
+            standBySchedulerMap.remove(schedulerName);
+            schedulerDataInterval.remove(schedulerName);
+        } finally {
+            lock.unlock();
+        }
+    }
+
 }
