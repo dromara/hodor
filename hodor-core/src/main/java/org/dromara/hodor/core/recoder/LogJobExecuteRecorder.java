@@ -43,7 +43,7 @@ public class LogJobExecuteRecorder implements JobExecuteRecorder {
 
     private final int interval = 3;
 
-    private boolean isStart = false;
+    private volatile boolean isStart = false;
 
     public LogJobExecuteRecorder(final String logDir,
                                  final JobExecDetailService jobExecDetailService,
@@ -90,18 +90,27 @@ public class LogJobExecuteRecorder implements JobExecuteRecorder {
                         return;
                     }
                     File[] files = logsDir.listFiles(fileFilter);
+                    if (files != null && files.length == 0) {
+                        File loggerFile = new File(logsDir, loggerName);
+                        long length = loggerFile.length();
+                        if (length > 2) {
+                            logger.info("");
+                        }
+                    }
                     File backUpCurrentDayRecordFile = new File(backUpDir, DateUtil.today());
                     for (File file : Objects.requireNonNull(files)) {
                         List<String> lines = FileUtils.readLines(file, StandardCharsets.UTF_8);
-                        lines.forEach(line -> {
-                            JobExecDetail jobExecDetail = toRawJobExecDetail(line);
-                            if (line.startsWith(OP_INSERT)) {
-                                jobExecDetailService.createIfAbsent(jobExecDetail);
-                            }
-                            if (line.startsWith(OP_UPDATE)) {
-                                jobExecDetailService.update(jobExecDetail);
-                            }
-                        });
+                        lines.stream()
+                            .filter(StringUtils::isNotBlank)
+                            .forEach(line -> {
+                                JobExecDetail jobExecDetail = toRawJobExecDetail(line);
+                                if (line.startsWith(OP_INSERT)) {
+                                    jobExecDetailService.createIfAbsent(jobExecDetail);
+                                }
+                                if (line.startsWith(OP_UPDATE)) {
+                                    jobExecDetailService.update(jobExecDetail);
+                                }
+                            });
                         FileUtils.moveFile(file, new File(backUpCurrentDayRecordFile, file.getName()));
                     }
                 } catch (Exception e) {
