@@ -49,7 +49,7 @@ public final class StringUtils extends org.apache.commons.lang3.StringUtils {
      * @return bool .
      */
     public static boolean isBlank(final String arg) {
-        return org.apache.commons.lang3.StringUtils.isBlank(arg);
+        return StrUtil.isBlank(arg);
     }
 
     /**
