@@ -119,6 +119,7 @@ public class LogJobExecuteRecorder implements JobExecuteRecorder {
                 ThreadUtils.sleep(TimeUnit.SECONDS, interval);
             }
         }, "job-exec-detail-reporter");
+        reporterThread.setDaemon(true);
         reporterThread.start();
     }
 

@@ -14,7 +14,7 @@
  * the License.
  */
 
-package org.dromara.hodor.common.dag;
+package org.dromara.hodor.common.concurrent;
 
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
