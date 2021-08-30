@@ -14,6 +14,7 @@
 
     <modules>
         <module>hodor-extension-cache-zk-impl</module>
+        <module>hodor-extension-cache-register-impl</module>
     </modules>
 
 </project>
