@@ -15,11 +15,11 @@ import org.dromara.hodor.server.manager.JobExecuteStatusManager;
  * @since 2021/4/7
  */
 @Slf4j
-public class JobResponseHandlerManager extends AbstractEventPublisher<RemotingResponse<JobExecuteResponse>> {
+public class HodorJobResponseHandler extends AbstractEventPublisher<RemotingResponse<JobExecuteResponse>> {
 
-    public static final JobResponseHandlerManager INSTANCE = new JobResponseHandlerManager();
+    public static final HodorJobResponseHandler INSTANCE = new HodorJobResponseHandler();
 
-    private JobResponseHandlerManager() {
+    private HodorJobResponseHandler() {
     }
 
     @Override

@@ -72,7 +72,7 @@ public class HodorJobRequestHandler {
                     @Override
                     public void onSuccess(RemotingMessage response) {
                         RemotingResponse<JobExecuteResponse> remotingResponse = serializer.deserialize(response.getBody(), typeReference.getType());
-                        JobResponseHandlerManager.INSTANCE.fireJobResponseHandler(remotingResponse);
+                        HodorJobResponseHandler.INSTANCE.fireJobResponseHandler(remotingResponse);
                     }
 
                     @Override
@@ -99,7 +99,7 @@ public class HodorJobRequestHandler {
         jobExecuteResponse.setCompleteTime(DateUtil.formatDateTime(new Date()));
         jobExecuteResponse.setStatus(JobExecuteStatus.ERROR);
         jobExecuteResponse.setComments(ThreadUtils.getStackTraceInfo(t));
-        JobResponseHandlerManager.INSTANCE.fireJobExecuteInnerErrorHandler(jobExecuteResponse);
+        HodorJobResponseHandler.INSTANCE.fireJobExecuteInnerErrorHandler(jobExecuteResponse);
     }
 
     private RemotingMessage getRequestBody(final HodorJobExecutionContext context) {
