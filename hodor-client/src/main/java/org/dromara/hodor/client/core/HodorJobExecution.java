@@ -38,7 +38,7 @@ public class HodorJobExecution {
 
     private String comments;
 
-    private String result;
+    private byte[] result;
 
     public static HodorJobExecution createRunningJobExecution(Long requestId, String groupName, String jobName, String jobParameters, String schedulerName) {
         return HodorJobExecution.builder()
@@ -59,12 +59,11 @@ public class HodorJobExecution {
             .requestId(requestId)
             .status(JobExecuteStatus.FAILED)
             .comments(exceptionStack)
-            .result("{}")
             .completeTime(new Date())
             .build();
     }
 
-    public static HodorJobExecution createSuccessJobExecution(Long requestId, String result) {
+    public static HodorJobExecution createSuccessJobExecution(Long requestId, byte[] result) {
         return HodorJobExecution.builder()
             .requestId(requestId)
             .status(JobExecuteStatus.FAILED)

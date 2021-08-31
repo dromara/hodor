@@ -23,6 +23,8 @@ public class ScheduledMethodRunnable implements Runnable {
 
     private final ThreadLocal<Object[]> argsThreadLocal = new ThreadLocal<>();
 
+    private final ThreadLocal<Object> resultThreadLocal = new ThreadLocal<>();
+
     /**
      * Create a {@code ScheduledMethodRunnable} for the given target instance,
      * calling the specified method.
@@ -66,6 +68,10 @@ public class ScheduledMethodRunnable implements Runnable {
         return argsThreadLocal.get();
     }
 
+    public Object getResult() {
+        return resultThreadLocal.get();
+    }
+
     public void setArgs(Object... args) {
         this.argsThreadLocal.set(args);
     }
@@ -74,16 +80,22 @@ public class ScheduledMethodRunnable implements Runnable {
         return hasArg;
     }
 
+    public void refresh() {
+        resultThreadLocal.remove();
+    }
+
     @Override
     public void run() {
         try {
             ReflectionUtils.makeAccessible(this.method);
             //this.method.invoke(this.target);
+            Object result;
             if (this.hasArg) {
-                this.method.invoke(this.target, getArgs());
+                result = this.method.invoke(this.target, getArgs());
             } else {
-                this.method.invoke(this.target);
+                result = this.method.invoke(this.target);
             }
+            resultThreadLocal.set(result);
         }
         catch (InvocationTargetException ex) {
             ReflectionUtils.rethrowRuntimeException(ex.getTargetException());

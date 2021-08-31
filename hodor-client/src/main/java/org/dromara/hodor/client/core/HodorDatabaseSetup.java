@@ -59,7 +59,7 @@ public class HodorDatabaseSetup {
         log.info("create table sql: {}", tableSql);
         log.info("create index sql: {}", indexSql);
 
-        if (!dbOperator.createTableIfNeeded(JOB_EXECUTION_TABLE_NAME, tableSql)) {
+        if (!dbOperator.createTableIfNeeded(RETRYABLE_MESSAGE_TABLE_NAME, tableSql)) {
             // create index
             dbOperator.update(indexSql);
         }
@@ -79,7 +79,7 @@ public class HodorDatabaseSetup {
                 "\tcomplete_time TIMESTAMP,\n" +
                 "\tstatus INT NOT NULL,\n" +
                 "\tcomments VARCHAR2,\n" +
-                "\tresult VARCHAR2,\n" +
+                "\tresult LONGBLOB,\n" +
                 "\tCONSTRAINT {0}_pk PRIMARY KEY (request_id)\n" +
                 ");",
             JOB_EXECUTION_TABLE_NAME);

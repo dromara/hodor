@@ -10,6 +10,7 @@ import org.dromara.hodor.client.config.HodorProperties;
 import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.client.core.ScheduledMethodRunnable;
 import org.dromara.hodor.client.executor.JobExecutionPersistence;
+import org.dromara.hodor.common.utils.Stopwatch;
 import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
@@ -24,6 +25,8 @@ import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
 public class JobExecuteAction extends AbstractExecuteAction {
 
     private final JobRegistrar jobRegistrar;
+
+    private final Stopwatch stopwatch = Stopwatch.create();
 
     public JobExecuteAction(final RequestContext context, final HodorProperties properties,
                             final JobExecutionPersistence jobExecutionPersistence, final JobRegistrar jobRegistrar) {
@@ -44,10 +47,13 @@ public class JobExecuteAction extends AbstractExecuteAction {
             jobRunnable.setArgs(context);
         }
 
+        Object result;
+        stopwatch.start();
         for (int i = 0; ; i++) {
             getLogger().info("execute job, attempts: {}", i);
             try {
                 jobRunnable.run();
+                result = jobRunnable.getResult();
                 break;
             } catch (Exception e) {
                 getLogger().error("execute job exception, attempts:{} , msg: {}", i, e.getMessage(), e);
@@ -55,13 +61,20 @@ public class JobExecuteAction extends AbstractExecuteAction {
                     // 异常统一处理
                     throw e;
                 }
+            } finally {
+                jobRunnable.refresh();
             }
             ThreadUtils.sleep(TimeUnit.MILLISECONDS, 500);
         }
+        stopwatch.stop();
 
         // to set job return result to response
         JobExecuteResponse response = buildResponse(request);
         response.setStatus(JobExecuteStatus.SUCCEEDED);
+        if (result != null) {
+            response.setResult(getRequestContext().serializer().serialize(result));
+        }
+        response.setProcessTime(stopwatch.elapsedMillis());
         response.setCompleteTime(DateUtil.formatDateTime(new Date()));
         return response;
     }
