@@ -1,7 +1,7 @@
 package org.dromara.hodor.server.executor;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.dromara.hodor.model.enums.JobType;
 import org.dromara.hodor.scheduler.api.JobExecutor;
 import org.dromara.hodor.scheduler.api.exception.HodorSchedulerException;
@@ -16,7 +16,7 @@ public class JobExecutorTypeManager {
 
     private static final JobExecutorTypeManager INSTANCE = new JobExecutorTypeManager();
 
-    private final Map<String, JobExecutor> jobExecutorMap = new HashMap<>();
+    private final Map<String, JobExecutor> jobExecutorMap = new ConcurrentHashMap<>();
 
     private JobExecutorTypeManager() {
 
