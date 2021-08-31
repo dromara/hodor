@@ -11,6 +11,7 @@ import org.dromara.hodor.client.core.JobLoggerManager;
 import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.client.executor.ExecutorManager;
 import org.dromara.hodor.client.executor.JobExecutionPersistence;
+import org.dromara.hodor.common.utils.Stopwatch;
 import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.model.job.JobKey;
@@ -40,12 +41,15 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
 
     private final JobLoggerManager jobLoggerManager;
 
+    private final Stopwatch stopwatch;
+
     public AbstractExecuteAction(final RequestContext context, final HodorProperties properties,
                                  final JobExecutionPersistence jobExecutionPersistence) {
         super(context);
         this.properties = properties;
         this.jobExecutionPersistence = jobExecutionPersistence;
         this.jobLoggerManager = JobLoggerManager.getInstance();
+        this.stopwatch = Stopwatch.create();
     }
 
     public abstract JobExecuteResponse executeRequest0(final JobExecuteRequest request) throws Exception;
@@ -67,13 +71,16 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
 
         // executing job
         jobLogger.info("job start executing.");
+
+        stopwatch.start();
         JobExecuteResponse remotingResponse = executeRequest0(request);
+        stopwatch.stop();
 
         jobLogger.info("job execution completed.");
 
         HodorJobExecution successJobExecution = HodorJobExecution.createSuccessJobExecution(requestId, remotingResponse.getResult());
         jobExecutionPersistence.fireJobExecutionEvent(successJobExecution);
-
+        remotingResponse.setProcessTime(stopwatch.elapsedMillis());
         return remotingResponse;
     }
 
