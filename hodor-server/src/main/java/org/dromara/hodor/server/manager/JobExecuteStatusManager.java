@@ -153,6 +153,9 @@ public enum JobExecuteStatusManager {
         if (!StringUtils.isBlank(response.getCompleteTime())) {
             jobExecDetail.setExecuteEnd(DateUtil.parse(response.getCompleteTime(), DatePattern.NORM_DATETIME_FORMAT));
             jobExecDetail.setElapsedTime(response.getProcessTime());
+            if (response.getResult() != null) {
+                jobExecDetail.setJobExeData(response.getResult());
+            }
         }
         jobExecDetail.setComments(response.getComments());
         return jobExecDetail;

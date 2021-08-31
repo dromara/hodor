@@ -65,7 +65,7 @@ public interface JobExecuteRecorder {
             jobExecDetail.setExecuteStatus(JobExecuteStatus.ofName(strings.get(10)));
         }
         if (StringUtils.isNotBlank(strings.get(11))) {
-            jobExecDetail.setElapsedTime(Integer.parseInt(strings.get(11)));
+            jobExecDetail.setElapsedTime(Long.parseLong(strings.get(11)));
         }
         if (StringUtils.isNotBlank(strings.get(12))) {
             jobExecDetail.setIsTimeout(Boolean.parseBoolean(strings.get(12)));

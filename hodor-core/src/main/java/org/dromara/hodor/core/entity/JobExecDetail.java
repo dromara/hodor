@@ -35,7 +35,7 @@ public class JobExecDetail {
 
     private JobExecuteStatus executeStatus;
 
-    private Integer elapsedTime;
+    private Long elapsedTime;
 
     private Boolean isTimeout;
 

@@ -3,6 +3,7 @@ package org.dromara.hodor.remoting.api.message.response;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.model.job.JobKey;
 
@@ -27,7 +28,7 @@ public class JobExecuteResponse extends AbstractResponseBody {
 
     private String completeTime;
 
-    private Integer processTime;
+    private Long processTime;
 
     private Integer shardId;
 
@@ -35,7 +36,7 @@ public class JobExecuteResponse extends AbstractResponseBody {
 
     private String comments;
 
-    private String result;
+    private byte[] result;
 
     @Override
     public String toString() {
@@ -48,7 +49,7 @@ public class JobExecuteResponse extends AbstractResponseBody {
             ", shardId=" + shardId +
             ", shardName='" + shardName + '\'' +
             ", comments='" + comments + '\'' +
-            ", result='" + result + '\'' +
+            ", result='" + StringUtils.decodeString(result) + '\'' +
             '}';
     }
 
