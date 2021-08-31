@@ -40,6 +40,8 @@ public final class StringUtils extends org.apache.commons.lang3.StringUtils {
 
     public static final String UNDER_LINE_SEPARATOR = "_";
 
+    public static final String EMPTY_STRING = "";
+
     public static final char EXTENSION_SEPARATOR = '.';
 
     /**
@@ -93,6 +95,9 @@ public final class StringUtils extends org.apache.commons.lang3.StringUtils {
     }
 
     public static String decodeString(byte[] data) {
+        if (data == null) {
+            return EMPTY_STRING;
+        }
         return toEncodedString(data, StandardCharsets.UTF_8);
     }
 
