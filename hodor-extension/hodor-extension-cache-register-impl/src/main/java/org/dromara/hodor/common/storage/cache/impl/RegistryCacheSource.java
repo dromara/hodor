@@ -17,7 +17,7 @@ public class RegistryCacheSource implements HodorCacheSource {
     }
 
     @Override
-    public <K, V> CacheSource<K, V> getCacheSource(String groupName) {
+    public <K, V> CacheSource<K, V> getCacheSource(String group) {
         return null;
     }
 

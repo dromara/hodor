@@ -27,8 +27,8 @@ public class LocalCacheSource implements HodorCacheSource {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <K, V> CacheSource<K, V> getCacheSource(String groupName) {
-        return (CacheSource<K, V>) groupCacheSourceMap.computeIfAbsent(groupName, k -> new LocalRawCacheSource<>(cacheSourceConfig));
+    public <K, V> CacheSource<K, V> getCacheSource(String group) {
+        return (CacheSource<K, V>) groupCacheSourceMap.computeIfAbsent(group, k -> new LocalRawCacheSource<>(cacheSourceConfig));
     }
 
     @Override
