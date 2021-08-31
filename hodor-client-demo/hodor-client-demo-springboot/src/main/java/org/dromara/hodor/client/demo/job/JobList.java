@@ -15,13 +15,14 @@ import org.springframework.stereotype.Component;
 public class JobList {
 
     @Job(group = "testGroup", jobName = "test1", cron = "0/5 * * * * ?")
-    public void test1(JobExecutionContext context) {
+    public String test1(JobExecutionContext context) {
         System.out.println(context);
         Logger logger = context.getJobLogger();
         logger.info("start executor job test1");
         logger.info("job argument: {}", context.getJobParameter());
         logger.info("executing......");
         logger.info("executed");
+        return "a=123";
     }
 
     @Job(group = "testGroup", jobName = "test2", cron = "0/5 * * * * ?")
