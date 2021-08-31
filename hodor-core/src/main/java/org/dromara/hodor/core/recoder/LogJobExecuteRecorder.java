@@ -29,7 +29,7 @@ import org.dromara.hodor.model.job.JobKey;
 @Slf4j
 public class LogJobExecuteRecorder implements JobExecuteRecorder {
 
-    private final Logger logger;
+    private final Logger jobExecuteDetailLogger;
 
     private final HodorCacheSource hodorCacheSource;
 
@@ -51,14 +51,14 @@ public class LogJobExecuteRecorder implements JobExecuteRecorder {
         String logLayout = "%msg%n";
         this.logsDir = new File((StringUtils.isBlank(logDir) ? System.getProperty("user.dir") : logDir) + "/logs/");
         this.backUpDir = new File((StringUtils.isBlank(logDir) ? System.getProperty("user.dir") : logDir) + "/backup/");
-        this.logger = LogUtil.getInstance().createRollingLogger(loggerName, new File(logsDir, loggerName), logLayout, interval);
+        this.jobExecuteDetailLogger = LogUtil.getInstance().createRollingLogger(loggerName, new File(logsDir, loggerName), logLayout, interval);
         this.hodorCacheSource = hodorCacheSource;
         this.jobExecDetailService = jobExecDetailService;
 
     }
 
     public void recordJobExecDetail(String op, JobExecDetail jobExecDetail) {
-        logger.info(toDetailString(op, jobExecDetail));
+        jobExecuteDetailLogger.info(toDetailString(op, jobExecDetail));
     }
 
     @Override
@@ -84,8 +84,6 @@ public class LogJobExecuteRecorder implements JobExecuteRecorder {
         final Thread reporterThread = new Thread(() -> {
             while (isStart) {
                 try {
-                    //Map<Long, JobExecDetail> insertMap = Maps.newHashMap();
-                    //Map<Long, JobExecDetail> updateMap = Maps.newHashMap();
                     if (!logsDir.exists() || !logsDir.isDirectory()) {
                         return;
                     }
@@ -94,7 +92,7 @@ public class LogJobExecuteRecorder implements JobExecuteRecorder {
                         File loggerFile = new File(logsDir, loggerName);
                         long length = loggerFile.length();
                         if (length > 2) {
-                            logger.info("");
+                            jobExecuteDetailLogger.info("");
                         }
                     }
                     File backUpCurrentDayRecordFile = new File(backUpDir, DateUtil.today());
@@ -103,11 +101,13 @@ public class LogJobExecuteRecorder implements JobExecuteRecorder {
                         lines.stream()
                             .filter(StringUtils::isNotBlank)
                             .forEach(line -> {
-                                JobExecDetail jobExecDetail = toRawJobExecDetail(line);
                                 if (line.startsWith(OP_INSERT)) {
+                                    JobExecDetail jobExecDetail = toRawJobExecDetail(line);
                                     jobExecDetailService.createIfAbsent(jobExecDetail);
+                                    return;
                                 }
                                 if (line.startsWith(OP_UPDATE)) {
+                                    JobExecDetail jobExecDetail = toRawJobExecDetail(line);
                                     jobExecDetailService.update(jobExecDetail);
                                 }
                             });
