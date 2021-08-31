@@ -1,5 +1,7 @@
 package org.dromara.hodor.common.storage.cache;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.dromara.hodor.common.extension.Join;
 
 /**
@@ -9,10 +11,13 @@ import org.dromara.hodor.common.extension.Join;
 @Join
 public class LocalCacheSource implements HodorCacheSource {
 
-    private final CacheSource<Object, Object> cacheSource;
+    private final CacheSourceConfig cacheSourceConfig;
+
+    private final Map<String, CacheSource<Object, Object>> groupCacheSourceMap;
 
     public LocalCacheSource(final CacheSourceConfig cacheSourceConfig) {
-        this.cacheSource = new LocalRawCacheSource<>(cacheSourceConfig);
+        this.cacheSourceConfig = cacheSourceConfig;
+        this.groupCacheSourceMap = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -22,8 +27,13 @@ public class LocalCacheSource implements HodorCacheSource {
 
     @Override
     @SuppressWarnings("unchecked")
+    public <K, V> CacheSource<K, V> getCacheSource(String groupName) {
+        return (CacheSource<K, V>) groupCacheSourceMap.computeIfAbsent(groupName, k -> new LocalRawCacheSource<>(cacheSourceConfig));
+    }
+
+    @Override
     public <K, V> CacheSource<K, V> getCacheSource() {
-        return (CacheSource<K, V>) cacheSource;
+        return getCacheSource("default");
     }
 
 }

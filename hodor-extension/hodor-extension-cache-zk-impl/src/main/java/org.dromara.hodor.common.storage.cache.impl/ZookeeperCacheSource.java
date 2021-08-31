@@ -26,6 +26,11 @@ public class ZookeeperCacheSource implements HodorCacheSource {
     }
 
     @Override
+    public <K, V> CacheSource<K, V> getCacheSource(String groupName) {
+        return null;
+    }
+
+    @Override
     public <K, V> CacheSource<K, V> getCacheSource() {
         return new ZookeeperRawCacheSource<>();
     }

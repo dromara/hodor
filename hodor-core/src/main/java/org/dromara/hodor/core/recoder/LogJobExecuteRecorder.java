@@ -1,6 +1,7 @@
 package org.dromara.hodor.core.recoder;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.lang.Assert;
 import java.io.File;
 import java.io.FileFilter;
 import java.nio.charset.StandardCharsets;
@@ -13,6 +14,7 @@ import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.common.log.LogUtil;
+import org.dromara.hodor.common.storage.cache.CacheSource;
 import org.dromara.hodor.common.storage.cache.HodorCacheSource;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.common.utils.ThreadUtils;
@@ -31,7 +33,7 @@ public class LogJobExecuteRecorder implements JobExecuteRecorder {
 
     private final Logger jobExecuteDetailLogger;
 
-    private final HodorCacheSource hodorCacheSource;
+    private final CacheSource<JobKey, JobExecDetail> cacheSource;
 
     private final File logsDir;
 
@@ -48,13 +50,15 @@ public class LogJobExecuteRecorder implements JobExecuteRecorder {
     public LogJobExecuteRecorder(final String logDir,
                                  final JobExecDetailService jobExecDetailService,
                                  final HodorCacheSource hodorCacheSource) {
+        Assert.notNull(jobExecDetailService, "jobExecDetailService must be not null.");
+        Assert.notNull(hodorCacheSource, "hodorCacheSource must be not null.");
+
         String logLayout = "%msg%n";
         this.logsDir = new File((StringUtils.isBlank(logDir) ? System.getProperty("user.dir") : logDir) + "/logs/");
         this.backUpDir = new File((StringUtils.isBlank(logDir) ? System.getProperty("user.dir") : logDir) + "/backup/");
         this.jobExecuteDetailLogger = LogUtil.getInstance().createRollingLogger(loggerName, new File(logsDir, loggerName), logLayout, interval);
-        this.hodorCacheSource = hodorCacheSource;
+        this.cacheSource = hodorCacheSource.getCacheSource("job-execute-recorder");
         this.jobExecDetailService = jobExecDetailService;
-
     }
 
     public void recordJobExecDetail(String op, JobExecDetail jobExecDetail) {
@@ -63,18 +67,17 @@ public class LogJobExecuteRecorder implements JobExecuteRecorder {
 
     @Override
     public JobExecDetail getJobExecDetail(JobKey jobKey) {
-        return hodorCacheSource.<JobKey, JobExecDetail>getCacheSource().get(jobKey);
+        return cacheSource.get(jobKey);
     }
 
     @Override
     public void removeJobExecDetail(JobKey jobKey) {
-        hodorCacheSource.<JobKey, JobExecDetail>getCacheSource().remove(jobKey);
+        cacheSource.remove(jobKey);
     }
 
     @Override
     public void addJobExecDetail(JobExecDetail jobExecDetail) {
-        hodorCacheSource.<JobKey, JobExecDetail>getCacheSource()
-            .put(JobKey.of(jobExecDetail.getGroupName(), jobExecDetail.getJobName()), jobExecDetail);
+        cacheSource.put(JobKey.of(jobExecDetail.getGroupName(), jobExecDetail.getJobName()), jobExecDetail);
     }
 
     @Override
