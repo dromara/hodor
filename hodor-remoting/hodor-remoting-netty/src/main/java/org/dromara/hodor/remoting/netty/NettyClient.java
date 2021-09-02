@@ -12,7 +12,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import java.net.ConnectException;
-import lombok.SneakyThrows;
 import org.dromara.hodor.common.utils.OSInfo;
 import org.dromara.hodor.remoting.api.AbstractNetClient;
 import org.dromara.hodor.remoting.api.Attribute;
@@ -37,11 +36,16 @@ public class NettyClient extends AbstractNetClient {
     }
 
     @Override
-    @SneakyThrows({InterruptedException.class})
     public HodorChannel connect() throws ConnectException {
-        ChannelFuture future = bootstrap.connect(getHost(), getPort()).sync();
+        ChannelFuture future;
+        try {
+            future = bootstrap.connect(getHost(), getPort()).sync();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new ConnectException(String.format("connect %s:%s interrupt exception.", getHost(), getPort()));
+        }
         if (!future.isSuccess()) {
-            throw new ConnectException(String.format("connect %s:%s failure.", getHost(), getPort()));
+            throw new ConnectException(String.format("connect %s:%s failure. cause: %s", getHost(), getPort(), future.cause()));
         }
         return new NettyChannel(future.channel());
     }
