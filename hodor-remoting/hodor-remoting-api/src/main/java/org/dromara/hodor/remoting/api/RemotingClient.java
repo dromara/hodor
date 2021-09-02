@@ -181,6 +181,7 @@ public class RemotingClient {
 
         @Override
         public void exceptionCaught(HodorChannel channel, Throwable cause) {
+            channel.close();
             callback.onFailure(cause);
         }
 
