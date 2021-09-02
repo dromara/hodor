@@ -29,6 +29,8 @@ public interface DagService {
    */
   void startDag(final Dag dag);
 
+  void markNodeRunning(Node node);
+
   /**
    * Transitions the node to the success state.
    */

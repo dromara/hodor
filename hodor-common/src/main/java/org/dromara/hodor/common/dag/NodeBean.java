@@ -26,6 +26,8 @@ import java.util.Map;
  */
 public class NodeBean implements Serializable {
 
+  private static final long serialVersionUID = 4876620613367969682L;
+
   private String name;
   private Map<String, String> config;
   private List<String> dependsOn;

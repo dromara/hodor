@@ -31,6 +31,12 @@ public enum Status {
   KILLING, // in the process of killing a running job
   KILLED; // explicitly killed by a user
 
+  static final ImmutableSet<Status> RUNNING_STATES = ImmutableSet.of(RUNNING);
+
+  public boolean isRunning() {
+    return RUNNING_STATES.contains(this);
+  }
+
   // The states that will not transition to other states
   static final ImmutableSet<Status> TERMINAL_STATES = ImmutableSet.of(DISABLED, SUCCESS, FAILURE,
       CANCELED, KILLED);

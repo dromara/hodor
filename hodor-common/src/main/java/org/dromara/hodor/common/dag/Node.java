@@ -53,7 +53,7 @@ public class Node {
     dag.addNode(this);
   }
 
-  Dag getDag() {
+  public Dag getDag() {
     return this.dag;
   }
 
