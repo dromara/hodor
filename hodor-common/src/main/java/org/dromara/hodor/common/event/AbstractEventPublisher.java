@@ -19,6 +19,8 @@ public abstract class AbstractEventPublisher<V> implements EventPublisher<V> {
 
     private final ReentrantLock lock = new ReentrantLock();
 
+    private final Set<HodorEventListener<V>> EMPTY_LISTENERS = Sets.newHashSet();
+
     public AbstractEventPublisher() {
         this.registerListener();
     }
@@ -89,7 +91,7 @@ public abstract class AbstractEventPublisher<V> implements EventPublisher<V> {
 
     public Set<HodorEventListener<V>> getListeners(Object eventType) {
         if (listeners.get(eventType) == null) {
-            return Sets.newHashSet();
+            return EMPTY_LISTENERS;
         }
         return listeners.get(eventType);
     }
