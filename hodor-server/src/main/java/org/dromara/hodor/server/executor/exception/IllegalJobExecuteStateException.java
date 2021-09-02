@@ -1,4 +1,4 @@
-package org.dromara.hodor.server.executor.job;
+package org.dromara.hodor.server.executor.exception;
 
 import org.dromara.hodor.common.utils.StringUtils;
 

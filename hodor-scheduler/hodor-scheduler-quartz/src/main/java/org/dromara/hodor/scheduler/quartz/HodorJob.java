@@ -29,11 +29,7 @@ public class HodorJob implements Job {
     @Override
     public void execute(JobExecutionContext context) {
         Date fireTime = context.getFireTime();
-        Date scheduledFireTime = context.getScheduledFireTime();
-        Date previousFireTime = context.getPreviousFireTime();
-        Date nextFireTime = context.getNextFireTime();
-
-        jobExecutor.execute(new HodorJobExecutionContext(jobDesc, schedulerName, fireTime, scheduledFireTime, previousFireTime, nextFireTime));
+        jobExecutor.execute(new HodorJobExecutionContext(jobDesc, schedulerName, fireTime));
     }
 
 }
