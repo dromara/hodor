@@ -1,6 +1,5 @@
 package org.dromara.hodor.server.manager;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Assert;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -16,8 +15,6 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.concurrent.HodorThreadFactory;
-import org.dromara.hodor.common.event.AbstractAsyncEventPublisher;
-import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.loadbalance.LoadBalance;
 import org.dromara.hodor.common.loadbalance.LoadBalanceEnum;
 import org.dromara.hodor.common.loadbalance.LoadBalanceFactory;
@@ -31,7 +28,7 @@ import org.dromara.hodor.model.node.NodeInfo;
  * @version 2021/8/1 1.0
  */
 @Slf4j
-public class ActuatorNodeManager extends AbstractAsyncEventPublisher<ActuatorInfo> {
+public class ActuatorNodeManager {
 
     private static volatile ActuatorNodeManager INSTANCE;
 
@@ -71,17 +68,11 @@ public class ActuatorNodeManager extends AbstractAsyncEventPublisher<ActuatorInf
             ActuatorInfo actuatorInfo = entry.getValue();
             if (heartbeatThresholdExceedCheck(actuatorInfo.getLastHeartbeat())) {
                 String endpoint = entry.getKey();
-                ActuatorInfo immutableActuatorInfo = BeanUtil.copyProperties(actuatorInfo, ActuatorInfo.class);
-                notifyRemoveActuatorNode(immutableActuatorInfo);
                 removeNode(endpoint);
                 return true;
             }
             return false;
         });
-    }
-
-    private void notifyRemoveActuatorNode(ActuatorInfo actuatorNodeInfo) {
-        publish(Event.create(actuatorNodeInfo));
     }
 
     private void removeNode(String endpoint) {
