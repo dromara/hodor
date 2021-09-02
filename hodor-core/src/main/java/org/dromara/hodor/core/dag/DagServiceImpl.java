@@ -20,6 +20,11 @@ public class DagServiceImpl implements DagService {
     }
 
     @Override
+    public void markNodeRunning(Node node) {
+
+    }
+
+    @Override
     public void markNodeSuccess(Node node) {
 
     }
