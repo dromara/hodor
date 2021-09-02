@@ -77,7 +77,7 @@ public class HodorJobRequestHandler {
 
                     @Override
                     public void onFailure(Throwable cause) {
-                        exceptionCaught(context, cause);
+                        log.error("HodorJobRequestHandler exceptionCaught : {}", cause.getMessage(), cause);
                     }
                 });
                 JobExecuteStatusManager.getInstance().addSchedulerEndJob(context, host);
