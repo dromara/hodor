@@ -29,6 +29,17 @@ public class HodorJobExecutionContext {
         this.fireTime = fireTime;
     }
 
+    public HodorJobExecutionContext(final long requestId,
+                                    final JobDesc jobDesc,
+                                    final String schedulerName,
+                                    final Date fireTime) {
+        this.requestId = requestId;
+        this.schedulerName = schedulerName;
+        this.jobDesc = jobDesc;
+        this.jobKey = JobKey.of(jobDesc.getGroupName(), jobDesc.getJobName());
+        this.fireTime = fireTime;
+    }
+
     public long getRequestId() {
         return requestId;
     }
