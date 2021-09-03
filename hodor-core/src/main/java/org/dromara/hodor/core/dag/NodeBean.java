@@ -15,7 +15,7 @@
  *
  */
 
-package org.dromara.hodor.common.dag;
+package org.dromara.hodor.core.dag;
 
 import java.io.Serializable;
 import java.util.List;

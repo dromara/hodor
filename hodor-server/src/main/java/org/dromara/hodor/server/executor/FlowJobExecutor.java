@@ -1,11 +1,8 @@
 package org.dromara.hodor.server.executor;
 
-import java.util.List;
 import org.dromara.hodor.common.dag.Dag;
-import org.dromara.hodor.common.dag.DagCreator;
-import org.dromara.hodor.common.dag.Node;
+import org.dromara.hodor.core.dag.DagCreator;
 import org.dromara.hodor.common.dag.Status;
-import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.storage.cache.CacheSource;
 import org.dromara.hodor.common.storage.cache.HodorCacheSource;
 import org.dromara.hodor.model.job.JobKey;
@@ -29,7 +26,6 @@ public class FlowJobExecutor extends CommonJobExecutor {
 
     @Override
     public void process(HodorJobExecutionContext context) {
-        //TODO: 校验一些与工作流相关的事项
         // 1、判断是否有正在运行的flow
         // 2、没有则获取flow json信息
         // 3、构建dag对象
@@ -60,14 +56,7 @@ public class FlowJobExecutor extends CommonJobExecutor {
 
     private void submitDagInstance(Dag dag) {
         dag.setStatus(Status.RUNNING);
-        dag.getFirstLayer().ifPresent(nodeLayer -> {
-            List<Node> nodes = nodeLayer.getNodes();
-            nodeLayer.setStatus(Status.RUNNING);
-            nodeLayer.setRunningNodes(nodes.size());
-            for (Node node : nodes) {
-                FlowJobExecutorManager.getInstance().publish(Event.create(node, Status.RUNNING));
-            }
-        });
+        dag.getFirstLayer().ifPresent(FlowJobExecutorManager.getInstance()::submitLayerNode);
     }
 
 }

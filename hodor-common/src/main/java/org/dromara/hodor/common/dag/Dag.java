@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+import org.dromara.hodor.common.IdGenerator;
 
 import static java.util.Objects.requireNonNull;
 
@@ -33,6 +34,8 @@ import static java.util.Objects.requireNonNull;
  */
 public class Dag {
 
+    private final Long id;
+
     private final String name;
 
     private final DagProcessor dagProcessor;
@@ -41,6 +44,8 @@ public class Dag {
 
     private final List<NodeLayer> nodeLayers = new ArrayList<>();
 
+    private int layerSize;
+
     private Status status = Status.READY;
 
     Dag(final String name, final DagProcessor dagProcessor) {
@@ -48,6 +53,7 @@ public class Dag {
         this.name = name;
         requireNonNull(dagProcessor, "The dagProcessor parameter can't be null.");
         this.dagProcessor = dagProcessor;
+        this.id = IdGenerator.defaultGenerator().nextId();
     }
 
     /**
@@ -178,6 +184,7 @@ public class Dag {
             nodeLayer.setNodes(nodes);
             this.nodeLayers.add(nodeLayer);
         });
+        this.layerSize = nodeLayers.size();
     }
 
     public List<NodeLayer> getNodeLayers() {
@@ -206,6 +213,14 @@ public class Dag {
     public Optional<NodeLayer> getFirstLayer() {
         List<NodeLayer> nodeLayers = this.getNodeLayers();
         return nodeLayers.stream().findFirst();
+    }
+
+    public boolean isLastLayer(int layer) {
+        return this.layerSize == layer + 1;
+    }
+
+    public Long getDagId() {
+        return this.id;
     }
 
 }

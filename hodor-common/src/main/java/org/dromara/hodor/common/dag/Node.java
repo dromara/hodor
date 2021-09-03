@@ -19,6 +19,7 @@ package org.dromara.hodor.common.dag;
 import com.google.common.annotations.VisibleForTesting;
 import java.util.ArrayList;
 import java.util.List;
+import org.dromara.hodor.common.IdGenerator;
 
 import static java.util.Objects.requireNonNull;
 
@@ -26,6 +27,8 @@ import static java.util.Objects.requireNonNull;
  * Node in a DAG: Directed acyclic graph.
  */
 public class Node {
+
+  private final Long id;
 
   private final String name;
 
@@ -49,6 +52,7 @@ public class Node {
     requireNonNull(name, "The name of the node can't be null");
     this.name = name;
     requireNonNull(dag, "The dag of the node can't be null");
+    this.id = IdGenerator.defaultGenerator().nextId();
     this.dag = dag;
     dag.addNode(this);
   }
@@ -204,6 +208,14 @@ public class Node {
 
   public void setLayer(int layer) {
     this.layer = layer;
+  }
+
+  public NodeLayer getCurrentNodeLayer() {
+    return this.dag.getLayer(layer);
+  }
+
+  public Long getNodeId() {
+    return this.id;
   }
 
   @VisibleForTesting
