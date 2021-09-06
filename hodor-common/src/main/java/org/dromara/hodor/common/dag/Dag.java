@@ -38,8 +38,6 @@ public class Dag {
 
     private final String name;
 
-    private final DagProcessor dagProcessor;
-
     private final List<Node> nodes = new ArrayList<>();
 
     private final List<NodeLayer> nodeLayers = new ArrayList<>();
@@ -48,11 +46,9 @@ public class Dag {
 
     private Status status = Status.READY;
 
-    Dag(final String name, final DagProcessor dagProcessor) {
+    Dag(final String name) {
         requireNonNull(name, "The name of the Dag can't be null");
         this.name = name;
-        requireNonNull(dagProcessor, "The dagProcessor parameter can't be null.");
-        this.dagProcessor = dagProcessor;
         this.id = IdGenerator.defaultGenerator().nextId();
     }
 
@@ -129,14 +125,14 @@ public class Dag {
      */
     private void updateDagStatusInternal(final boolean failed) {
         if (this.status == Status.KILLING) {
-      /*
-      It's possible that some nodes have failed when the dag is killed.
-      Since killing a dag signals an intent from an operator, it is more important to make
-      the dag status reflect the result of that explict intent. e.g. if the killing is a
-      result of handing a job failure, users more likely want to know that someone has taken
-      an action rather than that a job has failed. Operators can still see the individual job
-      status.
-      */
+            /*
+            It's possible that some nodes have failed when the dag is killed.
+            Since killing a dag signals an intent from an operator, it is more important to make
+            the dag status reflect the result of that explict intent. e.g. if the killing is a
+            result of handing a job failure, users more likely want to know that someone has taken
+            an action rather than that a job has failed. Operators can still see the individual job
+            status.
+            */
             changeStatus(Status.KILLED);
         } else if (failed) {
             changeStatus(Status.FAILURE);
@@ -147,12 +143,11 @@ public class Dag {
 
     private void changeStatus(final Status status) {
         this.status = status;
-        this.dagProcessor.changeStatus(this, status);
     }
 
     @Override
     public String toString() {
-        return String.format("dag (%s), status (%s)", this.name, this.status);
+        return String.format("dag (%s), id (%s), status (%s)", this.name, this.id, this.status);
     }
 
     public String getName() {
@@ -169,6 +164,14 @@ public class Dag {
 
     public List<Node> getNodes() {
         return this.nodes;
+    }
+
+    public Node getNode(String nodeName) {
+        return getNodes()
+            .stream()
+            .filter(node -> node.getName().equals(nodeName))
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException(nodeName + "is illegal node name."));
     }
 
     public Map<Integer, List<Node>> getLayerNodeMap() {

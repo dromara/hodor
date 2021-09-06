@@ -47,30 +47,27 @@ public class DagBuilder {
    * A builder for building a DAG.
    *
    * @param name name of the DAG
-   * @param dagProcessor the associated DagProcessor
    */
-  public DagBuilder(final String name, final DagProcessor dagProcessor) {
+  public DagBuilder(final String name) {
     requireNonNull(name, "The name of the DagBuilder can't be null");
-    requireNonNull(dagProcessor, "The dagProcessor of the DagBuilder can't be null");
-    this.dag = new Dag(name, dagProcessor);
+    this.dag = new Dag(name);
   }
 
   /**
    * Creates a new node and adds it to the DagBuilder.
    *
    * @param name name of the node
-   * @param nodeProcessor node processor associated with this node
    * @return a new node
    * @throws DagException if the name is not unique in the DAG.
    */
-  public Node createNode(final String name, final NodeProcessor nodeProcessor) {
+  public Node createNode(final String name, final Object rawData) {
     checkIsBuilt();
 
     if (this.nameToNodeMap.get(name) != null) {
       throw new DagException(String.format("Node names in %s need to be unique. The name "
           + "(%s) already exists.", this, name));
     }
-    final Node node = new Node(name, nodeProcessor, this.dag);
+    final Node node = new Node(name, rawData, this.dag);
     this.nameToNodeMap.put(name, node);
 
     return node;
@@ -89,7 +86,7 @@ public class DagBuilder {
 
   /**
    * Add a parent node to a child node. All the names should have been registered with this builder
-   * with the {@link DagBuilder#createNode(String, NodeProcessor)} call.
+   * with the {@link DagBuilder#createNode(String, Object)} call.
    *
    * @param childNodeName name of the child node
    * @param parentNodeName name of the parent node
