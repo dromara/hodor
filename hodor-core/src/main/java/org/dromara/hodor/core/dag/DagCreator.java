@@ -3,8 +3,7 @@ package org.dromara.hodor.core.dag;
 import java.util.List;
 import org.dromara.hodor.common.dag.Dag;
 import org.dromara.hodor.common.dag.DagBuilder;
-import org.dromara.hodor.common.dag.DagProcessor;
-import org.dromara.hodor.common.dag.NodeProcessor;
+import org.dromara.hodor.model.job.JobDesc;
 
 /**
  * dag creator
@@ -16,15 +15,12 @@ public class DagCreator {
 
     private final NodeBean flowNode;
 
-    private final NodeProcessor nodeProcessor;
-
     private final DagBuilder dagBuilder;
 
-    public DagCreator(final NodeBean flowNode, final DagProcessor dagProcessor, final NodeProcessor nodeProcessor) {
+    public DagCreator(final NodeBean flowNode) {
         final String flowName = flowNode.getName();
         this.flowNode = flowNode;
-        this.nodeProcessor = nodeProcessor;
-        this.dagBuilder = new DagBuilder(flowName, dagProcessor);
+        this.dagBuilder = new DagBuilder(flowName);
     }
 
     public Dag create() {
@@ -35,13 +31,20 @@ public class DagCreator {
 
     private void createNodes() {
         for (final NodeBean node : this.flowNode.getNodes()) {
-            createNode(node, nodeProcessor);
+            createNode(node);
         }
     }
 
-    private void createNode(final NodeBean node, final NodeProcessor nodeProcessor) {
+    private void createNode(final NodeBean node) {
         final String nodeName = node.getName();
-        this.dagBuilder.createNode(nodeName, nodeProcessor);
+        JobDesc jobDesc = buildJobDesc(node);
+        this.dagBuilder.createNode(nodeName, jobDesc);
+    }
+
+    private JobDesc buildJobDesc(NodeBean node) {
+        JobDesc jobDesc = new JobDesc();
+        jobDesc.setJobName(node.getName());
+        return jobDesc;
     }
 
     private void linkNodes() {
