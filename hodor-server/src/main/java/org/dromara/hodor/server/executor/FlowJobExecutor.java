@@ -42,7 +42,7 @@ public class FlowJobExecutor extends CommonJobExecutor {
     }
 
     private Dag createDagInstance(HodorJobExecutionContext context) {
-        DagCreator dagCreator = new DagCreator(null, null, null);
+        DagCreator dagCreator = new DagCreator(null);
         return dagCreator.create();
     }
 

@@ -25,8 +25,11 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
 
     private final DagService dagService;
 
+    private final JobDispatcher jobDispatcher;
+
     private FlowJobExecutorManager() {
         this.dagService = ServiceProvider.getInstance().getBean(DagService.class);
+        this.jobDispatcher = ServiceProvider.getInstance().getBean(JobDispatcher.class);
     }
 
     public static FlowJobExecutorManager getInstance() {
@@ -59,7 +62,7 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
             }
             dagService.markNodeRunning(node);
             HodorJobExecutionContext hodorJobExecutionContext = new HodorJobExecutionContext(node.getNodeId(), null, null, null);
-            JobDispatcher.getInstance().dispatch(hodorJobExecutionContext);
+            jobDispatcher.dispatch(hodorJobExecutionContext);
         }, Status.RUNNING);
 
         this.addListener(event -> {
@@ -89,11 +92,6 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
             Node node = event.getValue();
             node.getDag().setStatus(Status.FAILURE);
         }, Status.FAILURE);
-
-        this.addListener(event -> {
-            Node node = event.getValue();
-            node.getDag().setStatus(Status.CANCELED);
-        }, Status.CANCELED);
 
         this.addListener(event -> {
             Node node = event.getValue();
