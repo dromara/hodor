@@ -13,7 +13,7 @@ import org.dromara.hodor.common.queue.CircleQueue;
 import org.dromara.hodor.common.queue.DiscardOldestElementPolicy;
 import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
-import org.dromara.hodor.server.executor.handler.HodorJobRequestHandler;
+import org.dromara.hodor.server.executor.handler.RequestHandler;
 
 /**
  * 任务分发器
@@ -23,24 +23,18 @@ import org.dromara.hodor.server.executor.handler.HodorJobRequestHandler;
  */
 public class JobDispatcher {
 
-    private static final JobDispatcher INSTANCE = new JobDispatcher();
-
-    private final Map<JobKey, HodorExecutor> hodorExecutorMap = new ConcurrentHashMap<>();
+    private static final Map<JobKey, HodorExecutor> hodorExecutorMap = new ConcurrentHashMap<>();
 
     private final ThreadPoolExecutor threadPoolExecutor;
 
-    private final HodorJobRequestHandler hodorJobRequestHandler;
+    private final RequestHandler requestHandler;
 
-    private JobDispatcher() {
+    public JobDispatcher(final RequestHandler requestHandler) {
         final int threadSize = Runtime.getRuntime().availableProcessors() * 2;
         this.threadPoolExecutor = HodorExecutorFactory.createThreadPoolExecutor("job-dispatcher", threadSize, false);
         ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(2);
         scheduledThreadPoolExecutor.scheduleWithFixedDelay(this::clearUnavailableExecutor, 1, 1, TimeUnit.HOURS);
-        this.hodorJobRequestHandler = new HodorJobRequestHandler();
-    }
-
-    public static JobDispatcher getInstance() {
-        return INSTANCE;
+        this.requestHandler = requestHandler;
     }
 
     /**
@@ -54,10 +48,12 @@ public class JobDispatcher {
             @Override
             public void execute() {
                 try {
-                    hodorJobRequestHandler.preHandle(context);
-                    hodorJobRequestHandler.handle(context);
+                    requestHandler.preHandle(context);
+                    requestHandler.handle(context);
                 } catch (Throwable t) {
-                    hodorJobRequestHandler.exceptionCaught(context, t);
+                    requestHandler.exceptionCaught(context, t);
+                } finally {
+                    requestHandler.postHandle(context);
                 }
             }
         });

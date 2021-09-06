@@ -6,6 +6,8 @@ import org.dromara.hodor.common.storage.cache.HodorCacheSource;
 import org.dromara.hodor.core.recoder.JobExecuteRecorder;
 import org.dromara.hodor.core.recoder.LogJobExecuteRecorder;
 import org.dromara.hodor.core.service.JobExecDetailService;
+import org.dromara.hodor.server.executor.JobDispatcher;
+import org.dromara.hodor.server.executor.handler.HodorJobRequestHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -38,6 +40,11 @@ public class HodorServerConfiguration {
         LogJobExecuteRecorder logJobExecuteRecorder = new LogJobExecuteRecorder(properties.getLogDir(), jobExecDetailService, hodorCacheSource());
         logJobExecuteRecorder.startReporterJobExecDetail();
         return logJobExecuteRecorder;
+    }
+
+    @Bean
+    public JobDispatcher jobDispatcher() {
+        return new JobDispatcher(new HodorJobRequestHandler());
     }
 
 }
