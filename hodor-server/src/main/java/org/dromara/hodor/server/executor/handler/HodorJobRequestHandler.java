@@ -35,7 +35,7 @@ import org.dromara.hodor.server.manager.JobExecuteStatusManager;
  * @since 2020/9/22
  */
 @Slf4j
-public class HodorJobRequestHandler {
+public class HodorJobRequestHandler implements RequestHandler {
 
     private final RemotingClient clientService;
 
@@ -90,6 +90,11 @@ public class HodorJobRequestHandler {
         if (jobException != null) {
             exceptionCaught(context, jobException);
         }
+    }
+
+    @Override
+    public void postHandle(HodorJobExecutionContext context) {
+
     }
 
     public void exceptionCaught(final HodorJobExecutionContext context, final Throwable t) {
