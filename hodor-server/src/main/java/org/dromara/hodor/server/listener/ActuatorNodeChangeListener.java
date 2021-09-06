@@ -30,7 +30,6 @@ public class ActuatorNodeChangeListener implements DataChangeListener, HodorEven
     public ActuatorNodeChangeListener(final ActuatorNodeManager actuatorNodeManager, final RegistryService registryService) {
         this.actuatorNodeManager = actuatorNodeManager;
         this.registryService = registryService;
-        this.actuatorNodeManager.addListener(this);
     }
 
     @Override
