@@ -17,6 +17,8 @@
 
 package org.dromara.hodor.core.dag;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -24,90 +26,22 @@ import java.util.Map;
 /**
  * Used by the YAML loader to deserialize DAG nodes in the flow
  */
+@Data
 public class NodeBean implements Serializable {
 
-  private static final long serialVersionUID = 4876620613367969682L;
+    private static final long serialVersionUID = 4876620613367969682L;
 
-  private String name;
-  private Map<String, String> config;
-  private List<String> dependsOn;
-  private String type;
-  private String condition;
-  private List<NodeBean> nodes;
-  //private FlowTriggerBean trigger;
+    private String groupName;
 
-  public String getName() {
-    return this.name;
-  }
+    private String nodeName;
 
-  public void setName(final String name) {
-    this.name = name;
-  }
+    private Map<String, String> config;
 
-  public Map<String, String> getConfig() {
-    return this.config;
-  }
+    private List<String> dependsOn;
 
-  public void setConfig(final Map<String, String> config) {
-    this.config = config;
-  }
+    private String type;
 
-  public List<String> getDependsOn() {
-    return this.dependsOn;
-  }
+    private String condition;
 
-  public void setDependsOn(final List<String> dependsOn) {
-    this.dependsOn = dependsOn;
-  }
-
-  public String getType() {
-    return this.type;
-  }
-
-  public void setType(final String type) {
-    this.type = type;
-  }
-
-  public String getCondition() {
-    return this.condition;
-  }
-
-  public void setCondition(final String condition) {
-    this.condition = condition;
-  }
-
-  public List<NodeBean> getNodes() {
-    return this.nodes;
-  }
-
-  public void setNodes(final List<NodeBean> nodes) {
-    this.nodes = nodes;
-  }
-
-//  public Props getProps() {
-//    final Props props = new Props(null, this.getConfig());
-//    props.put(Constants.NODE_TYPE, this.getType());
-//    return props;
-//  }
-//
-//  public FlowTriggerBean getTrigger() {
-//    return this.trigger;
-//  }
-//
-//  public void setTrigger(final FlowTriggerBean trigger) {
-//    this.trigger = trigger;
-//  }
-
-  @Override
-  public String toString() {
-    return "NodeBean{" +
-        "name='" + this.name + '\'' +
-        ", config=" + this.config +
-        ", dependsOn=" + this.dependsOn +
-        ", type='" + this.type + '\'' +
-        ", condition='" + this.condition + '\'' +
-        ", nodes=" + this.nodes +
-        //", trigger=" + this.trigger +
-        '}';
-  }
+    private List<NodeBean> nodes;
 }

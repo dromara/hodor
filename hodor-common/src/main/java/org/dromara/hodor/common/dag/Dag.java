@@ -168,12 +168,12 @@ public class Dag {
         return this.nodes;
     }
 
-    public Node getNode(String nodeName) {
+    public Node getNode(String groupName, String nodeName) {
         return getNodes()
             .stream()
-            .filter(node -> node.getName().equals(nodeName))
+            .filter(node -> node.getNodeKeyName().equals(Node.createNodeKey(groupName, nodeName)))
             .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException(nodeName + "is illegal node name."));
+            .orElseThrow(() -> new IllegalArgumentException(Node.createNodeKey(groupName, nodeName) + "is illegal node name."));
     }
 
     public Map<Integer, List<Node>> getLayerNodeMap() {

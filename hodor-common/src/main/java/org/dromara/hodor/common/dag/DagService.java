@@ -40,6 +40,11 @@ public interface DagService {
   void markNodeSuccess(final Node node);
 
   /**
+   * Transitions the node from the running state to the killing state.
+   */
+  void markNodeKilling(final Node node);
+
+  /**
    * Transitions the node from the killing state to the killed state.
    */
   void markNodeKilled(final Node node);

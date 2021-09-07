@@ -20,6 +20,7 @@ import com.google.common.annotations.VisibleForTesting;
 import java.util.ArrayList;
 import java.util.List;
 import org.dromara.hodor.common.IdGenerator;
+import org.dromara.hodor.common.utils.StringUtils;
 
 import static java.util.Objects.requireNonNull;
 
@@ -28,9 +29,13 @@ import static java.util.Objects.requireNonNull;
  */
 public class Node {
 
+    private static final String NODE_KEY_FORMAT = "{}#{}";
+
     private final Long id;
 
-    private final String name;
+    private final String groupName;
+
+    private final String nodeName;
 
     private final Object rawData;
 
@@ -46,15 +51,21 @@ public class Node {
 
     private int layer = 0;
 
-    Node(final String name, Object rawData, final Dag dag) {
-        requireNonNull(name, "The name of the node can't be null");
-        this.name = name;
+    Node(final String groupName, final String nodeName, Object rawData, final Dag dag) {
+        requireNonNull(groupName, "The groupName of the node can't be null");
+        this.groupName = groupName;
+        requireNonNull(nodeName, "The nodeName of the node can't be null");
+        this.nodeName = nodeName;
         requireNonNull(dag, "The dag of the node can't be null");
         this.dag = dag;
         requireNonNull(rawData, "The rawData of the node can't be null");
         this.rawData = rawData;
         this.id = IdGenerator.defaultGenerator().nextId();
         dag.addNode(this);
+    }
+
+    public static String createNodeKey(String groupName, String nodeName) {
+        return StringUtils.format(NODE_KEY_FORMAT, groupName, nodeName);
     }
 
     public Dag getDag() {
@@ -193,7 +204,7 @@ public class Node {
 
     @Override
     public String toString() {
-        return String.format("Node (%s) id (%s) status (%s) layer (%s) in [%s]", this.name, this.id, this.status, this.layer, this.dag);
+        return String.format("Node (%s_%s) id (%s) status (%s) layer (%s) in [%s]", this.groupName, this.nodeName, this.id, this.status, this.layer, this.dag);
     }
 
     public Status getStatus() {
@@ -205,8 +216,16 @@ public class Node {
         this.status = status;
     }
 
-    public String getName() {
-        return this.name;
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public String getNodeName() {
+        return nodeName;
+    }
+
+    public String getNodeKeyName() {
+        return StringUtils.format(NODE_KEY_FORMAT, groupName, nodeName);
     }
 
     public int getLayer() {

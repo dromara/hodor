@@ -60,15 +60,16 @@ public class DagBuilder {
    * @return a new node
    * @throws DagException if the name is not unique in the DAG.
    */
-  public Node createNode(final String name, final Object rawData) {
+  public Node createNode(final String groupName, final String name, final Object rawData) {
     checkIsBuilt();
 
-    if (this.nameToNodeMap.get(name) != null) {
+    String nodeKey = Node.createNodeKey(groupName, name);
+    if (this.nameToNodeMap.get(nodeKey) != null) {
       throw new DagException(String.format("Node names in %s need to be unique. The name "
           + "(%s) already exists.", this, name));
     }
-    final Node node = new Node(name, rawData, this.dag);
-    this.nameToNodeMap.put(name, node);
+    final Node node = new Node(groupName, name, rawData, this.dag);
+    this.nameToNodeMap.put(nodeKey, node);
 
     return node;
   }
@@ -86,24 +87,24 @@ public class DagBuilder {
 
   /**
    * Add a parent node to a child node. All the names should have been registered with this builder
-   * with the {@link DagBuilder#createNode(String, Object)} call.
+   * with the {@link DagBuilder#createNode(String, String, Object)} call.
    *
-   * @param childNodeName name of the child node
-   * @param parentNodeName name of the parent node
+   * @param childNodeKeyName name of the child node key
+   * @param parentNodeKeyName name of the parent node key
    */
-  public void addParentNode(final String childNodeName, final String parentNodeName) {
+  public void addParentNode(final String childNodeKeyName, final String parentNodeKeyName) {
     checkIsBuilt();
 
-    final Node child = this.nameToNodeMap.get(childNodeName);
+    final Node child = this.nameToNodeMap.get(childNodeKeyName);
     if (child == null) {
       throw new DagException(String.format("Unknown child node (%s). Did you create the node?",
-          childNodeName));
+              childNodeKeyName));
     }
 
-    final Node parent = this.nameToNodeMap.get(parentNodeName);
+    final Node parent = this.nameToNodeMap.get(parentNodeKeyName);
     if (parent == null) {
       throw new DagException(
-          String.format("Unknown parent node (%s). Did you create the node?", parentNodeName));
+          String.format("Unknown parent node (%s). Did you create the node?", parentNodeKeyName));
     }
 
     if (child.getLayer() < parent.getLayer() + 1) {

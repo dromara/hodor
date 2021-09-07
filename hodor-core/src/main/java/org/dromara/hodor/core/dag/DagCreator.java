@@ -3,6 +3,7 @@ package org.dromara.hodor.core.dag;
 import java.util.List;
 import org.dromara.hodor.common.dag.Dag;
 import org.dromara.hodor.common.dag.DagBuilder;
+import org.dromara.hodor.common.dag.Node;
 import org.dromara.hodor.model.job.JobDesc;
 
 /**
@@ -18,9 +19,10 @@ public class DagCreator {
     private final DagBuilder dagBuilder;
 
     public DagCreator(final NodeBean flowNode) {
-        final String flowName = flowNode.getName();
+        final String groupName = flowNode.getGroupName();
+        final String nodeName = flowNode.getNodeName();
         this.flowNode = flowNode;
-        this.dagBuilder = new DagBuilder(flowName);
+        this.dagBuilder = new DagBuilder(Node.createNodeKey(groupName, nodeName));
     }
 
     public Dag create() {
@@ -36,14 +38,13 @@ public class DagCreator {
     }
 
     private void createNode(final NodeBean node) {
-        final String nodeName = node.getName();
         JobDesc jobDesc = buildJobDesc(node);
-        this.dagBuilder.createNode(nodeName, jobDesc);
+        this.dagBuilder.createNode(node.getGroupName(), node.getNodeName(), jobDesc);
     }
 
     private JobDesc buildJobDesc(NodeBean node) {
         JobDesc jobDesc = new JobDesc();
-        jobDesc.setJobName(node.getName());
+        jobDesc.setJobName(node.getNodeName());
         return jobDesc;
     }
 
@@ -54,13 +55,14 @@ public class DagCreator {
     }
 
     private void linkNode(final NodeBean node) {
-        final String name = node.getName();
+        final String groupName = node.getGroupName();
+        final String nodeName = node.getNodeName();
         final List<String> parents = node.getDependsOn();
         if (parents == null) {
             return;
         }
-        for (final String parentNodeName : parents) {
-            this.dagBuilder.addParentNode(name, parentNodeName);
+        for (final String parentNodeKeyName : parents) {
+            this.dagBuilder.addParentNode(Node.createNodeKey(groupName, nodeName), parentNodeKeyName);
         }
     }
 
