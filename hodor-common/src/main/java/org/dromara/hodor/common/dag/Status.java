@@ -49,7 +49,7 @@ public enum Status {
   private static final ImmutableSet<Status> EFFECTIVE_SUCCESS_STATES = ImmutableSet.of(DISABLED,
       SUCCESS);
 
-  boolean isSuccessEffectively() {
+  public boolean isSuccessEffectively() {
     return EFFECTIVE_SUCCESS_STATES.contains(this);
   }
 
@@ -57,7 +57,7 @@ public enum Status {
   private static final ImmutableSet<Status> PRE_RUN_STATES = ImmutableSet
       .of(DISABLED, READY, BLOCKED);
 
-  boolean isPreRunState() {
+  public boolean isPreRunState() {
     return PRE_RUN_STATES.contains(this);
   }
 }

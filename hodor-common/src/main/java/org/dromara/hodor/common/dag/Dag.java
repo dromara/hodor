@@ -46,6 +46,8 @@ public class Dag {
 
     private Status status = Status.READY;
 
+    private String schedulerName;
+
     Dag(final String name) {
         requireNonNull(name, "The name of the Dag can't be null");
         this.name = name;
@@ -224,6 +226,14 @@ public class Dag {
 
     public Long getDagId() {
         return this.id;
+    }
+
+    public String getSchedulerName() {
+        return schedulerName;
+    }
+
+    public void setSchedulerName(String schedulerName) {
+        this.schedulerName = schedulerName;
     }
 
 }
