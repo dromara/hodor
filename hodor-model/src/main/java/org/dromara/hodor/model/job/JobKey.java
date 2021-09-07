@@ -1,7 +1,8 @@
 package org.dromara.hodor.model.job;
 
-import java.util.Objects;
 import lombok.Data;
+
+import java.util.Objects;
 
 /**
  * job key
@@ -44,7 +45,7 @@ public class JobKey {
 
     @Override
     public String toString() {
-        return groupName + "_" + jobName;
+        return String.format("%s#%s", groupName, jobName);
     }
 
 }
