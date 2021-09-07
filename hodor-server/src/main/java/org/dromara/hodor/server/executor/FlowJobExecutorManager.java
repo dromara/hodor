@@ -1,6 +1,5 @@
 package org.dromara.hodor.server.executor;
 
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.dag.Dag;
 import org.dromara.hodor.common.dag.DagService;
@@ -8,8 +7,6 @@ import org.dromara.hodor.common.dag.Node;
 import org.dromara.hodor.common.dag.NodeLayer;
 import org.dromara.hodor.common.dag.Status;
 import org.dromara.hodor.common.event.AbstractAsyncEventPublisher;
-import org.dromara.hodor.common.event.Event;
-import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.server.ServiceProvider;
 
 /**
@@ -25,11 +22,8 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
 
     private final DagService dagService;
 
-    private final JobDispatcher jobDispatcher;
-
     private FlowJobExecutorManager() {
         this.dagService = ServiceProvider.getInstance().getBean(DagService.class);
-        this.jobDispatcher = ServiceProvider.getInstance().getBean(JobDispatcher.class);
     }
 
     public static FlowJobExecutorManager getInstance() {
@@ -43,13 +37,8 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
         return INSTANCE;
     }
 
-    public void submitLayerNode(NodeLayer nodeLayer) {
-        List<Node> nodes = nodeLayer.getNodes();
-        nodeLayer.setStatus(Status.RUNNING);
-        nodeLayer.setRunningNodes(nodes.size());
-        for (Node node : nodes) {
-            FlowJobExecutorManager.getInstance().publish(Event.create(node, Status.RUNNING));
-        }
+    public void startDag(Dag dag) {
+        dagService.startDag(dag);
     }
 
     @Override
@@ -61,8 +50,6 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
                 return;
             }
             dagService.markNodeRunning(node);
-            HodorJobExecutionContext hodorJobExecutionContext = new HodorJobExecutionContext(node.getNodeId(), null, null, null);
-            jobDispatcher.dispatch(hodorJobExecutionContext);
         }, Status.RUNNING);
 
         this.addListener(event -> {
@@ -72,20 +59,6 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
                 return;
             }
             dagService.markNodeSuccess(node);
-
-            int layer = node.getLayer();
-            Dag dag = node.getDag();
-            NodeLayer nodeLayer = dag.getLayer(layer);
-            if (!nodeLayer.getStatus().isTerminal()) {
-                return;
-            }
-            // all layer success
-            if (dag.isLastLayer(layer)) {
-                dag.setStatus(Status.SUCCESS);
-            } else {
-                // submit next layer node
-                submitLayerNode(dag.getLayer(layer + 1));
-            }
         }, Status.SUCCESS);
 
         this.addListener(event -> {
