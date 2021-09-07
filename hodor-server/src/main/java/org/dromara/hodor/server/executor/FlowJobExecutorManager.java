@@ -46,7 +46,7 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
         this.addListener(event -> {
             Node node = event.getValue();
             if (node.getStatus() != Status.READY) {
-                log.error("node {} status {} is not ready.", node.getName(), node.getStatus());
+                log.warn("node {} status {} is not ready state can't to running.", node.getNodeKeyName(), node.getStatus());
                 return;
             }
             dagService.markNodeRunning(node);
@@ -55,7 +55,7 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
         this.addListener(event -> {
             Node node = event.getValue();
             if (!node.getStatus().isRunning()) {
-                log.error("node {} status {} is not running.", node.getName(), node.getStatus());
+                log.warn("node {} status {} is not running state can't to success.", node.getNodeKeyName(), node.getStatus());
                 return;
             }
             dagService.markNodeSuccess(node);
@@ -65,6 +65,15 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
             Node node = event.getValue();
             node.getDag().setStatus(Status.FAILURE);
         }, Status.FAILURE);
+
+        this.addListener(event -> {
+            Node node = event.getValue();
+            if (!node.getStatus().isRunning()) {
+                log.warn("node {} status {} is not running state can't to killing.", node.getNodeKeyName(), node.getStatus());
+                return;
+            }
+            dagService.markNodeKilling(node);
+        }, Status.KILLING);
 
         this.addListener(event -> {
             Node node = event.getValue();

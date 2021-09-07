@@ -92,7 +92,7 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
         this.addListener(event -> {
             Node node = event.getValue();
             if (!node.isReady()) {
-                log.error("node {} status {} is not ready.", node.getName(), node.getStatus());
+                log.error("node {} status {} is not ready.", node.getNodeKeyName(), node.getStatus());
                 return;
             }
             node.changeStatus(Status.RUNNING);
@@ -102,7 +102,7 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
             JobDesc jobDesc = (JobDesc) node.getRawData();
             //JobDesc jobDesc = new JobDesc();
             jobDesc.setGroupName("testGroup");
-            jobDesc.setJobName(node.getName());
+            jobDesc.setJobName(node.getNodeName());
             HodorJobExecutionContext hodorJobExecutionContext = new HodorJobExecutionContext(node.getNodeId(), jobDesc, "test-scheduler", new Date());
             jobDispatcher.dispatch(hodorJobExecutionContext);
         }, Status.RUNNING);
@@ -156,37 +156,39 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
     }
 
     private NodeBean createFlowNode3() {
-        NodeBean rootNode = buildSubFlowNode("root");
-        NodeBean rn1 = buildSubFlowNode("n1", "root");
-        NodeBean rn2 = buildSubFlowNode("r-n2", "root");
+        String groupName = "testGroup";
+        NodeBean rootNode = buildSubFlowNode(groupName, "root");
+        NodeBean rn1 = buildSubFlowNode(groupName,"n1", "root");
+        NodeBean rn2 = buildSubFlowNode(groupName,"r-n2", "root");
 
-        NodeBean n2 = buildSubFlowNode("n2", "n1");
-        NodeBean n3 = buildSubFlowNode("n3", "n1");
-        NodeBean n4 = buildSubFlowNode("n4", "n1");
+        NodeBean n2 = buildSubFlowNode(groupName,"n2", "n1");
+        NodeBean n3 = buildSubFlowNode(groupName,"n3", "n1");
+        NodeBean n4 = buildSubFlowNode(groupName,"n4", "n1");
 
-        NodeBean n5 = buildSubFlowNode("n5", "n2");
-        NodeBean n6 = buildSubFlowNode("n6", "n2");
-        NodeBean n7 = buildSubFlowNode("n7", "n2");
+        NodeBean n5 = buildSubFlowNode(groupName,"n5", "n2");
+        NodeBean n6 = buildSubFlowNode(groupName,"n6", "n2");
+        NodeBean n7 = buildSubFlowNode(groupName,"n7", "n2");
 
-        NodeBean n8 = buildSubFlowNode("n8", "n4");
-        NodeBean n9 = buildSubFlowNode("n9", "n4");
-        NodeBean n10 = buildSubFlowNode("n10", "n4");
+        NodeBean n8 = buildSubFlowNode(groupName,"n8", "n4");
+        NodeBean n9 = buildSubFlowNode(groupName, "n9", "n4");
+        NodeBean n10 = buildSubFlowNode(groupName, "n10", "n4");
 
-        NodeBean n11 = buildSubFlowNode("n11", "n5", "n6", "n7");
-        NodeBean n12 = buildSubFlowNode("n12", "n3");
-        NodeBean n13 = buildSubFlowNode("n13", "n8", "n9", "n10");
+        NodeBean n11 = buildSubFlowNode(groupName,"n11", "n5", "n6", "n7");
+        NodeBean n12 = buildSubFlowNode(groupName,"n12", "n3");
+        NodeBean n13 = buildSubFlowNode(groupName,"n13", "n8", "n9", "n10");
 
         NodeBean n14 = buildSubFlowNode("n14", "n11", "n12", "n13");
 
-        NodeBean flowNode = buildSubFlowNode("flow");
+        NodeBean flowNode = buildSubFlowNode(groupName, "flow");
         flowNode.setNodes(ImmutableList.of(rootNode, rn1, rn2, n4, n7, n5, n6, n2, n3, n8, n9, n11, n13, n14, n12, n10));
 
         return flowNode;
     }
 
-    private NodeBean buildSubFlowNode(String name, String... depends) {
+    private NodeBean buildSubFlowNode(String groupName, String name, String... depends) {
         NodeBean node = new NodeBean();
-        node.setName(name);
+        node.setGroupName(groupName);
+        node.setNodeName(name);
         node.setDependsOn(Lists.newArrayList(depends));
         return node;
     }
@@ -204,7 +206,7 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
         public void handle(HodorJobExecutionContext context) {
             log.info("handle {} {}", context.getRequestId(), context.getJobKey());
             ThreadUtils.sleep(TimeUnit.SECONDS, random.nextInt(5));
-            Node node = dag.getNode(context.getJobKey().getJobName());
+            Node node = dag.getNode(context.getJobKey().getGroupName(), context.getJobKey().getJobName());
             publish(Event.create(node, Status.SUCCESS));
         }
 
@@ -216,7 +218,7 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
         @Override
         public void exceptionCaught(HodorJobExecutionContext context, Throwable t) {
             log.info("exceptionCaught {} {}", context.getRequestId(), context.getJobKey());
-            Node node = dag.getNode(context.getJobKey().getJobName());
+            Node node = dag.getNode(context.getJobKey().getGroupName(), context.getJobKey().getJobName());
             publish(Event.create(node, Status.FAILURE));
         }
     }
