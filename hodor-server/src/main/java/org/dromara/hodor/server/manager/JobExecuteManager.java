@@ -3,7 +3,6 @@ package org.dromara.hodor.server.manager;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.TypeReference;
-import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.extension.ExtensionLoader;
@@ -20,11 +19,16 @@ import org.dromara.hodor.remoting.api.message.Header;
 import org.dromara.hodor.remoting.api.message.MessageType;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
 import org.dromara.hodor.remoting.api.message.RemotingResponse;
+import org.dromara.hodor.remoting.api.message.request.AbstractRequestBody;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteStatusRequest;
+import org.dromara.hodor.remoting.api.message.request.KillRunningJobRequest;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteStatusResponse;
+import org.dromara.hodor.remoting.api.message.response.KillRunningJobResponse;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.server.ServiceProvider;
+
+import java.util.Date;
 
 /**
  * job status manager
@@ -33,7 +37,7 @@ import org.dromara.hodor.server.ServiceProvider;
  * @since 2021/8/10
  */
 @Slf4j
-public enum JobExecuteStatusManager {
+public enum JobExecuteManager {
     INSTANCE;
 
     private final JobExecuteRecorder jobExecuteRecorder = ServiceProvider.getInstance().getBean(JobExecuteRecorder.class);
@@ -43,7 +47,7 @@ public enum JobExecuteStatusManager {
     private final TypeReference<RemotingResponse<JobExecuteStatusResponse>> typeReference = new TypeReference<RemotingResponse<JobExecuteStatusResponse>>() {
     };
 
-    public static JobExecuteStatusManager getInstance() {
+    public static JobExecuteManager getInstance() {
         return INSTANCE;
     }
 
@@ -95,29 +99,7 @@ public enum JobExecuteStatusManager {
     }
 
     public JobExecuteStatusResponse queryExecuteJobStatus(Host host, JobExecuteStatusRequest request) {
-        byte[] body = serializer.serialize(request);
-        Header header = Header.builder()
-            .id(request.getRequestId())
-            .type(MessageType.FETCH_JOB_STATUS_REQUEST.getCode())
-            .length(body.length)
-            .version(RemotingConst.DEFAULT_VERSION)
-            .build();
-        RemotingMessage remotingRequest = RemotingMessage.builder()
-            .header(header)
-            .body(body)
-            .build();
-        try {
-            RemotingMessage remotingMessage = RemotingClient.getInstance().sendSyncRequest(host, remotingRequest, 1500);
-            RemotingResponse<JobExecuteStatusResponse> remotingResponse =
-                serializer.deserialize(remotingMessage.getBody(), typeReference.getType());
-            if (remotingResponse.isSuccess()) {
-                return remotingResponse.getData();
-            }
-        } catch (Exception e) {
-            // ignore
-            log.error("query job status error, msg: {}.", e.getMessage(), e);
-        }
-        return null;
+        return executeRequest(host, request, MessageType.FETCH_JOB_STATUS_REQUEST);
     }
 
     private JobExecDetail buildSchedulerStartJobExecDetail(HodorJobExecutionContext context) {
@@ -159,6 +141,43 @@ public enum JobExecuteStatusManager {
         }
         jobExecDetail.setComments(response.getComments());
         return jobExecDetail;
+    }
+
+    public JobExecDetail queryJobExecDetail(final JobKey jobKey) {
+        return jobExecuteRecorder.getJobExecDetail(jobKey);
+    }
+
+    public KillRunningJobResponse killRunningJob(JobExecDetail jobExecDetail) {
+        Host host = Host.of(jobExecDetail.getActuatorEndpoint());
+        KillRunningJobRequest killRunningJobRequest = new KillRunningJobRequest();
+        killRunningJobRequest.setRequestId(jobExecDetail.getId());
+        return this.executeRequest(host, killRunningJobRequest, MessageType.KILL_JOB_REQUEST);
+    }
+
+    public <R> R executeRequest(Host host, AbstractRequestBody requestBody, MessageType messageType) {
+        byte[] body = serializer.serialize(requestBody);
+        Header header = Header.builder()
+                .id(requestBody.getRequestId())
+                .type(messageType.getCode())
+                .length(body.length)
+                .version(RemotingConst.DEFAULT_VERSION)
+                .build();
+        RemotingMessage remotingRequest = RemotingMessage.builder()
+                .header(header)
+                .body(body)
+                .build();
+        try {
+            RemotingMessage remotingMessage = RemotingClient.getInstance().sendSyncRequest(host, remotingRequest, 1500);
+            RemotingResponse<R> remotingResponse =
+                    serializer.deserialize(remotingMessage.getBody(), typeReference.getType());
+            if (remotingResponse.isSuccess()) {
+                return remotingResponse.getData();
+            }
+        } catch (Exception e) {
+            // ignore
+            log.error("execute request error, messageType: {}, errorMsg: {}.", messageType, e.getMessage(), e);
+        }
+        return null;
     }
 
 }

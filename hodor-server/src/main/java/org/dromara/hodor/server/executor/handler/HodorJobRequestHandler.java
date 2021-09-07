@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import org.dromara.hodor.server.executor.exception.IllegalJobExecuteStateException;
 import org.dromara.hodor.server.manager.ActuatorNodeManager;
-import org.dromara.hodor.server.manager.JobExecuteStatusManager;
+import org.dromara.hodor.server.manager.JobExecuteManager;
 
 /**
  * job request executor
@@ -54,10 +54,10 @@ public class HodorJobRequestHandler implements RequestHandler {
 
     public void preHandle(HodorJobExecutionContext context) {
         // check job is running
-        if (JobExecuteStatusManager.getInstance().isRunning(context.getJobKey())) {
+        if (JobExecuteManager.getInstance().isRunning(context.getJobKey())) {
             throw new IllegalJobExecuteStateException("job {} is running.", context.getJobKey());
         }
-        JobExecuteStatusManager.getInstance().addSchedulerStartJob(context);
+        JobExecuteManager.getInstance().addSchedulerStartJob(context);
     }
 
     public void handle(final HodorJobExecutionContext context) {
@@ -80,7 +80,7 @@ public class HodorJobRequestHandler implements RequestHandler {
                         log.error("HodorJobRequestHandler exceptionCaught : {}", cause.getMessage(), cause);
                     }
                 });
-                JobExecuteStatusManager.getInstance().addSchedulerEndJob(context, host);
+                JobExecuteManager.getInstance().addSchedulerEndJob(context, host);
                 jobException = null;
                 break;
             } catch (Exception e) {

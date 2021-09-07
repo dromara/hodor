@@ -6,7 +6,7 @@ import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.remoting.api.message.RemotingResponse;
 import org.dromara.hodor.remoting.api.message.RemotingStatus;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
-import org.dromara.hodor.server.manager.JobExecuteStatusManager;
+import org.dromara.hodor.server.manager.JobExecuteManager;
 
 /**
  * response handler
@@ -32,14 +32,14 @@ public class HodorJobResponseHandler extends AbstractEventPublisher<RemotingResp
         this.addListener(event -> {
             RemotingResponse<JobExecuteResponse> remotingResponse = event.getValue();
             JobExecuteResponse jobExecuteResponse = remotingResponse.getData();
-            JobExecuteStatusManager.getInstance().addFinishJob(jobExecuteResponse);
+            JobExecuteManager.getInstance().addFinishJob(jobExecuteResponse);
         }, RemotingStatus.SUCCEEDED);
     }
 
     private void registerJobExecuteFailureResponseListener() {
         this.addListener(event -> {
             RemotingResponse<JobExecuteResponse> remotingResponse = event.getValue();
-            JobExecuteStatusManager.getInstance().addFinishJob(remotingResponse.getData());
+            JobExecuteManager.getInstance().addFinishJob(remotingResponse.getData());
         }, RemotingStatus.FAILED);
     }
 
