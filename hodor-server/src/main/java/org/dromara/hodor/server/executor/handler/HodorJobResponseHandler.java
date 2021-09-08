@@ -15,7 +15,7 @@ import org.dromara.hodor.server.manager.JobExecuteManager;
  * @since 2021/4/7
  */
 @Slf4j
-public class HodorJobResponseHandler extends AbstractEventPublisher<RemotingResponse<JobExecuteResponse>> {
+public class HodorJobResponseHandler extends AbstractEventPublisher<RemotingResponse<JobExecuteResponse>> implements ResponseHandler {
 
     public static final HodorJobResponseHandler INSTANCE = new HodorJobResponseHandler();
 
@@ -43,14 +43,10 @@ public class HodorJobResponseHandler extends AbstractEventPublisher<RemotingResp
         }, RemotingStatus.FAILED);
     }
 
+    @Override
     public void fireJobResponseHandler(final RemotingResponse<JobExecuteResponse> remotingResponse) {
         Event<RemotingResponse<JobExecuteResponse>> event = new Event<>(remotingResponse, remotingResponse.getCode());
         publish(event);
-    }
-
-    public void fireJobExecuteInnerErrorHandler(final JobExecuteResponse jobExecuteResponse) {
-        RemotingResponse<JobExecuteResponse> remotingResponse = RemotingResponse.failed("inner error", jobExecuteResponse);
-        fireJobResponseHandler(remotingResponse);
     }
 
 }

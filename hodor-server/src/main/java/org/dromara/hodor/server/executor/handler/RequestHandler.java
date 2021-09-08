@@ -1,5 +1,7 @@
 package org.dromara.hodor.server.executor.handler;
 
+import org.dromara.hodor.remoting.api.message.RemotingResponse;
+import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 
 /**
@@ -10,11 +12,13 @@ import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
  */
 public interface RequestHandler {
 
-    void preHandle(HodorJobExecutionContext context);
+    void preHandle(final HodorJobExecutionContext context);
 
-    void handle(HodorJobExecutionContext context);
+    void handle(final HodorJobExecutionContext context);
 
-    void postHandle(HodorJobExecutionContext context);
+    void postHandle(final HodorJobExecutionContext context);
+
+    void resultHandle(final RemotingResponse<JobExecuteResponse> remotingResponse);
 
     void exceptionCaught(final HodorJobExecutionContext context, final Throwable t);
 

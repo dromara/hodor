@@ -50,10 +50,9 @@ public class JobDispatcher {
                 try {
                     requestHandler.preHandle(context);
                     requestHandler.handle(context);
+                    requestHandler.postHandle(context);
                 } catch (Throwable t) {
                     requestHandler.exceptionCaught(context, t);
-                } finally {
-                    requestHandler.postHandle(context);
                 }
             }
         });

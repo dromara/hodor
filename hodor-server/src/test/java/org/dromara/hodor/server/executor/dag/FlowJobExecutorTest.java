@@ -22,6 +22,8 @@ import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.core.dag.DagCreator;
 import org.dromara.hodor.core.dag.NodeBean;
 import org.dromara.hodor.model.job.JobDesc;
+import org.dromara.hodor.remoting.api.message.RemotingResponse;
+import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.server.executor.JobDispatcher;
 import org.dromara.hodor.server.executor.handler.RequestHandler;
@@ -213,6 +215,11 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
         @Override
         public void postHandle(HodorJobExecutionContext context) {
             log.info("postHandle {} {}", context.getRequestId(), context.getJobKey());
+        }
+
+        @Override
+        public void resultHandle(RemotingResponse<JobExecuteResponse> remotingResponse) {
+
         }
 
         @Override

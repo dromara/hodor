@@ -2,6 +2,10 @@ package org.dromara.hodor.server.executor.handler;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.TypeReference;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.concurrent.FutureCallback;
@@ -19,11 +23,6 @@ import org.dromara.hodor.remoting.api.message.RemotingResponse;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.dromara.hodor.server.executor.exception.IllegalJobExecuteStateException;
 import org.dromara.hodor.server.manager.ActuatorNodeManager;
 import org.dromara.hodor.server.manager.JobExecuteManager;
@@ -52,7 +51,7 @@ public class HodorJobRequestHandler implements RequestHandler {
         this.typeReference = new TypeReference<RemotingResponse<JobExecuteResponse>>() {};
     }
 
-    public void preHandle(HodorJobExecutionContext context) {
+    public void preHandle(final HodorJobExecutionContext context) {
         // check job is running
         if (JobExecuteManager.getInstance().isRunning(context.getJobKey())) {
             throw new IllegalJobExecuteStateException("job {} is running.", context.getJobKey());
@@ -72,7 +71,7 @@ public class HodorJobRequestHandler implements RequestHandler {
                     @Override
                     public void onSuccess(RemotingMessage response) {
                         RemotingResponse<JobExecuteResponse> remotingResponse = serializer.deserialize(response.getBody(), typeReference.getType());
-                        HodorJobResponseHandler.INSTANCE.fireJobResponseHandler(remotingResponse);
+                        resultHandle(remotingResponse);
                     }
 
                     @Override
@@ -93,18 +92,29 @@ public class HodorJobRequestHandler implements RequestHandler {
     }
 
     @Override
-    public void postHandle(HodorJobExecutionContext context) {
-
+    public void postHandle(final HodorJobExecutionContext context) {
+        log.info("job {} submit success.", context.getJobKey());
     }
 
+    @Override
+    public void resultHandle(final RemotingResponse<JobExecuteResponse> remotingResponse) {
+        HodorJobResponseHandler.INSTANCE.fireJobResponseHandler(remotingResponse);
+    }
+
+    @Override
     public void exceptionCaught(final HodorJobExecutionContext context, final Throwable t) {
         log.error("job {} request [id:{}] execute exception, msg: {}.", context.getRequestId(), context.getJobKey(), t.getMessage(), t);
+        RemotingResponse<JobExecuteResponse> errorResponse = getErrorResponse(context, t);
+        HodorJobResponseHandler.INSTANCE.fireJobResponseHandler(errorResponse);
+    }
+
+    public RemotingResponse<JobExecuteResponse> getErrorResponse(final HodorJobExecutionContext context, final Throwable t) {
         JobExecuteResponse jobExecuteResponse = new JobExecuteResponse();
         jobExecuteResponse.setRequestId(context.getRequestId());
         jobExecuteResponse.setCompleteTime(DateUtil.formatDateTime(new Date()));
         jobExecuteResponse.setStatus(JobExecuteStatus.ERROR);
         jobExecuteResponse.setComments(ThreadUtils.getStackTraceInfo(t));
-        HodorJobResponseHandler.INSTANCE.fireJobExecuteInnerErrorHandler(jobExecuteResponse);
+        return RemotingResponse.failed("inner error", jobExecuteResponse);
     }
 
     private RemotingMessage getRequestBody(final HodorJobExecutionContext context) {

@@ -3,14 +3,11 @@ package org.dromara.hodor.server.executor;
 import cn.hutool.core.lang.Assert;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.dag.Dag;
-import org.dromara.hodor.core.dag.DagCreator;
 import org.dromara.hodor.common.dag.Status;
-import org.dromara.hodor.common.storage.cache.CacheSource;
-import org.dromara.hodor.common.storage.cache.HodorCacheSource;
+import org.dromara.hodor.core.dag.DagCreator;
 import org.dromara.hodor.core.dag.NodeBean;
 import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
-import org.dromara.hodor.server.ServiceProvider;
 
 /**
  *  workflow job executor
@@ -21,14 +18,10 @@ import org.dromara.hodor.server.ServiceProvider;
 @Slf4j
 public class FlowJobExecutor extends CommonJobExecutor {
 
-    private final CacheSource<JobKey, Dag> dagCacheSource;
-
-    private final CacheSource<JobKey, NodeBean> flowNodeCacheSource;
+    private final FlowJobExecutorManager flowJobExecutorManager;
 
     public FlowJobExecutor() {
-        HodorCacheSource hodorCacheSource = ServiceProvider.getInstance().getBean(HodorCacheSource.class);
-        this.dagCacheSource = hodorCacheSource.getCacheSource("dag_instance");
-        this.flowNodeCacheSource = hodorCacheSource.getCacheSource("flow_node");
+        this.flowJobExecutorManager = FlowJobExecutorManager.getInstance();
     }
 
     @Override
@@ -49,11 +42,11 @@ public class FlowJobExecutor extends CommonJobExecutor {
 
     private void addRunningDag(JobKey jobKey, Dag dagInstance) {
         dagInstance.setStatus(Status.RUNNING);
-        dagCacheSource.put(jobKey, dagInstance);
+        flowJobExecutorManager.putDagInstance(jobKey, dagInstance);
     }
 
     private Dag createDagInstance(HodorJobExecutionContext context) {
-        NodeBean nodeBean = flowNodeCacheSource.get(context.getJobKey());
+        NodeBean nodeBean = flowJobExecutorManager.getFlowNode(context.getJobKey());
         Assert.notNull(nodeBean, "not found flow node by job key {}.", context.getJobKey());
         DagCreator dagCreator = new DagCreator(nodeBean);
         Dag dag = dagCreator.create();
@@ -62,7 +55,7 @@ public class FlowJobExecutor extends CommonJobExecutor {
     }
 
     private boolean isAlreadyRunningJob(JobKey jobKey) {
-        Dag dag = dagCacheSource.get(jobKey);
+        Dag dag = flowJobExecutorManager.getDagInstance(jobKey);
         if (dag == null) {
             return false;
         }

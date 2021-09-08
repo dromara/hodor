@@ -37,17 +37,30 @@ import java.util.Date;
  * @since 2021/8/10
  */
 @Slf4j
-public enum JobExecuteManager {
-    INSTANCE;
+public class JobExecuteManager {
 
-    private final JobExecuteRecorder jobExecuteRecorder = ServiceProvider.getInstance().getBean(JobExecuteRecorder.class);
+    private static volatile JobExecuteManager INSTANCE;
 
-    private final RemotingMessageSerializer serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
+    private final JobExecuteRecorder jobExecuteRecorder;
 
-    private final TypeReference<RemotingResponse<JobExecuteStatusResponse>> typeReference = new TypeReference<RemotingResponse<JobExecuteStatusResponse>>() {
-    };
+    private final RemotingMessageSerializer serializer;
+
+    private final TypeReference<RemotingResponse<JobExecuteStatusResponse>> typeReference;
+
+    private JobExecuteManager() {
+        this.jobExecuteRecorder = ServiceProvider.getInstance().getBean(JobExecuteRecorder.class);
+        this.serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
+        this.typeReference = new TypeReference<RemotingResponse<JobExecuteStatusResponse>>() { };
+    }
 
     public static JobExecuteManager getInstance() {
+        if (INSTANCE == null) {
+            synchronized (JobExecuteManager.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new JobExecuteManager();
+                }
+            }
+        }
         return INSTANCE;
     }
 
@@ -168,14 +181,14 @@ public enum JobExecuteManager {
                 .build();
         try {
             RemotingMessage remotingMessage = RemotingClient.getInstance().sendSyncRequest(host, remotingRequest, 1500);
-            RemotingResponse<R> remotingResponse =
-                    serializer.deserialize(remotingMessage.getBody(), typeReference.getType());
+            RemotingResponse<R> remotingResponse = serializer.deserialize(remotingMessage.getBody(), typeReference.getType());
             if (remotingResponse.isSuccess()) {
                 return remotingResponse.getData();
+            } else {
+                log.error("request failure, code: {}, msg: {}", remotingResponse.getCode(), remotingResponse.getMsg());
             }
         } catch (Exception e) {
-            // ignore
-            log.error("execute request error, messageType: {}, errorMsg: {}.", messageType, e.getMessage(), e);
+            log.error("execute request error, messageType: {}, errorMsg: {}", messageType, e.getMessage(), e);
         }
         return null;
     }
