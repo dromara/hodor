@@ -25,11 +25,6 @@ package org.dromara.hodor.common.dag;
 public interface DagService {
 
   /**
-   * Transitions the node from the ready state to the running state.
-   */
-  void startDag(final Dag dag);
-
-  /**
    * Transitions the node to the running state.
    */
   void markNodeRunning(Node node);
