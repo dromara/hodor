@@ -48,7 +48,7 @@ public class Dag {
 
     private String schedulerName;
 
-    Dag(final String name) {
+    public Dag(final String name) {
         requireNonNull(name, "The name of the Dag can't be null");
         this.name = name;
         this.id = IdGenerator.defaultGenerator().nextId();
@@ -67,12 +67,12 @@ public class Dag {
      *
      * @param node a node to add
      */
-    void addNode(final Node node) {
+    public void addNode(final Node node) {
         assert (node.getDag() == this);
         this.nodes.add(node);
     }
 
-    void start() {
+    public void start() {
         assert (this.status == Status.READY);
         changeStatus(Status.RUNNING);
         for (final Node node : this.nodes) {
@@ -83,7 +83,7 @@ public class Dag {
         updateDagStatus();
     }
 
-    void kill() {
+    public void kill() {
         if (this.status.isTerminal() || this.status == Status.KILLING) {
             // It is possible that a kill is issued after a dag has finished or multiple kill requests
             // are received. Without this check, this method will make duplicate calls to the
@@ -102,7 +102,7 @@ public class Dag {
      *
      * <p>If any node has not reached its terminal state, this method will simply return.
      */
-    void updateDagStatus() {
+    public void updateDagStatus() {
         // A dag may have nodes that are disabled. It's safer to scan all the nodes.
         // Assume the overhead is minimal. If it is not the case, we can optimize later.
         boolean failed = false;
@@ -143,7 +143,7 @@ public class Dag {
         }
     }
 
-    private void changeStatus(final Status status) {
+    public void changeStatus(final Status status) {
         this.status = status;
     }
 
