@@ -26,6 +26,14 @@ public class JobKey {
         return new JobKey(groupName, jobName);
     }
 
+    public static JobKey of(String jobKey) {
+        String[] split = jobKey.split("#", 2);
+        if (split.length != 2) {
+            throw new IllegalArgumentException(String.format("jobKey [%s] is illegal.", jobKey));
+        }
+        return new JobKey(split[0], split[1]);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
