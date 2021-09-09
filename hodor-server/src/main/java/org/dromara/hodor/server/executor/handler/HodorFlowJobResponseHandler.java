@@ -1,8 +1,13 @@
 package org.dromara.hodor.server.executor.handler;
 
+import cn.hutool.core.lang.Assert;
+import org.dromara.hodor.common.Tuple2;
+import org.dromara.hodor.common.dag.Dag;
+import org.dromara.hodor.common.dag.Node;
 import org.dromara.hodor.common.dag.Status;
 import org.dromara.hodor.common.event.AbstractEventPublisher;
 import org.dromara.hodor.common.event.Event;
+import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.remoting.api.message.RemotingResponse;
 import org.dromara.hodor.remoting.api.message.RemotingStatus;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
@@ -15,7 +20,8 @@ import org.dromara.hodor.server.manager.JobExecuteManager;
  * @author tomgs
  * @since 2021/9/8
  */
-public class HodorFlowJobResponseHandler extends AbstractEventPublisher<RemotingResponse<JobExecuteResponse>> implements ResponseHandler {
+public class HodorFlowJobResponseHandler extends AbstractEventPublisher<Tuple2<JobKey, JobExecuteResponse>>
+        implements ResponseHandler<Tuple2<JobKey, RemotingResponse<JobExecuteResponse>>> {
 
     public static final HodorFlowJobResponseHandler INSTANCE = new HodorFlowJobResponseHandler();
 
@@ -33,29 +39,32 @@ public class HodorFlowJobResponseHandler extends AbstractEventPublisher<Remoting
 
     private void registerSubJobExecuteSuccessResponseListener() {
         this.addListener(event -> {
-            RemotingResponse<JobExecuteResponse> remotingResponse = event.getValue();
-            JobExecuteResponse jobExecuteResponse = remotingResponse.getData();
-            JobExecuteManager.getInstance().addFinishJob(jobExecuteResponse);
-
-            // notify execute next
-            flowJobExecutorManager.changeNodeStatus(jobExecuteResponse.getJobKey(), Status.SUCCESS);
+            changeNodeStatus(event, Status.SUCCESS);
         }, RemotingStatus.SUCCEEDED);
     }
 
     private void registerSubJobExecuteFailureResponseListener() {
         this.addListener(event -> {
-            RemotingResponse<JobExecuteResponse> remotingResponse = event.getValue();
-            JobExecuteResponse jobExecuteResponse = remotingResponse.getData();
-            JobExecuteManager.getInstance().addFinishJob(jobExecuteResponse);
-
-            flowJobExecutorManager.changeNodeStatus(jobExecuteResponse.getJobKey(), Status.FAILURE);
+            changeNodeStatus(event, Status.FAILURE);
         }, RemotingStatus.FAILED);
     }
 
-    @Override
-    public void fireJobResponseHandler(RemotingResponse<JobExecuteResponse> remotingResponse) {
-        Event<RemotingResponse<JobExecuteResponse>> event = new Event<>(remotingResponse, remotingResponse.getCode());
-        publish(event);
+    private void changeNodeStatus(Event<Tuple2<JobKey, JobExecuteResponse>> event, Status status) {
+        Tuple2<JobKey, JobExecuteResponse> tuple = event.getValue();
+        JobKey rootJobKey = tuple.getFirst();
+        JobExecuteResponse jobExecuteResponse = tuple.getSecond();
+
+        JobExecuteManager.getInstance().addFinishJob(jobExecuteResponse);
+
+        // notify execute next
+        Dag dagInstance = flowJobExecutorManager.getDagInstance(rootJobKey);
+        Assert.notNull(dagInstance, "not found dag instance by root key {}.", rootJobKey);
+        Node node = dagInstance.getNode(jobExecuteResponse.getJobKey().getGroupName(), jobExecuteResponse.getJobKey().getJobName());
+        flowJobExecutorManager.changeNodeStatus(node, status);
+    }
+
+    public void fireJobResponseHandler(Tuple2<JobKey, RemotingResponse<JobExecuteResponse>> tuple) {
+        publish(Event.create(new Tuple2<>(tuple.getFirst(), tuple.getSecond().getData()), tuple.getSecond().getCode()));
     }
 
 }

@@ -14,7 +14,12 @@
  * the License.
  */
 
-package org.dromara.hodor.common.dag;
+package org.dromara.hodor.server.executor.handler;
+
+import org.dromara.hodor.common.dag.Dag;
+import org.dromara.hodor.common.dag.Node;
+import org.dromara.hodor.core.dag.NodeBean;
+import org.dromara.hodor.model.job.JobKey;
 
 /**
  * Thread safe and non blocking service for DAG processing.
@@ -52,11 +57,23 @@ public interface DagService {
   /**
    * Kills a DAG.
    */
-  void killDag(final Dag dag);
+  //void killDag(final Dag dag);
+
+  void updateDagStatus(Dag dag);
 
   /**
    * Shuts down the service and waits for the tasks to finish.
    */
   void shutdownAndAwaitTermination() throws InterruptedException;
+
+  void markNodeCanceled(Node node);
+
+  void putDagInstance(JobKey jobKey, Dag dagInstance);
+
+  Dag getDagInstance(JobKey jobKey);
+
+  void putFlowNodeBean(JobKey jobKey, NodeBean nodeBean);
+
+  NodeBean getFlowNodeBean(JobKey jobKey);
 
 }

@@ -105,7 +105,7 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
             //JobDesc jobDesc = new JobDesc();
             jobDesc.setGroupName("testGroup");
             jobDesc.setJobName(node.getNodeName());
-            HodorJobExecutionContext hodorJobExecutionContext = new HodorJobExecutionContext(node.getNodeId(), jobDesc, "test-scheduler", new Date());
+            HodorJobExecutionContext hodorJobExecutionContext = new HodorJobExecutionContext(node.getNodeId(), null, jobDesc, "test-scheduler", new Date());
             jobDispatcher.dispatch(hodorJobExecutionContext);
         }, Status.RUNNING);
 
@@ -218,7 +218,7 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
         }
 
         @Override
-        public void resultHandle(RemotingResponse<JobExecuteResponse> remotingResponse) {
+        public void resultHandle(Map<String, Object> attachment, RemotingResponse<JobExecuteResponse> remotingResponse) {
 
         }
 

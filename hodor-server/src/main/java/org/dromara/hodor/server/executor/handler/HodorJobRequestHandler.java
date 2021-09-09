@@ -70,8 +70,9 @@ public class HodorJobRequestHandler implements RequestHandler {
                 clientService.sendDuplexRequest(host, request, new FutureCallback<RemotingMessage>() {
                     @Override
                     public void onSuccess(RemotingMessage response) {
+                        Header header = response.getHeader();
                         RemotingResponse<JobExecuteResponse> remotingResponse = serializer.deserialize(response.getBody(), typeReference.getType());
-                        resultHandle(remotingResponse);
+                        resultHandle(header.getAttachment(), remotingResponse);
                     }
 
                     @Override
@@ -97,7 +98,7 @@ public class HodorJobRequestHandler implements RequestHandler {
     }
 
     @Override
-    public void resultHandle(final RemotingResponse<JobExecuteResponse> remotingResponse) {
+    public void resultHandle(Map<String, Object> attachment, final RemotingResponse<JobExecuteResponse> remotingResponse) {
         HodorJobResponseHandler.INSTANCE.fireJobResponseHandler(remotingResponse);
     }
 
@@ -120,7 +121,7 @@ public class HodorJobRequestHandler implements RequestHandler {
     private RemotingMessage getRequestBody(final HodorJobExecutionContext context) {
         byte[] requestBody = serializer.serialize(buildRequestFromContext(context));
         return RemotingMessage.builder()
-            .header(buildHeader(requestBody.length, context.getRequestId(), context.getSchedulerName()))
+            .header(buildHeader(requestBody.length, context))
             .body(requestBody)
             .build();
     }
@@ -142,11 +143,14 @@ public class HodorJobRequestHandler implements RequestHandler {
             .build();
     }
 
-    private Header buildHeader(int bodyLength, long requestId, String schedulerName) {
+    private Header buildHeader(int bodyLength, HodorJobExecutionContext context) {
         Map<String, Object> attachment = new HashMap<>();
-        attachment.put("schedulerName", schedulerName);
+        attachment.put("schedulerName", context.getSchedulerName());
+        if (context.getRootJobKey() != null) {
+            attachment.put("rootJobKey", context.getRootJobKey());
+        }
         return Header.builder()
-            .id(requestId)
+            .id(context.getRequestId())
             .version(RemotingConst.DEFAULT_VERSION)
             .type(MessageType.JOB_EXEC_REQUEST.getCode())
             .attachment(attachment)

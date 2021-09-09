@@ -15,7 +15,7 @@ import org.dromara.hodor.server.manager.JobExecuteManager;
  * @since 2021/4/7
  */
 @Slf4j
-public class HodorJobResponseHandler extends AbstractEventPublisher<RemotingResponse<JobExecuteResponse>> implements ResponseHandler {
+public class HodorJobResponseHandler extends AbstractEventPublisher<JobExecuteResponse> implements ResponseHandler<RemotingResponse<JobExecuteResponse>> {
 
     public static final HodorJobResponseHandler INSTANCE = new HodorJobResponseHandler();
 
@@ -30,22 +30,21 @@ public class HodorJobResponseHandler extends AbstractEventPublisher<RemotingResp
 
     private void registerJobExecuteSuccessResponseListener() {
         this.addListener(event -> {
-            RemotingResponse<JobExecuteResponse> remotingResponse = event.getValue();
-            JobExecuteResponse jobExecuteResponse = remotingResponse.getData();
+            JobExecuteResponse jobExecuteResponse = event.getValue();
             JobExecuteManager.getInstance().addFinishJob(jobExecuteResponse);
         }, RemotingStatus.SUCCEEDED);
     }
 
     private void registerJobExecuteFailureResponseListener() {
         this.addListener(event -> {
-            RemotingResponse<JobExecuteResponse> remotingResponse = event.getValue();
-            JobExecuteManager.getInstance().addFinishJob(remotingResponse.getData());
+            JobExecuteResponse jobExecuteResponse = event.getValue();
+            JobExecuteManager.getInstance().addFinishJob(jobExecuteResponse);
         }, RemotingStatus.FAILED);
     }
 
     @Override
     public void fireJobResponseHandler(final RemotingResponse<JobExecuteResponse> remotingResponse) {
-        Event<RemotingResponse<JobExecuteResponse>> event = new Event<>(remotingResponse, remotingResponse.getCode());
+        Event<JobExecuteResponse> event = new Event<>(remotingResponse.getData(), remotingResponse.getCode());
         publish(event);
     }
 
