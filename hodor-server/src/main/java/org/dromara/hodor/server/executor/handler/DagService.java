@@ -68,7 +68,7 @@ public interface DagService {
 
   void markNodeCanceled(Node node);
 
-  void putDagInstance(JobKey jobKey, Dag dagInstance);
+  void createDagInstance(JobKey jobKey, Dag dagInstance);
 
   Dag getDagInstance(JobKey jobKey);
 

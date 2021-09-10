@@ -85,8 +85,8 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
         }
     }
 
-    public void putDagInstance(JobKey rootJobKey, Dag dagInstance) {
-        dagService.putDagInstance(rootJobKey, dagInstance);
+    public void createDagInstance(JobKey rootJobKey, Dag dagInstance) {
+        dagService.createDagInstance(rootJobKey, dagInstance);
     }
 
     public Dag getDagInstance(JobKey rootJobKey) {

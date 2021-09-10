@@ -42,7 +42,7 @@ public class FlowJobExecutor extends CommonJobExecutor {
 
     private void addRunningDag(JobKey jobKey, Dag dagInstance) {
         dagInstance.setStatus(Status.RUNNING);
-        flowJobExecutorManager.putDagInstance(jobKey, dagInstance);
+        flowJobExecutorManager.createDagInstance(jobKey, dagInstance);
     }
 
     private Dag createDagInstance(HodorJobExecutionContext context) {
