@@ -77,7 +77,7 @@ public interface JobExecuteRecorder {
             jobExecDetail.setComments(strings.get(14));
         }
         if (StringUtils.isNotBlank(strings.get(15))) {
-            jobExecDetail.setJobExeData(strings.get(15).getBytes(StandardCharsets.UTF_8));
+            jobExecDetail.setJobExecData(strings.get(15).getBytes(StandardCharsets.UTF_8));
         }
         return jobExecDetail;
     }
@@ -105,7 +105,7 @@ public interface JobExecuteRecorder {
         sb.append(detail.getIsTimeout()).append("|");
         sb.append(detail.getParentRequestId()).append("|");
         sb.append(StringEscapeUtils.ESCAPE_JAVA.translate(detail.getComments())).append("|");
-        sb.append(new String(Optional.ofNullable(detail.getJobExeData()).orElse(new byte[0]), StandardCharsets.UTF_8));
+        sb.append(new String(Optional.ofNullable(detail.getJobExecData()).orElse(new byte[0]), StandardCharsets.UTF_8));
         return sb.toString();
     }
 

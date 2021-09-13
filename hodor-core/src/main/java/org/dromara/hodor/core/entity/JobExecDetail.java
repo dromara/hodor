@@ -43,7 +43,7 @@ public class JobExecDetail {
 
     private byte[] detailedLog;
 
-    private byte[] jobExeData;
+    private byte[] jobExecData;
 
     private String parentRequestId;
 
