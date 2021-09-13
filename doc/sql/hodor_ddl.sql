@@ -62,8 +62,7 @@ CREATE TABLE `hodor_job_exec_detail` (
     `is_timeout` int NOT NULL DEFAULT '0' COMMENT '是否超时,0:否,1:是',
     `enc_type` int DEFAULT NULL COMMENT '1:rar 2:zip 3:tar 4:json  数据保存类型',
     `detailed_log` blob COMMENT '存储详细日志',
-    `job_exe_data` blob COMMENT 'job执行信息',
-    `parent_request_id` varchar(32) NOT NULL DEFAULT '' COMMENT 'flow上一任务的requestid',
+    `job_exec_data` blob COMMENT 'job执行信息',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 
@@ -74,7 +73,7 @@ CREATE TABLE `hodor_flow_job_info` (
   `create_time` timestamp DEFAULT NULL COMMENT '创建时间',
   `update_time` timestamp DEFAULT NULL COMMENT '更新时间',
   `enc_type` int(4) DEFAULT NULL COMMENT '压缩类型  1：rar,2:zip,3:tar,4:byte',
-  `json` blob COMMENT '依赖关系数据：json',
+  `flow_data` blob COMMENT '依赖关系数据',
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_job_group` (`job_name`, `group_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -87,7 +86,7 @@ CREATE TABLE `hodor_flow_job_exec_detail` (
   `create_time` timestamp DEFAULT NULL COMMENT '创建时间',
   `update_time` timestamp DEFAULT NULL COMMENT '更新时间',
   `enc_type` int(4) DEFAULT NULL COMMENT '压缩类型  1：rar,2:zip,3:tar,4:byte',
-  `json` blob COMMENT '依赖关系数据：json',
+  `flow_exec_data` blob COMMENT 'flow任务执行明细关系数据',
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_request_id` (`request_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
