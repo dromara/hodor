@@ -12,7 +12,7 @@ import org.dromara.hodor.common.utils.StringUtils;
  */
 public class TrySender {
 
-    private static String lastConnectUrl = null;
+    private static volatile String lastConnectUrl = null;
 
     // eg: http://ip:port/rootName/
     private static final String URL_FORMAT = "{}://{}/{}";
