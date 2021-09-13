@@ -142,7 +142,7 @@ public class DagServiceImpl implements DagService {
         }, jobKey);
     }
 
-    public void persistDagInstance(Dag dag) {
+    private void persistDagInstance(Dag dag) {
         LockUtil.lockMethod(dagInstanceLock, d -> {
             dagCacheSource.put(JobKey.of(d.getName()), d);
             flowJobExecDetailService.updateFlowJobExecDetail(d);
