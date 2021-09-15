@@ -15,5 +15,5 @@ public interface FlowJobExecDetailService {
 
     Dag getFlowJobExecDetail(JobKey jobKey);
 
-    void updateFlowJobExecDetail(Dag dag);
+    void updateFlowJobExecDetail(Dag dagInstance);
 }

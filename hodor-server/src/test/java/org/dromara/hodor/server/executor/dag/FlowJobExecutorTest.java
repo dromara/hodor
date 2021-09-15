@@ -1,5 +1,6 @@
 package org.dromara.hodor.server.executor.dag;
 
+import cn.hutool.json.JSONUtil;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import java.util.Date;
@@ -18,8 +19,10 @@ import org.dromara.hodor.common.dag.NodeLayer;
 import org.dromara.hodor.common.dag.Status;
 import org.dromara.hodor.common.event.AbstractAsyncEventPublisher;
 import org.dromara.hodor.common.event.Event;
+import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.core.dag.DagCreator;
+import org.dromara.hodor.core.dag.FlowExecData;
 import org.dromara.hodor.core.dag.NodeBean;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.remoting.api.message.RemotingResponse;
@@ -61,7 +64,33 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
             }));
             countDownLatch.await();
         }
+    }
 
+    @Test
+    public void dagPersistTest() {
+        NodeBean flowNode = createFlowNode3();
+        String jsonStr = JSONUtil.toJsonStr(flowNode);
+        System.out.println(jsonStr);
+
+        final Dag dag = createDag(flowNode);
+        //String jsonStr = JSONUtil.toJsonStr(dag);
+        //System.out.println(jsonStr);
+        FlowExecData flowExecData = new FlowExecData();
+        flowExecData.setId(dag.getDagId());
+        flowExecData.setName(dag.getName());
+        flowExecData.setSchedulerName(dag.getSchedulerName());
+        flowExecData.setLayerSize(dag.getLayerSize());
+        flowExecData.setStatus(dag.getStatus());
+        //flowExecData.setNodes(dag.getNodes());
+        //flowExecData.setNodeLayers(dag.getNodeLayers());
+        jsonStr = JSONUtil.toJsonStr(flowExecData);
+        System.out.println(jsonStr);
+
+        /*jsonStr = JSONUtil.toJsonStr(dag.getNodes());
+        System.out.println(jsonStr);*/
+
+        jsonStr = JSONUtil.toJsonStr(dag.getNodeLayers());
+        System.out.println(jsonStr);
     }
 
     @Test
@@ -111,11 +140,11 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
 
         this.addListener(event -> {
             Node node = event.getValue();
-            node.markSuccess();
+            //node.markSuccess();
 
             log.info("{} is SUCCESS", node);
 
-            NodeLayer nodeLayer = node.getNodeLayer();
+            NodeLayer nodeLayer = null;//node.getNodeLayer();
             if (!nodeLayer.getStatus().isTerminal()) {
                 return;
             }
@@ -135,16 +164,16 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
 
         this.addListener(event -> {
             Node node = event.getValue();
-            node.markFailed();
+            //node.markFailed();
             log.info("{} is FAILURE", node);
         }, Status.FAILURE);
 
         this.addListener(event -> {
             Node node = event.getValue();
-            node.markKilled();
+            //node.markKilled();
             node.setStatus(Status.KILLED);
-            Dag dag = node.getDag();
-            NodeLayer nodeLayer = node.getCurrentNodeLayer();
+            //Dag dag = node.getDag();
+            NodeLayer nodeLayer = null;//node.getCurrentNodeLayer();
             if (nodeLayer.getRunningNodes() == 0) {
                 log.info("{} is KILLED", node);
                 dag.setStatus(Status.KILLED);
@@ -160,26 +189,31 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
     private NodeBean createFlowNode3() {
         String groupName = "testGroup";
         NodeBean rootNode = buildSubFlowNode(groupName, "root");
-        NodeBean rn1 = buildSubFlowNode(groupName,"n1", "root");
-        NodeBean rn2 = buildSubFlowNode(groupName,"r-n2", "root");
+        NodeBean rn1 = buildSubFlowNode(groupName,"n1", Node.createNodeKey(groupName, "root"));
+        NodeBean rn2 = buildSubFlowNode(groupName,"r-n2", Node.createNodeKey(groupName, "root"));
 
-        NodeBean n2 = buildSubFlowNode(groupName,"n2", "n1");
-        NodeBean n3 = buildSubFlowNode(groupName,"n3", "n1");
-        NodeBean n4 = buildSubFlowNode(groupName,"n4", "n1");
+        NodeBean n2 = buildSubFlowNode(groupName,"n2", Node.createNodeKey(groupName, "n1"));
+        NodeBean n3 = buildSubFlowNode(groupName,"n3", Node.createNodeKey(groupName, "n1"));
+        NodeBean n4 = buildSubFlowNode(groupName,"n4", Node.createNodeKey(groupName, "n1"));
 
-        NodeBean n5 = buildSubFlowNode(groupName,"n5", "n2");
-        NodeBean n6 = buildSubFlowNode(groupName,"n6", "n2");
-        NodeBean n7 = buildSubFlowNode(groupName,"n7", "n2");
+        NodeBean n5 = buildSubFlowNode(groupName,"n5", Node.createNodeKey(groupName, "n2"));
+        NodeBean n6 = buildSubFlowNode(groupName,"n6", Node.createNodeKey(groupName, "n2"));
+        NodeBean n7 = buildSubFlowNode(groupName,"n7", Node.createNodeKey(groupName, "n2"));
 
-        NodeBean n8 = buildSubFlowNode(groupName,"n8", "n4");
-        NodeBean n9 = buildSubFlowNode(groupName, "n9", "n4");
-        NodeBean n10 = buildSubFlowNode(groupName, "n10", "n4");
+        NodeBean n8 = buildSubFlowNode(groupName,"n8", Node.createNodeKey(groupName, "n4"));
+        NodeBean n9 = buildSubFlowNode(groupName, "n9", Node.createNodeKey(groupName, "n4"));
+        NodeBean n10 = buildSubFlowNode(groupName, "n10", Node.createNodeKey(groupName, "n4"));
 
-        NodeBean n11 = buildSubFlowNode(groupName,"n11", "n5", "n6", "n7");
-        NodeBean n12 = buildSubFlowNode(groupName,"n12", "n3");
-        NodeBean n13 = buildSubFlowNode(groupName,"n13", "n8", "n9", "n10");
+        NodeBean n11 = buildSubFlowNode(groupName,"n11", Node.createNodeKey(groupName, "n5"),
+            Node.createNodeKey(groupName, "n6"),
+            Node.createNodeKey(groupName, "n7"));
+        NodeBean n12 = buildSubFlowNode(groupName,"n12", Node.createNodeKey(groupName, "n3"));
+        NodeBean n13 = buildSubFlowNode(groupName,"n13", Node.createNodeKey(groupName, "n8"),
+            Node.createNodeKey(groupName, "n9"),
+            Node.createNodeKey(groupName, "n10"));
 
-        NodeBean n14 = buildSubFlowNode("n14", "n11", "n12", "n13");
+        NodeBean n14 = buildSubFlowNode("n14", "n11", Node.createNodeKey(groupName, "n12"),
+            Node.createNodeKey(groupName, "n13"));
 
         NodeBean flowNode = buildSubFlowNode(groupName, "flow");
         flowNode.setNodes(ImmutableList.of(rootNode, rn1, rn2, n4, n7, n5, n6, n2, n3, n8, n9, n11, n13, n14, n12, n10));

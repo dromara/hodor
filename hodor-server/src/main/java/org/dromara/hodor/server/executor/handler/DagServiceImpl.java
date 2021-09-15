@@ -41,9 +41,9 @@ public class DagServiceImpl implements DagService {
     public DagServiceImpl(final HodorCacheSource hodorCacheSource,
                           final FlowJobInfoService flowJobInfoService,
                           final FlowJobExecDetailService flowJobExecDetailService) {
+        Assert.notNull(hodorCacheSource, "hodorCacheSource must be not null.");
         this.flowJobInfoService = flowJobInfoService;
         this.flowJobExecDetailService = flowJobExecDetailService;
-        Assert.notNull(hodorCacheSource, "hodorCacheSource must be not null.");
         this.dagCacheSource = hodorCacheSource.getCacheSource("dag_instance");
         this.flowNodeBeanCacheSource = hodorCacheSource.getCacheSource("flow_node");
     }
@@ -93,7 +93,7 @@ public class DagServiceImpl implements DagService {
     }
 
     @Override
-    public void shutdownAndAwaitTermination() throws InterruptedException {
+    public void shutdownAndAwaitTermination() {
 
     }
 

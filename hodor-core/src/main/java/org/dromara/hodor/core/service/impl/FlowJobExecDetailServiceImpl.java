@@ -25,7 +25,7 @@ public class FlowJobExecDetailServiceImpl implements FlowJobExecDetailService {
     }
 
     @Override
-    public void updateFlowJobExecDetail(Dag dag) {
+    public void updateFlowJobExecDetail(Dag dagInstance) {
 
     }
 

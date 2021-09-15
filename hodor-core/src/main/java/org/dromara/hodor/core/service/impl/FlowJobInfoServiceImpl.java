@@ -3,7 +3,8 @@ package org.dromara.hodor.core.service.impl;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.core.dag.CompressDataFactory;
+import org.dromara.hodor.common.compress.Compress;
+import org.dromara.hodor.common.compress.CompressFactory;
 import org.dromara.hodor.core.dag.NodeBean;
 import org.dromara.hodor.core.entity.FlowJobInfo;
 import org.dromara.hodor.core.mapper.FlowJobInfoMapper;
@@ -34,7 +35,7 @@ public class FlowJobInfoServiceImpl implements FlowJobInfoService {
         }
         byte[] flowData = flowJobInfo.getFlowData();
         Integer encType = flowJobInfo.getEncType();
-        CompressDataFactory factory = CompressDataFactory.getFactory(encType);
+        Compress factory = CompressFactory.getCompress(encType);
         NodeBean nodeBean = factory.uncompress(flowData);
         // nodeBean.setNodes();
         return nodeBean;
