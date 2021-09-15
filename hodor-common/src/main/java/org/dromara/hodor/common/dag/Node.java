@@ -51,7 +51,7 @@ public class Node {
 
     private int layer = 0;
 
-    Node(final String groupName, final String nodeName, Object rawData, final Dag dag) {
+    public Node(final String groupName, final String nodeName, Object rawData, final Dag dag) {
         requireNonNull(groupName, "The groupName of the node can't be null");
         this.groupName = groupName;
         requireNonNull(nodeName, "The nodeName of the node can't be null");

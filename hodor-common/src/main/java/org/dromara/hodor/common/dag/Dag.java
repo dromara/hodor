@@ -236,4 +236,7 @@ public class Dag {
         this.schedulerName = schedulerName;
     }
 
+    public int getLayerSize() {
+        return layerSize;
+    }
 }
