@@ -14,6 +14,9 @@ import org.dromara.hodor.model.job.JobKey;
 
 /**
  * JobExecuteRecorder
+ *
+ * @author tomgs
+ * @since 2021/09/15
  */
 public interface JobExecuteRecorder {
 
@@ -71,13 +74,10 @@ public interface JobExecuteRecorder {
             jobExecDetail.setIsTimeout(Boolean.parseBoolean(strings.get(12)));
         }
         if (StringUtils.isNotBlank(strings.get(13))) {
-            jobExecDetail.setParentRequestId(strings.get(13));
+            jobExecDetail.setComments(strings.get(13));
         }
         if (StringUtils.isNotBlank(strings.get(14))) {
-            jobExecDetail.setComments(strings.get(14));
-        }
-        if (StringUtils.isNotBlank(strings.get(15))) {
-            jobExecDetail.setJobExecData(strings.get(15).getBytes(StandardCharsets.UTF_8));
+            jobExecDetail.setJobExecData(strings.get(14).getBytes(StandardCharsets.UTF_8));
         }
         return jobExecDetail;
     }
@@ -103,7 +103,6 @@ public interface JobExecuteRecorder {
         sb.append(detail.getExecuteStatus()).append("|");
         sb.append(detail.getElapsedTime()).append("|");
         sb.append(detail.getIsTimeout()).append("|");
-        sb.append(detail.getParentRequestId()).append("|");
         sb.append(StringEscapeUtils.ESCAPE_JAVA.translate(detail.getComments())).append("|");
         sb.append(new String(Optional.ofNullable(detail.getJobExecData()).orElse(new byte[0]), StandardCharsets.UTF_8));
         return sb.toString();

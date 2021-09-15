@@ -3,15 +3,6 @@ package org.dromara.hodor.server.executor.dag;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.dag.Dag;
 import org.dromara.hodor.common.dag.Node;
@@ -19,7 +10,6 @@ import org.dromara.hodor.common.dag.NodeLayer;
 import org.dromara.hodor.common.dag.Status;
 import org.dromara.hodor.common.event.AbstractAsyncEventPublisher;
 import org.dromara.hodor.common.event.Event;
-import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.core.dag.DagCreator;
 import org.dromara.hodor.core.dag.FlowExecData;
@@ -31,6 +21,12 @@ import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.server.executor.JobDispatcher;
 import org.dromara.hodor.server.executor.handler.RequestHandler;
 import org.junit.Test;
+
+import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * FlowJobExecutorTest
@@ -90,6 +86,22 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
         System.out.println(jsonStr);*/
 
         jsonStr = JSONUtil.toJsonStr(dag.getNodeLayers());
+        System.out.println(jsonStr);
+    }
+
+    @Test
+    public void testNodeBean() {
+        String groupName = "trest";
+        NodeBean rootNode = buildSubFlowNode(groupName, "root");
+        NodeBean rn1 = buildSubFlowNode(groupName,"n1", Node.createNodeKey(groupName, "root"));
+        NodeBean rn2 = buildSubFlowNode(groupName,"r-n2", Node.createNodeKey(groupName, "root"));
+        rn1.setNodes(ImmutableList.of(rootNode));
+        rn2.setNodes(ImmutableList.of(rootNode));
+
+        NodeBean flowNode = buildSubFlowNode(groupName, "flow");
+        flowNode.setNodes(ImmutableList.of(rootNode, rn1, rn2));
+
+        String jsonStr = JSONUtil.toJsonStr(flowNode);
         System.out.println(jsonStr);
     }
 

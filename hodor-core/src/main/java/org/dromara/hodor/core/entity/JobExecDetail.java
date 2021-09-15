@@ -45,8 +45,6 @@ public class JobExecDetail {
 
     private byte[] jobExecData;
 
-    private String parentRequestId;
-
     private String comments;
 
 }
