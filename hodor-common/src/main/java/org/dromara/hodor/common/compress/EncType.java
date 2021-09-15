@@ -15,26 +15,36 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.core.dag;
+package org.dromara.hodor.common.compress;
 
 /**
- * CompressDataFactory
+ * EncType
  *
  * @author tomgs
- * @since 2021/9/13
+ * @since 2021/9/14
  */
-public class CompressDataFactory {
+public enum EncType {
 
-    public static CompressDataFactory getFactory(Integer encType) {
-        return null;
+    ZIP(1),
+    PLAIN(2);
+
+    private final int type;
+
+    EncType(int type) {
+        this.type = type;
     }
 
-    public <T> T uncompress(byte[] data) {
-        return null;
+    public static EncType of(int type) {
+        for (EncType encType : EncType.values()) {
+            if (encType.type == type) {
+                return encType;
+            }
+        }
+        throw new IllegalArgumentException("not found enc type:" + type);
     }
 
-    public <T> boolean compress(T t) {
-        return false;
+    public int getType() {
+        return type;
     }
 
 }
