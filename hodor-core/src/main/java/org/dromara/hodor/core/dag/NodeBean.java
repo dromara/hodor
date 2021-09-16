@@ -33,7 +33,7 @@ public class NodeBean implements Serializable {
 
     private String groupName;
 
-    private String nodeName;
+    private String jobName;
 
     private Map<String, String> config;
 

@@ -4,7 +4,9 @@ import java.util.List;
 import org.dromara.hodor.common.dag.Dag;
 import org.dromara.hodor.common.dag.DagBuilder;
 import org.dromara.hodor.common.dag.Node;
+import org.dromara.hodor.model.enums.CommandType;
 import org.dromara.hodor.model.job.JobDesc;
+import org.dromara.hodor.model.job.JobKey;
 
 /**
  * dag creator
@@ -20,9 +22,9 @@ public class DagCreator {
 
     public DagCreator(final NodeBean flowNode) {
         final String groupName = flowNode.getGroupName();
-        final String nodeName = flowNode.getNodeName();
+        final String jobName = flowNode.getJobName();
         this.flowNode = flowNode;
-        this.dagBuilder = new DagBuilder(Node.createNodeKey(groupName, nodeName));
+        this.dagBuilder = new DagBuilder(groupName + "#" + jobName);
     }
 
     public Dag create() {
@@ -39,12 +41,15 @@ public class DagCreator {
 
     private void createNode(final NodeBean node) {
         JobDesc jobDesc = buildJobDesc(node);
-        this.dagBuilder.createNode(node.getGroupName(), node.getNodeName(), jobDesc);
+        this.dagBuilder.createNode(node.getGroupName(), node.getJobName(), jobDesc);
     }
 
     private JobDesc buildJobDesc(NodeBean node) {
         JobDesc jobDesc = new JobDesc();
-        jobDesc.setJobName(node.getNodeName());
+        jobDesc.setGroupName(node.getGroupName());
+        jobDesc.setJobName(node.getJobName());
+        jobDesc.setJobCommandType(CommandType.of(node.getType()));
+        jobDesc.setJobCommand(node.getConfig().get("command"));
         return jobDesc;
     }
 
@@ -55,14 +60,13 @@ public class DagCreator {
     }
 
     private void linkNode(final NodeBean node) {
-        final String groupName = node.getGroupName();
-        final String nodeName = node.getNodeName();
+        final String nodeName = node.getJobName();
         final List<String> parents = node.getDependsOn();
         if (parents == null) {
             return;
         }
-        for (final String parentNodeKeyName : parents) {
-            this.dagBuilder.addParentNode(Node.createNodeKey(groupName, nodeName), parentNodeKeyName);
+        for (final String parentJobName : parents) {
+            this.dagBuilder.addParentNode(nodeName, parentJobName);
         }
     }
 
