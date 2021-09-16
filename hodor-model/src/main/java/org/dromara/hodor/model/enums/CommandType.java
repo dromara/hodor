@@ -47,6 +47,15 @@ public enum CommandType {
         this.name = typeName;
     }
 
+    public static CommandType of(String type) {
+        for (CommandType commandType : CommandType.values()) {
+            if (commandType.getName().equals(type)) {
+                return commandType;
+            }
+        }
+        throw new IllegalArgumentException("not found command type by " + type);
+    }
+
     public int getCode() {
         return code;
     }
