@@ -63,13 +63,12 @@ public class DagBuilder {
   public Node createNode(final String groupName, final String name, final Object rawData) {
     checkIsBuilt();
 
-    String nodeKey = Node.createNodeKey(groupName, name);
-    if (this.nameToNodeMap.get(nodeKey) != null) {
+    if (this.nameToNodeMap.get(name) != null) {
       throw new DagException(String.format("Node names in %s need to be unique. The name "
           + "(%s) already exists.", this, name));
     }
     final Node node = new Node(groupName, name, rawData, this.dag);
-    this.nameToNodeMap.put(nodeKey, node);
+    this.nameToNodeMap.put(name, node);
 
     return node;
   }

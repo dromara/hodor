@@ -29,8 +29,6 @@ import static java.util.Objects.requireNonNull;
  */
 public class Node {
 
-    private static final String NODE_KEY_FORMAT = "{}#{}";
-
     private final Long id;
 
     private final String groupName;
@@ -62,10 +60,6 @@ public class Node {
         this.rawData = rawData;
         this.id = IdGenerator.defaultGenerator().nextId();
         dag.addNode(this);
-    }
-
-    public static String createNodeKey(String groupName, String nodeName) {
-        return StringUtils.format(NODE_KEY_FORMAT, groupName, nodeName);
     }
 
     public Dag getDag() {
@@ -222,10 +216,6 @@ public class Node {
 
     public String getNodeName() {
         return nodeName;
-    }
-
-    public String getNodeKeyName() {
-        return StringUtils.format(NODE_KEY_FORMAT, groupName, nodeName);
     }
 
     public int getLayer() {

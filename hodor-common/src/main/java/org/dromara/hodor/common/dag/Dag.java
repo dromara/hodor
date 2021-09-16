@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import org.dromara.hodor.common.IdGenerator;
+import org.dromara.hodor.common.utils.StringUtils;
 
 import static java.util.Objects.requireNonNull;
 
@@ -30,7 +31,7 @@ import static java.util.Objects.requireNonNull;
  * A DAG (Directed acyclic graph) consists of {@link Node}s.
  *
  * <p>Most of the methods in this class should remain package private. Code outside of this
- * package should mainly interact with the {@link DagService}.
+ * package should mainly interact with the DagService.
  */
 public class Dag {
 
@@ -171,9 +172,9 @@ public class Dag {
     public Node getNode(String groupName, String nodeName) {
         return getNodes()
             .stream()
-            .filter(node -> node.getNodeKeyName().equals(Node.createNodeKey(groupName, nodeName)))
+            .filter(node -> node.getGroupName().equals(groupName) && node.getNodeName().equals(nodeName))
             .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException(Node.createNodeKey(groupName, nodeName) + "is illegal node name."));
+            .orElseThrow(() -> new IllegalArgumentException(StringUtils.format("node {}#{} is illegal node name.", groupName, nodeName)));
     }
 
     public Map<Integer, List<Node>> getLayerNodeMap() {
