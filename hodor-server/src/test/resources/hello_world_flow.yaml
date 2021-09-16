@@ -1,0 +1,20 @@
+groupName: test
+jobName: flow_name
+type: flow
+nodes:
+  - jobName: n1
+    type: command
+    config:
+      command: echo "Hello World."
+  - jobName: n2
+    dependsOn:
+      - n1
+    type: command
+    config:
+      command: echo "This is the second job."
+  - jobName: n3
+    dependsOn:
+      - n2
+    type: command
+    config:
+        command: echo "This is the third job."
