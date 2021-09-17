@@ -3,6 +3,7 @@ package org.dromara.hodor.core.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.util.Date;
 import lombok.Data;
+import org.dromara.hodor.common.dag.Status;
 
 /**
  * flow job execute detail
@@ -22,9 +23,15 @@ public class FlowJobExecDetail {
 
     private String jobName;
 
-    private Date createTime;
+    private String schedulerName;
 
-    private Date updateTime;
+    private Status status;
+
+    private Date executeStart;
+
+    private Date executeEnd;
+
+    private Long elapsedTime;
 
     private Integer encType;
 

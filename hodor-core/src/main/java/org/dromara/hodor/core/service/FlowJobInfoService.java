@@ -1,6 +1,7 @@
 package org.dromara.hodor.core.service;
 
-import org.dromara.hodor.core.dag.NodeBean;
+import org.dromara.hodor.core.dag.FlowData;
+import org.dromara.hodor.core.entity.FlowJobInfo;
 import org.dromara.hodor.model.job.JobKey;
 
 /**
@@ -11,7 +12,7 @@ import org.dromara.hodor.model.job.JobKey;
  */
 public interface FlowJobInfoService {
 
-    NodeBean getFlowJobInfo(JobKey jobKey);
+    FlowData getFlowData(JobKey jobKey);
 
-    void createFlowJobInfo(NodeBean nodeBean);
+    void createFlowJobInfo(FlowJobInfo flowJobInfo);
 }

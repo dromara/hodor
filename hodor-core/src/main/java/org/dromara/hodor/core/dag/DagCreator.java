@@ -3,10 +3,8 @@ package org.dromara.hodor.core.dag;
 import java.util.List;
 import org.dromara.hodor.common.dag.Dag;
 import org.dromara.hodor.common.dag.DagBuilder;
-import org.dromara.hodor.common.dag.Node;
 import org.dromara.hodor.model.enums.CommandType;
 import org.dromara.hodor.model.job.JobDesc;
-import org.dromara.hodor.model.job.JobKey;
 
 /**
  * dag creator
@@ -16,11 +14,11 @@ import org.dromara.hodor.model.job.JobKey;
  */
 public class DagCreator {
 
-    private final NodeBean flowNode;
+    private final FlowData flowNode;
 
     private final DagBuilder dagBuilder;
 
-    public DagCreator(final NodeBean flowNode) {
+    public DagCreator(final FlowData flowNode) {
         final String groupName = flowNode.getGroupName();
         final String jobName = flowNode.getJobName();
         this.flowNode = flowNode;
@@ -34,17 +32,17 @@ public class DagCreator {
     }
 
     private void createNodes() {
-        for (final NodeBean node : this.flowNode.getNodes()) {
+        for (final FlowData node : this.flowNode.getNodes()) {
             createNode(node);
         }
     }
 
-    private void createNode(final NodeBean node) {
+    private void createNode(final FlowData node) {
         JobDesc jobDesc = buildJobDesc(node);
         this.dagBuilder.createNode(node.getGroupName(), node.getJobName(), jobDesc);
     }
 
-    private JobDesc buildJobDesc(NodeBean node) {
+    private JobDesc buildJobDesc(FlowData node) {
         JobDesc jobDesc = new JobDesc();
         jobDesc.setGroupName(node.getGroupName());
         jobDesc.setJobName(node.getJobName());
@@ -54,12 +52,12 @@ public class DagCreator {
     }
 
     private void linkNodes() {
-        for (final NodeBean node : this.flowNode.getNodes()) {
+        for (final FlowData node : this.flowNode.getNodes()) {
             linkNode(node);
         }
     }
 
-    private void linkNode(final NodeBean node) {
+    private void linkNode(final FlowData node) {
         final String nodeName = node.getJobName();
         final List<String> parents = node.getDependsOn();
         if (parents == null) {

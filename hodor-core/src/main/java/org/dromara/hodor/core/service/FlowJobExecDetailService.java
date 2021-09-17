@@ -1,6 +1,6 @@
 package org.dromara.hodor.core.service;
 
-import org.dromara.hodor.common.dag.Dag;
+import org.dromara.hodor.core.entity.FlowJobExecDetail;
 import org.dromara.hodor.model.job.JobKey;
 
 /**
@@ -11,9 +11,9 @@ import org.dromara.hodor.model.job.JobKey;
  */
 public interface FlowJobExecDetailService {
 
-    void createFlowJobExecDetail(Dag dagInstance);
+    void createFlowJobExecDetail(FlowJobExecDetail flowJobExecDetail);
 
-    Dag getFlowJobExecDetail(JobKey jobKey);
+    FlowJobExecDetail getRunningFlowJobExecDetail(JobKey jobKey);
 
-    void updateFlowJobExecDetail(Dag dagInstance);
+    void updateFlowJobExecDetail(FlowJobExecDetail flowJobExecDetail);
 }

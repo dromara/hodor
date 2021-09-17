@@ -15,34 +15,19 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.core.dag;
-
-import java.util.List;
-import lombok.Data;
-import org.dromara.hodor.common.dag.Node;
-import org.dromara.hodor.common.dag.Status;
+package org.dromara.hodor.core;
 
 /**
- * FlowExecData
+ * Constants
  *
  * @author tomgs
- * @since 2021/9/14
+ * @since 2021/9/17
  */
-@Data
-public class FlowExecData {
+public interface Constants {
 
-    private Long id;
+    class EventReporterConstants {
+        public static final String FLOW_NAME = "flowName";
+    }
 
-    private String groupName;
-
-    private String jobName;
-
-    private String schedulerName;
-
-    private Status status = Status.READY;
-
-    private List<String> dependsOn;
-
-    private List<Node> nodes;
 
 }
