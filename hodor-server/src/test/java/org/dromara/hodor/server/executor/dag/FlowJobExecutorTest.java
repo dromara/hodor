@@ -1,11 +1,16 @@
 package org.dromara.hodor.server.executor.dag;
 
+import cn.hutool.core.lang.TypeReference;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import java.io.File;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.common.compress.Compress;
+import org.dromara.hodor.common.compress.CompressFactory;
+import org.dromara.hodor.common.compress.EncType;
 import org.dromara.hodor.common.dag.Dag;
 import org.dromara.hodor.common.dag.Node;
 import org.dromara.hodor.common.dag.NodeLayer;
@@ -15,7 +20,7 @@ import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.core.dag.DagCreator;
 import org.dromara.hodor.core.dag.FlowExecData;
-import org.dromara.hodor.core.dag.NodeBean;
+import org.dromara.hodor.core.dag.FlowData;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.remoting.api.message.RemotingResponse;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
@@ -51,15 +56,22 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
     public void loadFlow() throws Exception {
         File file = loadFlowFileFromResource();
         NodeBeanLoader loader = new NodeBeanLoader();
-        NodeBean nodeBean = loader.load(file);
-        System.out.println(nodeBean);
+        FlowData flowData = loader.load(file);
+
+        String toJsonStr = JSONUtil.toJsonStr(flowData);
+        byte[] bytes = toJsonStr.getBytes(StandardCharsets.UTF_8);
+        Compress factory = CompressFactory.getCompress(EncType.PLAIN.getType());
+        TypeReference<FlowData> typeReference = new TypeReference<FlowData>() {};
+        flowData = factory.uncompress(bytes, typeReference.getType());
+
+        System.out.println(flowData);
     }
 
     @Test
     public void testExecuteFlowFromResource() throws Exception {
         File file = loadFlowFileFromResource();
         NodeBeanLoader loader = new NodeBeanLoader();
-        NodeBean flowNode = loader.load(file);
+        FlowData flowNode = loader.load(file);
         dag = createDag(flowNode);
 
         try {
@@ -73,6 +85,12 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
         }
     }
 
+    public FlowExecData buildFlowExecData(Dag dag) {
+        FlowExecData flowExecData = new FlowExecData();
+
+        return flowExecData;
+    }
+
     private File loadFlowFileFromResource() {
         //final ClassLoader loader = getClass().getClassLoader();
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -83,7 +101,7 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
 
     @Test
     public void executeFlow() throws InterruptedException {
-        NodeBean flowNode = createFlowNode3();
+        FlowData flowNode = createFlowNode3();
         final Dag dag = createDag(flowNode);
         Map<Integer, List<Node>> collect = dag.getLayerNodeMap();
         for (Map.Entry<Integer, List<Node>> nodeEntry : collect.entrySet()) {
@@ -100,7 +118,7 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
 
     @Test
     public void dagPersistTest() {
-        NodeBean flowNode = createFlowNode3();
+        FlowData flowNode = createFlowNode3();
         String jsonStr = JSONUtil.toJsonStr(flowNode);
         System.out.println(jsonStr);
 
@@ -111,7 +129,7 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
         flowExecData.setId(dag.getDagId());
         flowExecData.setName(dag.getName());
         flowExecData.setSchedulerName(dag.getSchedulerName());
-        flowExecData.setLayerSize(dag.getLayerSize());
+        //flowExecData.setLayerSize(dag.getLayerSize());
         flowExecData.setStatus(dag.getStatus());
         //flowExecData.setNodes(dag.getNodes());
         //flowExecData.setNodeLayers(dag.getNodeLayers());
@@ -128,26 +146,26 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
     @Test
     public void testNodeBean() {
         String groupName = "trest";
-        NodeBean rootNode = buildSubFlowNode(groupName, "root");
-        NodeBean rn1 = buildSubFlowNode(groupName,"n1", "root");
-        NodeBean rn2 = buildSubFlowNode(groupName,"r-n2", "root");
+        FlowData rootNode = buildSubFlowNode(groupName, "root");
+        FlowData rn1 = buildSubFlowNode(groupName,"n1", "root");
+        FlowData rn2 = buildSubFlowNode(groupName,"r-n2", "root");
         rn1.setNodes(ImmutableList.of(rootNode));
         rn2.setNodes(ImmutableList.of(rootNode));
 
-        NodeBean flowNode = buildSubFlowNode(groupName, "flow");
+        FlowData flowNode = buildSubFlowNode(groupName, "flow");
         flowNode.setNodes(ImmutableList.of(rootNode, rn1, rn2));
 
         String jsonStr = JSONUtil.toJsonStr(flowNode);
         System.out.println(jsonStr);
 
-        NodeBean nodeBean = JSONUtil.toBean(jsonStr, NodeBean.class);
-        System.out.println(nodeBean);
+        FlowData flowData = JSONUtil.toBean(jsonStr, FlowData.class);
+        System.out.println(flowData);
     }
 
     @Test
     public void executeSuccessFlow() {
         try {
-            NodeBean flowNode = createFlowNode3();
+            FlowData flowNode = createFlowNode3();
             this.dag = createDag(flowNode);
             Optional<NodeLayer> firstLayer = dag.getFirstLayer();
             dag.setStatus(Status.RUNNING);
@@ -229,43 +247,43 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
         }, Status.KILLED);
     }
 
-    private Dag createDag(final NodeBean flowNode) {
+    private Dag createDag(final FlowData flowNode) {
         final DagCreator creator = new DagCreator(flowNode);
         return creator.create();
     }
 
-    private NodeBean createFlowNode3() {
+    private FlowData createFlowNode3() {
         String groupName = "testGroup";
-        NodeBean rootNode = buildSubFlowNode(groupName, "root");
-        NodeBean rn1 = buildSubFlowNode(groupName,"n1", "root");
-        NodeBean rn2 = buildSubFlowNode(groupName,"r-n2", "root");
+        FlowData rootNode = buildSubFlowNode(groupName, "root");
+        FlowData rn1 = buildSubFlowNode(groupName,"n1", "root");
+        FlowData rn2 = buildSubFlowNode(groupName,"r-n2", "root");
 
-        NodeBean n2 = buildSubFlowNode(groupName,"n2", "n1");
-        NodeBean n3 = buildSubFlowNode(groupName,"n3", "n1");
-        NodeBean n4 = buildSubFlowNode(groupName,"n4", "n1");
+        FlowData n2 = buildSubFlowNode(groupName,"n2", "n1");
+        FlowData n3 = buildSubFlowNode(groupName,"n3", "n1");
+        FlowData n4 = buildSubFlowNode(groupName,"n4", "n1");
 
-        NodeBean n5 = buildSubFlowNode(groupName,"n5", "n2");
-        NodeBean n6 = buildSubFlowNode(groupName,"n6", "n2");
-        NodeBean n7 = buildSubFlowNode(groupName,"n7", "n2");
+        FlowData n5 = buildSubFlowNode(groupName,"n5", "n2");
+        FlowData n6 = buildSubFlowNode(groupName,"n6", "n2");
+        FlowData n7 = buildSubFlowNode(groupName,"n7", "n2");
 
-        NodeBean n8 = buildSubFlowNode(groupName,"n8", "n4");
-        NodeBean n9 = buildSubFlowNode(groupName, "n9", "n4");
-        NodeBean n10 = buildSubFlowNode(groupName, "n10", "n4");
+        FlowData n8 = buildSubFlowNode(groupName,"n8", "n4");
+        FlowData n9 = buildSubFlowNode(groupName, "n9", "n4");
+        FlowData n10 = buildSubFlowNode(groupName, "n10", "n4");
 
-        NodeBean n11 = buildSubFlowNode(groupName,"n11", "n5", "n6", "n7");
-        NodeBean n12 = buildSubFlowNode(groupName,"n12", "n3");
-        NodeBean n13 = buildSubFlowNode(groupName,"n13", "n8", "n9", "n10");
+        FlowData n11 = buildSubFlowNode(groupName,"n11", "n5", "n6", "n7");
+        FlowData n12 = buildSubFlowNode(groupName,"n12", "n3");
+        FlowData n13 = buildSubFlowNode(groupName,"n13", "n8", "n9", "n10");
 
-        NodeBean n14 = buildSubFlowNode("n14", "n11", "n12", "n13");
+        FlowData n14 = buildSubFlowNode("n14", "n11", "n12", "n13");
 
-        NodeBean flowNode = buildSubFlowNode(groupName, "flow");
+        FlowData flowNode = buildSubFlowNode(groupName, "flow");
         flowNode.setNodes(ImmutableList.of(rootNode, rn1, rn2, n4, n7, n5, n6, n2, n3, n8, n9, n11, n13, n14, n12, n10));
 
         return flowNode;
     }
 
-    private NodeBean buildSubFlowNode(String groupName, String name, String... depends) {
-        NodeBean node = new NodeBean();
+    private FlowData buildSubFlowNode(String groupName, String name, String... depends) {
+        FlowData node = new FlowData();
         node.setGroupName(groupName);
         node.setJobName(name);
         node.setDependsOn(Lists.newArrayList(depends));

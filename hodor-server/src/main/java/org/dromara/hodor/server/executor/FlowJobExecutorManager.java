@@ -12,7 +12,7 @@ import org.dromara.hodor.common.dag.Status;
 import org.dromara.hodor.common.event.AbstractAsyncEventPublisher;
 import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.utils.StringUtils;
-import org.dromara.hodor.core.dag.NodeBean;
+import org.dromara.hodor.core.dag.FlowData;
 import org.dromara.hodor.core.entity.JobExecDetail;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.model.job.JobDesc;
@@ -93,11 +93,11 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
         return dagService.getDagInstance(rootJobKey);
     }
 
-    public void putFlowNodeBean(JobKey rootJobKey, NodeBean nodeBean) {
-        dagService.putFlowNodeBean(rootJobKey, nodeBean);
+    public void putFlowNodeBean(JobKey rootJobKey, FlowData flowData) {
+        dagService.putFlowNodeBean(rootJobKey, flowData);
     }
 
-    public NodeBean getFlowNodeBean(JobKey rootJobKey) {
+    public FlowData getFlowNodeBean(JobKey rootJobKey) {
         return dagService.getFlowNodeBean(rootJobKey);
     }
 

@@ -1,15 +1,25 @@
 package org.dromara.hodor.server.executor.handler;
 
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.lang.TypeReference;
+import com.google.common.collect.Maps;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.common.compress.EncType;
 import org.dromara.hodor.common.concurrent.LockUtil;
 import org.dromara.hodor.common.dag.Dag;
 import org.dromara.hodor.common.dag.Node;
 import org.dromara.hodor.common.dag.Status;
 import org.dromara.hodor.common.storage.cache.CacheSource;
 import org.dromara.hodor.common.storage.cache.HodorCacheSource;
-import org.dromara.hodor.core.dag.NodeBean;
+import org.dromara.hodor.common.utils.SerializeUtils;
+import org.dromara.hodor.common.utils.TypedMapWrapper;
+import org.dromara.hodor.core.dag.DagCreator;
+import org.dromara.hodor.core.dag.FlowData;
+import org.dromara.hodor.core.entity.FlowJobExecDetail;
 import org.dromara.hodor.core.service.FlowJobExecDetailService;
 import org.dromara.hodor.core.service.FlowJobInfoService;
 import org.dromara.hodor.model.job.JobKey;
@@ -28,7 +38,7 @@ public class DagServiceImpl implements DagService {
     // dagName -> Dag instance
     private final CacheSource<JobKey, Dag> dagCacheSource;
 
-    private final CacheSource<JobKey, NodeBean> flowNodeBeanCacheSource;
+    private final CacheSource<JobKey, FlowData> flowNodeBeanCacheSource;
 
     private final FlowJobInfoService flowJobInfoService;
 
@@ -37,6 +47,9 @@ public class DagServiceImpl implements DagService {
     private final ReentrantLock flowNodeBeanLock = new ReentrantLock();
 
     private final ReentrantLock dagInstanceLock = new ReentrantLock();
+
+    private final TypeReference<Map<JobKey, Map<String, Object>>> flowExecDataTypeReference =
+        new TypeReference<Map<JobKey, Map<String, Object>>>() {};
 
     public DagServiceImpl(final HodorCacheSource hodorCacheSource,
                           final FlowJobInfoService flowJobInfoService,
@@ -89,7 +102,7 @@ public class DagServiceImpl implements DagService {
     public void updateDagStatus(Dag dag) {
         log.info("Dag {} Status update.", dag);
         dag.updateDagStatus();
-        //dagCacheSource.put();
+        persistDagInstance(dag);
     }
 
     @Override
@@ -108,7 +121,9 @@ public class DagServiceImpl implements DagService {
     public void createDagInstance(JobKey jobKey, Dag dagInstance) {
         LockUtil.lockMethod(dagInstanceLock, (key, dag) -> {
             dagCacheSource.put(jobKey, dagInstance);
-            flowJobExecDetailService.createFlowJobExecDetail(dagInstance);
+            FlowJobExecDetail flowJobExecDetail = buildFlowJobExecDetail(dagInstance);
+            flowJobExecDetail.setExecuteStart(new Date());
+            flowJobExecDetailService.createFlowJobExecDetail(flowJobExecDetail);
             return null;
         }, jobKey, dagInstance);
     }
@@ -118,7 +133,7 @@ public class DagServiceImpl implements DagService {
         return LockUtil.lockMethod(dagInstanceLock, key -> {
             Dag dag = dagCacheSource.get(jobKey);
             if (dag == null) {
-                dag = flowJobExecDetailService.getFlowJobExecDetail(jobKey);
+                dag = getRunningDagInstance(jobKey);
                 dagCacheSource.put(jobKey, dag);
             }
             return dag;
@@ -126,28 +141,93 @@ public class DagServiceImpl implements DagService {
     }
 
     @Override
-    public void putFlowNodeBean(JobKey jobKey, NodeBean nodeBean) {
-        flowNodeBeanCacheSource.put(jobKey, nodeBean);
+    public void putFlowNodeBean(JobKey jobKey, FlowData flowData) {
+        flowNodeBeanCacheSource.put(jobKey, flowData);
     }
 
     @Override
-    public NodeBean getFlowNodeBean(JobKey jobKey) {
+    public FlowData getFlowNodeBean(JobKey jobKey) {
         return LockUtil.lockMethod(flowNodeBeanLock, key -> {
-            NodeBean nodeBean = flowNodeBeanCacheSource.get(key);
-            if (nodeBean == null) {
-                nodeBean = flowJobInfoService.getFlowJobInfo(jobKey);
-                flowNodeBeanCacheSource.put(key, nodeBean);
+            FlowData flowData = flowNodeBeanCacheSource.get(key);
+            if (flowData == null) {
+                flowData = flowJobInfoService.getFlowData(jobKey);
+                flowNodeBeanCacheSource.put(key, flowData);
             }
-            return nodeBean;
+            return flowData;
         }, jobKey);
     }
 
     private void persistDagInstance(Dag dag) {
         LockUtil.lockMethod(dagInstanceLock, d -> {
             dagCacheSource.put(JobKey.of(d.getName()), d);
-            flowJobExecDetailService.updateFlowJobExecDetail(d);
+            FlowJobExecDetail flowJobExecDetail = buildFlowJobExecDetail(d);
+            if (dag.getStatus().isTerminal()) {
+                flowJobExecDetail.setExecuteEnd(new Date());
+            }
+            flowJobExecDetailService.updateFlowJobExecDetail(flowJobExecDetail);
             return null;
         }, dag);
+    }
+
+    private Dag getRunningDagInstance(JobKey jobKey) {
+        FlowData flowData = getFlowNodeBean(jobKey);
+        Assert.notNull(flowData, "not found flowData by key {}.", jobKey);
+        DagCreator dagCreator = new DagCreator(flowData);
+        Dag dag = dagCreator.create();
+
+        FlowJobExecDetail flowJobExecDetail = flowJobExecDetailService.getRunningFlowJobExecDetail(jobKey);
+        Map<JobKey, Map<String, Object>> nodeMaps = SerializeUtils.deserialize(flowJobExecDetail.getFlowExecData(), flowExecDataTypeReference.getType());
+
+        dag.setDagId(flowJobExecDetail.getRequestId());
+        dag.setStatus(flowJobExecDetail.getStatus());
+        dag.setSchedulerName(flowJobExecDetail.getSchedulerName());
+        List<Node> nodes = dag.getNodes();
+        for (Node node : nodes) {
+            TypedMapWrapper<String, Object> wrapper = new TypedMapWrapper<>(nodeMaps.get(JobKey.of(node.getGroupName(), node.getNodeName())));
+            node.setNodeId(wrapper.getLong("nodeId"));
+            node.setStatus(Status.valueOf(wrapper.getString("nodeStatus")));
+        }
+        return dag;
+    }
+
+    private FlowJobExecDetail buildFlowJobExecDetail(Dag dagInstance) {
+        Long dagId = dagInstance.getDagId();
+        JobKey jobKey = JobKey.of(dagInstance.getName());
+        String schedulerName = dagInstance.getSchedulerName();
+        Status status = dagInstance.getStatus();
+        List<Node> nodes = dagInstance.getNodes();
+
+        Map<JobKey, Map<String, Object>> nodeMaps = Maps.newHashMap();
+        for (Node node : nodes) {
+            Map<String, Object> nodeMap = Maps.newHashMap();
+            Long nodeId = node.getNodeId();
+            String groupName = node.getGroupName();
+            String nodeName = node.getNodeName();
+            Status nodeStatus = node.getStatus();
+            Object rawData = node.getRawData();
+            nodeMap.put("nodeId", nodeId);
+            nodeMap.put("groupName", groupName);
+            nodeMap.put("nodeName", nodeName);
+            nodeMap.put("nodeStatus", nodeStatus);
+            nodeMap.put("rawData", rawData);
+            nodeMaps.put(JobKey.of(groupName, nodeName), nodeMap);
+        }
+
+        byte[] flowExecDataBytes = SerializeUtils.serialize(nodeMaps);
+
+        return getFlowJobExecDetail(dagId, jobKey, schedulerName, status, flowExecDataBytes);
+    }
+
+    private FlowJobExecDetail getFlowJobExecDetail(Long dagId, JobKey jobKey, String schedulerName, Status status, byte[] flowExecDataBytes) {
+        FlowJobExecDetail flowJobExecDetail = new FlowJobExecDetail();
+        flowJobExecDetail.setRequestId(dagId);
+        flowJobExecDetail.setGroupName(jobKey.getGroupName());
+        flowJobExecDetail.setJobName(jobKey.getJobName());
+        flowJobExecDetail.setSchedulerName(schedulerName);
+        flowJobExecDetail.setStatus(status);
+        flowJobExecDetail.setEncType(EncType.PLAIN.getType());
+        flowJobExecDetail.setFlowExecData(flowExecDataBytes);
+        return flowJobExecDetail;
     }
 
 }

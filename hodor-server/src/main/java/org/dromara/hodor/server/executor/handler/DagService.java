@@ -18,7 +18,7 @@ package org.dromara.hodor.server.executor.handler;
 
 import org.dromara.hodor.common.dag.Dag;
 import org.dromara.hodor.common.dag.Node;
-import org.dromara.hodor.core.dag.NodeBean;
+import org.dromara.hodor.core.dag.FlowData;
 import org.dromara.hodor.model.job.JobKey;
 
 /**
@@ -72,8 +72,8 @@ public interface DagService {
 
   Dag getDagInstance(JobKey jobKey);
 
-  void putFlowNodeBean(JobKey jobKey, NodeBean nodeBean);
+  void putFlowNodeBean(JobKey jobKey, FlowData flowData);
 
-  NodeBean getFlowNodeBean(JobKey jobKey);
+  FlowData getFlowNodeBean(JobKey jobKey);
 
 }

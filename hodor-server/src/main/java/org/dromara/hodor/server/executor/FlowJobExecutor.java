@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.dag.Dag;
 import org.dromara.hodor.common.dag.Status;
 import org.dromara.hodor.core.dag.DagCreator;
-import org.dromara.hodor.core.dag.NodeBean;
+import org.dromara.hodor.core.dag.FlowData;
 import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 
@@ -46,9 +46,9 @@ public class FlowJobExecutor extends CommonJobExecutor {
     }
 
     private Dag createDagInstance(HodorJobExecutionContext context) {
-        NodeBean nodeBean = flowJobExecutorManager.getFlowNodeBean(context.getJobKey());
-        Assert.notNull(nodeBean, "not found flow node by job key {}.", context.getJobKey());
-        DagCreator dagCreator = new DagCreator(nodeBean);
+        FlowData flowData = flowJobExecutorManager.getFlowNodeBean(context.getJobKey());
+        Assert.notNull(flowData, "not found flow node by job key {}.", context.getJobKey());
+        DagCreator dagCreator = new DagCreator(flowData);
         Dag dag = dagCreator.create();
         dag.setSchedulerName(context.getSchedulerName());
         return dag;
