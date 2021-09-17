@@ -72,7 +72,7 @@ CREATE TABLE `hodor_flow_job_info` (
   `job_name` varchar(100) NOT NULL DEFAULT '' COMMENT 'job名称',
   `create_time` timestamp DEFAULT NULL COMMENT '创建时间',
   `update_time` timestamp DEFAULT NULL COMMENT '更新时间',
-  `enc_type` int(4) DEFAULT NULL COMMENT '压缩类型  1：rar,2:zip,3:tar,4:byte',
+  `enc_type` int(4) NOT NULL DEFAULT 0 COMMENT '压缩类型  0: plain, 1：zip',
   `flow_data` blob COMMENT '依赖关系数据',
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_job_group` (`job_name`, `group_name`)
@@ -83,12 +83,16 @@ CREATE TABLE `hodor_flow_job_exec_detail` (
   `request_id` int(20) NOT NULL COMMENT '任务执行id',
   `group_name` varchar(100) NOT NULL DEFAULT '' COMMENT 'job所属组名',
   `job_name` varchar(100) NOT NULL DEFAULT '' COMMENT 'job名称',
-  `create_time` timestamp DEFAULT NULL COMMENT '创建时间',
-  `update_time` timestamp DEFAULT NULL COMMENT '更新时间',
-  `enc_type` int(4) DEFAULT NULL COMMENT '压缩类型  1：rar,2:zip,3:tar,4:byte',
+  `scheduler_name` varchar(100) NOT NULL DEFAULT '' COMMENT '调度节点名称',
+  `status` varchar(100) NOT NULL DEFAULT 'READY' COMMENT 'Flow状态',
+  `execute_start` timestamp DEFAULT NULL COMMENT '创建时间',
+  `execute_end` timestamp DEFAULT NULL COMMENT '更新时间',
+  `elapsed_time` int(4) NOT NULL DEFAULT 0 COMMENT '执行耗时',
+  `enc_type` int(4) NOT NULL DEFAULT 0 COMMENT '压缩类型  0: plain, 1：zip',
   `flow_exec_data` blob COMMENT 'flow任务执行明细关系数据',
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_request_id` (`request_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE INDEX index_job_key_status USING BTREE ON hodor.hodor_flow_job_exec_detail (group_name, job_name, status);
 
 SET FOREIGN_KEY_CHECKS = 1;
