@@ -17,6 +17,8 @@
 
 package org.dromara.hodor.common.compress;
 
+import java.lang.reflect.Type;
+
 /**
  * CompressData
  *
@@ -25,7 +27,7 @@ package org.dromara.hodor.common.compress;
  */
 public interface Compress {
 
-    <T> T uncompress(byte[] data);
+    <T> T uncompress(byte[] data, Type typeOfT);
 
     <T> byte[] compress(T t);
 

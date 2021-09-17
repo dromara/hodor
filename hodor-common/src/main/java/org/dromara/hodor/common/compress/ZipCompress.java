@@ -17,6 +17,8 @@
 
 package org.dromara.hodor.common.compress;
 
+import java.lang.reflect.Type;
+
 /**
  * ZipCompress
  *
@@ -43,7 +45,7 @@ public class ZipCompress implements Compress {
     }
 
     @Override
-    public <T> T uncompress(byte[] data) {
+    public <T> T uncompress(byte[] data, Type typeOfT) {
         return null;
     }
 

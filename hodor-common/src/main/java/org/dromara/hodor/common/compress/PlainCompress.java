@@ -18,6 +18,7 @@
 package org.dromara.hodor.common.compress;
 
 import cn.hutool.core.lang.TypeReference;
+import java.lang.reflect.Type;
 import org.dromara.hodor.common.utils.SerializeUtils;
 
 /**
@@ -46,9 +47,8 @@ public class PlainCompress implements Compress {
     }
 
     @Override
-    public <T> T uncompress(byte[] data) {
-        TypeReference<T> typeReference = new TypeReference<T>() {};
-        return SerializeUtils.deserialize(data, typeReference.getType());
+    public <T> T uncompress(byte[] data, Type typeOfT) {
+        return SerializeUtils.deserialize(data, typeOfT);
     }
 
     @Override

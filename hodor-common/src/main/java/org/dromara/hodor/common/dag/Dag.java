@@ -35,13 +35,13 @@ import static java.util.Objects.requireNonNull;
  */
 public class Dag {
 
-    private final Long id;
-
     private final String name;
 
     private final List<Node> nodes = new ArrayList<>();
 
     private final List<NodeLayer> nodeLayers = new ArrayList<>();
+
+    private Long id;
 
     private int layerSize;
 
@@ -227,6 +227,10 @@ public class Dag {
 
     public Long getDagId() {
         return this.id;
+    }
+
+    public void setDagId(Long id) {
+        this.id = id;
     }
 
     public String getSchedulerName() {

@@ -25,8 +25,8 @@ package org.dromara.hodor.common.compress;
  */
 public enum EncType {
 
-    ZIP(1),
-    PLAIN(2);
+    PLAIN(0),
+    ZIP(1);
 
     private final int type;
 

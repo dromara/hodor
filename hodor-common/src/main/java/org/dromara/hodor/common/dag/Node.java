@@ -29,7 +29,7 @@ import static java.util.Objects.requireNonNull;
  */
 public class Node {
 
-    private final Long id;
+    private Long id;
 
     private final String groupName;
 
@@ -68,6 +68,10 @@ public class Node {
 
     public Long getNodeId() {
         return this.id;
+    }
+
+    public void setNodeId(Long id) {
+        this.id = id;
     }
 
     public Object getRawData() {
