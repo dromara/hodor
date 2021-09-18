@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.dromara.hodor.common.utils.StringUtils;
 
 import static java.util.Objects.requireNonNull;
 
@@ -51,6 +52,12 @@ public class DagBuilder {
   public DagBuilder(final String name) {
     requireNonNull(name, "The name of the DagBuilder can't be null");
     this.dag = new Dag(name);
+  }
+
+  public DagBuilder(final String groupName, final String jobName) {
+    requireNonNull(groupName, "The groupName of the DagBuilder can't be null");
+    requireNonNull(jobName, "The jobName of the DagBuilder can't be null");
+    this.dag = new Dag(StringUtils.format("{}#{}", groupName, jobName));
   }
 
   /**
