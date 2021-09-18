@@ -25,8 +25,39 @@ package org.dromara.hodor.core;
  */
 public interface Constants {
 
-    class EventReporterConstants {
-        public static final String FLOW_NAME = "flowName";
+    /**
+     * CopySet config
+     */
+    class CopySetConstants {
+
+        public static final Integer LEAST_NODE_COUNT = 3;
+
+        /**
+         * 副本数量，不超过节点数量
+         */
+        public static final Integer REPLICA_COUNT = 2;
+
+        /**
+         * 副本散布宽度，小于节点数量
+         */
+        public static final Integer SCATTER_WIDTH = 2;
+    }
+
+
+    class FlowNodeConstants {
+
+        public static final String ROOT_JOB_KEY = "rootJobKey";
+
+        public static final String NODE_ID = "nodeId";
+
+        public static final String NODE_STATUS = "nodeStatus";
+
+        public static final String GROUP_NAME = "groupName";
+
+        public static final String NODE_NAME = "nodeName";
+
+        public static final String RAW_DATA = "rawData";
+
     }
 
 
