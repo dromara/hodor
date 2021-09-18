@@ -8,6 +8,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.hodor.common.exception.HodorException;
 import org.dromara.hodor.common.utils.CopySets;
 import org.dromara.hodor.common.utils.ThreadUtils;
+import org.dromara.hodor.core.Constants.CopySetConstants;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.core.service.JobInfoService;
 import org.dromara.hodor.model.scheduler.CopySet;
@@ -15,7 +16,6 @@ import org.dromara.hodor.model.scheduler.DataInterval;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
 import org.dromara.hodor.scheduler.api.HodorScheduler;
 import org.dromara.hodor.scheduler.api.SchedulerManager;
-import org.dromara.hodor.server.common.Constants;
 import org.dromara.hodor.server.common.HodorLifecycle;
 import org.dromara.hodor.server.executor.JobExecutorTypeManager;
 import org.dromara.hodor.server.listener.ActuatorNodeChangeListener;
@@ -106,7 +106,7 @@ public class HodorService implements HodorLifecycle {
             throw new HodorException("running node count is 0.");
         }
         // 至少3个节点才可以使用copy set
-        List<List<String>> copySetNodes = CopySets.buildCopySets(currRunningNodes, Constants.REPLICA_COUNT, Constants.SCATTER_WIDTH);
+        List<List<String>> copySetNodes = CopySets.buildCopySets(currRunningNodes, CopySetConstants.REPLICA_COUNT, CopySetConstants.SCATTER_WIDTH);
         int setsNum = Math.max(copySetNodes.size(), currRunningNodes.size());
         // distribution copySet
         List<CopySet> copySets = Lists.newArrayList();

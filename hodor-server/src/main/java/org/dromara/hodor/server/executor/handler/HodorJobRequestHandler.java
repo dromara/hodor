@@ -11,6 +11,7 @@ import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.concurrent.FutureCallback;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.utils.ThreadUtils;
+import org.dromara.hodor.core.Constants.FlowNodeConstants;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.remoting.api.RemotingClient;
@@ -147,7 +148,7 @@ public class HodorJobRequestHandler implements RequestHandler {
         Map<String, Object> attachment = new HashMap<>();
         attachment.put("schedulerName", context.getSchedulerName());
         if (context.getRootJobKey() != null) {
-            attachment.put("rootJobKey", context.getRootJobKey());
+            attachment.put(FlowNodeConstants.ROOT_JOB_KEY, context.getRootJobKey());
         }
         return Header.builder()
             .id(context.getRequestId())

@@ -32,21 +32,17 @@ public class HodorFlowJobResponseHandler extends AbstractEventPublisher<Tuple2<J
     }
 
     @Override
-    public void registerListener() {
+    public void registryListener() {
         registerSubJobExecuteSuccessResponseListener();
         registerSubJobExecuteFailureResponseListener();
     }
 
     private void registerSubJobExecuteSuccessResponseListener() {
-        this.addListener(event -> {
-            changeNodeStatus(event, Status.SUCCESS);
-        }, RemotingStatus.SUCCEEDED);
+        this.addListener(event -> changeNodeStatus(event, Status.SUCCESS), RemotingStatus.SUCCEEDED);
     }
 
     private void registerSubJobExecuteFailureResponseListener() {
-        this.addListener(event -> {
-            changeNodeStatus(event, Status.FAILURE);
-        }, RemotingStatus.FAILED);
+        this.addListener(event -> changeNodeStatus(event, Status.FAILURE), RemotingStatus.FAILED);
     }
 
     private void changeNodeStatus(Event<Tuple2<JobKey, JobExecuteResponse>> event, Status status) {

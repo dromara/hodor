@@ -17,6 +17,7 @@ import org.dromara.hodor.common.storage.cache.CacheSource;
 import org.dromara.hodor.common.storage.cache.HodorCacheSource;
 import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.common.utils.TypedMapWrapper;
+import org.dromara.hodor.core.Constants.FlowNodeConstants;
 import org.dromara.hodor.core.dag.DagCreator;
 import org.dromara.hodor.core.dag.FlowData;
 import org.dromara.hodor.core.entity.FlowJobExecDetail;
@@ -184,8 +185,9 @@ public class DagServiceImpl implements DagService {
         List<Node> nodes = dag.getNodes();
         for (Node node : nodes) {
             TypedMapWrapper<String, Object> wrapper = new TypedMapWrapper<>(nodeMaps.get(JobKey.of(node.getGroupName(), node.getNodeName())));
-            node.setNodeId(wrapper.getLong("nodeId"));
-            node.setStatus(Status.valueOf(wrapper.getString("nodeStatus")));
+            node.setNodeId(wrapper.getLong(FlowNodeConstants.NODE_ID));
+            node.setStatus(Status.valueOf(wrapper.getString(FlowNodeConstants.NODE_STATUS)));
+            node.setRawData(wrapper.getObject(FlowNodeConstants.RAW_DATA));
         }
         return dag;
     }
@@ -205,11 +207,11 @@ public class DagServiceImpl implements DagService {
             String nodeName = node.getNodeName();
             Status nodeStatus = node.getStatus();
             Object rawData = node.getRawData();
-            nodeMap.put("nodeId", nodeId);
-            nodeMap.put("groupName", groupName);
-            nodeMap.put("nodeName", nodeName);
-            nodeMap.put("nodeStatus", nodeStatus);
-            nodeMap.put("rawData", rawData);
+            nodeMap.put(FlowNodeConstants.NODE_ID, nodeId);
+            nodeMap.put(FlowNodeConstants.GROUP_NAME, groupName);
+            nodeMap.put(FlowNodeConstants.NODE_NAME, nodeName);
+            nodeMap.put(FlowNodeConstants.NODE_STATUS, nodeStatus);
+            nodeMap.put(FlowNodeConstants.RAW_DATA, rawData);
             nodeMaps.put(JobKey.of(groupName, nodeName), nodeMap);
         }
 

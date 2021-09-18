@@ -23,7 +23,7 @@ public class HodorJobResponseHandler extends AbstractEventPublisher<JobExecuteRe
     }
 
     @Override
-    public void registerListener() {
+    public void registryListener() {
         registerJobExecuteSuccessResponseListener();
         registerJobExecuteFailureResponseListener();
     }

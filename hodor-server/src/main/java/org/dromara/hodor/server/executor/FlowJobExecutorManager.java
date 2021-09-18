@@ -107,7 +107,7 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
     }
 
     @Override
-    public void registerListener() {
+    public void registryListener() {
         registerRunningNodeListener();
         registerSuccessNodeListener();
         registerFailureNodeListener();

@@ -25,7 +25,7 @@ public class JobEventDispatchListener extends AbstractAsyncEventPublisher<String
     }
 
     @Override
-    public void registerListener() {
+    public void registryListener() {
         registerJobCreateListener();
         registerJobUpdateListener();
     }

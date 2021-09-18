@@ -7,6 +7,15 @@ import com.google.common.collect.Lists;
 import java.io.File;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.compress.Compress;
 import org.dromara.hodor.common.compress.CompressFactory;
@@ -19,8 +28,8 @@ import org.dromara.hodor.common.event.AbstractAsyncEventPublisher;
 import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.core.dag.DagCreator;
-import org.dromara.hodor.core.dag.FlowExecData;
 import org.dromara.hodor.core.dag.FlowData;
+import org.dromara.hodor.core.dag.FlowDataLoader;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.remoting.api.message.RemotingResponse;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
@@ -28,12 +37,6 @@ import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.server.executor.JobDispatcher;
 import org.dromara.hodor.server.executor.handler.RequestHandler;
 import org.junit.Test;
-
-import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 /**
  * FlowJobExecutorTest
@@ -55,8 +58,10 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
     @Test
     public void loadFlow() throws Exception {
         File file = loadFlowFileFromResource();
-        NodeBeanLoader loader = new NodeBeanLoader();
+        FlowDataLoader loader = new FlowDataLoader();
         FlowData flowData = loader.load(file);
+
+        dag = createDag(flowData);
 
         String toJsonStr = JSONUtil.toJsonStr(flowData);
         byte[] bytes = toJsonStr.getBytes(StandardCharsets.UTF_8);
@@ -70,7 +75,7 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
     @Test
     public void testExecuteFlowFromResource() throws Exception {
         File file = loadFlowFileFromResource();
-        NodeBeanLoader loader = new NodeBeanLoader();
+        FlowDataLoader loader = new FlowDataLoader();
         FlowData flowNode = loader.load(file);
         dag = createDag(flowNode);
 
@@ -83,12 +88,6 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
             e.printStackTrace();
             aliveLatch.countDown();
         }
-    }
-
-    public FlowExecData buildFlowExecData(Dag dag) {
-        FlowExecData flowExecData = new FlowExecData();
-
-        return flowExecData;
     }
 
     private File loadFlowFileFromResource() {
@@ -114,33 +113,6 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
             }));
             countDownLatch.await();
         }
-    }
-
-    @Test
-    public void dagPersistTest() {
-        FlowData flowNode = createFlowNode3();
-        String jsonStr = JSONUtil.toJsonStr(flowNode);
-        System.out.println(jsonStr);
-
-        final Dag dag = createDag(flowNode);
-        //String jsonStr = JSONUtil.toJsonStr(dag);
-        //System.out.println(jsonStr);
-        FlowExecData flowExecData = new FlowExecData();
-        flowExecData.setId(dag.getDagId());
-        flowExecData.setName(dag.getName());
-        flowExecData.setSchedulerName(dag.getSchedulerName());
-        //flowExecData.setLayerSize(dag.getLayerSize());
-        flowExecData.setStatus(dag.getStatus());
-        //flowExecData.setNodes(dag.getNodes());
-        //flowExecData.setNodeLayers(dag.getNodeLayers());
-        jsonStr = JSONUtil.toJsonStr(flowExecData);
-        System.out.println(jsonStr);
-
-        /*jsonStr = JSONUtil.toJsonStr(dag.getNodes());
-        System.out.println(jsonStr);*/
-
-        jsonStr = JSONUtil.toJsonStr(dag.getNodeLayers());
-        System.out.println(jsonStr);
     }
 
     @Test
@@ -188,7 +160,7 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
     }
 
     @Override
-    public void registerListener() {
+    public void registryListener() {
         this.addListener(event -> {
             Node node = event.getValue();
             if (!node.isReady()) {
