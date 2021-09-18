@@ -20,7 +20,6 @@ import com.google.common.annotations.VisibleForTesting;
 import java.util.ArrayList;
 import java.util.List;
 import org.dromara.hodor.common.IdGenerator;
-import org.dromara.hodor.common.utils.StringUtils;
 
 import static java.util.Objects.requireNonNull;
 
@@ -35,7 +34,7 @@ public class Node {
 
     private final String nodeName;
 
-    private final Object rawData;
+    private Object rawData;
 
     // The nodes that this node depends on.
     private final List<Node> parents = new ArrayList<>();
@@ -76,6 +75,10 @@ public class Node {
 
     public Object getRawData() {
         return rawData;
+    }
+
+    public void setRawData(Object rawData) {
+        this.rawData = rawData;
     }
 
     /**
