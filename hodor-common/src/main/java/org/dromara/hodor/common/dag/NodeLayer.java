@@ -1,6 +1,7 @@
 package org.dromara.hodor.common.dag;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 节点层
@@ -46,12 +47,19 @@ public class NodeLayer {
     this.status = status;
   }
 
-  public int getRunningNodes() {
+  public int getRunningNodeNums() {
     return runningNodes;
   }
 
-  public void setRunningNodes(int runningNodes) {
+  public void setRunningNodeNums(int runningNodes) {
     this.runningNodes = runningNodes;
+  }
+
+  public List<Node> getRunningNodes() {
+    return getNodes()
+        .stream()
+        .filter(node -> node.getStatus().isRunning())
+        .collect(Collectors.toList());
   }
 
 }

@@ -126,10 +126,10 @@ public class Node {
         assertRunningOrKilling();
         changeStatus(Status.SUCCESS);
         NodeLayer layer = this.dag.getLayer(this.getLayer());
-        if (layer.getRunningNodes() == 1) {
+        if (layer.getRunningNodeNums() == 1) {
             layer.setStatus(Status.SUCCESS);
         }
-        layer.setRunningNodes(layer.getRunningNodes() - 1);
+        layer.setRunningNodeNums(layer.getRunningNodeNums() - 1);
     }
 
     /**
