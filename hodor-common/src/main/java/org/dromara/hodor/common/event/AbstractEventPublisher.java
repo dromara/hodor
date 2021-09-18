@@ -11,7 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * abstract event publisher
  *
- * @param <V>
+ * @author tomgs
  */
 public abstract class AbstractEventPublisher<V> implements EventPublisher<V> {
 
@@ -22,16 +22,12 @@ public abstract class AbstractEventPublisher<V> implements EventPublisher<V> {
     private final Set<HodorEventListener<V>> EMPTY_LISTENERS = Sets.newHashSet();
 
     public AbstractEventPublisher() {
-        this.registerListener();
-    }
-
-    public void publish(V v, Object eventType) {
-        publish(new Event<>(v, eventType));
+        this.registryListener();
     }
 
     @Override
-    public void addListener(HodorEventListener<V> objectListener) {
-        addListener(objectListener, Event.DEFAULT_TYPE);
+    public void addListener(HodorEventListener<V> listener) {
+        addListener(listener, Event.DEFAULT_TYPE);
     }
 
     public void addListener(HodorEventListener<V> objectListener, Object eventType) {
@@ -47,15 +43,11 @@ public abstract class AbstractEventPublisher<V> implements EventPublisher<V> {
         }
     }
 
-    public void removeListener(HodorEventListener<V> objectListener, Object eventType) {
+    public void removeListener(Object eventType, HodorEventListener<V> objectListener) {
         lock.lock();
         try {
             Set<HodorEventListener<V>> listenerSet = listeners.get(eventType);
             if (listenerSet == null) {
-                return;
-            }
-            if (listenerSet.size() == 1) {
-                listenerSet.clear();
                 return;
             }
             listenerSet.remove(objectListener);
@@ -89,7 +81,7 @@ public abstract class AbstractEventPublisher<V> implements EventPublisher<V> {
         }
     }
 
-    public Set<HodorEventListener<V>> getListeners(Object eventType) {
+    protected Set<HodorEventListener<V>> getListeners(Object eventType) {
         if (listeners.get(eventType) == null) {
             return EMPTY_LISTENERS;
         }

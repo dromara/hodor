@@ -23,11 +23,6 @@ public abstract class AbstractAsyncEventPublisher<V> extends AbstractEventPublis
     }
 
     @Override
-    public void publish(V v, Object eventType) {
-        publish(new Event<>(v, eventType));
-    }
-
-    @Override
     public void publish(Event<V> event) {
         Set<HodorEventListener<V>> listenerSet = getListeners(event.getEventType());
         eventExecutor.serialExecute(new HodorRunnable() {
