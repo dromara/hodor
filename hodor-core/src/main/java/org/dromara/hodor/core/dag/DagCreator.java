@@ -1,9 +1,11 @@
 package org.dromara.hodor.core.dag;
 
+import cn.hutool.core.bean.BeanUtil;
 import java.util.List;
+import java.util.Map;
 import org.dromara.hodor.common.dag.Dag;
 import org.dromara.hodor.common.dag.DagBuilder;
-import org.dromara.hodor.model.enums.CommandType;
+import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.model.job.JobDesc;
 
 /**
@@ -22,7 +24,7 @@ public class DagCreator {
         final String groupName = flowNode.getGroupName();
         final String jobName = flowNode.getJobName();
         this.flowNode = flowNode;
-        this.dagBuilder = new DagBuilder(groupName + "#" + jobName);
+        this.dagBuilder = new DagBuilder(groupName, jobName);
     }
 
     public Dag create() {
@@ -43,11 +45,14 @@ public class DagCreator {
     }
 
     private JobDesc buildJobDesc(FlowData node) {
-        JobDesc jobDesc = new JobDesc();
-        jobDesc.setGroupName(node.getGroupName());
-        jobDesc.setJobName(node.getJobName());
-        jobDesc.setJobCommandType(CommandType.of(node.getType()));
-        jobDesc.setJobCommand(node.getConfig().get("command"));
+        Map<String, Object> jobDescMap = node.getJobDesc();
+        JobDesc jobDesc = BeanUtil.toBean(jobDescMap, JobDesc.class);
+        if (StringUtils.isBlank(jobDesc.getGroupName())) {
+            jobDesc.setGroupName(node.getGroupName());
+        }
+        if (StringUtils.isBlank(jobDesc.getJobName())) {
+            jobDesc.setJobName(node.getJobName());
+        }
         return jobDesc;
     }
 

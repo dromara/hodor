@@ -17,14 +17,16 @@
 
 package org.dromara.hodor.core.dag;
 
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import lombok.Data;
 
 /**
  * Used by the YAML loader to deserialize DAG nodes in the flow
+ *
+ * @author tomgs
+ * @since 2021/09/18
  */
 @Data
 public class FlowData implements Serializable {
@@ -35,13 +37,9 @@ public class FlowData implements Serializable {
 
     private String jobName;
 
-    private Map<String, String> config;
+    private Map<String, Object> jobDesc;
 
     private List<String> dependsOn;
-
-    private String type;
-
-    private String condition;
 
     private List<FlowData> nodes;
 }

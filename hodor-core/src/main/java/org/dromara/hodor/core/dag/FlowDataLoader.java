@@ -15,14 +15,13 @@
  *
  */
 
-package org.dromara.hodor.server.executor.dag;
+package org.dromara.hodor.core.dag;
 
 import com.google.common.io.Files;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.HashSet;
 import java.util.Set;
-import org.dromara.hodor.core.dag.FlowData;
 import org.yaml.snakeyaml.Yaml;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -30,11 +29,11 @@ import static com.google.common.base.Preconditions.checkArgument;
 /**
  * Loads NodeBean from YAML files.
  */
-public class NodeBeanLoader {
+public class FlowDataLoader {
 
     public FlowData load(final File flowFile) throws Exception {
-        //checkArgument(flowFile != null && flowFile.exists());
-        //checkArgument(flowFile.getName().endsWith(Constants.FLOW_FILE_SUFFIX));
+        checkArgument(flowFile != null && flowFile.exists());
+        checkArgument(flowFile.getName().endsWith(".flow") || flowFile.getName().endsWith(".yaml"));
 
         final FlowData flowData = new Yaml().loadAs(new FileInputStream(flowFile), FlowData.class);
         if (flowData == null) {
@@ -44,7 +43,6 @@ public class NodeBeanLoader {
         if (flowData.getJobName() == null) {
             flowData.setJobName(getFlowName(flowFile));
         }
-        flowData.setType("flow");
         for (final FlowData node : flowData.getNodes()) {
             if (node.getGroupName() == null) {
                 node.setGroupName(flowData.getGroupName());
@@ -68,15 +66,10 @@ public class NodeBeanLoader {
                 return false;
             }
         }
-
-        if (nodeNames.contains("ROOT")) {
-            // ROOT is reserved as a special value in runtimeProperties
-            return false;
-        }
-
         return true;
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     public String getFlowName(final File flowFile) {
         checkArgument(flowFile != null && flowFile.exists());
         checkArgument(flowFile.getName().endsWith(".flow") || flowFile.getName().endsWith(".yaml"));
