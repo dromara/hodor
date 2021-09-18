@@ -79,7 +79,7 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
         log.info("Starting execute the {} layer nodes.", nodeLayer.getLayer());
         List<Node> nodes = nodeLayer.getNodes();
         nodeLayer.setStatus(Status.RUNNING);
-        nodeLayer.setRunningNodes(nodes.size());
+        nodeLayer.setRunningNodeNums(nodes.size());
         for (Node node : nodes) {
             parallelPublish(Event.create(node, Status.RUNNING));
         }
@@ -93,12 +93,12 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
         return dagService.getDagInstance(rootJobKey);
     }
 
-    public void putFlowNodeBean(JobKey rootJobKey, FlowData flowData) {
-        dagService.putFlowNodeBean(rootJobKey, flowData);
+    public void putFlowData(JobKey rootJobKey, FlowData flowData) {
+        dagService.putFlowData(rootJobKey, flowData);
     }
 
-    public FlowData getFlowNodeBean(JobKey rootJobKey) {
-        return dagService.getFlowNodeBean(rootJobKey);
+    public FlowData getFlowData(JobKey rootJobKey) {
+        return dagService.getFlowData(rootJobKey);
     }
 
     public void changeNodeStatus(Node node, Status status) {
@@ -160,6 +160,11 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
         this.addListener(event -> {
             Node node = event.getValue();
             dagService.markNodeFailed(node);
+
+            NodeLayer nodeLayer = node.getCurrentNodeLayer();
+            nodeLayer.setStatus(Status.FAILURE);
+            List<Node> runningNodes = nodeLayer.getRunningNodes();
+            runningNodes.forEach(runningNode -> publish(Event.create(runningNode, Status.KILLING)));
             dagService.updateDagStatus(node.getDag());
         }, Status.FAILURE);
     }
@@ -195,8 +200,11 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
             Dag dag = node.getDag();
             NodeLayer nodeLayer = node.getCurrentNodeLayer();
             dagService.markNodeKilled(node);
-            if (nodeLayer.getRunningNodes() == 0) {
-                dag.changeStatus(Status.KILLED);
+            if (nodeLayer.getRunningNodeNums() == 0) {
+                if (dag.getStatus().isRunning()) {
+                    dag.setStatus(Status.KILLED);
+                }
+                dag.changeStatus(nodeLayer.getStatus());
                 dagService.updateDagStatus(dag);
             }
         }, Status.KILLED);

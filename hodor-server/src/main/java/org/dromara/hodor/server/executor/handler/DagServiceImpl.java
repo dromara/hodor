@@ -142,12 +142,12 @@ public class DagServiceImpl implements DagService {
     }
 
     @Override
-    public void putFlowNodeBean(JobKey jobKey, FlowData flowData) {
+    public void putFlowData(JobKey jobKey, FlowData flowData) {
         flowNodeBeanCacheSource.put(jobKey, flowData);
     }
 
     @Override
-    public FlowData getFlowNodeBean(JobKey jobKey) {
+    public FlowData getFlowData(JobKey jobKey) {
         return LockUtil.lockMethod(flowNodeBeanLock, key -> {
             FlowData flowData = flowNodeBeanCacheSource.get(key);
             if (flowData == null) {
@@ -171,7 +171,7 @@ public class DagServiceImpl implements DagService {
     }
 
     private Dag getRunningDagInstance(JobKey jobKey) {
-        FlowData flowData = getFlowNodeBean(jobKey);
+        FlowData flowData = getFlowData(jobKey);
         Assert.notNull(flowData, "not found flowData by key {}.", jobKey);
         DagCreator dagCreator = new DagCreator(flowData);
         Dag dag = dagCreator.create();

@@ -153,7 +153,7 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
         log.info("=============== 开始执行第{}层 =============", nodeLayer.getLayer());
         List<Node> nodes = nodeLayer.getNodes();
         nodeLayer.setStatus(Status.RUNNING);
-        nodeLayer.setRunningNodes(nodes.size());
+        nodeLayer.setRunningNodeNums(nodes.size());
         for (Node node : nodes) {
             publish(Event.create(node, Status.RUNNING));
         }
@@ -212,7 +212,7 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
             //node.setStatus(Status.KILLED);
             //Dag dag = node.getDag();
             NodeLayer nodeLayer = node.getCurrentNodeLayer();
-            if (nodeLayer.getRunningNodes() == 0) {
+            if (nodeLayer.getRunningNodeNums() == 0) {
                 log.info("{} is KILLED", node);
                 dag.setStatus(Status.KILLED);
             }

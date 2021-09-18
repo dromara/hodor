@@ -46,7 +46,7 @@ public class FlowJobExecutor extends CommonJobExecutor {
     }
 
     private Dag createDagInstance(HodorJobExecutionContext context) {
-        FlowData flowData = flowJobExecutorManager.getFlowNodeBean(context.getJobKey());
+        FlowData flowData = flowJobExecutorManager.getFlowData(context.getJobKey());
         Assert.notNull(flowData, "not found flow node by job key {}.", context.getJobKey());
         DagCreator dagCreator = new DagCreator(flowData);
         Dag dag = dagCreator.create();

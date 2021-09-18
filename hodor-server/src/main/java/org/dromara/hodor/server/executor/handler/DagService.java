@@ -72,8 +72,8 @@ public interface DagService {
 
   Dag getDagInstance(JobKey jobKey);
 
-  void putFlowNodeBean(JobKey jobKey, FlowData flowData);
+  void putFlowData(JobKey jobKey, FlowData flowData);
 
-  FlowData getFlowNodeBean(JobKey jobKey);
+  FlowData getFlowData(JobKey jobKey);
 
 }
