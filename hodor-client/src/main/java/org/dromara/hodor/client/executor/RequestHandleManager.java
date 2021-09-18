@@ -52,7 +52,7 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
     }
 
     @Override
-    public void registerListener() {
+    public void registryListener() {
         registerHeartbeatListener();
         registerJobExecuteListener();
         registerKillRunningListener();

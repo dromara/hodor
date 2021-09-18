@@ -28,7 +28,7 @@ public class JobExecutionPersistence extends AbstractAsyncEventPublisher<HodorJo
     }
 
     @Override
-    public void registerListener() {
+    public void registryListener() {
         insertHodorJobExecutionListener();
         updateHodorJobExecutionListener();
     }

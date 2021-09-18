@@ -64,7 +64,7 @@ public class FailureRequestHandleManager extends AbstractAsyncEventPublisher<Ret
     }
 
     @Override
-    public void registerListener() {
+    public void registryListener() {
         registerAddFailureMessageListener();
         registerUpdateFailureMessageListener();
         registerDeleteFailureMessageListener();
