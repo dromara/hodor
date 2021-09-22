@@ -67,7 +67,7 @@ CREATE TABLE `hodor_job_exec_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 
 CREATE TABLE `hodor_flow_job_info` (
-  `id` int(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `group_name` varchar(100) NOT NULL DEFAULT '' COMMENT 'job所属组名',
   `job_name` varchar(100) NOT NULL DEFAULT '' COMMENT 'job名称',
   `create_time` timestamp DEFAULT NULL COMMENT '创建时间',
@@ -79,7 +79,7 @@ CREATE TABLE `hodor_flow_job_info` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `hodor_flow_job_exec_detail` (
-  `id` int(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `request_id` int(20) NOT NULL COMMENT '任务执行id',
   `group_name` varchar(100) NOT NULL DEFAULT '' COMMENT 'job所属组名',
   `job_name` varchar(100) NOT NULL DEFAULT '' COMMENT 'job名称',
