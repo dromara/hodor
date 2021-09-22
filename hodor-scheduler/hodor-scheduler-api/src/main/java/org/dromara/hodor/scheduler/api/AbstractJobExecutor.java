@@ -18,7 +18,7 @@ public abstract class AbstractJobExecutor implements JobExecutor {
             process(context);
         } catch (Exception e) {
             // 调度处理异常
-            throw new HodorSchedulerException(e.getMessage(), e);
+            throw new HodorSchedulerException(e);
         }
     }
 
