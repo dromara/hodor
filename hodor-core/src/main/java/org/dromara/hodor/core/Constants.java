@@ -25,6 +25,8 @@ package org.dromara.hodor.core;
  */
 public interface Constants {
 
+    String CRON_KEY = "cron";
+
     /**
      * CopySet config
      */
