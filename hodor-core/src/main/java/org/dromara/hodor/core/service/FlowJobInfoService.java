@@ -15,4 +15,7 @@ public interface FlowJobInfoService {
     FlowData getFlowData(JobKey jobKey);
 
     void createFlowJobInfo(FlowJobInfo flowJobInfo);
+
+    void addFlowJob(FlowData flowData);
+
 }

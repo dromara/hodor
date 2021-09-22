@@ -45,8 +45,8 @@ public class DagCreator {
     }
 
     private JobDesc buildJobDesc(FlowData node) {
-        Map<String, Object> jobDescMap = node.getJobDesc();
-        JobDesc jobDesc = BeanUtil.toBean(jobDescMap, JobDesc.class);
+        Map<String, Object> jobConfigMap = node.getConfig();
+        JobDesc jobDesc = BeanUtil.toBean(jobConfigMap, JobDesc.class);
         if (StringUtils.isBlank(jobDesc.getGroupName())) {
             jobDesc.setGroupName(node.getGroupName());
         }

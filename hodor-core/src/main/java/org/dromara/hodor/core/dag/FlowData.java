@@ -37,7 +37,7 @@ public class FlowData implements Serializable {
 
     private String jobName;
 
-    private Map<String, Object> jobDesc;
+    private Map<String, Object> config;
 
     private List<String> dependsOn;
 
