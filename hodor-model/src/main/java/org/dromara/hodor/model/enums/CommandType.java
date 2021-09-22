@@ -8,42 +8,39 @@ package org.dromara.hodor.model.enums;
  */
 public enum CommandType {
 
-    PHP(0, "php"),
+    PHP("php"),
 
-    SHELL(1, "shell"),
+    SHELL("shell"),
 
-    PYTHON(2, "python"),
+    PYTHON("python"),
 
-    JAR(3, "jar"),
+    JAR("jar"),
 
-    JAVA(4, "java"),
+    JAVA("java"),
 
-    COMMAND(5, "command"),
+    COMMAND("command"),
 
-    HTTP(6, "http"),
+    HTTP("http"),
 
-    HADOOP_JAVA(7, "hadoopJava"),
+    HADOOP_JAVA("hadoopJava"),
 
-    HADOOP_SHELL(8, "hadoopShell"),
+    HADOOP_SHELL("hadoopShell"),
 
-    SPARK(9, "spark"),
+    SPARK("spark"),
 
-    FLINK(10, "flink"),
+    FLINK("flink"),
 
-    HIVE(11, "hive"),
+    HIVE("hive"),
 
-    SQOOP(12, "sqoop"),
+    SQOOP("sqoop"),
 
-    SUPERVISOR(13, "supervisor"),
+    SUPERVISOR("supervisor"),
 
-    MQ(14, "mq");
-
-    private final int code;
+    MQ("mq");
 
     private final String name;
 
-    CommandType(int code, String typeName) {
-        this.code = code;
+    CommandType(String typeName) {
         this.name = typeName;
     }
 
@@ -54,10 +51,6 @@ public enum CommandType {
             }
         }
         throw new IllegalArgumentException("not found command type by " + type);
-    }
-
-    public int getCode() {
-        return code;
     }
 
     public String getName() {

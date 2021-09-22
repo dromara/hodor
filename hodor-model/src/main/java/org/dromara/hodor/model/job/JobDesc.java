@@ -2,7 +2,6 @@ package org.dromara.hodor.model.job;
 
 import java.util.Date;
 import lombok.Data;
-import org.dromara.hodor.model.enums.CommandType;
 import org.dromara.hodor.model.enums.JobType;
 import org.dromara.hodor.model.enums.Priority;
 
@@ -23,7 +22,7 @@ public class JobDesc {
 
   private String jobPath;
 
-  private CommandType jobCommandType;
+  private String jobCommandType;
 
   private String jobCommand;
 

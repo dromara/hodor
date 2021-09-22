@@ -20,7 +20,7 @@ public class JobInstance {
 
     private final String jobName;
 
-    private final CommandType commandType;
+    private final String commandType;
 
     private final String cron;
 
