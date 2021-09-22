@@ -1,0 +1,33 @@
+groupName: test
+jobName: flow_name
+config:
+  cron: '*/5 * * * * ?'
+nodes:
+  - jobName: n1
+    config:
+      jobCommand: echo "This is the first job."
+      jobCommandType: command
+      priority: 0
+      jobParameters: 123123
+      timeout: 10
+      retryCount: 3
+  - jobName: n2
+    dependsOn:
+      - n1
+    config:
+      jobCommand: echo "This is the second job."
+      jobCommandType: hadoopJava
+      priority: 1
+      jobParameters: 123123
+      timeout: 10
+      retryCount: 3
+  - jobName: n3
+    dependsOn:
+      - n2
+    config:
+      jobCommand: echo "This is the third job."
+      jobCommandType: java
+      priority: 2
+      jobParameters: 123123
+      timeout: 10
+      retryCount: 3
