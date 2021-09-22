@@ -113,6 +113,7 @@ public class HodorJobRequestHandler implements RequestHandler {
     public RemotingResponse<JobExecuteResponse> getErrorResponse(final HodorJobExecutionContext context, final Throwable t) {
         JobExecuteResponse jobExecuteResponse = new JobExecuteResponse();
         jobExecuteResponse.setRequestId(context.getRequestId());
+        jobExecuteResponse.setJobKey(context.getJobKey());
         jobExecuteResponse.setCompleteTime(DateUtil.formatDateTime(new Date()));
         jobExecuteResponse.setStatus(JobExecuteStatus.ERROR);
         jobExecuteResponse.setComments(ThreadUtils.getStackTraceInfo(t));
@@ -136,7 +137,7 @@ public class HodorJobRequestHandler implements RequestHandler {
             .groupName(jobDesc.getGroupName())
             .jobPath(jobDesc.getJobPath())
             .jobCommand(jobDesc.getJobCommand())
-            .jobCommandType(jobDesc.getJobCommandType().getName())
+            .jobCommandType(jobDesc.getJobCommandType())
             .jobParameters(jobDesc.getJobParameters())
             .extensibleParameters(jobDesc.getExtensibleParameters())
             .timeout(jobDesc.getTimeout())
