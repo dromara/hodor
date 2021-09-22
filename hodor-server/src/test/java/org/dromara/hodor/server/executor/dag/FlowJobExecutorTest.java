@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import java.io.File;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -61,15 +60,15 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
         FlowDataLoader loader = new FlowDataLoader();
         FlowData flowData = loader.load(file);
 
-        dag = createDag(flowData);
-
-        String toJsonStr = JSONUtil.toJsonStr(flowData);
-        byte[] bytes = toJsonStr.getBytes(StandardCharsets.UTF_8);
         Compress factory = CompressFactory.getCompress(EncType.PLAIN.getType());
+        byte[] bytes = factory.compress(flowData);
+
         TypeReference<FlowData> typeReference = new TypeReference<FlowData>() {};
         flowData = factory.uncompress(bytes, typeReference.getType());
-
         System.out.println(flowData);
+
+        dag = createDag(flowData);
+        System.out.println(dag);
     }
 
     @Test

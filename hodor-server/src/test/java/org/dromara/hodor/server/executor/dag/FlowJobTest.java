@@ -17,7 +17,14 @@
 
 package org.dromara.hodor.server.executor.dag;
 
+import java.io.File;
+import java.net.URL;
+import org.dromara.hodor.core.dag.FlowData;
+import org.dromara.hodor.core.dag.FlowDataLoader;
+import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.server.HodorServerBaseTest;
+import org.dromara.hodor.server.executor.FlowJobExecutorManager;
+import org.junit.Test;
 
 /**
  * FlowJobTest
@@ -27,6 +34,21 @@ import org.dromara.hodor.server.HodorServerBaseTest;
  */
 public class FlowJobTest extends HodorServerBaseTest {
 
-    
+    @Test
+    public void testAddFlowData() throws Exception {
+        FlowJobExecutorManager manager = FlowJobExecutorManager.getInstance();
+        File file = loadFlowFileFromResource();
+        FlowDataLoader loader = new FlowDataLoader();
+        FlowData flowData = loader.load(file);
+        manager.putFlowData(JobKey.of("test", "flow_name"), flowData);
+    }
+
+    private File loadFlowFileFromResource() {
+        //final ClassLoader loader = getClass().getClassLoader();
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        URL resource = loader.getResource("hello_world_flow.yaml");
+        assert resource != null;
+        return new File(resource.getFile());
+    }
 
 }
