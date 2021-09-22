@@ -171,12 +171,15 @@ public class DagServiceImpl implements DagService {
     }
 
     private Dag getRunningDagInstance(JobKey jobKey) {
+        FlowJobExecDetail flowJobExecDetail = flowJobExecDetailService.getRunningFlowJobExecDetail(jobKey);
+        if (flowJobExecDetail == null) {
+            return null;
+        }
+
         FlowData flowData = getFlowData(jobKey);
         Assert.notNull(flowData, "not found flowData by key {}.", jobKey);
         DagCreator dagCreator = new DagCreator(flowData);
         Dag dag = dagCreator.create();
-
-        FlowJobExecDetail flowJobExecDetail = flowJobExecDetailService.getRunningFlowJobExecDetail(jobKey);
         Map<JobKey, Map<String, Object>> nodeMaps = SerializeUtils.deserialize(flowJobExecDetail.getFlowExecData(), flowExecDataTypeReference.getType());
 
         dag.setDagId(flowJobExecDetail.getRequestId());
