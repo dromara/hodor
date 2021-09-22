@@ -3,7 +3,6 @@ package org.dromara.hodor.model.job;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-import org.dromara.hodor.model.enums.CommandType;
 
 /**
  * job instance
