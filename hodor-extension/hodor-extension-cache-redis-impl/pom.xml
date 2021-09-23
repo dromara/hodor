@@ -9,14 +9,18 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hodor-extension-cache-zk-impl</artifactId>
+    <artifactId>hodor-extension-cache-redis-impl</artifactId>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.dromara</groupId>
             <artifactId>hodor-common</artifactId>
         </dependency>
-
     </dependencies>
 
 </project>
