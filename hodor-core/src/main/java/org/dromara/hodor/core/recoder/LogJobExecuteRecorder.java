@@ -14,7 +14,7 @@ import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.common.log.LogUtil;
-import org.dromara.hodor.common.storage.cache.CacheSource;
+import org.dromara.hodor.common.storage.cache.CacheClient;
 import org.dromara.hodor.common.storage.cache.HodorCacheSource;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.common.utils.ThreadUtils;
@@ -33,7 +33,7 @@ public class LogJobExecuteRecorder implements JobExecuteRecorder {
 
     private final Logger jobExecuteDetailLogger;
 
-    private final CacheSource<JobKey, JobExecDetail> cacheSource;
+    private final CacheClient<JobKey, JobExecDetail> cacheClient;
 
     private final File logsDir;
 
@@ -57,7 +57,7 @@ public class LogJobExecuteRecorder implements JobExecuteRecorder {
         this.logsDir = new File((StringUtils.isBlank(logDir) ? System.getProperty("user.dir") : logDir) + "/logs/");
         this.backUpDir = new File((StringUtils.isBlank(logDir) ? System.getProperty("user.dir") : logDir) + "/backup/");
         this.jobExecuteDetailLogger = LogUtil.getInstance().createRollingLogger(loggerName, new File(logsDir, loggerName), logLayout, interval);
-        this.cacheSource = hodorCacheSource.getCacheSource("job-execute-recorder");
+        this.cacheClient = hodorCacheSource.getCacheClient("job-execute-recorder");
         this.jobExecDetailService = jobExecDetailService;
     }
 
@@ -67,17 +67,17 @@ public class LogJobExecuteRecorder implements JobExecuteRecorder {
 
     @Override
     public JobExecDetail getJobExecDetail(JobKey jobKey) {
-        return cacheSource.get(jobKey);
+        return cacheClient.get(jobKey);
     }
 
     @Override
     public void removeJobExecDetail(JobKey jobKey) {
-        cacheSource.remove(jobKey);
+        cacheClient.remove(jobKey);
     }
 
     @Override
     public void addJobExecDetail(JobExecDetail jobExecDetail) {
-        cacheSource.put(JobKey.of(jobExecDetail.getGroupName(), jobExecDetail.getJobName()), jobExecDetail);
+        cacheClient.put(JobKey.of(jobExecDetail.getGroupName(), jobExecDetail.getJobName()), jobExecDetail);
     }
 
     @Override

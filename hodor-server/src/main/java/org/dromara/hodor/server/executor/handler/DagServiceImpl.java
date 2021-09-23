@@ -13,7 +13,7 @@ import org.dromara.hodor.common.concurrent.LockUtil;
 import org.dromara.hodor.common.dag.Dag;
 import org.dromara.hodor.common.dag.Node;
 import org.dromara.hodor.common.dag.Status;
-import org.dromara.hodor.common.storage.cache.CacheSource;
+import org.dromara.hodor.common.storage.cache.CacheClient;
 import org.dromara.hodor.common.storage.cache.HodorCacheSource;
 import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.common.utils.TypedMapWrapper;
@@ -37,9 +37,9 @@ import org.springframework.stereotype.Service;
 public class DagServiceImpl implements DagService {
 
     // dagName -> Dag instance
-    private final CacheSource<JobKey, Dag> dagCacheSource;
+    private final CacheClient<JobKey, Dag> dagCacheClient;
 
-    private final CacheSource<JobKey, FlowData> flowNodeBeanCacheSource;
+    private final CacheClient<JobKey, FlowData> flowNodeBeanCacheClient;
 
     private final FlowJobInfoService flowJobInfoService;
 
@@ -58,8 +58,8 @@ public class DagServiceImpl implements DagService {
         Assert.notNull(hodorCacheSource, "hodorCacheSource must be not null.");
         this.flowJobInfoService = flowJobInfoService;
         this.flowJobExecDetailService = flowJobExecDetailService;
-        this.dagCacheSource = hodorCacheSource.getCacheSource("dag_instance");
-        this.flowNodeBeanCacheSource = hodorCacheSource.getCacheSource("flow_node");
+        this.dagCacheClient = hodorCacheSource.getCacheClient("dag_instance");
+        this.flowNodeBeanCacheClient = hodorCacheSource.getCacheClient("flow_node");
     }
 
     @Override
@@ -121,7 +121,7 @@ public class DagServiceImpl implements DagService {
     @Override
     public void createDagInstance(JobKey jobKey, Dag dagInstance) {
         LockUtil.lockMethod(dagInstanceLock, (key, dag) -> {
-            dagCacheSource.put(jobKey, dagInstance);
+            dagCacheClient.put(jobKey, dagInstance);
             FlowJobExecDetail flowJobExecDetail = buildFlowJobExecDetail(dagInstance);
             flowJobExecDetail.setExecuteStart(new Date());
             flowJobExecDetailService.createFlowJobExecDetail(flowJobExecDetail);
@@ -132,10 +132,10 @@ public class DagServiceImpl implements DagService {
     @Override
     public Dag getDagInstance(JobKey jobKey) {
         return LockUtil.lockMethod(dagInstanceLock, key -> {
-            Dag dag = dagCacheSource.get(jobKey);
+            Dag dag = dagCacheClient.get(jobKey);
             if (dag == null) {
                 dag = getRunningDagInstance(jobKey);
-                dagCacheSource.put(jobKey, dag);
+                dagCacheClient.put(jobKey, dag);
             }
             return dag;
         }, jobKey);
@@ -143,16 +143,16 @@ public class DagServiceImpl implements DagService {
 
     @Override
     public void putFlowData(JobKey jobKey, FlowData flowData) {
-        flowNodeBeanCacheSource.put(jobKey, flowData);
+        flowNodeBeanCacheClient.put(jobKey, flowData);
     }
 
     @Override
     public FlowData getFlowData(JobKey jobKey) {
         return LockUtil.lockMethod(flowNodeBeanLock, key -> {
-            FlowData flowData = flowNodeBeanCacheSource.get(key);
+            FlowData flowData = flowNodeBeanCacheClient.get(key);
             if (flowData == null) {
                 flowData = flowJobInfoService.getFlowData(jobKey);
-                flowNodeBeanCacheSource.put(key, flowData);
+                flowNodeBeanCacheClient.put(key, flowData);
             }
             return flowData;
         }, jobKey);
@@ -160,7 +160,7 @@ public class DagServiceImpl implements DagService {
 
     private void persistDagInstance(Dag dag) {
         LockUtil.lockMethod(dagInstanceLock, d -> {
-            dagCacheSource.put(JobKey.of(d.getName()), d);
+            dagCacheClient.put(JobKey.of(d.getName()), d);
             FlowJobExecDetail flowJobExecDetail = buildFlowJobExecDetail(d);
             if (dag.getStatus().isTerminal()) {
                 flowJobExecDetail.setExecuteEnd(new Date());

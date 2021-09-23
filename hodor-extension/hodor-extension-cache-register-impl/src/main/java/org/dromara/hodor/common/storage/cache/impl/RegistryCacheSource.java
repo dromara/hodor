@@ -1,6 +1,6 @@
 package org.dromara.hodor.common.storage.cache.impl;
 
-import org.dromara.hodor.common.storage.cache.CacheSource;
+import org.dromara.hodor.common.storage.cache.CacheClient;
 import org.dromara.hodor.common.storage.cache.HodorCacheSource;
 
 /**
@@ -17,12 +17,12 @@ public class RegistryCacheSource implements HodorCacheSource {
     }
 
     @Override
-    public <K, V> CacheSource<K, V> getCacheSource(String group) {
+    public <K, V> CacheClient<K, V> getCacheClient(String group) {
         return null;
     }
 
     @Override
-    public <K, V> CacheSource<K, V> getCacheSource() {
+    public <K, V> CacheClient<K, V> getCacheClient() {
         return null;
     }
 

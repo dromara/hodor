@@ -1,6 +1,6 @@
 package org.dromara.hodor.common.storage.cache.impl;
 
-import org.dromara.hodor.common.storage.cache.CacheSource;
+import org.dromara.hodor.common.storage.cache.CacheClient;
 
 /**
  * registry raw cache source
@@ -8,7 +8,7 @@ import org.dromara.hodor.common.storage.cache.CacheSource;
  * @author tomgs
  * @version 2021/8/30 1.0
  */
-public class RegistryRawCacheSource<K, V> implements CacheSource<K, V> {
+public class RegistryRawCacheClient<K, V> implements CacheClient<K, V> {
 
     @Override
     public V get(K key) {
