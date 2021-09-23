@@ -41,7 +41,7 @@ public class RemotingClient {
     }
 
     public void sendDuplexRequest(final Host host, final RemotingMessage request, final FutureCallback<RemotingMessage> responseCallback) throws RemotingException {
-        HodorChannel channel = computeIfInActiveChannel(host, e -> createChannel(e, new JobExecuteResponseHandler(responseCallback)));
+        HodorChannel channel = computeIfInActiveChannel(host, e -> createChannel(e, new KeepAliveChannelResponseHandler(responseCallback)));
         HodorChannelFuture hodorChannelFuture = channel.send(request);
         hodorChannelFuture.operationComplete(future -> {
             if (future.isSuccess()) {
@@ -163,11 +163,11 @@ public class RemotingClient {
     /**
      * 这种适应于长连接，双向通信
      */
-    private static class JobExecuteResponseHandler implements HodorChannelHandler {
+    private static class KeepAliveChannelResponseHandler implements HodorChannelHandler {
 
         private final FutureCallback<RemotingMessage> callback;
 
-        public JobExecuteResponseHandler(FutureCallback<RemotingMessage> callback) {
+        public KeepAliveChannelResponseHandler(FutureCallback<RemotingMessage> callback) {
             this.callback = callback;
         }
 
