@@ -62,9 +62,9 @@ public class HodorJobRequestHandler implements RequestHandler {
 
     public void handle(final HodorJobExecutionContext context) {
         log.info("hodor job request handler, info {}.", context);
+        Exception jobException = null;
         RemotingMessage request = getRequestBody(context);
         List<Host> hosts = actuatorNodeManager.getAvailableHosts(context.getJobDesc().getGroupName());
-        Exception jobException = null;
         for (int i = hosts.size() - 1; i >= 0; i--) {
             Host host = hosts.get(i);
             try {
