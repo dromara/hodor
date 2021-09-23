@@ -8,12 +8,12 @@ import org.dromara.hodor.common.Tuple2;
 import org.dromara.hodor.common.concurrent.LockUtil;
 
 /**
- * LocalRawCacheSource
+ * LocalRawCacheClient
  *
  * @author tomgs
  * @since 2021/8/16
  */
-public class LocalRawCacheSource<K, V> implements CacheSource<K, V> {
+public class LocalRawCacheClient<K, V> implements CacheClient<K, V> {
 
     private final Map<K, Tuple2<V, Long>> cache;
 
@@ -21,7 +21,7 @@ public class LocalRawCacheSource<K, V> implements CacheSource<K, V> {
 
     private final int maximumSize;
 
-    public LocalRawCacheSource(final CacheSourceConfig cacheSourceConfig) {
+    public LocalRawCacheClient(final CacheSourceConfig cacheSourceConfig) {
         this.readWriteLock = new ReentrantReadWriteLock();
         maximumSize = cacheSourceConfig.getMaximumSize() <= 0 ? Integer.MAX_VALUE : cacheSourceConfig.getMaximumSize();
         this.cache = new LinkedHashMap<K, Tuple2<V, Long>>() {

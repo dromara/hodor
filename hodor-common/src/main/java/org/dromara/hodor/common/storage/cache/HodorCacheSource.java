@@ -24,7 +24,7 @@ public interface HodorCacheSource {
      * @param <V> value 类型
      * @return cacheSource对象
      */
-    <K, V> CacheSource<K, V> getCacheSource(String group);
+    <K, V> CacheClient<K, V> getCacheClient(String group);
 
     /**
      * 获取默认分组缓存对象
@@ -32,6 +32,6 @@ public interface HodorCacheSource {
      * @param <V> value 类型
      * @return cacheSource对象
      */
-    <K, V> CacheSource<K, V> getCacheSource();
+    <K, V> CacheClient<K, V> getCacheClient();
 
 }

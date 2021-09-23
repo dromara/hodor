@@ -1,12 +1,12 @@
 package org.dromara.hodor.common.storage.cache;
 
 /**
- * cache source
+ * cache client
  *
  * @author tomgs
  * @since 2021/8/11
  */
-public interface CacheSource<K, V> {
+public interface CacheClient<K, V> {
 
     V get(K key);
 
