@@ -107,11 +107,6 @@ public class DagServiceImpl implements DagService {
     }
 
     @Override
-    public void shutdownAndAwaitTermination() {
-
-    }
-
-    @Override
     public void markNodeCanceled(Node node) {
         node.cancel();
         // persist dag instance

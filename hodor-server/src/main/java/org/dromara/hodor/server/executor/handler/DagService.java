@@ -61,11 +61,6 @@ public interface DagService {
 
   void updateDagStatus(Dag dag);
 
-  /**
-   * Shuts down the service and waits for the tasks to finish.
-   */
-  void shutdownAndAwaitTermination() throws InterruptedException;
-
   void markNodeCanceled(Node node);
 
   void createDagInstance(JobKey jobKey, Dag dagInstance);
