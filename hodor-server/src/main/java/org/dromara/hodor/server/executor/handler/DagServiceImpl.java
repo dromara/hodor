@@ -49,8 +49,8 @@ public class DagServiceImpl implements DagService {
 
     private final ReentrantLock dagInstanceLock = new ReentrantLock();
 
-    private final TypeReference<Map<JobKey, Map<String, Object>>> flowExecDataTypeReference =
-        new TypeReference<Map<JobKey, Map<String, Object>>>() {};
+    private final TypeReference<Map<String, Map<String, Object>>> flowExecDataTypeReference =
+        new TypeReference<Map<String, Map<String, Object>>>() {};
 
     public DagServiceImpl(final HodorCacheSource hodorCacheSource,
                           final FlowJobInfoService flowJobInfoService,
@@ -170,22 +170,22 @@ public class DagServiceImpl implements DagService {
         if (flowJobExecDetail == null) {
             return null;
         }
+        Map<String, Map<String, Object>> runningFlowExecDataMaps = SerializeUtils.deserialize(flowJobExecDetail.getFlowExecData(), flowExecDataTypeReference.getType());
 
         FlowData flowData = getFlowData(jobKey);
         Assert.notNull(flowData, "not found flowData by key {}.", jobKey);
         DagCreator dagCreator = new DagCreator(flowData);
         Dag dag = dagCreator.create();
-        Map<JobKey, Map<String, Object>> nodeMaps = SerializeUtils.deserialize(flowJobExecDetail.getFlowExecData(), flowExecDataTypeReference.getType());
 
         dag.setDagId(flowJobExecDetail.getRequestId());
         dag.setStatus(flowJobExecDetail.getStatus());
         dag.setSchedulerName(flowJobExecDetail.getSchedulerName());
         List<Node> nodes = dag.getNodes();
         for (Node node : nodes) {
-            TypedMapWrapper<String, Object> wrapper = new TypedMapWrapper<>(nodeMaps.get(JobKey.of(node.getGroupName(), node.getNodeName())));
+            JobKey nodeJobKey = JobKey.of(node.getGroupName(), node.getNodeName());
+            TypedMapWrapper<String, Object> wrapper = new TypedMapWrapper<>(runningFlowExecDataMaps.get(nodeJobKey.getKeyName()));
             node.setNodeId(wrapper.getLong(FlowNodeConstants.NODE_ID));
             node.setStatus(Status.valueOf(wrapper.getString(FlowNodeConstants.NODE_STATUS)));
-            node.setRawData(wrapper.getObject(FlowNodeConstants.RAW_DATA));
         }
         return dag;
     }
@@ -197,20 +197,18 @@ public class DagServiceImpl implements DagService {
         Status status = dagInstance.getStatus();
         List<Node> nodes = dagInstance.getNodes();
 
-        Map<JobKey, Map<String, Object>> nodeMaps = Maps.newHashMap();
+        Map<String, Map<String, Object>> nodeMaps = Maps.newHashMap();
         for (Node node : nodes) {
             Map<String, Object> nodeMap = Maps.newHashMap();
             Long nodeId = node.getNodeId();
             String groupName = node.getGroupName();
             String nodeName = node.getNodeName();
             Status nodeStatus = node.getStatus();
-            Object rawData = node.getRawData();
             nodeMap.put(FlowNodeConstants.NODE_ID, nodeId);
             nodeMap.put(FlowNodeConstants.GROUP_NAME, groupName);
             nodeMap.put(FlowNodeConstants.NODE_NAME, nodeName);
             nodeMap.put(FlowNodeConstants.NODE_STATUS, nodeStatus);
-            nodeMap.put(FlowNodeConstants.RAW_DATA, rawData);
-            nodeMaps.put(JobKey.of(groupName, nodeName), nodeMap);
+            nodeMaps.put(JobKey.of(groupName, nodeName).getKeyName(), nodeMap);
         }
 
         byte[] flowExecDataBytes = SerializeUtils.serialize(nodeMaps);
