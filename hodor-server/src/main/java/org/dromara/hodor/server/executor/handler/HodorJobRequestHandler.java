@@ -149,7 +149,7 @@ public class HodorJobRequestHandler implements RequestHandler {
         Map<String, Object> attachment = new HashMap<>();
         attachment.put("schedulerName", context.getSchedulerName());
         if (context.getRootJobKey() != null) {
-            attachment.put(FlowNodeConstants.ROOT_JOB_KEY, context.getRootJobKey());
+            attachment.put(FlowNodeConstants.ROOT_JOB_KEY, context.getRootJobKey().getKeyName());
         }
         return Header.builder()
             .id(context.getRequestId())

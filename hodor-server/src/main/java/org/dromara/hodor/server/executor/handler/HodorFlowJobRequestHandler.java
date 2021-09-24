@@ -1,5 +1,6 @@
 package org.dromara.hodor.server.executor.handler;
 
+import cn.hutool.core.lang.Assert;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Tuple2;
@@ -21,6 +22,7 @@ public class HodorFlowJobRequestHandler extends HodorJobRequestHandler {
     @Override
     public void resultHandle(Map<String, Object> attachment, final RemotingResponse<JobExecuteResponse> remotingResponse) {
         String rootJobKey = String.valueOf(attachment.get(FlowNodeConstants.ROOT_JOB_KEY));
+        Assert.notNull(rootJobKey, "root job key must be not null.");
         HodorFlowJobResponseHandler.INSTANCE.fireJobResponseHandler(new Tuple2<>(JobKey.of(rootJobKey), remotingResponse));
     }
 
