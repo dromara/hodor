@@ -46,6 +46,10 @@ public class JobKey {
         return Objects.equals(groupName, jobKey.groupName) && Objects.equals(jobName, jobKey.jobName);
     }
 
+    public String getKeyName() {
+        return this.toString();
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(groupName, jobName);
@@ -54,10 +58,6 @@ public class JobKey {
     @Override
     public String toString() {
         return String.format("%s#%s", groupName, jobName);
-    }
-
-    public String getKeyName() {
-        return this.toString();
     }
 
 }
