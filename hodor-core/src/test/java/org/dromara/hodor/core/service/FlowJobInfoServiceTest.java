@@ -38,17 +38,26 @@ public class FlowJobInfoServiceTest extends BaseTest {
 
     @Test
     public void testAddFlowJob() throws Exception {
-        File file = loadFlowFileFromResource();
+        File file = loadFlowFileFromResource("hello_world_flow.yaml");
         FlowDataLoader loader = new FlowDataLoader();
         FlowData flowData = loader.load(file);
 
         flowJobInfoService.addFlowJob(flowData);
     }
 
-    private File loadFlowFileFromResource() {
+    @Test
+    public void testAddDemoFlowJob() throws Exception {
+        File file = loadFlowFileFromResource("hodor_client_demo_flow.yaml");
+        FlowDataLoader loader = new FlowDataLoader();
+        FlowData flowData = loader.load(file);
+
+        flowJobInfoService.addFlowJob(flowData);
+    }
+
+    private File loadFlowFileFromResource(String flowName) {
         final ClassLoader loader = getClass().getClassLoader();
         //ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        URL resource = loader.getResource("hello_world_flow.yaml");
+        URL resource = loader.getResource(flowName);
         assert resource != null;
         return new File(resource.getFile());
     }

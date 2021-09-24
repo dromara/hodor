@@ -1,0 +1,22 @@
+groupName: testGroup
+jobName: hodorClientDemo
+config:
+  cron: '0/5 * * * * ?'
+  jobCommandType: dag
+  fireNow: true
+nodes:
+  - jobName: test1
+    config:
+      jobCommandType: java
+      priority: 0
+      jobParameters: 123123
+      timeout: 10
+      retryCount: 3
+  - jobName: test2
+    dependsOn:
+      - test1
+    config:
+      jobCommandType: java
+      priority: 1
+      timeout: 10
+      retryCount: 3

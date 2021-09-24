@@ -68,15 +68,16 @@ public class FlowJobInfoServiceImpl implements FlowJobInfoService {
         String jobName = flowData.getJobName();
         Map<String, Object> config = flowData.getConfig();
         TypedMapWrapper<String, Object> jobConfigWrapper = new TypedMapWrapper<>(config);
-
-        JobInfo jobInfo = new JobInfo();
-        jobInfo.setGroupName(groupName);
-        jobInfo.setJobName(jobName);
-        jobInfo.setJobType(JobType.WORKFLOW_JOB);
-        jobInfo.setCron(jobConfigWrapper.getString(Constants.CRON_KEY, CronUtils.CRON_DISABLED));
-        jobInfo.setJobStatus(JobStatus.READY);
-        jobInfo.setHashId(HashUtils.hash(jobInfo.getGroupName() + jobInfo.getJobName()));
-        jobInfoService.addJobIfAbsent(jobInfo);
+        JobInfo rootFlowJobInfo = jobConfigWrapper.convertInstance(JobInfo.class);
+        //JobInfo rootFlowJobInfo = new JobInfo();
+        rootFlowJobInfo.setGroupName(groupName);
+        rootFlowJobInfo.setJobName(jobName);
+        rootFlowJobInfo.setJobType(JobType.WORKFLOW_JOB);
+        rootFlowJobInfo.setJobCommandType(jobConfigWrapper.getString(Constants.JobConstants.COMMAND_TYPE_KEY));
+        rootFlowJobInfo.setCron(jobConfigWrapper.getString(Constants.JobConstants.CRON_KEY, CronUtils.CRON_DISABLED));
+        rootFlowJobInfo.setJobStatus(JobStatus.READY);
+        rootFlowJobInfo.setHashId(HashUtils.hash(rootFlowJobInfo.getGroupName() + rootFlowJobInfo.getJobName()));
+        jobInfoService.addJobIfAbsent(rootFlowJobInfo);
 
         FlowJobInfo flowJobInfo = new FlowJobInfo();
         flowJobInfo.setGroupName(groupName);
