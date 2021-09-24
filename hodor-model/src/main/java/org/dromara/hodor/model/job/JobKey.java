@@ -56,4 +56,8 @@ public class JobKey {
         return String.format("%s#%s", groupName, jobName);
     }
 
+    public String getKeyName() {
+        return this.toString();
+    }
+
 }
