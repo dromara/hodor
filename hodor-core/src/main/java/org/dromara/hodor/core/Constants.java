@@ -25,7 +25,13 @@ package org.dromara.hodor.core;
  */
 public interface Constants {
 
-    String CRON_KEY = "cron";
+    class JobConstants {
+
+        public static final String CRON_KEY = "cron";
+
+        public static final String COMMAND_TYPE_KEY = "jobCommandType";
+
+    }
 
     /**
      * CopySet config
