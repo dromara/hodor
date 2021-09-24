@@ -277,6 +277,7 @@ public class GsonUtils {
     private static class MapDeserializer<T, U> implements JsonDeserializer<Map<T, U>> {
         
         @Override
+        @SuppressWarnings("unchecked")
         public Map<T, U> deserialize(final JsonElement json, final Type type, final JsonDeserializationContext context) throws JsonParseException {
             if (!json.isJsonObject()) {
                 return null;
@@ -302,7 +303,8 @@ public class GsonUtils {
          */
         public Class<?> getType(final JsonElement element) {
             if (!element.isJsonPrimitive()) {
-                return element.getClass();
+                //return element.getClass();
+                return Map.class;
             }
             
             final JsonPrimitive primitive = element.getAsJsonPrimitive();
