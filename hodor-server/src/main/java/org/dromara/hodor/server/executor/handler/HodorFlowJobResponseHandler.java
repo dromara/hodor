@@ -27,7 +27,7 @@ public class HodorFlowJobResponseHandler extends AbstractEventPublisher<Tuple2<J
 
     private final FlowJobExecutorManager flowJobExecutorManager;
 
-    public HodorFlowJobResponseHandler() {
+    private HodorFlowJobResponseHandler() {
         this.flowJobExecutorManager = FlowJobExecutorManager.getInstance();
     }
 
@@ -49,14 +49,15 @@ public class HodorFlowJobResponseHandler extends AbstractEventPublisher<Tuple2<J
         Tuple2<JobKey, JobExecuteResponse> tuple = event.getValue();
         JobKey rootJobKey = tuple.getFirst();
         JobExecuteResponse jobExecuteResponse = tuple.getSecond();
-
-        JobExecuteManager.getInstance().addFinishJob(jobExecuteResponse);
-
-        // notify execute next
-        Dag dagInstance = flowJobExecutorManager.getDagInstance(rootJobKey);
-        Assert.notNull(dagInstance, "not found dag instance by root key {}.", rootJobKey);
-        Node node = dagInstance.getNode(jobExecuteResponse.getJobKey().getGroupName(), jobExecuteResponse.getJobKey().getJobName());
-        flowJobExecutorManager.changeNodeStatus(node, status);
+        try {
+            // notify execute next
+            Dag dagInstance = flowJobExecutorManager.getDagInstance(rootJobKey);
+            Assert.notNull(dagInstance, "not found dag instance by root key {}.", rootJobKey);
+            Node node = dagInstance.getNode(jobExecuteResponse.getJobKey().getGroupName(), jobExecuteResponse.getJobKey().getJobName());
+            flowJobExecutorManager.changeNodeStatus(node, status);
+        } finally {
+            JobExecuteManager.getInstance().addFinishJob(jobExecuteResponse);
+        }
     }
 
     public void fireJobResponseHandler(Tuple2<JobKey, RemotingResponse<JobExecuteResponse>> tuple) {
