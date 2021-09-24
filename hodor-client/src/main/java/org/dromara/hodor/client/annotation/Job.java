@@ -5,7 +5,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.dromara.hodor.common.cron.CronUtils;
-import org.dromara.hodor.model.enums.CommandType;
 
 /**
  * 调度任务描述
@@ -27,7 +26,7 @@ public @interface Job {
      */
     String jobName() default "";
 
-    CommandType commandType() default CommandType.JAVA;
+    String commandType() default "java";
 
     /**
      * cron 表达式

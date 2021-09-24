@@ -150,7 +150,7 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
         boolean fireNow = job.fireNow();
         boolean broadcast = job.isBroadcast();
         int timeout = job.timeout();
-        CommandType commandType = job.commandType();
+        String commandType = job.commandType();
 
         JobInstance jobInstance = JobInstance.builder()
             .groupName(groupName)
