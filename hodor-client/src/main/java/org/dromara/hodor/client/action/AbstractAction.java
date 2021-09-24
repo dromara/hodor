@@ -66,6 +66,7 @@ public abstract class AbstractAction<I extends RequestBody, O extends ResponseBo
             .id(context.requestHeader().getId())
             .type(context.requestHeader().getType())
             .version(context.requestHeader().getVersion())
+            .attachment(context.requestHeader().getAttachment())
             .length(body.length)
             .build();
         return RemotingMessage
