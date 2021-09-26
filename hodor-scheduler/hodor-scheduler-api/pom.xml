@@ -19,7 +19,7 @@
 
         <dependency>
             <groupId>org.dromara</groupId>
-            <artifactId>hodor-core</artifactId>
+            <artifactId>hodor-model</artifactId>
         </dependency>
 
         <dependency>

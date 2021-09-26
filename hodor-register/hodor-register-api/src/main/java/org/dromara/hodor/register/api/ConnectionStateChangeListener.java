@@ -7,6 +7,6 @@ package org.dromara.hodor.register.api;
  */
 public interface ConnectionStateChangeListener {
 
-    //void stateChanged(ConnectionState newState);
+    void stateChanged(ConnectionState newState);
 
 }

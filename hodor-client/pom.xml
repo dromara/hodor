@@ -14,6 +14,11 @@
     <dependencies>
         <dependency>
             <groupId>org.dromara</groupId>
+            <artifactId>hodor-model</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.dromara</groupId>
             <artifactId>hodor-common</artifactId>
         </dependency>
 
@@ -57,6 +62,12 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

@@ -1,47 +1,60 @@
 package org.dromara.hodor.common.event;
 
 /**
- * 事务发布器
+ * Event Publisher
  *
- * @param <V>
+ * @author tomgs
  */
 public interface EventPublisher<V> {
 
     /**
-     * 在事件对象上面添加事件监听器
+     * registry listener
      */
-    default void registerListener() {
+    default void registryListener() {
 
     }
 
     /**
-     * 添加某个事件类型的监听器。一个 eventType 可对应多个 object listener
+     * add default event type listener
+     *
+     * @param listener registry listener
      */
-    void addListener(ObjectListener<V> objectListener, Object eventType);
+    void addListener(HodorEventListener<V> listener);
 
     /**
-     * 移除指定 event type 中的一个object listener
+     * 添加某个事件类型的监听器，一个 eventType 可对应多个 listener
+     *
+     * @param listener listener
+     * @param eventType event type
      */
-    void removeListener(ObjectListener<V> objectListener, Object eventType);
+    void addListener(HodorEventListener<V> listener, Object eventType);
 
     /**
-     * 移除一组 object listeners
+     * Removes a listener of the specified event type
+     *
+     * @param eventType the specified event type
+     * @param listener a listener
+     */
+    void removeListener(Object eventType, HodorEventListener<V> listener);
+
+    /**
+     * Removes listeners from the specified event type
+     *
+     * @param eventType the specified event type
      */
     void removeListener(Object eventType);
 
     /**
-     * 清除事件监听器
+     * Clear the event listener
      */
     void clearListener();
 
     /**
-     * 唤醒一组事件监听器。这组事件监听器按序执行
+     * Publish the specified event
+     *
+     * @param event the specified event
+     *
      */
     void publish(Event<V> event);
-
-    /**
-     * 给某个事件类型发布一个消息。这个消息会触发一组事件监听器执行
-     */
-    void publish(V v, Object eventType);
 
 }

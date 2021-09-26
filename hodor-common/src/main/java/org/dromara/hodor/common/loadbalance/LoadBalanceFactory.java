@@ -1,5 +1,8 @@
 package org.dromara.hodor.common.loadbalance;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * load balance factory
  *
@@ -7,12 +10,16 @@ package org.dromara.hodor.common.loadbalance;
  */
 public final class LoadBalanceFactory {
 
+    private static final Map<String, LoadBalance> loadBalanceMap = new HashMap<>();
+
     public static LoadBalance getLoadBalance(String type) {
-        LoadBalanceEnum lb = getLoadBalanceEnum(type);
-        if (lb == LoadBalanceEnum.RANDOM) {
-            return new RandomLoadBalance();
-        }
-        return new RoundRobinLoadBalance();
+        return loadBalanceMap.computeIfAbsent(type, k -> {
+            LoadBalanceEnum lb = getLoadBalanceEnum(type);
+            if (lb == LoadBalanceEnum.RANDOM) {
+                return new RandomLoadBalance();
+            }
+            return new RoundRobinLoadBalance();
+        });
     }
 
     /**

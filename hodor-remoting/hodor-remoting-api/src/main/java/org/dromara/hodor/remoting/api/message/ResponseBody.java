@@ -17,22 +17,9 @@ public interface ResponseBody extends Serializable {
     Long getRequestId();
 
     /**
-     * 请求响应code
-     * @return code
+     * 设置requestId
+     * @param requestId 请求id
      */
-    int getCode();
-
-    /**
-     * 请求响应信息
-     * @return msg
-     */
-    String getMsg();
-
-    /**
-     * 响应数据
-     *
-     * @return data
-     */
-    Object getData();
+    void setRequestId(Long requestId);
 
 }

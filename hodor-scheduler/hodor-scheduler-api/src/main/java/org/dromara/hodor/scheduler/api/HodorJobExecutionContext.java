@@ -2,43 +2,59 @@ package org.dromara.hodor.scheduler.api;
 
 import java.util.Date;
 import org.dromara.hodor.common.IdGenerator;
-import org.dromara.hodor.core.JobDesc;
+import org.dromara.hodor.model.job.JobDesc;
+import org.dromara.hodor.model.job.JobKey;
 
 /**
- *  hodor scheduler context
+ * hodor scheduler context
  *
  * @author tomgs
- * @version 2020/6/25 1.0 
+ * @version 2020/6/25 1.0
  */
 public class HodorJobExecutionContext {
 
     private final long requestId;
-    private final String jobKey;
-    private final JobDesc jobDesc;
-    private final Date fireTime;
-    private final Date scheduledFireTime;
-    private final Date previousFireTime;
-    private final Date nextFireTime;
 
-    public HodorJobExecutionContext(final JobDesc jobDesc,
-                                    final Date fireTime,
-                                    final Date scheduledFireTime,
-                                    final Date previousFireTime,
-                                    final Date nextFireTime) {
+    private final String schedulerName;
+
+    private final JobKey rootJobKey;
+
+    private final JobKey jobKey;
+
+    private final JobDesc jobDesc;
+
+    private final Date fireTime;
+
+    public HodorJobExecutionContext(final JobKey rootJobKey, final JobDesc jobDesc,
+                                    final String schedulerName, final Date fireTime) {
+        this.rootJobKey = rootJobKey;
         this.requestId = IdGenerator.defaultGenerator().nextId();
+        this.schedulerName = schedulerName;
         this.jobDesc = jobDesc;
-        this.jobKey = jobDesc.getGroupName() + "_" + jobDesc.getJobName();
+        this.jobKey = JobKey.of(jobDesc.getGroupName(), jobDesc.getJobName());
         this.fireTime = fireTime;
-        this.scheduledFireTime = scheduledFireTime;
-        this.previousFireTime = previousFireTime;
-        this.nextFireTime = nextFireTime;
+    }
+
+    public HodorJobExecutionContext(final long requestId,
+                                    final JobKey rootJobKey, final JobDesc jobDesc,
+                                    final String schedulerName, final Date fireTime) {
+        this.requestId = requestId;
+        this.schedulerName = schedulerName;
+        this.jobDesc = jobDesc;
+        this.jobKey = JobKey.of(jobDesc.getGroupName(), jobDesc.getJobName());
+        this.rootJobKey = rootJobKey;
+        this.fireTime = fireTime;
     }
 
     public long getRequestId() {
         return requestId;
     }
 
-    public String getJobKey() {
+    public JobKey getRootJobKey() {
+        return rootJobKey;
+    }
+
+    public JobKey getJobKey() {
         return jobKey;
     }
 
@@ -50,16 +66,8 @@ public class HodorJobExecutionContext {
         return fireTime;
     }
 
-    public Date getScheduledFireTime() {
-        return scheduledFireTime;
-    }
-
-    public Date getPreviousFireTime() {
-        return previousFireTime;
-    }
-
-    public Date getNextFireTime() {
-        return nextFireTime;
+    public String getSchedulerName() {
+        return schedulerName;
     }
 
 }

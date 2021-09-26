@@ -1,5 +1,7 @@
 package org.dromara.hodor.core;
 import java.util.List;
+
+import org.dromara.hodor.model.job.JobDesc;
 import org.mapstruct.Mapper;
 import org.dromara.hodor.core.entity.JobInfo;
 

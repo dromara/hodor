@@ -29,11 +29,11 @@ import org.dromara.hodor.common.extension.SPI;
 @SPI("transport")
 public interface NetServerTransport {
     /**
-     * Bind net server.
+     * build net server.
      *
      * @param attribute the attribute
      * @param handler   the handler
      * @return the net server
      */
-    NetServer bind(Attribute attribute, HodorChannelHandler handler);
+    NetServer build(Attribute attribute, HodorChannelHandler handler);
 }

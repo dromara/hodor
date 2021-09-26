@@ -1,5 +1,6 @@
 package org.dromara.hodor.common.utils;
 
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -18,6 +19,10 @@ public class SerializeUtils {
 
     public static <T> T deserialize(byte[] byteData, Class<T> cls) {
         return INSTANCE.fromJson(new String(byteData, StandardCharsets.UTF_8), cls);
+    }
+
+    public static <T> T deserialize(byte[] byteData, Type typeOfT) {
+        return INSTANCE.fromJson(new String(byteData, StandardCharsets.UTF_8), typeOfT);
     }
 
 }

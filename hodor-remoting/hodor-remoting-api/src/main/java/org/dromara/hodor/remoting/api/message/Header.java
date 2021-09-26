@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.dromara.hodor.remoting.api.RemotingConst;
 
 /**
  *  rpc header
@@ -19,19 +20,25 @@ import lombok.NoArgsConstructor;
 public class Header {
 
     /**
-     * 消息校验码
+     * 先导码
      */
-    private int crcCode;
+    private short magic = RemotingConst.MAGIC;
+
+    /**
+     * 消息id
+     */
+    private long id;
 
     /**
      * 消息类型
+     * @see MessageType
      */
     private byte type;
 
     /**
      * 协议版本，目前是1
      */
-    private int version;
+    private byte version;
 
     /**
      * 消息体长度

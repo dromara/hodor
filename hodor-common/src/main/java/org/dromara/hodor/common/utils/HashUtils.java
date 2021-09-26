@@ -56,7 +56,7 @@ public class HashUtils {
         h ^= h >>> r;
 
         buf.order(byteOrder);
-        return h;
+        return Math.abs(h);
     }
 
 }

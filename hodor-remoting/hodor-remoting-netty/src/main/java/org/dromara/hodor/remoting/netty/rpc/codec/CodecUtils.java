@@ -2,32 +2,38 @@ package org.dromara.hodor.remoting.netty.rpc.codec;
 
 import com.google.common.collect.Maps;
 import io.netty.buffer.ByteBuf;
-import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
-import org.dromara.hodor.common.utils.SerializeUtils;
+import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.remoting.api.RemotingConst;
+import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
 import org.dromara.hodor.remoting.api.exception.RemotingException;
 import org.dromara.hodor.remoting.api.message.Header;
 
 import java.util.Map;
 
 /**
+ * codec utils
+ *
  * @author tomgs
  * @since 2020/9/17
  */
 @Slf4j
 public class CodecUtils {
 
+    private static final RemotingMessageSerializer serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
+
     @SuppressWarnings("unchecked")
-    public static Map<String, Object> parseAttachment(ByteBuf in, int attachmentSize) {
+    public static Map<String, Object> parseAttachment(ByteBuf in, int attachmentSize) throws ResetReaderIndexException {
         Map<String, Object> attachment = Maps.newHashMap();
         if (attachmentSize != 0) {
-            ByteBuf buf = in.readBytes(attachmentSize);
-            byte[] req = new byte[buf.readableBytes()];
-            buf.readBytes(req);
-            attachment = (Map<String, Object>) SerializeUtils.deserialize(req, Map.class);
-            ReferenceCountUtil.release(buf);
+            if (in.readableBytes() < attachmentSize) {
+                in.resetReaderIndex();
+                throw new ResetReaderIndexException("reader attachment index reset");
+            }
+            byte[] req = new byte[attachmentSize];
+            in.readBytes(req);
+            attachment = (Map<String, Object>) serializer.deserialize(req, Map.class);
         }
         return attachment;
     }
@@ -36,15 +42,16 @@ public class CodecUtils {
         if (header == null) {
             throw new RemotingException("message header must be not null.");
         }
-        out.writeInt(header.getCrcCode());
-        out.writeInt(header.getVersion());
+        out.writeShort(RemotingConst.MAGIC);
+        out.writeLong(header.getId());
+        out.writeByte(header.getVersion());
         out.writeByte(header.getType());
 
         // write attachment
         if (MapUtils.isEmpty(header.getAttachment())) {
             out.writeInt(0);
         } else {
-            byte[] attachmentByte = SerializeUtils.serialize(header.getAttachment());
+            byte[] attachmentByte = serializer.serialize(header.getAttachment());
             out.writeInt(attachmentByte.length);
             out.writeBytes(attachmentByte);
         }
@@ -53,19 +60,15 @@ public class CodecUtils {
         out.writeInt(header.getLength());
     }
 
-    public static Header parseHeader(ByteBuf in) {
-        // 17 is header message length
-        if (in.readableBytes() < 17) {
-            throw new RemotingException("Server receive client message, but readableBytes length less than header length!");
+    public static Header parseHeader(ByteBuf in) throws ResetReaderIndexException {
+        short magic = in.readShort();
+        if (RemotingConst.MAGIC != magic) {
+            throw new RemotingException("magic number is illegal, " + magic);
         }
 
-        int crcCode = in.readInt();
-        if (crcCode != RemotingConst.MESSAGE_CRC_CODE) {
-            throw new RemotingException("Server receive message crcCode is illegal.");
-        }
-
-        int version = in.readInt();
-        if (version != RemotingConst.DEFAULT_VERSION) {
+        long id = in.readLong();
+        byte version = in.readByte();
+        if (version < RemotingConst.DEFAULT_VERSION) {
             throw new RemotingException("Server receive message version is illegal.");
         }
 
@@ -84,7 +87,7 @@ public class CodecUtils {
             throw new RemotingException("Server receive message length must >= 0.");
         }
 
-        return Header.builder().crcCode(crcCode).type(type).version(version).length(length).attachment(attachment).build();
+        return Header.builder().magic(magic).id(id).type(type).version(version).length(length).attachment(attachment).build();
     }
 
     public static void writeBody(ByteBuf out, byte[] body) {

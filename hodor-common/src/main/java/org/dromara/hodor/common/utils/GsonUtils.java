@@ -75,10 +75,15 @@ public class GsonUtils {
         }
     };
     
-    private static final Gson GSON = new GsonBuilder().registerTypeAdapter(String.class, STRING).create();
+    private static final Gson GSON = new GsonBuilder()
+        .registerTypeAdapter(String.class, STRING)
+        .registerTypeHierarchyAdapter(new TypeToken<Map<String, Object>>() {}.getRawType(), new MapDeserializer<String, Object>())
+        .create();
     
-    private static final Gson GSON_MAP = new GsonBuilder().serializeNulls().registerTypeHierarchyAdapter(new TypeToken<Map<String, Object>>() {
-    }.getRawType(), new MapDeserializer<String, Object>()).create();
+    private static final Gson GSON_MAP = new GsonBuilder()
+        .serializeNulls()
+        .registerTypeHierarchyAdapter(new TypeToken<Map<String, Object>>() {}.getRawType(), new MapDeserializer<String, Object>())
+        .create();
     
     private static final String DOT = ".";
     
@@ -135,7 +140,17 @@ public class GsonUtils {
     public <T> T fromJson(final JsonElement jsonElement, final Class<T> tClass) {
         return GSON.fromJson(jsonElement, tClass);
     }
-    
+
+    /**
+     * From json t type
+     * @param json json sttring
+     * @param typeOfT type of T
+     * @param <T> the type parameter
+     * @return the t
+     */
+    public <T> T fromJson(final String json, final Type typeOfT) {
+        return GSON.fromJson(json, typeOfT);
+    }
     
     /**
      * From list list.
@@ -262,6 +277,7 @@ public class GsonUtils {
     private static class MapDeserializer<T, U> implements JsonDeserializer<Map<T, U>> {
         
         @Override
+        @SuppressWarnings("unchecked")
         public Map<T, U> deserialize(final JsonElement json, final Type type, final JsonDeserializationContext context) throws JsonParseException {
             if (!json.isJsonObject()) {
                 return null;
@@ -285,9 +301,10 @@ public class GsonUtils {
          * @param element the element
          * @return Class class
          */
-        public Class getType(final JsonElement element) {
+        public Class<?> getType(final JsonElement element) {
             if (!element.isJsonPrimitive()) {
-                return element.getClass();
+                //return element.getClass();
+                return Map.class;
             }
             
             final JsonPrimitive primitive = element.getAsJsonPrimitive();
@@ -298,6 +315,9 @@ public class GsonUtils {
                 if (numStr.contains(DOT) || numStr.contains(E)
                         || numStr.contains("E")) {
                     return Double.class;
+                }
+                if (Long.parseLong(numStr) <= Integer.MAX_VALUE) {
+                    return Integer.class;
                 }
                 return Long.class;
             } else if (primitive.isBoolean()) {

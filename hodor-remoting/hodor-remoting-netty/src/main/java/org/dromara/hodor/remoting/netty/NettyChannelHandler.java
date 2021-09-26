@@ -18,14 +18,24 @@
 
 package org.dromara.hodor.remoting.netty;
 
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelDuplexHandler;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.util.ReferenceCountUtil;
+import java.util.function.Function;
 import org.dromara.hodor.remoting.api.Attribute;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.HodorChannelHandler;
 import org.dromara.hodor.remoting.api.RemotingConst;
+import org.dromara.hodor.remoting.api.exception.RemotingException;
+import org.dromara.hodor.remoting.api.http.HodorHttpRequest;
+import org.dromara.hodor.remoting.api.http.HodorHttpResponse;
+import org.dromara.hodor.remoting.netty.http.HttpMessageWrapper;
 
 /**
  * NettyServerHandler.
@@ -36,11 +46,11 @@ import org.dromara.hodor.remoting.api.RemotingConst;
 @ChannelHandler.Sharable
 public class NettyChannelHandler extends ChannelDuplexHandler {
 
-    private HodorChannelHandler channelHandler;
+    private final HodorChannelHandler channelHandler;
 
     private final Attribute attribute;
 
-    public NettyChannelHandler(Attribute attribute, HodorChannelHandler channelHandler) {
+    public NettyChannelHandler(final Attribute attribute, final HodorChannelHandler channelHandler) {
         if (attribute == null) {
             throw new IllegalArgumentException("attribute is null");
         }
@@ -57,7 +67,7 @@ public class NettyChannelHandler extends ChannelDuplexHandler {
     }
 
     public boolean isTcpProtocol() {
-        return attribute.getProperty(RemotingConst.TCP_PROTOCOL, true);
+        return attribute.getProperty(RemotingConst.TCP_PROTOCOL, false);
     }
 
     @Override
@@ -76,16 +86,45 @@ public class NettyChannelHandler extends ChannelDuplexHandler {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        super.channelRead(ctx, msg);
         HodorChannel channel = new NettyChannel(ctx.channel());
-        channelHandler.received(channel, msg);
+        if (isTcpProtocol()) {
+            super.channelRead(ctx, msg);
+            channelHandler.received(channel, msg);
+            return;
+        }
+        if (isHttpProtocol() && msg instanceof FullHttpRequest) {
+            HodorHttpRequest hodorHttpRequest = getAutoReleaseMsg(e -> HttpMessageWrapper.requestWrapper((FullHttpRequest) e), msg);
+            channelHandler.received(channel, hodorHttpRequest);
+            return;
+        }
+        if (isHttpProtocol() && msg instanceof FullHttpResponse) {
+            HodorHttpResponse hodorHttpResponse = getAutoReleaseMsg(e -> HttpMessageWrapper.responseWrapper((FullHttpResponse) e), msg);
+            channelHandler.received(channel, hodorHttpResponse);
+            return;
+        }
+        throw new RemotingException("check the protocol set.");
     }
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-        super.write(ctx, msg, promise);
         HodorChannel channel = new NettyChannel(ctx.channel());
-        channelHandler.send(channel, msg);
+        if (isTcpProtocol()) {
+            super.write(ctx, msg, promise);
+            channelHandler.send(channel, msg);
+            return;
+        }
+        if (isHttpProtocol() && msg instanceof HodorHttpRequest) {
+            FullHttpRequest rawHttpRequest = getAutoReleaseMsg(e -> HttpMessageWrapper.requestRawWrapper((HodorHttpRequest) e), msg);
+            ctx.writeAndFlush(rawHttpRequest);
+            return;
+        }
+        if (isHttpProtocol() && msg instanceof HodorHttpResponse) {
+            FullHttpResponse httpResponse = getAutoReleaseMsg(e -> HttpMessageWrapper.responseRawWrapper((HodorHttpResponse) e), msg);
+            ctx.write(httpResponse);
+            ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
+            return;
+        }
+        throw new RemotingException("check the protocol set.");
     }
 
     @Override
@@ -93,6 +132,14 @@ public class NettyChannelHandler extends ChannelDuplexHandler {
         super.exceptionCaught(ctx, cause);
         HodorChannel channel = new NettyChannel(ctx.channel());
         channelHandler.exceptionCaught(channel, cause);
+    }
+
+    public <T, R> R getAutoReleaseMsg(Function<T, R> function, T msg) {
+        try {
+            return function.apply(msg);
+        } finally {
+            ReferenceCountUtil.release(msg);
+        }
     }
 
 }

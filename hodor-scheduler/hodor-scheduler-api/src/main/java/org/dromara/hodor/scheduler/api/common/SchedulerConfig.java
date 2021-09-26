@@ -5,14 +5,26 @@ import lombok.Getter;
 
 /**
  * scheduler config
+ *
  * @author tangzy
  */
 @Builder
 @Getter
 public class SchedulerConfig {
 
-  private String schedulerName;
-  private int threadCount;
-  private int misfireThreshold;
+    /**
+     * scheduler名称
+     */
+    private final String schedulerName;
+
+    /**
+     * 线程数
+     */
+    private final int threadCount;
+
+    /**
+     * 错过执行阈值时间
+     */
+    private final int misfireThreshold;
 
 }

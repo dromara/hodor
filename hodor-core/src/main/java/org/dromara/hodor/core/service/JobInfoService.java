@@ -2,6 +2,8 @@ package org.dromara.hodor.core.service;
 
 import java.util.List;
 import org.dromara.hodor.core.entity.JobInfo;
+import org.dromara.hodor.model.enums.JobStatus;
+import org.dromara.hodor.model.scheduler.DataInterval;
 
 /**
  * job service
@@ -17,6 +19,29 @@ public interface JobInfoService {
      * @param jobInfo 任务信息
      */
     void addJob(JobInfo jobInfo);
+
+    /**
+     * 如果不存在则新增任务，存在则跳过
+     *
+     * @param jobInfo 任务信息
+     */
+    void addJobIfAbsent(JobInfo jobInfo);
+
+    /**
+     * 检查任务是否存在
+     *
+     * @param jobInfo 任务信息
+     * @return true 存在， false不存在
+     */
+    boolean isExists(JobInfo jobInfo);
+
+    /**
+     * 查询任务信息
+     * @param groupName 任务组
+     * @param jobName 任务名称
+     * @return 任务信息
+     */
+    JobInfo queryJobByKey(String groupName, String jobName);
 
     /**
      * 查询可分配任务数量
@@ -42,11 +67,42 @@ public interface JobInfoService {
     Long queryJobIdByOffset(Integer offset);
 
     /**
-     * 获取指定位置数据
+     * 获取指定位置的任务
      *
-     * @param startHashId 起始位置
-     * @param endHashId 结束位置
-     * @return job info list
+     * @param dataInterval 数据区间范围
+     * @param jobStatus 任务状态
+     * @return 任务列表
      */
-    List<JobInfo> queryJobInfoByHashIdOffset(Long startHashId, Long endHashId);
+    List<JobInfo> queryJobInfoByDataInterval(DataInterval dataInterval, JobStatus jobStatus);
+
+    /**
+     * 获取指定位置可运行的任务
+     *
+     * @param dataInterval 数据区间范围
+     * @return running job info list
+     */
+    List<JobInfo> queryRunningJobInfoByDataInterval(DataInterval dataInterval);
+
+    /**
+     * 获取指定位置Ready状态的任务
+     *
+     * @param dataInterval 数据区间范围
+     * @return ready job info list
+     */
+    List<JobInfo> queryReadyJobInfoByDataInterval(DataInterval dataInterval);
+
+    /**
+     * 更新任务状态
+     *
+     * @param jobInfo 任务信息
+     * @param jobStatus 任务状态
+     */
+    void updateJobStatus(JobInfo jobInfo, JobStatus jobStatus);
+
+    /**
+     * 是否正在运行的任务
+     * @param jobInfo 任务信息
+     * @return true正在运行，false为正在运行
+     */
+    boolean isRunningJob(JobInfo jobInfo);
 }

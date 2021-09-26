@@ -1,15 +1,17 @@
 package org.dromara.hodor.scheduler.quartz;
 
+import cn.hutool.core.util.ReflectUtil;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 import org.dromara.hodor.common.extension.Join;
-import org.dromara.hodor.core.JobDesc;
+import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.scheduler.api.HodorScheduler;
 import org.dromara.hodor.scheduler.api.JobExecutor;
 import org.dromara.hodor.scheduler.api.common.SchedulerConfig;
 import org.dromara.hodor.scheduler.api.exception.HodorSchedulerException;
 import org.quartz.CronScheduleBuilder;
+import org.quartz.CronTrigger;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
@@ -18,6 +20,7 @@ import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
+import org.quartz.core.QuartzSchedulerResources;
 import org.quartz.impl.StdSchedulerFactory;
 
 /**
@@ -31,8 +34,9 @@ public class QuartzScheduler implements HodorScheduler {
 
     private String schedulerName;
     private Scheduler scheduler;
-    private StdSchedulerFactory factory;
-    private ReentrantLock lock;
+    private org.quartz.core.QuartzScheduler rawScheduler;
+    private final ReentrantLock lock;
+    private final StdSchedulerFactory factory;
 
     public QuartzScheduler() {
         factory = new StdSchedulerFactory();
@@ -50,6 +54,7 @@ public class QuartzScheduler implements HodorScheduler {
             this.factory.initialize(getBaseProperties(config));
             this.scheduler = factory.getScheduler();
             this.schedulerName = config.getSchedulerName();
+            this.rawScheduler = (org.quartz.core.QuartzScheduler) ReflectUtil.getFieldValue(scheduler, "sched");
         } catch (SchedulerException e) {
             throw new HodorSchedulerException(e);
         }
@@ -73,13 +78,20 @@ public class QuartzScheduler implements HodorScheduler {
     public void start() {
         lock.lock();
         try {
-            if (!scheduler.isStarted()) {
-                scheduler.start();
-            }
+            scheduler.start();
         } catch (SchedulerException e) {
             throw new HodorSchedulerException(e);
         } finally {
             lock.unlock();
+        }
+    }
+
+    @Override
+    public void standby() {
+        try {
+            scheduler.standby();
+        } catch (SchedulerException e) {
+            throw new HodorSchedulerException(e);
         }
     }
 
@@ -103,23 +115,36 @@ public class QuartzScheduler implements HodorScheduler {
 
     @Override
     public void addJob(JobDesc jobDesc, JobExecutor jobExecutor) {
+        if (checkExists(jobDesc)) {
+            return;
+        }
         JobDetail jobDetail = JobBuilder.newJob(HodorJob.class)
                 .withIdentity(jobDesc.getJobName(), jobDesc.getGroupName())
                 .requestRecovery(true)
                 .build();
 
+        jobDetail.getJobDataMap().put("schedulerName", schedulerName);
         jobDetail.getJobDataMap().put("jobExecutor", jobExecutor);
         jobDetail.getJobDataMap().put("jobDesc", jobDesc);
 
-        Trigger trigger = TriggerBuilder.newTrigger()
-                .withIdentity(jobDesc.getJobName(), jobDesc.getGroupName())
-                .withSchedule(CronScheduleBuilder.cronSchedule(jobDesc.getCronExpression()).withMisfireHandlingInstructionDoNothing())
-                .withPriority(jobDesc.getPriority().getValue())
-                .forJob(jobDetail)
-                .build();
+        TriggerBuilder<CronTrigger> triggerBuilder = TriggerBuilder.newTrigger()
+            .withIdentity(jobDesc.getJobName(), jobDesc.getGroupName())
+            .withSchedule(CronScheduleBuilder.cronSchedule(jobDesc.getCron()).withMisfireHandlingInstructionDoNothing())
+            .withPriority(jobDesc.getPriority().getValue())
+            .forJob(jobDetail);
+        if (jobDesc.getFireNow()) {
+            triggerBuilder = triggerBuilder.startNow();
+        }
+        if (jobDesc.getEndTime() != null) {
+            triggerBuilder = triggerBuilder.endAt(jobDesc.getEndTime());
+        }
+        Trigger trigger = triggerBuilder.build();
 
         try {
             scheduler.scheduleJob(jobDetail, trigger);
+            if (jobDesc.getFireNow()) {
+                scheduler.triggerJob(jobDetail.getKey());
+            }
         } catch (SchedulerException e) {
             throw new HodorSchedulerException(e);
         }
@@ -204,6 +229,25 @@ public class QuartzScheduler implements HodorScheduler {
     public boolean isShutdown() {
         try {
             return scheduler.isShutdown();
+        } catch (SchedulerException e) {
+            throw new HodorSchedulerException(e);
+        }
+    }
+
+    @Override
+    public boolean isStandby() {
+        try {
+            return scheduler.isInStandbyMode();
+        } catch (SchedulerException e) {
+            throw new HodorSchedulerException(e);
+        }
+    }
+
+    @Override
+    public int getNumberOfJobs() {
+        try {
+            QuartzSchedulerResources resources = (QuartzSchedulerResources) ReflectUtil.getFieldValue(rawScheduler, "resources");
+            return resources.getJobStore().getNumberOfJobs();
         } catch (SchedulerException e) {
             throw new HodorSchedulerException(e);
         }

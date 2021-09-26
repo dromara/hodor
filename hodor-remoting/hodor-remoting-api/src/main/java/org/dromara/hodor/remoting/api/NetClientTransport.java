@@ -28,5 +28,5 @@ import org.dromara.hodor.common.extension.SPI;
 @SPI("transport")
 public interface NetClientTransport {
 
-    NetClient connect(Attribute attribute, HodorChannelHandler handler);
+    NetClient build(Attribute attribute, HodorChannelHandler handler);
 }

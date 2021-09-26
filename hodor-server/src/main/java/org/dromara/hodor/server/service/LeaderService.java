@@ -3,7 +3,7 @@ package org.dromara.hodor.server.service;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.register.api.LeaderExecutionCallback;
 import org.dromara.hodor.register.api.RegistryCenter;
-import org.dromara.hodor.register.api.node.ServerNode;
+import org.dromara.hodor.register.api.node.SchedulerNode;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,18 +18,18 @@ public class LeaderService {
 
     private final RegistryCenter registryCenter;
 
-    private final RegisterService registerService;
+    private final RegistryService registryService;
 
-    public LeaderService(final RegisterService registerService) {
-        this.registerService = registerService;
-        this.registryCenter = registerService.getRegistryCenter();
+    public LeaderService(final RegistryService registryService) {
+        this.registryService = registryService;
+        this.registryCenter = registryService.getRegistryCenter();
     }
 
     /**
      * 选举主节点
      */
     public void electLeader(final LeaderExecutionCallback callback) {
-        registryCenter.executeInLeader(ServerNode.LATCH_PATH, () -> {
+        registryCenter.executeInLeader(SchedulerNode.LATCH_PATH, () -> {
             if (!hasLeader()) {
                 createLeaderNode();
                 callback.execute();
@@ -41,21 +41,25 @@ public class LeaderService {
      * 创建主节点
      */
     public void createLeaderNode() {
-        registryCenter.createEphemeral(ServerNode.ACTIVE_PATH, registerService.getServerId());
+        registryCenter.createEphemeral(SchedulerNode.MASTER_ACTIVE_PATH, registryService.getServerEndpoint());
     }
 
     /**
      *是否存在主节点
      */
     public boolean hasLeader() {
-        return registryCenter.checkExists(ServerNode.ACTIVE_PATH);
+        return registryCenter.checkExists(SchedulerNode.MASTER_ACTIVE_PATH);
     }
 
     /**
      * 当期节点是否为主节点
      */
     public boolean isLeader() {
-        return !registerService.getServerId().equals(registryCenter.get(ServerNode.ACTIVE_PATH));
+        return registryService.getServerEndpoint().equals(getLeaderEndpoint());
+    }
+
+    public String getLeaderEndpoint() {
+        return registryCenter.get(SchedulerNode.MASTER_ACTIVE_PATH);
     }
 
 }

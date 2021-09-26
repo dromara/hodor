@@ -31,7 +31,7 @@ public enum MessageType {
     }
 
     public static MessageType to(byte type) {
-        MessageType requestType = null;
+        MessageType requestType;
         switch (type) {
             case (byte) 0:
                 requestType = HEARTBEAT_REQUEST;

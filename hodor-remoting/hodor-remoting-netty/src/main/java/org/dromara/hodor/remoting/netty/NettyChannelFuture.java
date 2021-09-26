@@ -33,7 +33,7 @@ import org.dromara.hodor.remoting.api.HodorChannelFuture;
  */
 public class NettyChannelFuture implements HodorChannelFuture {
 
-    private ChannelFuture future;
+    private final ChannelFuture future;
 
     public NettyChannelFuture(ChannelFuture future) {
         this.future = future;

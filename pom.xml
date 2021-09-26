@@ -18,6 +18,8 @@
         <module>hodor-server</module>
         <module>hodor-scheduler</module>
         <module>hodor-client-demo</module>
+        <module>hodor-model</module>
+        <module>hodor-extension</module>
     </modules>
 
     <organization>
@@ -36,13 +38,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.2.RELEASE</version>
+        <version>2.5.4</version>
     </parent>
 
     <properties>
         <jdk.version>1.8</jdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <hutool.version>4.1.12</hutool.version>
+        <hutool.version>5.7.4</hutool.version>
         <jasypt.version>1.9.2</jasypt.version>
         <lombok.version>1.16.20</lombok.version>
         <springfox.version>2.6.1</springfox.version>
@@ -52,7 +54,7 @@
         <druid.version>1.0.29</druid.version>
         <commons-lang3.version>3.8</commons-lang3.version>
         <commons-io.version>2.7</commons-io.version>
-        <guava.version>21.0</guava.version>
+        <guava.version>30.1.1-jre</guava.version>
         <commons-collections4.version>4.1</commons-collections4.version>
         <reactor-spring.version>1.0.1.RELEASE</reactor-spring.version>
         <commons-dbcp.version>1.2.1</commons-dbcp.version>
@@ -67,10 +69,20 @@
         <mapstruct.version>1.2.0.Final</mapstruct.version>
         <curator.version>2.13.0</curator.version>
         <quartz.version>2.3.2</quartz.version>
+        <commons-dbutils.version>1.7</commons-dbutils.version>
+        <metrics.version>4.2.3</metrics.version>
+        <h2.version>1.4.200</h2.version>
+        <commons-text.version>1.9</commons-text.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>hodor-model</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.dromara</groupId>
                 <artifactId>hodor-admin</artifactId>
@@ -199,6 +211,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${commons-text.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${commons-io.version}</version>
@@ -220,6 +238,12 @@
                 <groupId>commons-dbcp</groupId>
                 <artifactId>commons-dbcp</artifactId>
                 <version>${commons-dbcp.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-dbutils</groupId>
+                <artifactId>commons-dbutils</artifactId>
+                <version>${commons-dbutils.version}</version>
             </dependency>
 
             <dependency>
@@ -251,6 +275,25 @@
                 <artifactId>hutool-all</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>io.dropwizard.metrics</groupId>
+                <artifactId>metrics-core</artifactId>
+                <version>${metrics.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.dropwizard.metrics</groupId>
+                <artifactId>metrics-jvm</artifactId>
+                <version>${metrics.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

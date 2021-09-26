@@ -165,7 +165,7 @@ public class SnowflakeIdWorker {
      */
     private static Long getWorkId() {
         try {
-            String hostAddress = LocalHost.getIp();
+            String hostAddress = HostUtils.getLocalIp();
             int[] ints = StringUtils.toCodePoints(hostAddress);
             int sums = 0;
             for (int b : ints) {
@@ -183,7 +183,7 @@ public class SnowflakeIdWorker {
      * @return dataCenterId
      */
     private static Long getDataCenterId() {
-        int[] ints = StringUtils.toCodePoints(LocalHost.getHostName());
+        int[] ints = StringUtils.toCodePoints(HostUtils.getLocalHostName());
         int sums = 0;
         for (int i : ints) {
             sums += i;

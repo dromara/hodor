@@ -18,6 +18,18 @@
   ],
   "properties": [
     {
+      "name": "hodor.logDir",
+      "type": "java.lang.String",
+      "sourceType": "org.dromara.hodor.server.config.HodorServerProperties",
+      "description": "log job execute detail info"
+    },
+    {
+      "name": "hodor.net-server.appName",
+      "type": "java.lang.String",
+      "sourceType": "org.dromara.hodor.server.config.HodorServerProperties$NetServerProperties",
+      "description": "hodor net server app name config"
+    },
+    {
       "name": "hodor.net-server.host",
       "type": "java.lang.String",
       "sourceType": "org.dromara.hodor.server.config.HodorServerProperties$NetServerProperties",
@@ -40,6 +52,23 @@
       "type": "java.lang.String",
       "sourceType": "org.dromara.hodor.server.config.HodorServerProperties$RegistryProperties",
       "description": "hodor registry server servers config"
+    },
+    {
+      "name": "database.url",
+      "type": "java.lang.String",
+      "description": "database.url."
+    }, {
+      "name": "database.username",
+      "type": "java.lang.String",
+      "description": "database.username."
+    }, {
+      "name": "database.password",
+      "type": "java.lang.String",
+      "description": "database.password."
+    }, {
+      "name": "database.driverClass",
+      "type": "java.lang.String",
+      "description": "database.driverClass."
     }
   ],
   "hints": []

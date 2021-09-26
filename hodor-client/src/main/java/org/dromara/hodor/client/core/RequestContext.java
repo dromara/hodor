@@ -1,9 +1,11 @@
 package org.dromara.hodor.client.core;
 
 import org.dromara.hodor.remoting.api.HodorChannel;
+import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
 import org.dromara.hodor.remoting.api.message.Header;
 import org.dromara.hodor.remoting.api.message.MessageType;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
+import org.dromara.hodor.remoting.api.message.RequestBody;
 
 /**
  *  request context
@@ -17,9 +19,14 @@ public class RequestContext {
 
     private final RemotingMessage remotingMessage;
 
-    public RequestContext(HodorChannel channel, RemotingMessage remotingMessage) {
+    private final RemotingMessageSerializer serializer;
+
+    private Class<? extends RequestBody> requestType;
+
+    public RequestContext(HodorChannel channel, RemotingMessage remotingMessage, final RemotingMessageSerializer serializer) {
         this.channel = channel;
         this.remotingMessage = remotingMessage;
+        this.serializer = serializer;
     }
 
     public HodorChannel channel() {
@@ -36,6 +43,18 @@ public class RequestContext {
 
     public byte[] rawRequestBody() {
         return remotingMessage.getBody();
+    }
+
+    public void setRequestType(Class<? extends RequestBody> requestType) {
+        this.requestType = requestType;
+    }
+
+    public Class<? extends RequestBody> getRequestType() {
+        return requestType;
+    }
+
+    public RemotingMessageSerializer serializer() {
+        return serializer;
     }
 
 }

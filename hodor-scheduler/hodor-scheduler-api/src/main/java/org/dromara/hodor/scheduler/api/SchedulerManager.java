@@ -1,10 +1,12 @@
 package org.dromara.hodor.scheduler.api;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 import org.dromara.hodor.common.extension.ExtensionLoader;
+import org.dromara.hodor.common.utils.StringUtils;
+import org.dromara.hodor.common.utils.ThreadUtils;
+import org.dromara.hodor.model.scheduler.DataInterval;
 import org.dromara.hodor.scheduler.api.common.SchedulerConfig;
 
 /**
@@ -23,7 +25,7 @@ public final class SchedulerManager {
 
     private final Map<String, HodorScheduler> standBySchedulerMap;
 
-    private final Map<String, List<Long>> schedulerDataInterval;
+    private final Map<String, DataInterval> schedulerDataInterval;
 
     private final ExtensionLoader<HodorScheduler> extensionLoader;
 
@@ -47,12 +49,16 @@ public final class SchedulerManager {
         return extensionLoader.getProtoJoin(schedulerName, config);
     }
 
+    public String createSchedulerName(String serverId, Integer copySetId) {
+        return StringUtils.format("HodorScheduler_{}_{}", serverId, copySetId);
+    }
+
     public void addActiveScheduler(HodorScheduler scheduler) {
         lock.lock();
         try {
             standBySchedulerMap.remove(scheduler.getSchedulerName());
             activeSchedulerMap.putIfAbsent(scheduler.getSchedulerName(), scheduler);
-            if (!scheduler.isStarted()) {
+            if (!scheduler.isStarted() || scheduler.isStandby()) {
                 scheduler.start();
             }
         } finally {
@@ -65,8 +71,8 @@ public final class SchedulerManager {
         try {
             activeSchedulerMap.remove(scheduler.getSchedulerName());
             standBySchedulerMap.putIfAbsent(scheduler.getSchedulerName(), scheduler);
-            if (scheduler.isStarted()) {
-                scheduler.shutdown();
+            if (scheduler.isStarted() && !scheduler.isStandby()) {
+                scheduler.standby();
             }
         } finally {
             lock.unlock();
@@ -89,12 +95,54 @@ public final class SchedulerManager {
         return scheduler;
     }
 
-    public List<Long> getSchedulerDataInterval(String schedulerName) {
+    public DataInterval getSchedulerDataInterval(String schedulerName) {
         return schedulerDataInterval.get(schedulerName);
     }
 
-    public void addSchedulerDataInterval(String schedulerName, List<Long> dataInterval) {
+    public void addSchedulerDataInterval(String schedulerName, DataInterval dataInterval) {
         schedulerDataInterval.put(schedulerName, dataInterval);
+    }
+
+    public HodorScheduler getOrCreateScheduler(SchedulerConfig config) {
+        HodorScheduler scheduler = getScheduler(config.getSchedulerName());
+        if (scheduler != null) {
+            return scheduler;
+        }
+        return createScheduler(config);
+    }
+
+    public HodorScheduler createActiveSchedulerIfAbsent(String serverEndpoint, Integer copySetId, DataInterval activeDataInterval) {
+        HodorScheduler activeScheduler = buildScheduler(serverEndpoint, copySetId);
+        this.addActiveScheduler(activeScheduler);
+        this.addSchedulerDataInterval(activeScheduler.getSchedulerName(), activeDataInterval);
+        return activeScheduler;
+    }
+
+    public HodorScheduler createStandbySchedulerIfAbsent(String serverEndpoint, Integer copySetId, DataInterval standbyDataInterval) {
+        HodorScheduler standbyScheduler = buildScheduler(serverEndpoint, copySetId);
+        this.addStandByScheduler(standbyScheduler);
+        this.addSchedulerDataInterval(standbyScheduler.getSchedulerName(), standbyDataInterval);
+        return standbyScheduler;
+    }
+
+    public HodorScheduler buildScheduler(String serverEndpoint, Integer copySetId) {
+        final SchedulerConfig config = SchedulerConfig.builder()
+            .schedulerName(this.createSchedulerName(serverEndpoint, copySetId))
+            .threadCount(ThreadUtils.availableProcessors() * 2)
+            .misfireThreshold(3000)
+            .build();
+        return this.getOrCreateScheduler(config);
+    }
+
+    public void shutdownScheduler(String schedulerName) {
+        lock.lock();
+        try {
+            activeSchedulerMap.remove(schedulerName);
+            standBySchedulerMap.remove(schedulerName);
+            schedulerDataInterval.remove(schedulerName);
+        } finally {
+            lock.unlock();
+        }
     }
 
 }

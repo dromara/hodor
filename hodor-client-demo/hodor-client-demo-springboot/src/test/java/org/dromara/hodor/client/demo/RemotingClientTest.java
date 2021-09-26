@@ -1,14 +1,18 @@
 package org.dromara.hodor.client.demo;
 
+import java.net.ConnectException;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.client.core.SchedulerRequestBody;
+import org.dromara.hodor.common.IdGenerator;
+import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 import org.dromara.hodor.common.extension.ExtensionLoader;
-import org.dromara.hodor.common.utils.LocalHost;
+import org.dromara.hodor.common.utils.HostUtils;
 import org.dromara.hodor.remoting.api.*;
 import org.dromara.hodor.remoting.api.message.Header;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
 import org.dromara.hodor.remoting.api.message.RequestBody;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -20,9 +24,9 @@ public class RemotingClientTest {
 
     private final static CountDownLatch downLatch = new CountDownLatch(1);
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, ConnectException {
         Attribute attribute = new Attribute();
-        attribute.put(RemotingConst.HOST_KEY, LocalHost.getIp());
+        attribute.put(RemotingConst.HOST_KEY, HostUtils.getLocalIp());
         attribute.put(RemotingConst.PORT_KEY, 46367);
         attribute.put(RemotingConst.TCP_PROTOCOL, true);
         // handle request
@@ -31,14 +35,13 @@ public class RemotingClientTest {
         RemotingMessageSerializer serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
 
         NetClientTransport clientTransport = ExtensionLoader.getExtensionLoader(NetClientTransport.class).getDefaultJoin();
-        NetClient client = clientTransport.connect(attribute, handler);
-        HodorChannel connection = client.connection();
+        NetClient client = clientTransport.build(attribute, handler);
+        HodorChannel connection = client.connect();
 
         System.out.println("channel is open:" + connection.isOpen());
 
-        RequestBody body = SchedulerRequestBody.builder()
+        RequestBody body = JobExecuteRequest.builder()
             .requestId(123L)
-            .jobPath("org.dromara.hodor.client.demo.job.JobList")
             .jobCommand("test2")
             .groupName("testGroup")
             .jobName("test2")
@@ -47,11 +50,14 @@ public class RemotingClientTest {
             .build();
         byte[] requestBody = serializer.serialize(body);
 
+        Map<String, Object> attachment = new HashMap<>();
+        attachment.put("schedulerName", "test");
         Header header = Header.builder()
-                .crcCode(RemotingConst.MESSAGE_CRC_CODE)
+                .id(IdGenerator.defaultGenerator().nextId())
                 .type((byte)1)
                 .version(RemotingConst.DEFAULT_VERSION)
                 .length(requestBody.length)
+                .attachment(attachment)
                 .build();
 
         RemotingMessage request = RemotingMessage.builder().header(header).body(requestBody).build();
@@ -62,6 +68,9 @@ public class RemotingClientTest {
 
         System.out.println("----------");
         connection.close();
+
+        // 清除历史数据
+
         System.exit(0);
     }
 

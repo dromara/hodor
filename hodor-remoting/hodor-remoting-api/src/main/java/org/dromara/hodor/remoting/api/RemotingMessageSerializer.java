@@ -1,5 +1,6 @@
 package org.dromara.hodor.remoting.api;
 
+import java.lang.reflect.Type;
 import org.dromara.hodor.common.extension.SPI;
 
 /**
@@ -17,8 +18,13 @@ public interface RemotingMessageSerializer {
     byte[] serialize(Object requestBody);
 
     /**
-     * 反序列化
+     * 反序列化根据Class类型
      */
     <T> T deserialize(byte[] byteData, Class<T> cls);
+
+    /**
+     * 反序列化根据Type类型，这种可以支持泛型
+     */
+    <T> T deserialize(byte[] byteData, Type typeOfT);
 
 }

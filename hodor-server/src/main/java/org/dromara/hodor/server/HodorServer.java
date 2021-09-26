@@ -1,6 +1,7 @@
 package org.dromara.hodor.server;
 
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.server.restservice.EnableHodorRestService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -11,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @version 2020/6/24 1.0 
  */
 @Slf4j
+@EnableHodorRestService
 @SpringBootApplication(scanBasePackages = "org.dromara.hodor")
 public class HodorServer {
 

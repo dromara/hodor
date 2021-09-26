@@ -10,7 +10,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.client.JobExecutionContext;
 import org.dromara.hodor.client.JobRegistrar;
-import org.dromara.hodor.client.config.JobDesc;
+import org.dromara.hodor.model.enums.CommandType;
+import org.dromara.hodor.model.job.JobInstance;
 import org.dromara.hodor.client.core.ScheduledMethodRunnable;
 import org.springframework.aop.framework.AopInfrastructureBean;
 import org.springframework.aop.framework.AopProxyUtils;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.EmbeddedValueResolverAware;
 import org.springframework.core.MethodIntrospector;
 import org.springframework.core.annotation.AnnotatedElementUtils;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -58,17 +60,17 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
     }
 
     @Override
-    public void setEmbeddedValueResolver(StringValueResolver resolver) {
+    public void setEmbeddedValueResolver(@NonNull StringValueResolver resolver) {
         this.embeddedValueResolver = resolver;
     }
 
     @Override
-    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+    public Object postProcessBeforeInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
         return bean;
     }
 
     @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+    public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
         if (bean instanceof AopInfrastructureBean || bean instanceof TaskScheduler ||
             bean instanceof ScheduledExecutorService) {
             // Ignore AOP infrastructure such as scoped proxies.
@@ -137,7 +139,7 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
         if (StringUtils.hasText(cron)) {
             if (this.embeddedValueResolver != null) {
                 cron = this.embeddedValueResolver.resolveStringValue(cron);
-                //TODO: 时区先不考虑
+                // TODO: 时区先不考虑
                 //zone = this.embeddedValueResolver.resolveStringValue(zone);
             }
             if (StringUtils.hasLength(cron) && !Scheduled.CRON_DISABLED.equals(cron)) {
@@ -148,17 +150,19 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
         boolean fireNow = job.fireNow();
         boolean broadcast = job.isBroadcast();
         int timeout = job.timeout();
+        String commandType = job.commandType();
 
-        JobDesc jobDesc = JobDesc.builder()
+        JobInstance jobInstance = JobInstance.builder()
             .groupName(groupName)
             .jobName(jobName)
+            .commandType(commandType)
             .cron(cron)
             .fireNow(fireNow)
             .broadcast(broadcast)
             .timeout(timeout)
             .build();
 
-        registrar.addJob(jobDesc, runnable);
+        registrar.addJob(jobInstance, runnable);
     }
 
 }
