@@ -159,6 +159,8 @@ public class DagServiceImpl implements DagService {
             FlowJobExecDetail flowJobExecDetail = buildFlowJobExecDetail(d);
             if (dag.getStatus().isTerminal()) {
                 flowJobExecDetail.setExecuteEnd(new Date());
+                // dag is finished, remove dag instance from cache
+                dagCacheClient.remove(JobKey.of(d.getName()));
             }
             flowJobExecDetailService.updateFlowJobExecDetail(flowJobExecDetail);
             return null;
