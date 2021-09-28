@@ -65,37 +65,44 @@ public class DagServiceImpl implements DagService {
     @Override
     public void markNodeRunning(Node node) {
         log.info("node {} state READY to RUNNING", node);
-        node.changeStatus(Status.RUNNING);
+        node.runIfAllowed();
         // persist dag instance
         persistDagInstance(node.getDag());
     }
 
     @Override
     public void markNodeSuccess(Node node) {
-        node.markSuccess();
         log.info("Node {} state RUNNING to SUCCESS", node);
+        node.markSuccess();
         // persist dag instance
         persistDagInstance(node.getDag());
     }
 
     @Override
     public void markNodeKilling(Node node) {
+        log.info("Node {} state RUNNING to KILLING", node);
         node.kill();
-        node.changeStatus(Status.KILLING);
         persistDagInstance(node.getDag());
     }
 
     @Override
     public void markNodeKilled(Node node) {
-        node.markKilled();
         log.info("Node {} is KILLED", node);
+        node.markKilled();
         persistDagInstance(node.getDag());
     }
 
     @Override
     public void markNodeFailed(Node node) {
-        node.markFailed();
         log.info("Node {} is FAILURE", node);
+        node.markFailed();
+        persistDagInstance(node.getDag());
+    }
+
+    @Override
+    public void markNodeCanceled(Node node) {
+        log.info("Node {} is CANCELED", node);
+        node.cancel();
         persistDagInstance(node.getDag());
     }
 
@@ -104,13 +111,6 @@ public class DagServiceImpl implements DagService {
         log.info("Dag {} Status update.", dag);
         dag.updateDagStatus();
         persistDagInstance(dag);
-    }
-
-    @Override
-    public void markNodeCanceled(Node node) {
-        node.cancel();
-        // persist dag instance
-        persistDagInstance(node.getDag());
     }
 
     @Override

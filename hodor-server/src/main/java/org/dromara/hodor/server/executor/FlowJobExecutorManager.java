@@ -64,7 +64,7 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
         for (NodeLayer nodeLayer : dag.getNodeLayers()) {
             if (nodeLayer.getStatus().isRunning()) {
                 for (Node node : nodeLayer.getNodes()) {
-                    publish(Event.create(node, Status.KILLING));
+                    parallelPublish(Event.create(node, Status.KILLING));
                 }
             }
             if (nodeLayer.getStatus().isPreRunState()) {
@@ -119,7 +119,7 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
         this.addListener(event -> {
             Node node = event.getValue();
             if (node.getStatus() != Status.READY) {
-                log.warn("node {} status {} is not ready state can't to running.", node.getNodeName(), node.getStatus());
+                log.warn("node {}#{} status {} is not ready state can't to running.", node.getNodeName(), node.getNodeId(), node.getStatus());
                 return;
             }
 
@@ -147,7 +147,7 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
             log.info("The {} layer execute SUCCESS.", layer);
             // all layer success
             if (dag.isLastLayer(layer)) {
-                log.info("DAG {} execute SUCCESS.", dag);
+                log.info("DAG {} execute FINISHED.", dag);
                 dagService.updateDagStatus(dag);
             } else {
                 // submit next layer node
@@ -159,13 +159,12 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
     private void registerFailureNodeListener() {
         this.addListener(event -> {
             Node node = event.getValue();
-            dagService.markNodeFailed(node);
-
             NodeLayer nodeLayer = node.getCurrentNodeLayer();
             nodeLayer.setStatus(Status.FAILURE);
             List<Node> runningNodes = nodeLayer.getRunningNodes();
             runningNodes.forEach(runningNode -> publish(Event.create(runningNode, Status.KILLING)));
-            dagService.updateDagStatus(node.getDag());
+            dagService.markNodeFailed(node);
+            //dagService.updateDagStatus(node.getDag());
         }, Status.FAILURE);
     }
 
@@ -190,7 +189,6 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
                     publish(Event.create(node, Status.KILLED));
                 }
             }
-
         }, Status.KILLING);
     }
 

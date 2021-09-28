@@ -54,14 +54,14 @@ public interface DagService {
    */
   void markNodeFailed(final Node node);
 
+  void markNodeCanceled(Node node);
+
   /**
    * Kills a DAG.
    */
   //void killDag(final Dag dag);
 
   void updateDagStatus(Dag dag);
-
-  void markNodeCanceled(Node node);
 
   void createDagInstance(JobKey jobKey, Dag dagInstance);
 
