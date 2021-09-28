@@ -72,7 +72,7 @@ public class JobExecuteManager {
             || jobExecDetail.getExecuteStatus() != JobExecuteStatus.RUNNING) {
             return false;
         }
-        // TODO: 否则去执行端查询状态，并且更新状态
+        // 去执行端查询状态，并且更新状态
         Host host = Host.of(jobExecDetail.getActuatorEndpoint());
         JobExecuteStatusRequest statusRequest = new JobExecuteStatusRequest();
         statusRequest.setRequestId(jobExecDetail.getId());
