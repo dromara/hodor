@@ -20,6 +20,7 @@
         <module>hodor-client-demo</module>
         <module>hodor-model</module>
         <module>hodor-extension</module>
+        <module>hodor-actuator</module>
     </modules>
 
     <organization>
