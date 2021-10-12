@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import org.dromara.hodor.common.Tuple2;
+import org.dromara.hodor.common.utils.Pair;
 import org.dromara.hodor.common.concurrent.LockUtil;
 
 /**
@@ -15,7 +15,7 @@ import org.dromara.hodor.common.concurrent.LockUtil;
  */
 public class LocalRawCacheClient<K, V> implements CacheClient<K, V> {
 
-    private final Map<K, Tuple2<V, Long>> cache;
+    private final Map<K, Pair<V, Long>> cache;
 
     private final ReadWriteLock readWriteLock;
 
@@ -24,11 +24,11 @@ public class LocalRawCacheClient<K, V> implements CacheClient<K, V> {
     public LocalRawCacheClient(final CacheSourceConfig cacheSourceConfig) {
         this.readWriteLock = new ReentrantReadWriteLock();
         maximumSize = cacheSourceConfig.getMaximumSize() <= 0 ? Integer.MAX_VALUE : cacheSourceConfig.getMaximumSize();
-        this.cache = new LinkedHashMap<K, Tuple2<V, Long>>() {
+        this.cache = new LinkedHashMap<K, Pair<V, Long>>() {
             private static final long serialVersionUID = 4488509922354454855L;
 
             @Override
-            protected boolean removeEldestEntry(Map.Entry<K, Tuple2<V, Long>> eldest) {
+            protected boolean removeEldestEntry(Map.Entry<K, Pair<V, Long>> eldest) {
                 return size() > maximumSize;
             }
         };
@@ -37,7 +37,7 @@ public class LocalRawCacheClient<K, V> implements CacheClient<K, V> {
     @Override
     public V get(K key) {
         return LockUtil.lockMethod(readWriteLock.readLock(), k -> {
-            Tuple2<V, Long> tuple = cache.get(k);
+            Pair<V, Long> tuple = cache.get(k);
             if (tuple == null) {
                 return null;
             }
@@ -57,7 +57,7 @@ public class LocalRawCacheClient<K, V> implements CacheClient<K, V> {
     @Override
     public void put(K key, V value) {
         LockUtil.lockMethod(readWriteLock.writeLock(), (k ,v) -> {
-            cache.put(k, new Tuple2<>(v, -1L));
+            cache.put(k, new Pair<>(v, -1L));
             return null;
         }, key, value);
     }
@@ -65,7 +65,7 @@ public class LocalRawCacheClient<K, V> implements CacheClient<K, V> {
     @Override
     public void put(K key, V value, int expire) {
         LockUtil.lockMethod(readWriteLock.writeLock(), (k ,v) -> {
-            Tuple2<V, Long> tuple = new Tuple2<>(v, System.currentTimeMillis() + expire);
+            Pair<V, Long> tuple = new Pair<>(v, System.currentTimeMillis() + expire);
             cache.put(k, tuple);
             return null;
         }, key, value);

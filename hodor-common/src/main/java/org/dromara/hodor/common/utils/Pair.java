@@ -1,4 +1,4 @@
-package org.dromara.hodor.common;
+package org.dromara.hodor.common.utils;
 
 import cn.hutool.core.lang.Tuple;
 
@@ -8,25 +8,25 @@ import cn.hutool.core.lang.Tuple;
  * @author tomgs
  * @since 2021/8/16
  */
-public class Tuple2<T1, T2> extends Tuple {
+public class Pair<F, S> extends Tuple {
 
     private static final long serialVersionUID = -39004049673534799L;
 
-    private final T1 first;
+    private final F first;
 
-    private final T2 second;
+    private final S second;
 
-    public Tuple2(T1 first, T2 second) {
+    public Pair(F first, S second) {
         super(first, second);
         this.first = first;
         this.second = second;
     }
 
-    public T1 getFirst() {
+    public F getFirst() {
         return first;
     }
 
-    public T2 getSecond() {
+    public S getSecond() {
         return second;
     }
 
