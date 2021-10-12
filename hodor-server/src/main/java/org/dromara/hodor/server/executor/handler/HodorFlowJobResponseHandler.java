@@ -1,7 +1,7 @@
 package org.dromara.hodor.server.executor.handler;
 
 import cn.hutool.core.lang.Assert;
-import org.dromara.hodor.common.Tuple2;
+import org.dromara.hodor.common.utils.Pair;
 import org.dromara.hodor.common.dag.Dag;
 import org.dromara.hodor.common.dag.Node;
 import org.dromara.hodor.common.dag.Status;
@@ -21,8 +21,8 @@ import org.dromara.hodor.server.manager.JobExecuteManager;
  * @author tomgs
  * @since 2021/9/8
  */
-public class HodorFlowJobResponseHandler extends AbstractEventPublisher<Tuple2<JobKey, JobExecuteResponse>>
-        implements ResponseHandler<Tuple2<JobKey, RemotingResponse<JobExecuteResponse>>> {
+public class HodorFlowJobResponseHandler extends AbstractEventPublisher<Pair<JobKey, JobExecuteResponse>>
+        implements ResponseHandler<Pair<JobKey, RemotingResponse<JobExecuteResponse>>> {
 
     public static final HodorFlowJobResponseHandler INSTANCE = new HodorFlowJobResponseHandler();
 
@@ -46,8 +46,8 @@ public class HodorFlowJobResponseHandler extends AbstractEventPublisher<Tuple2<J
         this.addListener(event -> changeNodeStatus(event, Status.FAILURE), RemotingStatus.FAILED);
     }
 
-    private void changeNodeStatus(Event<Tuple2<JobKey, JobExecuteResponse>> event, Status status) {
-        Tuple2<JobKey, JobExecuteResponse> tuple = event.getValue();
+    private void changeNodeStatus(Event<Pair<JobKey, JobExecuteResponse>> event, Status status) {
+        Pair<JobKey, JobExecuteResponse> tuple = event.getValue();
         JobKey rootJobKey = tuple.getFirst();
         JobExecuteResponse jobExecuteResponse = tuple.getSecond();
         if (!JobExecuteStatus.isFinished(jobExecuteResponse.getStatus())) {
@@ -64,8 +64,8 @@ public class HodorFlowJobResponseHandler extends AbstractEventPublisher<Tuple2<J
         }
     }
 
-    public void fireJobResponseHandler(Tuple2<JobKey, RemotingResponse<JobExecuteResponse>> tuple) {
-        publish(Event.create(new Tuple2<>(tuple.getFirst(), tuple.getSecond().getData()), tuple.getSecond().getCode()));
+    public void fireJobResponseHandler(Pair<JobKey, RemotingResponse<JobExecuteResponse>> tuple) {
+        publish(Event.create(new Pair<>(tuple.getFirst(), tuple.getSecond().getData()), tuple.getSecond().getCode()));
     }
 
 }
