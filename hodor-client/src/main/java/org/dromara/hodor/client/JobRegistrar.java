@@ -8,7 +8,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.model.job.JobInstance;
 import org.dromara.hodor.client.core.ScheduledMethodRunnable;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * job registrar
@@ -19,14 +18,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Slf4j
 public class JobRegistrar {
 
-    @Autowired
-    private HodorApiClient hodorApiClient;
+    private final HodorApiClient hodorApiClient;
 
     private final Map<String, JobInstance> jobCache = new ConcurrentHashMap<>(32);
 
     private final Map<String, ScheduledMethodRunnable> jobRunnableCache = new ConcurrentHashMap<>(32);
 
     private final Set<String> groupNames = new HashSet<>();
+
+    public JobRegistrar(final HodorApiClient hodorApiClient) {
+        this.hodorApiClient = hodorApiClient;
+    }
 
     public void registerJobs() throws Exception {
         log.info("register jobs.");
