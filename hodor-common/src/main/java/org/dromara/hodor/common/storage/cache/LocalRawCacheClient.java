@@ -37,20 +37,20 @@ public class LocalRawCacheClient<K, V> implements CacheClient<K, V> {
     @Override
     public V get(K key) {
         return LockUtil.lockMethod(readWriteLock.readLock(), k -> {
-            Pair<V, Long> tuple = cache.get(k);
-            if (tuple == null) {
+            Pair<V, Long> pair = cache.get(k);
+            if (pair == null) {
                 return null;
             }
-            Long expireTime = tuple.getSecond();
+            Long expireTime = pair.getSecond();
             if (expireTime <= 0) {
-                return tuple.getFirst();
+                return pair.getFirst();
             }
             // expired
             if (System.currentTimeMillis() - expireTime > 0) {
                 remove(k);
                 return null;
             }
-            return tuple.getFirst();
+            return pair.getFirst();
         }, key);
     }
 
@@ -65,8 +65,8 @@ public class LocalRawCacheClient<K, V> implements CacheClient<K, V> {
     @Override
     public void put(K key, V value, int expire) {
         LockUtil.lockMethod(readWriteLock.writeLock(), (k ,v) -> {
-            Pair<V, Long> tuple = new Pair<>(v, System.currentTimeMillis() + expire);
-            cache.put(k, tuple);
+            Pair<V, Long> pair = new Pair<>(v, System.currentTimeMillis() + expire);
+            cache.put(k, pair);
             return null;
         }, key, value);
     }

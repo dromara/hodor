@@ -47,9 +47,9 @@ public class HodorFlowJobResponseHandler extends AbstractEventPublisher<Pair<Job
     }
 
     private void changeNodeStatus(Event<Pair<JobKey, JobExecuteResponse>> event, Status status) {
-        Pair<JobKey, JobExecuteResponse> tuple = event.getValue();
-        JobKey rootJobKey = tuple.getFirst();
-        JobExecuteResponse jobExecuteResponse = tuple.getSecond();
+        Pair<JobKey, JobExecuteResponse> pair = event.getValue();
+        JobKey rootJobKey = pair.getFirst();
+        JobExecuteResponse jobExecuteResponse = pair.getSecond();
         if (!JobExecuteStatus.isFinished(jobExecuteResponse.getStatus())) {
             return;
         }
@@ -64,8 +64,8 @@ public class HodorFlowJobResponseHandler extends AbstractEventPublisher<Pair<Job
         }
     }
 
-    public void fireJobResponseHandler(Pair<JobKey, RemotingResponse<JobExecuteResponse>> tuple) {
-        publish(Event.create(new Pair<>(tuple.getFirst(), tuple.getSecond().getData()), tuple.getSecond().getCode()));
+    public void fireJobResponseHandler(Pair<JobKey, RemotingResponse<JobExecuteResponse>> pair) {
+        publish(Event.create(new Pair<>(pair.getFirst(), pair.getSecond().getData()), pair.getSecond().getCode()));
     }
 
 }
