@@ -1,7 +1,8 @@
 package org.dromara.hodor.actuator.java.action;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.client.core.RequestContext;
+import org.dromara.hodor.actuator.common.action.AbstractAction;
+import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.remoting.api.message.request.HeartbeatRequest;
 import org.dromara.hodor.remoting.api.message.response.HeartbeatResponse;
 

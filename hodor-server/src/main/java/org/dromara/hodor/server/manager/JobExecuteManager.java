@@ -171,7 +171,7 @@ public class JobExecuteManager {
         byte[] body = serializer.serialize(requestBody);
         Header header = Header.builder()
                 .id(requestBody.getRequestId())
-                .type(messageType.getCode())
+                .type(messageType.getType())
                 .length(body.length)
                 .version(RemotingConst.DEFAULT_VERSION)
                 .build();

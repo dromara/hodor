@@ -3,8 +3,8 @@ package org.dromara.hodor.client.action;
 import java.io.File;
 import org.dromara.hodor.client.config.HodorProperties;
 import org.dromara.hodor.client.core.JobLoggerManager;
-import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.common.utils.FileIOUtils;
+import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteLogRequest;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteLogResponse;
 

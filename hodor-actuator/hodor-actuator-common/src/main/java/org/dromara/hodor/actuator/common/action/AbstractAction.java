@@ -1,7 +1,8 @@
 package org.dromara.hodor.actuator.common.action;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.actuator.common.core.RequestContext;
+import org.dromara.hodor.remoting.api.message.RequestContext;
+import org.dromara.hodor.actuator.common.executor.RequestHandleManager;
 import org.dromara.hodor.common.executor.HodorRunnable;
 import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.remoting.api.HodorChannelFuture;
@@ -81,7 +82,7 @@ public abstract class AbstractAction<I extends RequestBody, O extends ResponseBo
      */
     public void retryableSendMessage(RemotingMessage message) {
         sendMessage(message).operationComplete(future -> {
-            RequestHandleManager requestHandleManager = ServiceProvider.getInstance().getBean(RequestHandleManager.class);
+            RequestHandleManager requestHandleManager = RequestHandleManager.getInstance();
             if (!future.isSuccess() || future.cause() != null) {
                 log.warn("response failed.", future.cause());
                 requestHandleManager.addRetrySendMessage(future.channel().remoteAddress(), message);

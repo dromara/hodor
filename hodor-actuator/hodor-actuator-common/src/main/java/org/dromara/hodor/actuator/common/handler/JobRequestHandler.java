@@ -1,9 +1,9 @@
 package org.dromara.hodor.actuator.common.handler;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.client.ServiceProvider;
-import org.dromara.hodor.client.core.RequestContext;
-import org.dromara.hodor.client.executor.RequestHandleManager;
+import org.dromara.hodor.remoting.api.message.RequestContext;
+import org.dromara.hodor.actuator.common.executor.RequestHandleManager;
+import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.HodorChannelHandler;
 import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
@@ -18,9 +18,14 @@ import org.dromara.hodor.remoting.api.message.RemotingMessage;
 @Slf4j
 public class JobRequestHandler implements HodorChannelHandler {
 
-    private final RequestHandleManager requestHandleManager = ServiceProvider.getInstance().getBean(RequestHandleManager.class);
+    private final RequestHandleManager requestHandleManager;
 
-    private final RemotingMessageSerializer serializer = ServiceProvider.getInstance().getBean(RemotingMessageSerializer.class);
+    private final RemotingMessageSerializer serializer;
+
+    public JobRequestHandler() {
+        this.requestHandleManager = RequestHandleManager.getInstance();
+        this.serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
+    }
 
     @Override
     public void received(HodorChannel channel, Object message) {
@@ -32,7 +37,6 @@ public class JobRequestHandler implements HodorChannelHandler {
     @Override
     public void exceptionCaught(HodorChannel channel, Throwable cause) {
         log.error("handler the request message has exception, message: {}.", cause.getMessage(), cause);
-        //channel.send(cause).operationComplete(future -> future.channel().close());
         channel.close();
     }
 

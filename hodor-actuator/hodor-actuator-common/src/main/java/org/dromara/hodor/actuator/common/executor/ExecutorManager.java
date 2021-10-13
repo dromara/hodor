@@ -42,7 +42,7 @@ public class ExecutorManager {
     }
 
     public void execute(final HodorRunnable runnable) {
-        hodorExecutor.parallelExecute(runnable);
+        hodorExecutor.serialExecute(runnable);
     }
 
     public void commonExecute(final HodorRunnable runnable) {

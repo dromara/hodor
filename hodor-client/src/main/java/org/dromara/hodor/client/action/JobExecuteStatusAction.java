@@ -2,9 +2,9 @@ package org.dromara.hodor.client.action;
 
 import cn.hutool.core.date.DateUtil;
 import org.dromara.hodor.client.core.HodorJobExecution;
-import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.client.executor.JobExecutionPersistence;
 import org.dromara.hodor.common.utils.StringUtils;
+import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteStatusRequest;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteStatusResponse;
 

@@ -296,10 +296,16 @@ public class PropsUtils {
         return resolveVariableExpression(newValue, lastIndex, jexl);
     }
 
-  /*public static String toJSONString(final Props props, final boolean localOnly) {
-    final Map<String, String> map = toStringMap(props, localOnly);
-    return JSONUtils.toJSON(map);
-  }*/
+    /*public static String toJSONString(final Props props, final boolean localOnly) {
+        final Map<String, String> map = toStringMap(props, localOnly);
+        return JSONUtils.toJSON(map);
+    }*/
+
+    /*public static Props fromJSONString(final String json) throws IOException {
+        final Map<String, String> obj = (Map<String, String>) JSONUtils.parseJSONFromString(json);
+        final Props props = new Props(null, obj);
+        return props;
+    }*/
 
     public static Map<String, String> toStringMap(final Props props, final boolean localOnly) {
         final HashMap<String, String> map = new HashMap<>();
@@ -311,12 +317,6 @@ public class PropsUtils {
         }
 
         return map;
-    }
-
-    public static Props fromJSONString(final String json) throws IOException {
-        final Map<String, String> obj = (Map<String, String>) JSONUtils.parseJSONFromString(json);
-        final Props props = new Props(null, obj);
-        return props;
     }
 
     public static Props fromHierarchicalMap(final Map<String, Object> propsMap) {
@@ -352,7 +352,6 @@ public class PropsUtils {
      * @return the difference between oldProps and newProps.
      */
     public static String getPropertyDiff(Props oldProps, Props newProps) {
-
         final StringBuilder builder = new StringBuilder("");
 
         // oldProps can not be null during the below comparison process.
@@ -371,7 +370,7 @@ public class PropsUtils {
         if (newlyCreatedProperty != null && newlyCreatedProperty.size() > 0) {
             builder.append("Newly created Properties: ");
             for (Map.Entry<String, String> entry : newlyCreatedProperty.entrySet()) {
-                builder.append("[ " + entry.getKey() + ", " + entry.getValue() + "], ");
+                builder.append("[ ").append(entry.getKey()).append(", ").append(entry.getValue()).append("], ");
             }
             builder.append("\n");
         }
@@ -380,7 +379,7 @@ public class PropsUtils {
         if (deletedProperty != null && deletedProperty.size() > 0) {
             builder.append("Deleted Properties: ");
             for (Map.Entry<String, String> entry : deletedProperty.entrySet()) {
-                builder.append("[ " + entry.getKey() + ", " + entry.getValue() + "], ");
+                builder.append("[ ").append(entry.getKey()).append(", ").append(entry.getValue()).append("], ");
             }
             builder.append("\n");
         }
@@ -389,7 +388,7 @@ public class PropsUtils {
         if (diffProperties != null && diffProperties.size() > 0) {
             builder.append("Modified Properties: ");
             for (Map.Entry<String, MapDifference.ValueDifference<String>> entry : diffProperties.entrySet()) {
-                builder.append("[ " + entry.getKey() + ", " + entry.getValue() + "], ");
+                builder.append("[ ").append(entry.getKey()).append(", ").append(entry.getValue()).append("], ");
             }
         }
         return builder.toString();

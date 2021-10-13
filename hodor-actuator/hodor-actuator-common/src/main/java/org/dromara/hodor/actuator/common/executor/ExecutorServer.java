@@ -1,9 +1,8 @@
 package org.dromara.hodor.actuator.common.executor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.client.ServiceProvider;
-import org.dromara.hodor.client.config.HodorProperties;
-import org.dromara.hodor.client.handler.JobRequestHandler;
+import org.dromara.hodor.actuator.common.config.HodorProperties;
+import org.dromara.hodor.actuator.common.handler.JobRequestHandler;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.remoting.api.Attribute;
 import org.dromara.hodor.remoting.api.NetServer;
@@ -21,12 +20,13 @@ public class ExecutorServer {
 
     private final NetServer netServer;
 
-    private final HodorProperties properties = ServiceProvider.getInstance().getBean(HodorProperties.class);
+    private final HodorProperties properties;
 
-    public ExecutorServer() {
+    public ExecutorServer(final HodorProperties properties) {
+        this.properties = properties;
         final Attribute attribute = new Attribute();
-        attribute.put(RemotingConst.HOST_KEY, properties.getHost());
-        attribute.put(RemotingConst.PORT_KEY, properties.getPort());
+        attribute.put(RemotingConst.HOST_KEY, this.properties.getHost());
+        attribute.put(RemotingConst.PORT_KEY, this.properties.getPort());
         attribute.put(RemotingConst.TCP_PROTOCOL, true);
 
         final JobRequestHandler handler = new JobRequestHandler();

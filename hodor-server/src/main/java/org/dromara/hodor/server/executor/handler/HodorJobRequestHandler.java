@@ -154,7 +154,7 @@ public class HodorJobRequestHandler implements RequestHandler {
         return Header.builder()
             .id(context.getRequestId())
             .version(RemotingConst.DEFAULT_VERSION)
-            .type(MessageType.JOB_EXEC_REQUEST.getCode())
+            .type(MessageType.JOB_EXEC_REQUEST.getType())
             .attachment(attachment)
             .length(bodyLength)
             .build();

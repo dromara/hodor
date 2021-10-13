@@ -2,12 +2,12 @@ package org.dromara.hodor.client.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.client.ServiceProvider;
-import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.client.executor.RequestHandleManager;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.HodorChannelHandler;
 import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
+import org.dromara.hodor.remoting.api.message.RequestContext;
 
 /**
  * job execute request handler
