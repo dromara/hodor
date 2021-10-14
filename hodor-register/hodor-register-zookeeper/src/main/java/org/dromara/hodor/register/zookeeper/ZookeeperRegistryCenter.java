@@ -200,12 +200,16 @@ public class ZookeeperRegistryCenter implements RegistryCenter {
         if (listener == null) {
             return;
         }
-        TreeCache cache = TreeCache.newBuilder(client, path).build();
-        try {
-            cache.start();
-        } catch (Exception e) {
-            throw new RegistryException(e);
-        }
+        TreeCache cache = caches.computeIfAbsent(path, key -> {
+            TreeCache treeCache = TreeCache.newBuilder(client, path).build();
+            try {
+                treeCache.start();
+            } catch (Exception e) {
+                throw new RegistryException(e);
+            }
+            return treeCache;
+        });
+        //TreeCache cache = TreeCache.newBuilder(client, path).build();
         cache.getListenable().addListener((curatorFramework, event) -> {
             String dataPath = null == event.getData() ? "" : event.getData().getPath();
             if (dataPath.isEmpty()) {
@@ -214,7 +218,6 @@ public class ZookeeperRegistryCenter implements RegistryCenter {
             DataChangeEvent changeEvent = new DataChangeEvent(event.getType().name(), event.getData().getPath(), event.getData().getData());
             listener.dataChanged(changeEvent);
         });
-        caches.put(path, cache);
     }
 
     @Override
