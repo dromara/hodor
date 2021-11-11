@@ -1,4 +1,4 @@
-package org.dromara.hodor.actuator.java.action;
+package org.dromara.hodor.actuator.common.action;
 
 import cn.hutool.core.date.DateUtil;
 import org.dromara.hodor.actuator.common.action.AbstractAction;

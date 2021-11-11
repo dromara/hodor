@@ -3,7 +3,6 @@ package org.dromara.hodor.actuator.common.handler;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.actuator.common.executor.RequestHandleManager;
-import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.HodorChannelHandler;
 import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
@@ -20,17 +19,19 @@ public class JobRequestHandler implements HodorChannelHandler {
 
     private final RequestHandleManager requestHandleManager;
 
-    private final RemotingMessageSerializer serializer;
+    private final RemotingMessageSerializer remotingMessageSerializer;
 
-    public JobRequestHandler() {
-        this.requestHandleManager = RequestHandleManager.getInstance();
-        this.serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
+    public JobRequestHandler(final RequestHandleManager requestHandleManager, final RemotingMessageSerializer remotingMessageSerializer) {
+        //this.requestHandleManager = RequestHandleManager.getInstance();
+        //this.serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
+        this.requestHandleManager = requestHandleManager;
+        this.remotingMessageSerializer = remotingMessageSerializer;
     }
 
     @Override
     public void received(HodorChannel channel, Object message) {
         final RemotingMessage request = (RemotingMessage) message;
-        final RequestContext context = new RequestContext(channel, request, serializer);
+        final RequestContext context = new RequestContext(channel, request, remotingMessageSerializer);
         this.requestHandleManager.notifyRequestHandler(context);
     }
 

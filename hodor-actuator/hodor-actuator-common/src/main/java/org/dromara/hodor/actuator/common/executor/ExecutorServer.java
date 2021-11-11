@@ -8,6 +8,7 @@ import org.dromara.hodor.remoting.api.Attribute;
 import org.dromara.hodor.remoting.api.NetServer;
 import org.dromara.hodor.remoting.api.NetServerTransport;
 import org.dromara.hodor.remoting.api.RemotingConst;
+import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
 
 /**
  * 执行器服务
@@ -22,14 +23,16 @@ public class ExecutorServer {
 
     private final HodorProperties properties;
 
-    public ExecutorServer(final HodorProperties properties) {
+    public ExecutorServer(final RequestHandleManager requestHandleManager,
+                          final RemotingMessageSerializer remotingMessageSerializer,
+                          final HodorProperties properties) {
         this.properties = properties;
         final Attribute attribute = new Attribute();
         attribute.put(RemotingConst.HOST_KEY, this.properties.getHost());
         attribute.put(RemotingConst.PORT_KEY, this.properties.getPort());
         attribute.put(RemotingConst.TCP_PROTOCOL, true);
 
-        final JobRequestHandler handler = new JobRequestHandler();
+        final JobRequestHandler handler = new JobRequestHandler(requestHandleManager, remotingMessageSerializer);
         final NetServerTransport netServerTransport = ExtensionLoader.getExtensionLoader(NetServerTransport.class).getDefaultJoin();
         this.netServer = netServerTransport.build(attribute, handler);
     }

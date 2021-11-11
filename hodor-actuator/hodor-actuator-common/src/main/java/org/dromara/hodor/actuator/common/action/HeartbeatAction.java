@@ -1,4 +1,4 @@
-package org.dromara.hodor.actuator.java.action;
+package org.dromara.hodor.actuator.common.action;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.actuator.common.action.AbstractAction;
