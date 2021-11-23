@@ -34,7 +34,7 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
 
     private final JobExecutionPersistence jobExecutionPersistence;
 
-    private RequestHandleManager(final HodorProperties properties,
+    public RequestHandleManager(final HodorProperties properties,
                                  final ExecutorManager executorManager,
                                  final ClientChannelManager clientChannelManager,
                                  final DBOperator dbOperator) {

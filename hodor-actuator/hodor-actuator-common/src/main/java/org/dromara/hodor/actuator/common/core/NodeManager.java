@@ -19,7 +19,7 @@ public class NodeManager {
 
     private final ExecutorManager executorManager;
 
-    private NodeManager(final HodorProperties hodorProperties, final ExecutorManager executorManager) {
+    public NodeManager(final HodorProperties hodorProperties, final ExecutorManager executorManager) {
         this.hodorProperties = hodorProperties;
         this.executorManager = executorManager;
     }

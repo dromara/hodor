@@ -39,10 +39,11 @@ public class HodorActuatorManager {
                                 final RemotingMessageSerializer remotingMessageSerializer,
                                 final HodorProperties properties,
                                 final HodorApiClient hodorApiClient,
-                                final NodeManager nodeManager) {
+                                final NodeManager nodeManager,
+                                final JobRegistrar jobRegistrar) {
         this.interval = System.getProperty("hodor.heartbeat.interval", "5000");
         this.executorServer = new ExecutorServer(requestHandleManager, remotingMessageSerializer, properties);
-        this.msgSender = new MsgSender(hodorApiClient, nodeManager);
+        this.msgSender = new MsgSender(hodorApiClient, nodeManager, jobRegistrar);
         this.heartbeatSenderService = new ScheduledThreadPoolExecutor(2,
             HodorThreadFactory.create("hodor-heartbeat-sender", true),
             new ThreadPoolExecutor.DiscardOldestPolicy());
