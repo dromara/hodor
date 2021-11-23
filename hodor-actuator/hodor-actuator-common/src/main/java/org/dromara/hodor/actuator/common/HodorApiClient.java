@@ -3,6 +3,7 @@ package org.dromara.hodor.actuator.common;
 import cn.hutool.http.HttpUtil;
 import java.util.Collection;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.actuator.common.config.HodorProperties;
 import org.dromara.hodor.actuator.common.core.ConnectStringParser;
 import org.dromara.hodor.actuator.common.core.TrySender;
 import org.dromara.hodor.common.utils.GsonUtils;

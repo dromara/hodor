@@ -1,11 +1,11 @@
 package org.dromara.hodor.actuator.common.action;
 
 import cn.hutool.core.date.DateUtil;
-import org.dromara.hodor.actuator.common.action.AbstractAction;
 import org.dromara.hodor.actuator.common.core.HodorJobExecution;
-import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.actuator.common.executor.JobExecutionPersistence;
+import org.dromara.hodor.actuator.common.executor.RequestHandleManager;
 import org.dromara.hodor.common.utils.StringUtils;
+import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteStatusRequest;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteStatusResponse;
 
@@ -19,8 +19,8 @@ public class JobExecuteStatusAction extends AbstractAction<JobExecuteStatusReque
 
     private final JobExecutionPersistence jobExecutionPersistence;
 
-    public JobExecuteStatusAction(final RequestContext context, final JobExecutionPersistence jobExecutionPersistence) {
-        super(context);
+    public JobExecuteStatusAction(final RequestContext context, final JobExecutionPersistence jobExecutionPersistence, final RequestHandleManager requestHandleManager) {
+        super(context, requestHandleManager);
         this.jobExecutionPersistence = jobExecutionPersistence;
     }
 

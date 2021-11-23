@@ -2,12 +2,12 @@ package org.dromara.hodor.actuator.common.action;
 
 import cn.hutool.core.date.DateUtil;
 import java.util.Date;
-import org.dromara.hodor.actuator.common.action.AbstractAction;
 import org.dromara.hodor.actuator.common.core.HodorJobExecution;
-import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.actuator.common.executor.ExecutorManager;
 import org.dromara.hodor.actuator.common.executor.JobExecutionPersistence;
+import org.dromara.hodor.actuator.common.executor.RequestHandleManager;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
+import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.remoting.api.message.request.KillRunningJobRequest;
 import org.dromara.hodor.remoting.api.message.response.KillRunningJobResponse;
 
@@ -23,9 +23,12 @@ public class KillRunningJobAction extends AbstractAction<KillRunningJobRequest, 
 
     private final JobExecutionPersistence jobExecutionPersistence;
 
-    public KillRunningJobAction(final RequestContext context, final JobExecutionPersistence jobExecutionPersistence) {
-        super(context);
-        this.executorManager = ExecutorManager.getInstance();
+    public KillRunningJobAction(final RequestContext context,
+                                final JobExecutionPersistence jobExecutionPersistence,
+                                final ExecutorManager executorManager,
+                                final RequestHandleManager requestHandleManager) {
+        super(context, requestHandleManager);
+        this.executorManager = executorManager;
         this.jobExecutionPersistence = jobExecutionPersistence;
     }
 

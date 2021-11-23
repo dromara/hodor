@@ -1,4 +1,4 @@
-package org.dromara.hodor.actuator.common;
+package org.dromara.hodor.actuator.java.core;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.actuator.common.core.ScheduledMethodRunnable;
+import org.dromara.hodor.actuator.common.HodorApiClient;
 import org.dromara.hodor.model.job.JobInstance;
 
 /**
@@ -55,6 +55,12 @@ public class JobRegistrar {
 
     public Set<String> getGroupNames() {
         return groupNames;
+    }
+
+    public void clear() {
+        jobCache.clear();
+        jobRunnableCache.clear();
+        groupNames.clear();
     }
 
 }

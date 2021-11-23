@@ -5,13 +5,15 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.actuator.common.config.HodorProperties;
 import org.dromara.hodor.actuator.common.core.HodorDatabaseSetup;
+import org.dromara.hodor.actuator.common.core.NodeManager;
 import org.dromara.hodor.actuator.common.executor.ExecutorServer;
 import org.dromara.hodor.actuator.common.executor.MsgSender;
+import org.dromara.hodor.actuator.common.executor.RequestHandleManager;
 import org.dromara.hodor.common.concurrent.HodorThreadFactory;
 import org.dromara.hodor.common.storage.db.DBOperator;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
+import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
 
 /**
  * hodor client init
@@ -20,7 +22,7 @@ import org.springframework.boot.ApplicationRunner;
  * @since 2021/1/6
  */
 @Slf4j
-public class HodorActuatorInit implements ApplicationRunner {
+public class HodorActuatorManager {
 
     private final String interval;
 
@@ -32,21 +34,22 @@ public class HodorActuatorInit implements ApplicationRunner {
 
     private final HodorDatabaseSetup hodorDatabaseSetup;
 
-    private final JobRegistrar jobRegistrar;
-
-    public HodorActuatorInit(final DBOperator dbOperator, final JobRegistrar jobRegistrar) {
+    public HodorActuatorManager(final DBOperator dbOperator,
+                                final RequestHandleManager requestHandleManager,
+                                final RemotingMessageSerializer remotingMessageSerializer,
+                                final HodorProperties properties,
+                                final HodorApiClient hodorApiClient,
+                                final NodeManager nodeManager) {
         this.interval = System.getProperty("hodor.heartbeat.interval", "5000");
-        this.executorServer = new ExecutorServer();
-        this.msgSender = new MsgSender();
+        this.executorServer = new ExecutorServer(requestHandleManager, remotingMessageSerializer, properties);
+        this.msgSender = new MsgSender(hodorApiClient, nodeManager);
         this.heartbeatSenderService = new ScheduledThreadPoolExecutor(2,
             HodorThreadFactory.create("hodor-heartbeat-sender", true),
             new ThreadPoolExecutor.DiscardOldestPolicy());
         this.hodorDatabaseSetup = new HodorDatabaseSetup(dbOperator);
-        this.jobRegistrar = jobRegistrar;
     }
 
-    @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void start() throws Exception {
         // TODO: 这里可以改造为SPI的方式加载服务
         // init data
         initHodorClientData();
@@ -56,7 +59,7 @@ public class HodorActuatorInit implements ApplicationRunner {
 
         // start register jobs after executor server start success
         log.info("HodorClient starting register jobs...");
-        jobRegistrar.registerJobs();
+        //jobRegistrar.registerJobs();
 
         // start heartbeat sender server
         log.info("HodorClient starting heartbeat sender server...");

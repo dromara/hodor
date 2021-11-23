@@ -1,7 +1,7 @@
 package org.dromara.hodor.actuator.common.action;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.actuator.common.action.AbstractAction;
+import org.dromara.hodor.actuator.common.executor.RequestHandleManager;
 import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.remoting.api.message.request.HeartbeatRequest;
 import org.dromara.hodor.remoting.api.message.response.HeartbeatResponse;
@@ -15,8 +15,8 @@ import org.dromara.hodor.remoting.api.message.response.HeartbeatResponse;
 @Slf4j
 public class HeartbeatAction extends AbstractAction<HeartbeatRequest, HeartbeatResponse> {
 
-    public HeartbeatAction(final RequestContext context) {
-        super(context);
+    public HeartbeatAction(final RequestContext context, final RequestHandleManager requestHandleManager) {
+        super(context, requestHandleManager);
     }
 
     @Override

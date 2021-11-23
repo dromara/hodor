@@ -1,8 +1,7 @@
 package org.dromara.hodor.actuator.common.core;
 
-import org.dromara.hodor.client.ServiceProvider;
-import org.dromara.hodor.client.config.HodorProperties;
-import org.dromara.hodor.client.executor.ExecutorManager;
+import org.dromara.hodor.actuator.common.config.HodorProperties;
+import org.dromara.hodor.actuator.common.executor.ExecutorManager;
 import org.dromara.hodor.common.executor.ExecutorInfo;
 import org.dromara.hodor.common.utils.HostUtils;
 import org.dromara.hodor.common.utils.MachineUtils;
@@ -16,19 +15,13 @@ import org.dromara.hodor.model.node.NodeInfo;
  */
 public class NodeManager {
 
-    private static final NodeManager INSTANCE = new NodeManager();
-
     private final HodorProperties hodorProperties;
 
     private final ExecutorManager executorManager;
 
-    private NodeManager() {
-        this.hodorProperties = ServiceProvider.getInstance().getBean(HodorProperties.class);
-        this.executorManager = ExecutorManager.getInstance();
-    }
-
-    public static NodeManager getInstance() {
-        return INSTANCE;
+    private NodeManager(final HodorProperties hodorProperties, final ExecutorManager executorManager) {
+        this.hodorProperties = hodorProperties;
+        this.executorManager = executorManager;
     }
 
     public NodeInfo getNodeInfo() {

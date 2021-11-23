@@ -1,9 +1,9 @@
 package org.dromara.hodor.actuator.common.action;
 
 import java.io.File;
-import org.dromara.hodor.actuator.common.action.AbstractAction;
 import org.dromara.hodor.actuator.common.config.HodorProperties;
 import org.dromara.hodor.actuator.common.core.JobLoggerManager;
+import org.dromara.hodor.actuator.common.executor.RequestHandleManager;
 import org.dromara.hodor.common.utils.FileIOUtils;
 import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteLogRequest;
@@ -21,8 +21,8 @@ public class JobExecuteLogAction extends AbstractAction<JobExecuteLogRequest, Jo
 
     private final JobLoggerManager jobLoggerManager;
 
-    public JobExecuteLogAction(final RequestContext context, final HodorProperties properties) {
-        super(context);
+    public JobExecuteLogAction(final RequestContext context, final HodorProperties properties, final RequestHandleManager requestHandleManager) {
+        super(context, requestHandleManager);
         this.properties = properties;
         this.jobLoggerManager = JobLoggerManager.getInstance();
     }

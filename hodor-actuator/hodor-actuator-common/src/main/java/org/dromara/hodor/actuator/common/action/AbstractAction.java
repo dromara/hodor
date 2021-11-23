@@ -26,9 +26,12 @@ public abstract class AbstractAction<I extends RequestBody, O extends ResponseBo
 
     private final RemotingMessageSerializer serializer;
 
-    public AbstractAction(final RequestContext context) {
+    private final RequestHandleManager requestHandleManager;
+
+    public AbstractAction(final RequestContext context, final RequestHandleManager requestHandleManager) {
         this.context = context;
         this.serializer = context.serializer();
+        this.requestHandleManager = requestHandleManager;
     }
 
     public RequestContext getRequestContext() {
@@ -82,7 +85,6 @@ public abstract class AbstractAction<I extends RequestBody, O extends ResponseBo
      */
     public void retryableSendMessage(RemotingMessage message) {
         sendMessage(message).operationComplete(future -> {
-            RequestHandleManager requestHandleManager = RequestHandleManager.getInstance();
             if (!future.isSuccess() || future.cause() != null) {
                 log.warn("response failed.", future.cause());
                 requestHandleManager.addRetrySendMessage(future.channel().remoteAddress(), message);

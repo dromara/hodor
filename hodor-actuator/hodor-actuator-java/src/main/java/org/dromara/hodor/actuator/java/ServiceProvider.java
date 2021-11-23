@@ -1,4 +1,4 @@
-package org.dromara.hodor.actuator.common;
+package org.dromara.hodor.actuator.java;
 
 import java.beans.Introspector;
 import java.util.Map;

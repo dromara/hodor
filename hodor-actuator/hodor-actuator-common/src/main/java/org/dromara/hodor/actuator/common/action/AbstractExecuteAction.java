@@ -9,6 +9,7 @@ import org.dromara.hodor.actuator.common.action.AbstractAction;
 import org.dromara.hodor.actuator.common.config.HodorProperties;
 import org.dromara.hodor.actuator.common.core.HodorJobExecution;
 import org.dromara.hodor.actuator.common.core.JobLoggerManager;
+import org.dromara.hodor.actuator.common.executor.RequestHandleManager;
 import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.actuator.common.executor.ExecutorManager;
 import org.dromara.hodor.actuator.common.executor.JobExecutionPersistence;
@@ -44,9 +45,11 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
 
     private final Stopwatch stopwatch;
 
-    public AbstractExecuteAction(final RequestContext context, final HodorProperties properties,
-                                 final JobExecutionPersistence jobExecutionPersistence) {
-        super(context);
+    public AbstractExecuteAction(final RequestContext context,
+                                 final HodorProperties properties,
+                                 final JobExecutionPersistence jobExecutionPersistence,
+                                 final RequestHandleManager requestHandleManager) {
+        super(context, requestHandleManager);
         this.properties = properties;
         this.jobExecutionPersistence = jobExecutionPersistence;
         this.jobLoggerManager = JobLoggerManager.getInstance();

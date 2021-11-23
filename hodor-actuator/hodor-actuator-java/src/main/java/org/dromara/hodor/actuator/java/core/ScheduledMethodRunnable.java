@@ -1,4 +1,4 @@
-package org.dromara.hodor.actuator.common.core;
+package org.dromara.hodor.actuator.java.core;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
