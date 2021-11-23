@@ -7,7 +7,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.actuator.common.HodorApiClient;
+import org.dromara.hodor.actuator.common.JobRegistrar;
 import org.dromara.hodor.model.job.JobInstance;
+import org.dromara.hodor.model.job.JobKey;
 
 /**
  * job registrar
@@ -16,7 +18,7 @@ import org.dromara.hodor.model.job.JobInstance;
  * @since 2021/1/4
  */
 @Slf4j
-public class JobRegistrar {
+public class JavaJobRegistrar implements JobRegistrar {
 
     private final HodorApiClient hodorApiClient;
 
@@ -26,14 +28,25 @@ public class JobRegistrar {
 
     private final Set<String> groupNames = new HashSet<>();
 
-    public JobRegistrar(final HodorApiClient hodorApiClient) {
+    public JavaJobRegistrar(final HodorApiClient hodorApiClient) {
         this.hodorApiClient = hodorApiClient;
     }
 
+    @Override
     public void registerJobs() throws Exception {
         log.info("register jobs.");
         Collection<JobInstance> jobs = jobCache.values();
         hodorApiClient.registerJobs(jobs);
+    }
+
+    @Override
+    public void registerJob(JobInstance jobInstance) {
+
+    }
+
+    @Override
+    public JobInstance getJob(JobKey jobKey) {
+        return null;
     }
 
     public ScheduledMethodRunnable getJobRunnable(String groupName, String jobName) {
@@ -53,10 +66,12 @@ public class JobRegistrar {
         return groupName + "-" + jobName;
     }
 
+    @Override
     public Set<String> getGroupNames() {
         return groupNames;
     }
 
+    @Override
     public void clear() {
         jobCache.clear();
         jobRunnableCache.clear();

@@ -2,7 +2,9 @@ package org.dromara.hodor.actuator.java;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.actuator.common.HodorActuatorManager;
-import org.dromara.hodor.actuator.java.core.JobRegistrar;
+import org.dromara.hodor.actuator.common.JobRegistrar;
+import org.dromara.hodor.actuator.java.core.JavaJobRegistrar;
+import org.dromara.hodor.actuator.java.core.ScheduledMethodRunnable;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
@@ -15,11 +17,11 @@ import org.springframework.boot.ApplicationRunner;
 @Slf4j
 public class HodorJavaActuatorInit implements ApplicationRunner {
 
-    private final JobRegistrar jobRegistrar;
+    private final JobRegistrar<ScheduledMethodRunnable> jobRegistrar;
 
     private final HodorActuatorManager actuatorManager;
 
-    public HodorJavaActuatorInit(final JobRegistrar jobRegistrar, final HodorActuatorManager actuatorManager) {
+    public HodorJavaActuatorInit(final JobRegistrar<ScheduledMethodRunnable> jobRegistrar, final HodorActuatorManager actuatorManager) {
         this.jobRegistrar = jobRegistrar;
         this.actuatorManager = actuatorManager;
     }
