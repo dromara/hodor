@@ -17,22 +17,31 @@
 
 package org.dromara.hodor.actuator.common;
 
-import org.dromara.hodor.model.job.JobKey;
+import org.dromara.hodor.actuator.common.exceptions.JobExecutionException;
 
 /**
- * Job
+ * Job instance
  *
  * @author tomgs
  * @since 2021/11/23
  */
 public interface Job {
 
-    String getRequestId();
+    /**
+     * 执行任务
+     *
+     * @param context 任务上下文
+     * @return 任务执行结果
+     * @throws JobExecutionException 任务执行异常
+     */
+    Object execute(JobExecutionContext context) throws JobExecutionException;
 
-    JobKey getJobKey();
-
-    Object execute() throws Exception;
-
-    void stop() throws Exception;
+    /**
+     * 停止任务
+     *
+     * @param context 任务上下文
+     * @throws JobExecutionException 任务停止异常
+     */
+    void stop(JobExecutionContext context) throws JobExecutionException;
 
 }

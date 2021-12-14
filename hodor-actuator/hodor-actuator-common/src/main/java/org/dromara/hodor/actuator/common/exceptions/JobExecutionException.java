@@ -15,51 +15,28 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.actuator.common;
-
-import java.util.Set;
-import org.dromara.hodor.actuator.common.core.JobInstance;
-import org.dromara.hodor.model.job.JobKey;
+package org.dromara.hodor.actuator.common.exceptions;
 
 /**
- * JobRegistrar
+ * JobExecutionException
  *
  * @author tomgs
- * @since 2021/11/23
+ * @since 2021/12/13
  */
-public interface JobRegistrar {
+public class JobExecutionException extends Exception {
 
-    /**
-     * 任务注册
-     *
-     * @throws Exception 任务注册异常
-     */
-    void registerJobs() throws Exception;
+    private static final long serialVersionUID = -2600310348494494039L;
 
-    /**
-     * register job
-     *
-     * @param jobInstance job instance
-     */
-    void registerJob(JobInstance jobInstance);
+    public JobExecutionException(String message) {
+        super(message);
+    }
 
-    /**
-     * get runnable job by job key
-     *
-     * @param jobKey job key
-     * @return runnable job
-     */
-    Job getRunnableJob(JobKey jobKey);
+    public JobExecutionException(Throwable cause) {
+        super(cause);
+    }
 
-    /**
-     * get group name set
-     *
-     * @return groupName set
-     */
-    Set<String> getGroupNames();
+    public JobExecutionException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-    /**
-     * clear register jobs cache
-     */
-    void clear();
 }

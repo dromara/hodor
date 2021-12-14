@@ -5,19 +5,18 @@ import java.io.File;
 import java.util.Date;
 import java.util.Map;
 import org.apache.logging.log4j.Logger;
-import org.dromara.hodor.actuator.common.action.AbstractAction;
 import org.dromara.hodor.actuator.common.config.HodorProperties;
 import org.dromara.hodor.actuator.common.core.HodorJobExecution;
 import org.dromara.hodor.actuator.common.core.JobLoggerManager;
-import org.dromara.hodor.actuator.common.executor.RequestHandleManager;
-import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.actuator.common.executor.ExecutorManager;
 import org.dromara.hodor.actuator.common.executor.JobExecutionPersistence;
+import org.dromara.hodor.actuator.common.executor.RequestHandleManager;
 import org.dromara.hodor.common.utils.Stopwatch;
 import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.remoting.api.message.RemotingResponse;
+import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
 
@@ -102,7 +101,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
         response.setStatus(JobExecuteStatus.FAILED);
         response.setCompleteTime(DateUtil.formatDateTime(new Date()));
         response.setComments(exceptionStack);
-        retryableSendMessage(buildResponseMessage(RemotingResponse.succeeded(response)));
+        retryableSendMessage(RemotingResponse.succeeded(response));
     }
 
     public void sendStartExecuteResponse(final JobExecuteRequest request) {
@@ -115,7 +114,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
             request.getJobName(), request.getJobParameters(),
             attachment == null ? getRequestContext().channel().remoteAddress().toString() : attachment.get("schedulerName").toString());
         jobExecutionPersistence.fireJobExecutionEvent(runningJobExecution);
-        retryableSendMessage(buildResponseMessage(RemotingResponse.succeeded(response)));
+        retryableSendMessage(RemotingResponse.succeeded(response));
     }
 
     public JobExecuteResponse buildResponse(final JobExecuteRequest request) {

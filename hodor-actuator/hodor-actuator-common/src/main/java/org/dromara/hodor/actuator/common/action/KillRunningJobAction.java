@@ -39,6 +39,10 @@ public class KillRunningJobAction extends AbstractAction<KillRunningJobRequest, 
         response.setStatus(JobExecuteStatus.KILLED);
 
         Thread runningThread = executorManager.getRunningThread(request.getRequestId());
+        if (runningThread == executorManager.getDefaultThread()) {
+            response.setStatus(JobExecuteStatus.READY);
+            return response;
+        }
         if (runningThread == null) {
             response.setStatus(JobExecuteStatus.FINISHED);
             return response;

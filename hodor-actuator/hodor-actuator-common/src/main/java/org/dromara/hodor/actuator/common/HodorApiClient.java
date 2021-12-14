@@ -8,7 +8,7 @@ import org.dromara.hodor.actuator.common.core.ConnectStringParser;
 import org.dromara.hodor.actuator.common.core.TrySender;
 import org.dromara.hodor.common.utils.GsonUtils;
 import org.dromara.hodor.model.actuator.ActuatorInfo;
-import org.dromara.hodor.model.job.JobInstance;
+import org.dromara.hodor.model.job.JobDesc;
 
 /**
  * hodor api client
@@ -33,7 +33,7 @@ public class HodorApiClient {
         this.appName = properties.getAppName();
     }
 
-    public void registerJobs(Collection<JobInstance> jobs) throws Exception {
+    public void registerJobs(Collection<JobDesc> jobs) throws Exception {
         String result = TrySender.send(connectStringParser, (url) -> HttpUtil.createPost( url + "/scheduler/batchCreateJob")
             .body(gsonUtils.toJson(jobs))
             .header("appName", appName)

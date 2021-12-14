@@ -22,6 +22,8 @@ public class ExecutorManager {
 
     private final Map<Long, Thread> runningThread = new ConcurrentHashMap<>();
 
+    private final Thread defaultThread = new Thread(() -> {}, "default");
+
     private ExecutorManager() {
         final int threadSize = Runtime.getRuntime().availableProcessors() * 2;
         // request job
@@ -67,6 +69,19 @@ public class ExecutorManager {
 
     public Thread getRunningThread(Long requestId) {
         return runningThread.get(requestId);
+    }
+
+    public Thread getDefaultThread() {
+        return defaultThread;
+    }
+
+    public boolean executeReady(Long requestId) {
+        Thread runningThread = getRunningThread(requestId);
+        if (runningThread != null) {
+            return false;
+        }
+        addRunningThread(requestId, getDefaultThread());
+        return true;
     }
 
 }
