@@ -17,12 +17,59 @@
 
 package org.dromara.hodor.actuator.java.job;
 
+import org.dromara.hodor.actuator.common.Job;
+import org.dromara.hodor.actuator.common.JobExecutionContext;
+import org.dromara.hodor.actuator.common.JobParameter;
+import org.dromara.hodor.actuator.common.exceptions.JobExecutionException;
+import org.dromara.hodor.actuator.common.executor.ExecutorManager;
+import org.dromara.hodor.actuator.java.core.ScheduledMethodRunnable;
+
 /**
  * JavaJob
  *
  * @author tomgs
  * @since 2021/11/23
  */
-public class JavaJob {
+public class JavaJob implements Job {
+
+    private final ScheduledMethodRunnable jobRunnable;
+
+    public JavaJob(final ScheduledMethodRunnable jobRunnable) {
+        this.jobRunnable = jobRunnable;
+    }
+
+    @Override
+    public Object execute(JobExecutionContext context) throws JobExecutionException {
+        //ScheduledMethodRunnable jobRunnable = jobRegistrar.getJobRunnable(request.getGroupName(), request.getJobName());
+        JobParameter jobInfo = context.getJobParameter();
+        if (jobRunnable == null) {
+            throw new IllegalArgumentException(String.format("not found job %s_%s.", jobInfo.getGroupName(), jobInfo.getJobName()));
+        }
+        if (jobRunnable.isHasArg()) {
+            jobRunnable.setArgs(context);
+        }
+
+        Object result;
+        try {
+            jobRunnable.run();
+            result = jobRunnable.getResult();
+        } catch (Exception e) {
+            throw new JobExecutionException(e);
+        } finally {
+            jobRunnable.refresh();
+        }
+        return result;
+    }
+
+    @Override
+    public void stop(JobExecutionContext context) {
+        JobParameter jobParameter = context.getJobParameter();
+        Thread runningThread = ExecutorManager.getInstance().getRunningThread(jobParameter.getRequestId());
+        if (runningThread == null) {
+            context.getJobLogger().info("not found running job {}#{}", jobParameter.getGroupName(), jobParameter.getJobName());
+            return;
+        }
+        runningThread.interrupt();
+    }
 
 }

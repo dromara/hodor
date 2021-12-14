@@ -11,7 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.actuator.common.JobExecutionContext;
 import org.dromara.hodor.actuator.common.JobRegistrar;
 import org.dromara.hodor.actuator.java.core.ScheduledMethodRunnable;
-import org.dromara.hodor.model.job.JobInstance;
+import org.dromara.hodor.actuator.common.core.JobInstance;
+import org.dromara.hodor.actuator.java.job.JavaJob;
+import org.dromara.hodor.model.job.JobDesc;
 import org.springframework.aop.framework.AopInfrastructureBean;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.support.AopUtils;
@@ -147,15 +149,19 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
         int timeout = job.timeout();
         String commandType = job.commandType();
 
-        JobInstance<ScheduledMethodRunnable> jobInstance = JobInstance.<ScheduledMethodRunnable>builder()
+        JobDesc jobDesc = JobDesc.builder()
             .groupName(groupName)
             .jobName(jobName)
-            .commandType(commandType)
+            .jobCommandType(commandType)
             .cron(cron)
             .fireNow(fireNow)
-            .broadcast(broadcast)
+            .isBroadcast(broadcast)
             .timeout(timeout)
-            .executeObj(runnable)
+            .build();
+
+        JobInstance jobInstance = JobInstance.builder()
+            .jobDesc(jobDesc)
+            .job(new JavaJob(runnable))
             .build();
 
         registrar.registerJob(jobInstance);

@@ -65,7 +65,7 @@ public class HodorSchedulerConfiguration {
 
     @Bean
     public RequestHandleManager requestHandleManger() {
-        return new RequestHandleManager(properties, ExecutorManager.getInstance(), ClientChannelManager.getInstance(), dbOperator());
+        return new RequestHandleManager(properties, ExecutorManager.getInstance(), ClientChannelManager.getInstance(), dbOperator(), jobRegistrar());
     }
 
     @Bean

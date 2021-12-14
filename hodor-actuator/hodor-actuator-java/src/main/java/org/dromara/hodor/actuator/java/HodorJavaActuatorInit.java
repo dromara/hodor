@@ -17,11 +17,11 @@ import org.springframework.boot.ApplicationRunner;
 @Slf4j
 public class HodorJavaActuatorInit implements ApplicationRunner {
 
-    private final JobRegistrar<ScheduledMethodRunnable> jobRegistrar;
+    private final JobRegistrar jobRegistrar;
 
     private final HodorActuatorManager actuatorManager;
 
-    public HodorJavaActuatorInit(final JobRegistrar<ScheduledMethodRunnable> jobRegistrar, final HodorActuatorManager actuatorManager) {
+    public HodorJavaActuatorInit(final JobRegistrar jobRegistrar, final HodorActuatorManager actuatorManager) {
         this.jobRegistrar = jobRegistrar;
         this.actuatorManager = actuatorManager;
     }

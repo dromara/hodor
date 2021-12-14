@@ -7,8 +7,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.actuator.common.HodorApiClient;
+import org.dromara.hodor.actuator.common.Job;
 import org.dromara.hodor.actuator.common.JobRegistrar;
-import org.dromara.hodor.model.job.JobInstance;
+import org.dromara.hodor.actuator.common.core.JobInstance;
+import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.model.job.JobKey;
 
 /**
@@ -22,9 +24,9 @@ public class JavaJobRegistrar implements JobRegistrar {
 
     private final HodorApiClient hodorApiClient;
 
-    private final Map<String, JobInstance> jobCache = new ConcurrentHashMap<>(32);
+    private final Map<JobKey, JobDesc> jobCache = new ConcurrentHashMap<>(32);
 
-    private final Map<String, ScheduledMethodRunnable> jobRunnableCache = new ConcurrentHashMap<>(32);
+    private final Map<JobKey, Job> runnableJobCache = new ConcurrentHashMap<>(32);
 
     private final Set<String> groupNames = new HashSet<>();
 
@@ -35,35 +37,30 @@ public class JavaJobRegistrar implements JobRegistrar {
     @Override
     public void registerJobs() throws Exception {
         log.info("register jobs.");
-        Collection<JobInstance> jobs = jobCache.values();
+        Collection<JobDesc> jobs = jobCache.values();
         hodorApiClient.registerJobs(jobs);
     }
 
     @Override
     public void registerJob(JobInstance jobInstance) {
-
+        addJob(jobInstance);
     }
 
     @Override
-    public JobInstance getJob(JobKey jobKey) {
-        return null;
+    public Job getRunnableJob(JobKey jobKey) {
+        return runnableJobCache.get(jobKey);
     }
 
-    public ScheduledMethodRunnable getJobRunnable(String groupName, String jobName) {
-        String jobKey = createJobKey(groupName, jobName);
-        return jobRunnableCache.get(jobKey);
-    }
+    public void addJob(JobInstance jobInstance) {
+        JobDesc jobDesc = jobInstance.getJobDesc();
+        Job runnableJob = jobInstance.getJob();
 
-    public void addJob(JobInstance jobInstance, ScheduledMethodRunnable runnable) {
         log.info("add job {}", jobInstance);
-        String jobKey = createJobKey(jobInstance.getGroupName(), jobInstance.getJobName());
-        groupNames.add(jobInstance.getGroupName());
-        jobCache.putIfAbsent(jobKey, jobInstance);
-        jobRunnableCache.putIfAbsent(jobKey, runnable);
-    }
 
-    private String createJobKey(String groupName, String jobName) {
-        return groupName + "-" + jobName;
+        JobKey jobKey = JobKey.of(jobDesc.getGroupName(), jobDesc.getJobName());
+        groupNames.add(jobDesc.getGroupName());
+        jobCache.putIfAbsent(jobKey, jobDesc);
+        runnableJobCache.putIfAbsent(jobKey, runnableJob);
     }
 
     @Override
@@ -74,7 +71,7 @@ public class JavaJobRegistrar implements JobRegistrar {
     @Override
     public void clear() {
         jobCache.clear();
-        jobRunnableCache.clear();
+        runnableJobCache.clear();
         groupNames.clear();
     }
 
