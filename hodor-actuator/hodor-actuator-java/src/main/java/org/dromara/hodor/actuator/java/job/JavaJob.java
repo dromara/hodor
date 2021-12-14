@@ -40,7 +40,6 @@ public class JavaJob implements Job {
 
     @Override
     public Object execute(JobExecutionContext context) throws JobExecutionException {
-        //ScheduledMethodRunnable jobRunnable = jobRegistrar.getJobRunnable(request.getGroupName(), request.getJobName());
         JobParameter jobInfo = context.getJobParameter();
         if (jobRunnable == null) {
             throw new IllegalArgumentException(String.format("not found job %s_%s.", jobInfo.getGroupName(), jobInfo.getJobName()));
