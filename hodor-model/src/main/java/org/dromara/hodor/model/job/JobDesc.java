@@ -1,11 +1,17 @@
 package org.dromara.hodor.model.job;
 
 import java.util.Date;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.dromara.hodor.model.enums.JobType;
 import org.dromara.hodor.model.enums.Priority;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class JobDesc {
 
   private Long id;

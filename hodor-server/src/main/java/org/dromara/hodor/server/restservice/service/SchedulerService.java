@@ -18,7 +18,7 @@ import org.dromara.hodor.model.common.HodorResult;
 import org.dromara.hodor.model.enums.JobStatus;
 import org.dromara.hodor.model.enums.JobType;
 import org.dromara.hodor.model.enums.Priority;
-import org.dromara.hodor.model.job.JobInstance;
+import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.model.scheduler.CopySet;
 import org.dromara.hodor.model.scheduler.DataInterval;
@@ -123,8 +123,8 @@ public class SchedulerService {
     }
 
     @RestMethod("batchCreateJob")
-    public HodorResult<String> batchCreateJob(List<JobInstance> jobs) {
-        for (JobInstance jobInstance : jobs) {
+    public HodorResult<String> batchCreateJob(List<JobDesc> jobs) {
+        for (JobDesc jobInstance : jobs) {
             JobInfo jobInfo = convertJobInfo(jobInstance);
             if (!jobInfoService.isRunningJob(jobInfo)) {
                 createJob(jobInfo);
@@ -201,17 +201,17 @@ public class SchedulerService {
         registryService.createJobEvent(Event.create("", EventType.JOB_CREATE_DISTRIBUTE));
     }
 
-    private JobInfo convertJobInfo(JobInstance job) {
+    private JobInfo convertJobInfo(JobDesc job) {
         JobInfo jobInfo = new JobInfo();
         jobInfo.setHashId(HashUtils.hash(job.getGroupName() + job.getJobName()));
         jobInfo.setGroupName(job.getGroupName());
         jobInfo.setJobName(job.getJobName());
-        jobInfo.setJobCommandType(job.getCommandType());
+        jobInfo.setJobCommandType(job.getJobCommandType());
         jobInfo.setJobStatus(JobStatus.READY);
         jobInfo.setCron(job.getCron());
         jobInfo.setTimeout(job.getTimeout());
-        jobInfo.setFireNow(job.isFireNow());
-        jobInfo.setIsBroadcast(job.isBroadcast());
+        jobInfo.setFireNow(job.getFireNow());
+        jobInfo.setIsBroadcast(job.getIsBroadcast());
         jobInfo.setJobType(JobType.TIME_JOB);
         jobInfo.setPriority(Priority.DEFAULT);
         return jobInfo;
