@@ -8,7 +8,7 @@ import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.model.enums.Priority;
-import org.dromara.hodor.model.job.JobInstance;
+import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.remoting.api.http.HodorHttpRequest;
 import org.dromara.hodor.remoting.api.http.HodorHttpResponse;
@@ -50,7 +50,7 @@ public class SchedulerServiceTest {
 
     @Test
     public void testBatchCreateJob() {
-        List<JobInstance> jobs = new ArrayList<>();
+        List<JobDesc> jobs = new ArrayList<>();
 
     }
 
