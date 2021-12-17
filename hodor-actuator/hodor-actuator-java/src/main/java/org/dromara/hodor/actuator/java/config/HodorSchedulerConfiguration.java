@@ -3,7 +3,6 @@ package org.dromara.hodor.actuator.java.config;
 import org.dromara.hodor.actuator.common.HodorActuatorManager;
 import org.dromara.hodor.actuator.common.HodorApiClient;
 import org.dromara.hodor.actuator.common.JobRegistrar;
-import org.dromara.hodor.actuator.common.config.HodorProperties;
 import org.dromara.hodor.actuator.common.core.NodeManager;
 import org.dromara.hodor.actuator.common.executor.ClientChannelManager;
 import org.dromara.hodor.actuator.common.executor.ExecutorManager;
@@ -33,10 +32,10 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(HodorActuatorJavaProperties.class)
 public class HodorSchedulerConfiguration {
 
-    private final HodorProperties properties;
+    private final HodorActuatorJavaProperties properties;
 
     public HodorSchedulerConfiguration(final HodorActuatorJavaProperties hodorActuatorJavaProperties, final ApplicationContext applicationContext) {
-        this.properties = hodorActuatorJavaProperties.getProperties();
+        this.properties = hodorActuatorJavaProperties;
         ServiceProvider.getInstance().setApplicationContext(applicationContext);
     }
 
@@ -47,7 +46,7 @@ public class HodorSchedulerConfiguration {
 
     @Bean
     public HodorApiClient hodorApiClient() {
-        return new HodorApiClient(properties);
+        return new HodorApiClient(properties.getCommonProperties());
     }
 
     @Bean
@@ -57,7 +56,7 @@ public class HodorSchedulerConfiguration {
 
     @Bean
     public DBOperator dbOperator() {
-        DataSourceConfig dataSourceConfig = properties.getDataSourceConfig();
+        DataSourceConfig dataSourceConfig = properties.getCommonProperties().getDataSourceConfig();
         HodorDataSource datasource = ExtensionLoader.getExtensionLoader(HodorDataSource.class, DataSourceConfig.class)
             .getProtoJoin("datasource", dataSourceConfig);
         return new DBOperator(datasource.getDataSource());
@@ -65,7 +64,7 @@ public class HodorSchedulerConfiguration {
 
     @Bean
     public RequestHandleManager requestHandleManger() {
-        return new RequestHandleManager(properties, ExecutorManager.getInstance(), ClientChannelManager.getInstance(), dbOperator(), jobRegistrar());
+        return new RequestHandleManager(properties.getCommonProperties(), ExecutorManager.getInstance(), ClientChannelManager.getInstance(), dbOperator(), jobRegistrar());
     }
 
     @Bean
@@ -80,12 +79,12 @@ public class HodorSchedulerConfiguration {
 
     @Bean
     public NodeManager nodeManager() {
-        return new NodeManager(properties, ExecutorManager.getInstance());
+        return new NodeManager(properties.getCommonProperties(), ExecutorManager.getInstance());
     }
 
     @Bean
     public HodorActuatorManager hodorActuatorManager() {
-        return new HodorActuatorManager(dbOperator(), requestHandleManger(), null, properties, hodorApiClient(), nodeManager(), jobRegistrar());
+        return new HodorActuatorManager(dbOperator(), requestHandleManger(), remotingMessageSerializer(), properties.getCommonProperties(), hodorApiClient(), nodeManager(), jobRegistrar());
     }
 
     @Bean

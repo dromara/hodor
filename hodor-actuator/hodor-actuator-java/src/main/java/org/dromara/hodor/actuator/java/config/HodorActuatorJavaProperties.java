@@ -17,6 +17,7 @@
 
 package org.dromara.hodor.actuator.java.config;
 
+import java.util.Map;
 import lombok.Data;
 import org.dromara.hodor.actuator.common.config.HodorProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -34,7 +35,13 @@ public class HodorActuatorJavaProperties {
     /**
      * common properties
      */
-    private HodorProperties properties;
+    private HodorProperties commons;
 
+    // TODO: add actuator java properties
+    private Map<String, Object> java;
+
+    public HodorProperties getCommonProperties() {
+        return this.commons;
+    }
 
 }
