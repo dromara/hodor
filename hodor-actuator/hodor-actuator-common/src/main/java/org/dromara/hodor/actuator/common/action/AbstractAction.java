@@ -1,5 +1,6 @@
 package org.dromara.hodor.actuator.common.action;
 
+import cn.hutool.core.lang.Assert;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.actuator.common.executor.RequestHandleManager;
 import org.dromara.hodor.common.executor.HodorRunnable;
@@ -26,6 +27,10 @@ public abstract class AbstractAction<I extends RequestBody, O extends ResponseBo
     private final RequestHandleManager requestHandleManager;
 
     public AbstractAction(final RequestContext context, final RequestHandleManager requestHandleManager) {
+        Assert.notNull(context, "context must be not null.");
+        Assert.notNull(context.serializer(), "serializer must be not null.");
+        Assert.notNull(requestHandleManager, "requestHandleManager must be not null.");
+
         this.context = context;
         this.serializer = context.serializer();
         this.requestHandleManager = requestHandleManager;
