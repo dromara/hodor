@@ -25,6 +25,7 @@ public class FlowJobExecDetailServiceImpl implements FlowJobExecDetailService {
 
     @Override
     public void createFlowJobExecDetail(FlowJobExecDetail flowJobExecDetail) {
+        // TODO: 数据重复校验
         flowJobExecDetailMapper.insert(flowJobExecDetail);
     }
 
