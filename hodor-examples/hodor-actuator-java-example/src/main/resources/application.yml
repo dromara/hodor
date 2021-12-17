@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: hodor-actuator-java-demo
+server:
+  port: 8088
+
+hodor:
+  commons:
+    appName: hodor-client
+    appKey: 1234567
+    registryAddress: http://localhost:8081,localhost:8082,localhost:8083/hodor
+    queueSize: 5000
+    poolSize: 500
+    rootJobLogPath: E:\\data\\hodor-scheudler\\logs
+    dataSourceConfig:
+      dataSourceClassName: org.h2.jdbcx.JdbcDataSource
+      url: jdbc:h2:file:E:\\data\\hodor-scheudler\\db_hodor;IGNORECASE=TRUE;AUTO_SERVER=TRUE
+      # url: jdbc:h2:tcp://localhost:9090/E:\\data\\hodor-scheudler\\db_hodor;IGNORECASE=TRUE
+      username: test
+      password: test
+      dataSourceProperties:
+        minimumIdle: 4
+        maximumPoolSize: 16
+  java:
+    supportType: [java]
+

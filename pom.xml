@@ -17,7 +17,7 @@
         <module>hodor-admin</module>
         <module>hodor-server</module>
         <module>hodor-scheduler</module>
-        <module>hodor-client-demo</module>
+        <module>hodor-examples</module>
         <module>hodor-model</module>
         <module>hodor-extension</module>
         <module>hodor-actuator</module>
@@ -93,6 +93,18 @@
             <dependency>
                 <groupId>org.dromara</groupId>
                 <artifactId>hodor-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>hodor-actuator-java</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>hodor-actuator-bigdata</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
