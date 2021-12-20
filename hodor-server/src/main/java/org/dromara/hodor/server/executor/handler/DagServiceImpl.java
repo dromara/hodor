@@ -116,10 +116,10 @@ public class DagServiceImpl implements DagService {
     @Override
     public void createDagInstance(JobKey jobKey, Dag dagInstance) {
         LockUtil.lockMethod(dagInstanceLock, (key, dag) -> {
-            dagCacheClient.put(jobKey, dagInstance);
             FlowJobExecDetail flowJobExecDetail = buildFlowJobExecDetail(dagInstance);
             flowJobExecDetail.setExecuteStart(new Date());
             flowJobExecDetailService.createFlowJobExecDetail(flowJobExecDetail);
+            dagCacheClient.put(jobKey, dagInstance);
             return null;
         }, jobKey, dagInstance);
     }

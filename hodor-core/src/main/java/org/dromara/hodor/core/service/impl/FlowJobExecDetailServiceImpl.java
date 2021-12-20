@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.dag.Status;
+import org.dromara.hodor.common.exception.KeyAlreadyExistsException;
+import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.core.entity.FlowJobExecDetail;
 import org.dromara.hodor.core.mapper.FlowJobExecDetailMapper;
 import org.dromara.hodor.core.service.FlowJobExecDetailService;
@@ -25,7 +27,15 @@ public class FlowJobExecDetailServiceImpl implements FlowJobExecDetailService {
 
     @Override
     public void createFlowJobExecDetail(FlowJobExecDetail flowJobExecDetail) {
-        // TODO: 数据重复校验
+        Integer count = flowJobExecDetailMapper.selectCount(Wrappers.<FlowJobExecDetail>lambdaQuery()
+            .eq(FlowJobExecDetail::getGroupName, flowJobExecDetail.getGroupName())
+            .eq(FlowJobExecDetail::getJobName, flowJobExecDetail.getJobName())
+            .eq(FlowJobExecDetail::getStatus, Status.RUNNING));
+        if (count > 0) {
+            throw new KeyAlreadyExistsException(StringUtils.format("create job instance exception, job {} has running already.",
+                JobKey.of(flowJobExecDetail.getGroupName(), flowJobExecDetail.getJobName())));
+        }
+
         flowJobExecDetailMapper.insert(flowJobExecDetail);
     }
 
