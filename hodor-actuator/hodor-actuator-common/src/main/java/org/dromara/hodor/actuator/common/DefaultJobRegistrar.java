@@ -1,14 +1,12 @@
-package org.dromara.hodor.actuator.java.core;
+package org.dromara.hodor.actuator.common;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.actuator.common.HodorApiClient;
-import org.dromara.hodor.actuator.common.Job;
-import org.dromara.hodor.actuator.common.JobRegistrar;
 import org.dromara.hodor.actuator.common.core.JobInstance;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.model.job.JobKey;
@@ -20,9 +18,7 @@ import org.dromara.hodor.model.job.JobKey;
  * @since 2021/1/4
  */
 @Slf4j
-public class JavaJobRegistrar implements JobRegistrar {
-
-    private final HodorApiClient hodorApiClient;
+public class DefaultJobRegistrar implements JobRegistrar {
 
     private final Map<JobKey, JobDesc> jobCache = new ConcurrentHashMap<>(32);
 
@@ -30,15 +26,13 @@ public class JavaJobRegistrar implements JobRegistrar {
 
     private final Set<String> groupNames = new HashSet<>();
 
-    public JavaJobRegistrar(final HodorApiClient hodorApiClient) {
-        this.hodorApiClient = hodorApiClient;
+    public DefaultJobRegistrar() {
     }
 
     @Override
-    public void registerJobs() throws Exception {
+    public List<JobDesc> registerJobs() {
         log.info("register jobs.");
-        Collection<JobDesc> jobs = jobCache.values();
-        hodorApiClient.registerJobs(jobs);
+        return new ArrayList<>(jobCache.values());
     }
 
     @Override

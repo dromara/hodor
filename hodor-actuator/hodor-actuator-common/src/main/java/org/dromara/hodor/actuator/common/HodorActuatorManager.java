@@ -1,5 +1,6 @@
 package org.dromara.hodor.actuator.common;
 
+import cn.hutool.core.lang.Assert;
 import java.sql.SQLException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -8,11 +9,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.actuator.common.config.HodorProperties;
 import org.dromara.hodor.actuator.common.core.HodorDatabaseSetup;
 import org.dromara.hodor.actuator.common.core.NodeManager;
+import org.dromara.hodor.actuator.common.executor.ClientChannelManager;
+import org.dromara.hodor.actuator.common.executor.ExecutorManager;
 import org.dromara.hodor.actuator.common.executor.ExecutorServer;
 import org.dromara.hodor.actuator.common.executor.MsgSender;
 import org.dromara.hodor.actuator.common.executor.RequestHandleManager;
 import org.dromara.hodor.common.concurrent.HodorThreadFactory;
+import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.storage.db.DBOperator;
+import org.dromara.hodor.common.storage.db.DataSourceConfig;
+import org.dromara.hodor.common.storage.db.HodorDataSource;
 import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
 
 /**
@@ -26,28 +32,57 @@ public class HodorActuatorManager {
 
     private final String interval;
 
-    private final ExecutorServer executorServer;
+    private ExecutorServer executorServer;
 
-    private final MsgSender msgSender;
+    private final JobRegistrar jobRegistrar;
 
-    private final ScheduledThreadPoolExecutor heartbeatSenderService;
+    private final HodorProperties properties;
 
-    private final HodorDatabaseSetup hodorDatabaseSetup;
+    private final RequestHandleManager requestHandleManager;
 
-    public HodorActuatorManager(final DBOperator dbOperator,
-                                final RequestHandleManager requestHandleManager,
-                                final RemotingMessageSerializer remotingMessageSerializer,
-                                final HodorProperties properties,
-                                final HodorApiClient hodorApiClient,
-                                final NodeManager nodeManager,
+    private final RemotingMessageSerializer remotingMessageSerializer;
+
+    private final HodorApiClient hodorApiClient;
+
+    private final DBOperator dbOperator;
+
+    private MsgSender msgSender;
+
+    private ScheduledThreadPoolExecutor heartbeatSenderService;
+
+    private HodorDatabaseSetup hodorDatabaseSetup;
+
+    public HodorActuatorManager(final HodorProperties properties,
                                 final JobRegistrar jobRegistrar) {
+        Assert.notNull(properties, "properties is required; it must not be null");
+        Assert.notNull(jobRegistrar, "jobRegistrar is required; it must not be null");
+
         this.interval = System.getProperty("hodor.heartbeat.interval", "5000");
+        this.properties = properties;
+        this.jobRegistrar = jobRegistrar;
+        this.dbOperator = dbOperator();
+        this.hodorApiClient = new HodorApiClient(properties);
+        this.requestHandleManager = new RequestHandleManager(properties, ExecutorManager.getInstance(),
+            ClientChannelManager.getInstance(), dbOperator, jobRegistrar);
+        this.remotingMessageSerializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
+        init();
+    }
+
+    private void init() {
+        final NodeManager nodeManager = new NodeManager(properties, ExecutorManager.getInstance());
         this.executorServer = new ExecutorServer(requestHandleManager, remotingMessageSerializer, properties);
         this.msgSender = new MsgSender(hodorApiClient, nodeManager, jobRegistrar);
+        this.hodorDatabaseSetup = new HodorDatabaseSetup(dbOperator);
         this.heartbeatSenderService = new ScheduledThreadPoolExecutor(2,
             HodorThreadFactory.create("hodor-heartbeat-sender", true),
             new ThreadPoolExecutor.DiscardOldestPolicy());
-        this.hodorDatabaseSetup = new HodorDatabaseSetup(dbOperator);
+    }
+
+    private DBOperator dbOperator() {
+        DataSourceConfig dataSourceConfig = properties.getDataSourceConfig();
+        HodorDataSource datasource = ExtensionLoader.getExtensionLoader(HodorDataSource.class, DataSourceConfig.class)
+            .getProtoJoin("datasource", dataSourceConfig);
+        return new DBOperator(datasource.getDataSource());
     }
 
     public void start() throws Exception {
@@ -66,8 +101,16 @@ public class HodorActuatorManager {
         log.info("HodorClient starting heartbeat sender server...");
         startHeartbeatSender();
 
+        // start register jobs after executor server start success
+        log.info("HodorClient starting register jobs...");
+        registerJobs();
+
         // add close shutdown hook
         Runtime.getRuntime().addShutdownHook(new Thread(this::close));
+    }
+
+    public void registerJobs() throws Exception {
+        hodorApiClient.registerJobs(jobRegistrar.registerJobs());
     }
 
     private void initHodorClientData() throws SQLException {
@@ -101,6 +144,7 @@ public class HodorActuatorManager {
         // 关闭相应服务
         executorServer.close();
         heartbeatSenderService.shutdown();
+        jobRegistrar.clear();
     }
 
 }

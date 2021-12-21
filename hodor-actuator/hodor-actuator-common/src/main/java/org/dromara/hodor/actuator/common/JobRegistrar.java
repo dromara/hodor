@@ -17,8 +17,10 @@
 
 package org.dromara.hodor.actuator.common;
 
+import java.util.List;
 import java.util.Set;
 import org.dromara.hodor.actuator.common.core.JobInstance;
+import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.model.job.JobKey;
 
 /**
@@ -34,7 +36,7 @@ public interface JobRegistrar {
      *
      * @throws Exception 任务注册异常
      */
-    void registerJobs() throws Exception;
+    List<JobDesc> registerJobs() throws Exception;
 
     /**
      * register job
