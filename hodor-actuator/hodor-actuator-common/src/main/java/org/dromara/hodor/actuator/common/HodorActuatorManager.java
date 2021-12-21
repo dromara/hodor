@@ -62,8 +62,8 @@ public class HodorActuatorManager {
         this.jobRegistrar = jobRegistrar;
         this.dbOperator = dbOperator();
         this.hodorApiClient = new HodorApiClient(properties);
-        this.requestHandleManager = new RequestHandleManager(properties, ExecutorManager.getInstance(),
-            ClientChannelManager.getInstance(), dbOperator, jobRegistrar);
+        this.requestHandleManager = new RequestHandleManager(properties, jobRegistrar, ExecutorManager.getInstance(),
+            ClientChannelManager.getInstance(), dbOperator);
         this.remotingMessageSerializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
         init();
     }

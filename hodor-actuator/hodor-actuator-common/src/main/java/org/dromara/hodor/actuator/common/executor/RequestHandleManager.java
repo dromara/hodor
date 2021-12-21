@@ -43,15 +43,15 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
     private final JobRegistrar jobRegistrar;
 
     public RequestHandleManager(final HodorProperties properties,
+                                final JobRegistrar jobRegistrar,
                                 final ExecutorManager executorManager,
                                 final ClientChannelManager clientChannelManager,
-                                final DBOperator dbOperator,
-                                final JobRegistrar jobRegistrar) {
+                                final DBOperator dbOperator) {
         this.properties = properties;
+        this.jobRegistrar = jobRegistrar;
         this.executorManager = executorManager;
         this.clientChannelManager = clientChannelManager;
         this.jobExecutionPersistence = new JobExecutionPersistence(dbOperator);
-        this.jobRegistrar = jobRegistrar;
         this.failureRequestHandleManager = new FailureRequestHandleManager(clientChannelManager, executorManager, dbOperator);
     }
 
