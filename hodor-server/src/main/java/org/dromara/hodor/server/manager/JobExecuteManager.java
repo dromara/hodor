@@ -182,11 +182,10 @@ public class JobExecuteManager {
         try {
             RemotingMessage remotingMessage = RemotingClient.getInstance().sendSyncRequest(host, remotingRequest, 1500);
             RemotingResponse<R> remotingResponse = serializer.deserialize(remotingMessage.getBody(), typeReference.getType());
-            if (remotingResponse.isSuccess()) {
-                return remotingResponse.getData();
-            } else {
+            if (!remotingResponse.isSuccess()) {
                 log.error("request failure, code: {}, msg: {}", remotingResponse.getCode(), remotingResponse.getMsg());
             }
+            return remotingResponse.getData();
         } catch (Exception e) {
             log.error("execute request error, messageType: {}, errorMsg: {}", messageType, e.getMessage(), e);
         }
