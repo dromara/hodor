@@ -84,7 +84,7 @@ public class JobExecuteManager {
         if (JobExecuteStatus.isFinished(statusResponse.getStatus())) {
             removeRunningJob(jobKey);
         }
-        return statusResponse.getStatus() == JobExecuteStatus.RUNNING;
+        return JobExecuteStatus.isRunning(statusResponse.getStatus());
     }
 
     public void removeRunningJob(JobKey jobKey) {
