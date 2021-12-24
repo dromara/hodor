@@ -54,11 +54,21 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
         return INSTANCE;
     }
 
+    /**
+     * 启动Dag
+     *
+     * @param dag Dag实例
+     */
     public void startDag(Dag dag) {
         Assert.notNull(dag, "dag instance must be not null.");
         dag.getFirstLayer().ifPresent(this::submitLayerNode);
     }
 
+    /**
+     * 停止Dag
+     *
+     * @param dag Dag实例
+     */
     public void killDag(Dag dag) {
         Assert.notNull(dag, "dag instance must be not null.");
         for (NodeLayer nodeLayer : dag.getNodeLayers()) {
@@ -73,6 +83,16 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
                 }
             }
         }
+    }
+
+    /**
+     * 更新Dag状态
+     *
+     * @param dag Dag实例
+     */
+    public void updateDagStatus(Dag dag) {
+        Assert.notNull(dag, "dag instance must be not null.");
+        dagService.updateDagStatus(dag);
     }
 
     public void submitLayerNode(NodeLayer nodeLayer) {
@@ -148,7 +168,7 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
             // all layer success
             if (dag.isLastLayer(layer)) {
                 log.info("DAG {} execute FINISHED.", dag);
-                dagService.updateDagStatus(dag);
+                updateDagStatus(dag);
             } else {
                 // submit next layer node
                 submitLayerNode(dag.getLayer(layer + 1));
@@ -203,7 +223,7 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
                     dag.setStatus(Status.KILLED);
                 }
                 dag.changeStatus(nodeLayer.getStatus());
-                dagService.updateDagStatus(dag);
+                updateDagStatus(dag);
             }
         }, Status.KILLED);
     }

@@ -60,7 +60,16 @@ public class FlowJobExecutor extends CommonJobExecutor {
         if (dag == null) {
             return false;
         }
-        return !dag.getStatus().isTerminal();
+        if (dag.getStatus().isTerminal()) {
+            return false;
+        }
+        // check dag status
+        dag.updateDagStatus();
+        if (dag.getStatus().isTerminal()) {
+            flowJobExecutorManager.updateDagStatus(dag);
+            return false;
+        }
+        return true;
     }
 
     private void submitDagInstance(Dag dag) {
