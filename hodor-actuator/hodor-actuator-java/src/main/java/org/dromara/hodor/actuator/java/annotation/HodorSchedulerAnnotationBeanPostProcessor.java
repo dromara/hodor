@@ -161,7 +161,7 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
 
         JobInstance jobInstance = JobInstance.builder()
             .jobDesc(jobDesc)
-            .job(new JavaJob(runnable))
+            .jobRunnable(new JavaJob(runnable))
             .build();
 
         registrar.registerJob(jobInstance);

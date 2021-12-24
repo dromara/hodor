@@ -25,7 +25,7 @@ import org.dromara.hodor.actuator.common.exceptions.JobExecutionException;
  * @author tomgs
  * @since 2021/11/23
  */
-public interface Job {
+public interface JobRunnable {
 
     /**
      * 执行任务

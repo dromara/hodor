@@ -2,7 +2,7 @@ package org.dromara.hodor.actuator.common.action;
 
 import cn.hutool.core.date.DateUtil;
 import java.util.Date;
-import org.dromara.hodor.actuator.common.Job;
+import org.dromara.hodor.actuator.common.JobRunnable;
 import org.dromara.hodor.actuator.common.JobExecutionContext;
 import org.dromara.hodor.actuator.common.JobParameter;
 import org.dromara.hodor.actuator.common.JobRegistrar;
@@ -38,7 +38,7 @@ public class JobExecuteAction extends AbstractExecuteAction {
     @Override
     public JobExecuteResponse executeRequest0(final JobExecuteRequest request) throws Exception {
         JobKey jobKey = JobKey.of(request.getGroupName(), request.getJobName());
-        Job runnableJob = jobRegistrar.getRunnableJob(jobKey);
+        JobRunnable runnableJob = jobRegistrar.getRunnableJob(jobKey);
         if (runnableJob == null) {
             throw new JobExecutionException(String.format("not found job %s", jobKey));
         }

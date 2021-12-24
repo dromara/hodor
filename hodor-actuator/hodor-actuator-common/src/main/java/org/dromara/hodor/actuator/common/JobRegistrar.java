@@ -51,7 +51,7 @@ public interface JobRegistrar {
      * @param jobKey job key
      * @return runnable job
      */
-    Job getRunnableJob(JobKey jobKey);
+    JobRunnable getRunnableJob(JobKey jobKey);
 
     /**
      * get group name set

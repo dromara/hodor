@@ -17,7 +17,7 @@
 
 package org.dromara.hodor.actuator.java.job;
 
-import org.dromara.hodor.actuator.common.Job;
+import org.dromara.hodor.actuator.common.JobRunnable;
 import org.dromara.hodor.actuator.common.JobExecutionContext;
 import org.dromara.hodor.actuator.common.JobParameter;
 import org.dromara.hodor.actuator.common.exceptions.JobExecutionException;
@@ -30,7 +30,7 @@ import org.dromara.hodor.actuator.java.core.ScheduledMethodRunnable;
  * @author tomgs
  * @since 2021/11/23
  */
-public class JavaJob implements Job {
+public class JavaJob implements JobRunnable {
 
     private final ScheduledMethodRunnable jobRunnable;
 
