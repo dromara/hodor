@@ -1,5 +1,8 @@
 package org.dromara.hodor.scheduler.api;
 
+import org.dromara.hodor.common.executor.HodorExecutor;
+import org.dromara.hodor.common.executor.HodorExecutorFactory;
+import org.dromara.hodor.common.executor.HodorRunnable;
 import org.dromara.hodor.scheduler.api.exception.HodorSchedulerException;
 
 /**
@@ -10,14 +13,23 @@ import org.dromara.hodor.scheduler.api.exception.HodorSchedulerException;
  */
 public abstract class AbstractJobExecutor implements JobExecutor {
 
+    private final HodorExecutor hodorExecutor;
+
+    public AbstractJobExecutor() {
+        final int threadSize = Runtime.getRuntime().availableProcessors() * 2;
+        this.hodorExecutor = HodorExecutorFactory.createDefaultExecutor("scheduler-exec", threadSize, false);
+    }
+
     @Override
     public void execute(HodorJobExecutionContext context) {
         try {
-            // 生成任务调度id
-            // 生成调度开始时间
-            process(context);
+            hodorExecutor.serialExecute(new HodorRunnable() {
+                @Override
+                public void execute() {
+                    process(context);
+                }
+            });
         } catch (Exception e) {
-            // 调度处理异常
             throw new HodorSchedulerException(e);
         }
     }
