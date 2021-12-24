@@ -37,10 +37,9 @@ public class JobExecuteAction extends AbstractExecuteAction {
 
     @Override
     public JobExecuteResponse executeRequest0(final JobExecuteRequest request) throws Exception {
-        JobKey jobKey = JobKey.of(request.getGroupName(), request.getJobName());
-        JobRunnable runnableJob = jobRegistrar.getRunnableJob(jobKey);
+        JobRunnable runnableJob = jobRegistrar.getRunnableJob(request);
         if (runnableJob == null) {
-            throw new JobExecutionException(String.format("not found job %s", jobKey));
+            throw new JobExecutionException(String.format("not found job %s", JobKey.of(request.getGroupName(), request.getJobName())));
         }
 
         final JobParameter jobParameter = new JobParameter(request.getGroupName(), request.getJobName(), request.getRequestId(),

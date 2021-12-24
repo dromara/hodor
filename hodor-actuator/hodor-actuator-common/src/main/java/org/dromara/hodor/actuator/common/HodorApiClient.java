@@ -1,5 +1,6 @@
 package org.dromara.hodor.actuator.common;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.http.HttpUtil;
 import java.util.Collection;
 import lombok.extern.slf4j.Slf4j;
@@ -34,13 +35,16 @@ public class HodorApiClient {
     }
 
     public void registerJobs(Collection<JobDesc> jobs) throws Exception {
+        if (CollectionUtil.isEmpty(jobs)) {
+            return;
+        }
         String result = TrySender.send(connectStringParser, (url) -> HttpUtil.createPost( url + "/scheduler/batchCreateJob")
             .body(gsonUtils.toJson(jobs))
             .header("appName", appName)
             .header("appKey", appKey)
             .execute()
             .body());
-        log.debug("Register jobs result: {}", result);
+        log.info("Register jobs result: {}", result);
     }
 
     public void sendHeartbeat(ActuatorInfo actuatorInfo) throws Exception {
@@ -60,7 +64,7 @@ public class HodorApiClient {
             .header("appKey", appKey)
             .execute()
             .body());
-        log.debug("Send Offline result: {}", result);
+        log.info("Send Offline result: {}", result);
     }
 
 }

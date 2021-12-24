@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Set;
 import org.dromara.hodor.actuator.common.core.JobInstance;
 import org.dromara.hodor.model.job.JobDesc;
-import org.dromara.hodor.model.job.JobKey;
+import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 
 /**
  * JobRegistrar
@@ -30,6 +30,13 @@ import org.dromara.hodor.model.job.JobKey;
  * @since 2021/11/23
  */
 public interface JobRegistrar {
+
+    /**
+     * supported group name set
+     *
+     * @return groupName set
+     */
+    Set<String> supportedGroupNames();
 
     /**
      * 任务注册
@@ -46,19 +53,13 @@ public interface JobRegistrar {
     void registerJob(JobInstance jobInstance);
 
     /**
-     * get runnable job by job key
+     * get runnable job by job execute request
      *
-     * @param jobKey job key
+     * @param request job key
      * @return runnable job
      */
-    JobRunnable getRunnableJob(JobKey jobKey);
+    JobRunnable getRunnableJob(JobExecuteRequest request);
 
-    /**
-     * get group name set
-     *
-     * @return groupName set
-     */
-    Set<String> getGroupNames();
 
     /**
      * clear register jobs cache

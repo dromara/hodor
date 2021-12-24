@@ -39,7 +39,7 @@ public class MsgSender {
 
     private ActuatorInfo getActuatorInfo() {
         NodeInfo nodeInfo = nodeManager.getNodeInfo();
-        Set<String> groupNames = jobRegistrar.getGroupNames();
+        Set<String> groupNames = jobRegistrar.supportedGroupNames();
         ActuatorInfo actuatorInfo = new ActuatorInfo();
         actuatorInfo.setNodeInfo(nodeInfo);
         actuatorInfo.setGroupNames(groupNames);
