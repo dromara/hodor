@@ -60,7 +60,6 @@ public interface JobRegistrar {
      */
     JobRunnable getRunnableJob(JobExecuteRequest request);
 
-
     /**
      * clear register jobs cache
      */
