@@ -5,10 +5,10 @@ import java.util.Collection;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.client.config.HodorProperties;
 import org.dromara.hodor.client.core.ConnectStringParser;
+import org.dromara.hodor.client.core.JobInstance;
 import org.dromara.hodor.client.core.TrySender;
 import org.dromara.hodor.common.utils.GsonUtils;
 import org.dromara.hodor.model.actuator.ActuatorInfo;
-import org.dromara.hodor.model.job.JobInstance;
 
 /**
  * hodor api client

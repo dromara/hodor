@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.model.job.JobInstance;
+import org.dromara.hodor.client.core.JobInstance;
 import org.dromara.hodor.client.core.ScheduledMethodRunnable;
 
 /**
