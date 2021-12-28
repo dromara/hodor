@@ -1,8 +1,8 @@
 package org.dromara.hodor.actuator.java.config;
 
-import org.dromara.hodor.actuator.common.DefaultJobRegistrar;
+import org.dromara.hodor.actuator.common.DefaultJobRegister;
 import org.dromara.hodor.actuator.common.HodorActuatorManager;
-import org.dromara.hodor.actuator.common.JobRegistrar;
+import org.dromara.hodor.actuator.common.JobRegister;
 import org.dromara.hodor.actuator.java.HodorJavaActuatorInit;
 import org.dromara.hodor.actuator.java.ServiceProvider;
 import org.dromara.hodor.actuator.java.annotation.HodorSchedulerAnnotationBeanPostProcessor;
@@ -29,8 +29,8 @@ public class HodorSchedulerConfiguration {
     }
 
     @Bean
-    public JobRegistrar jobRegistrar() {
-        return new DefaultJobRegistrar();
+    public JobRegister jobRegistrar() {
+        return new DefaultJobRegister();
     }
 
     @Bean

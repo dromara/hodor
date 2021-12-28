@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.actuator.common.JobExecutionContext;
-import org.dromara.hodor.actuator.common.JobRegistrar;
+import org.dromara.hodor.actuator.common.JobRegister;
 import org.dromara.hodor.actuator.java.core.ScheduledMethodRunnable;
 import org.dromara.hodor.actuator.common.core.JobInstance;
 import org.dromara.hodor.actuator.java.job.JavaJob;
@@ -44,14 +44,14 @@ import org.springframework.util.StringValueResolver;
 @Slf4j
 public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProcessor, EmbeddedValueResolverAware {
 
-    private final JobRegistrar registrar;
+    private final JobRegister registrar;
 
     @Nullable
     private StringValueResolver embeddedValueResolver;
 
     private final Set<Class<?>> nonAnnotatedClasses = Collections.newSetFromMap(new ConcurrentHashMap<>(64));
 
-    public HodorSchedulerAnnotationBeanPostProcessor(final JobRegistrar registrar) {
+    public HodorSchedulerAnnotationBeanPostProcessor(final JobRegister registrar) {
         Assert.notNull(registrar, "JobRegistrar must be not null.");
         this.registrar = registrar;
     }

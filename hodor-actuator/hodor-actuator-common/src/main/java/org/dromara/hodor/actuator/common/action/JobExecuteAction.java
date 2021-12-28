@@ -2,10 +2,10 @@ package org.dromara.hodor.actuator.common.action;
 
 import cn.hutool.core.date.DateUtil;
 import java.util.Date;
+import org.dromara.hodor.actuator.common.JobRegister;
 import org.dromara.hodor.actuator.common.JobRunnable;
 import org.dromara.hodor.actuator.common.JobExecutionContext;
 import org.dromara.hodor.actuator.common.JobParameter;
-import org.dromara.hodor.actuator.common.JobRegistrar;
 import org.dromara.hodor.actuator.common.config.HodorProperties;
 import org.dromara.hodor.actuator.common.exceptions.JobExecutionException;
 import org.dromara.hodor.actuator.common.executor.JobExecutionPersistence;
@@ -24,20 +24,20 @@ import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
  */
 public class JobExecuteAction extends AbstractExecuteAction {
 
-    private final JobRegistrar jobRegistrar;
+    private final JobRegister jobRegister;
 
     public JobExecuteAction(final RequestContext context,
                             final HodorProperties properties,
                             final JobExecutionPersistence jobExecutionPersistence,
-                            final JobRegistrar jobRegistrar,
+                            final JobRegister jobRegister,
                             final RequestHandleManager requestHandleManager) {
         super(context, properties, jobExecutionPersistence, requestHandleManager);
-        this.jobRegistrar = jobRegistrar;
+        this.jobRegister = jobRegister;
     }
 
     @Override
     public JobExecuteResponse executeRequest0(final JobExecuteRequest request) throws Exception {
-        JobRunnable runnableJob = jobRegistrar.getRunnableJob(request);
+        JobRunnable runnableJob = jobRegister.getRunnableJob(request);
         if (runnableJob == null) {
             throw new JobExecutionException(String.format("not found job %s", JobKey.of(request.getGroupName(), request.getJobName())));
         }

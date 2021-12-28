@@ -3,7 +3,7 @@ package org.dromara.hodor.actuator.common.executor;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.actuator.common.HodorApiClient;
-import org.dromara.hodor.actuator.common.JobRegistrar;
+import org.dromara.hodor.actuator.common.JobRegister;
 import org.dromara.hodor.actuator.common.core.NodeManager;
 import org.dromara.hodor.model.actuator.ActuatorInfo;
 import org.dromara.hodor.model.node.NodeInfo;
@@ -21,12 +21,12 @@ public class MsgSender {
 
     private final NodeManager nodeManager;
 
-    private final JobRegistrar jobRegistrar;
+    private final JobRegister jobRegister;
 
-    public MsgSender(final HodorApiClient hodorApiClient, final NodeManager nodeManager, final JobRegistrar jobRegistrar) {
+    public MsgSender(final HodorApiClient hodorApiClient, final NodeManager nodeManager, final JobRegister jobRegister) {
         this.hodorApiClient = hodorApiClient;
         this.nodeManager = nodeManager;
-        this.jobRegistrar = jobRegistrar;
+        this.jobRegister = jobRegister;
     }
 
     public HeartbeatSender getHeartbeatSender() {
@@ -39,7 +39,7 @@ public class MsgSender {
 
     private ActuatorInfo getActuatorInfo() {
         NodeInfo nodeInfo = nodeManager.getNodeInfo();
-        Set<String> groupNames = jobRegistrar.supportedGroupNames();
+        Set<String> groupNames = jobRegister.supportedGroupNames();
         ActuatorInfo actuatorInfo = new ActuatorInfo();
         actuatorInfo.setNodeInfo(nodeInfo);
         actuatorInfo.setGroupNames(groupNames);

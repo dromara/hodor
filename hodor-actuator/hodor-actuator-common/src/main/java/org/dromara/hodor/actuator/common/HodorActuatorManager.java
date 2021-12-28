@@ -32,37 +32,37 @@ public class HodorActuatorManager {
 
     private final String interval;
 
-    private ExecutorServer executorServer;
-
-    private final JobRegistrar jobRegistrar;
-
     private final HodorProperties properties;
+
+    private final JobRegister jobRegister;
+
+    private final DBOperator dbOperator;
+
+    private final HodorApiClient hodorApiClient;
 
     private final RequestHandleManager requestHandleManager;
 
     private final RemotingMessageSerializer remotingMessageSerializer;
 
-    private final HodorApiClient hodorApiClient;
-
-    private final DBOperator dbOperator;
-
     private MsgSender msgSender;
 
-    private ScheduledThreadPoolExecutor heartbeatSenderService;
+    private ExecutorServer executorServer;
 
     private HodorDatabaseSetup hodorDatabaseSetup;
 
+    private ScheduledThreadPoolExecutor heartbeatSenderService;
+
     public HodorActuatorManager(final HodorProperties properties,
-                                final JobRegistrar jobRegistrar) {
+                                final JobRegister jobRegister) {
         Assert.notNull(properties, "properties is required; it must not be null");
-        Assert.notNull(jobRegistrar, "jobRegistrar is required; it must not be null");
+        Assert.notNull(jobRegister, "jobRegistrar is required; it must not be null");
 
         this.interval = System.getProperty("hodor.heartbeat.interval", "5000");
         this.properties = properties;
-        this.jobRegistrar = jobRegistrar;
+        this.jobRegister = jobRegister;
         this.dbOperator = dbOperator();
         this.hodorApiClient = new HodorApiClient(properties);
-        this.requestHandleManager = new RequestHandleManager(properties, jobRegistrar, ExecutorManager.getInstance(),
+        this.requestHandleManager = new RequestHandleManager(properties, jobRegister, ExecutorManager.getInstance(),
             ClientChannelManager.getInstance(), dbOperator);
         this.remotingMessageSerializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
         init();
@@ -71,7 +71,7 @@ public class HodorActuatorManager {
     private void init() {
         final NodeManager nodeManager = new NodeManager(properties, ExecutorManager.getInstance());
         this.executorServer = new ExecutorServer(requestHandleManager, remotingMessageSerializer, properties);
-        this.msgSender = new MsgSender(hodorApiClient, nodeManager, jobRegistrar);
+        this.msgSender = new MsgSender(hodorApiClient, nodeManager, jobRegister);
         this.hodorDatabaseSetup = new HodorDatabaseSetup(dbOperator);
         this.heartbeatSenderService = new ScheduledThreadPoolExecutor(2,
             HodorThreadFactory.create("hodor-heartbeat-sender", true),
@@ -102,7 +102,7 @@ public class HodorActuatorManager {
     }
 
     public void registerJobs() throws Exception {
-        hodorApiClient.registerJobs(jobRegistrar.registerJobs());
+        hodorApiClient.registerJobs(jobRegister.registerJobs());
     }
 
     private void initHodorClientData() throws SQLException {
@@ -136,7 +136,7 @@ public class HodorActuatorManager {
         // 关闭相应服务
         executorServer.close();
         heartbeatSenderService.shutdown();
-        jobRegistrar.clear();
+        jobRegister.clear();
     }
 
 }

@@ -2,7 +2,7 @@ package org.dromara.hodor.actuator.common.executor;
 
 import java.net.SocketAddress;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.actuator.common.JobRegistrar;
+import org.dromara.hodor.actuator.common.JobRegister;
 import org.dromara.hodor.actuator.common.action.HeartbeatAction;
 import org.dromara.hodor.actuator.common.action.JobExecuteAction;
 import org.dromara.hodor.actuator.common.action.JobExecuteLogAction;
@@ -40,15 +40,15 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
 
     private final JobExecutionPersistence jobExecutionPersistence;
 
-    private final JobRegistrar jobRegistrar;
+    private final JobRegister jobRegister;
 
     public RequestHandleManager(final HodorProperties properties,
-                                final JobRegistrar jobRegistrar,
+                                final JobRegister jobRegister,
                                 final ExecutorManager executorManager,
                                 final ClientChannelManager clientChannelManager,
                                 final DBOperator dbOperator) {
         this.properties = properties;
-        this.jobRegistrar = jobRegistrar;
+        this.jobRegister = jobRegister;
         this.executorManager = executorManager;
         this.clientChannelManager = clientChannelManager;
         this.jobExecutionPersistence = new JobExecutionPersistence(dbOperator);
@@ -92,7 +92,7 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
             if (!executorManager.executeReady(requestId)) {
                 retryableSendMessage(context, RemotingResponse.failed(String.format("RequestId %s has running.", requestId)));
             }
-            executorManager.execute(new JobExecuteAction(context, properties, jobExecutionPersistence, jobRegistrar, this));
+            executorManager.execute(new JobExecuteAction(context, properties, jobExecutionPersistence, jobRegister, this));
         }, MessageType.JOB_EXEC_REQUEST);
     }
 

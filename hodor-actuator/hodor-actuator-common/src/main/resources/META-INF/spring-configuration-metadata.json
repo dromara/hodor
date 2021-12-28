@@ -1,0 +1,137 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "org.dromara.hodor.actuator.java.config.HodorActuatorJavaProperties",
+      "name": "hodor",
+      "type": "org.dromara.hodor.actuator.java.config.HodorActuatorJavaProperties"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "org.dromara.hodor.actuator.java.config.HodorActuatorJavaProperties",
+      "defaultValue": "",
+      "name": "hodor.commons.appName",
+      "description": "应用名称，这个用于和用户进行关联，需要先在管理平台进行注册分配",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.dromara.hodor.actuator.java.config.HodorActuatorJavaProperties",
+      "defaultValue": "",
+      "name": "hodor.commons.appKey",
+      "description": "hodor分配的客户端密钥key，需要先在管理平台进行注册分配",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.dromara.hodor.actuator.java.config.HodorActuatorJavaProperties",
+      "defaultValue": "http://localhost:8080/hodor",
+      "name": "hodor.commons.registryAddress",
+      "description": "任务注册地址, eg: http://{host:port1,host:port2,host:port3}/{hodorSchedulerNetName}",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.dromara.hodor.actuator.java.config.HodorActuatorJavaProperties",
+      "defaultValue": "127.0.0.1",
+      "name": "hodor.commons.host",
+      "description": "客户端host，如果存在多网卡的时候设置此值，默认自动获取本机ip",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.dromara.hodor.actuator.java.config.HodorActuatorJavaProperties",
+      "defaultValue": 46367,
+      "name": "hodor.commons.port",
+      "description": "客户端暴露端口，默认46367",
+      "type": "java.lang.Integer"
+    },
+    {
+      "sourceType": "org.dromara.hodor.actuator.java.config.HodorActuatorJavaProperties",
+      "defaultValue": 5000,
+      "name": "hodor.commons.queueSize",
+      "description": "任务执行队列大小，默认5000，短时任务队列为其1/2",
+      "type": "java.lang.Integer"
+    },
+    {
+      "sourceType": "org.dromara.hodor.actuator.java.config.HodorActuatorJavaProperties",
+      "defaultValue": 500,
+      "name": "hodor.commons.poolSize",
+      "description": "任务运行线程池大小",
+      "type": "java.lang.Integer"
+    },
+    {
+      "sourceType": "org.dromara.hodor.actuator.java.config.HodorActuatorJavaProperties",
+      "defaultValue": false,
+      "name": "hodor.commons.enableCloud",
+      "description": "是否为云服务",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "sourceType": "org.dromara.hodor.actuator.java.config.HodorActuatorJavaProperties",
+      "name": "hodor.commons.cloudIpProvider",
+      "description": "云服务机器ip提供接口地址",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.dromara.hodor.actuator.java.config.HodorActuatorJavaProperties",
+      "defaultValue": 0,
+      "name": "hodor.commons.taskStackingStrategy",
+      "description": "任务堆积策略，默认0，0：丢弃最老、1：继续等待（阻塞）、2：自适应调整队列大小、3：增大执行线程数量、4：转移任务到别的机器",
+      "type": "java.lang.Integer"
+    },
+    {
+      "sourceType": "org.dromara.hodor.actuator.java.config.HodorActuatorJavaProperties",
+      "defaultValue": 60,
+      "name": "hodor.commons.longTaskTime",
+      "description": "长时任务临界值单位秒，默认60s为长时任务，统计上一次任务执行的时长，然后判断下一次执行是放在长时队列还是短时队列",
+      "type": "java.lang.Integer"
+    },
+    {
+      "sourceType": "org.dromara.hodor.actuator.java.config.HodorActuatorJavaProperties",
+      "defaultValue": null,
+      "name": "hodor.commons.rootJobLogPath",
+      "description": "任务日志路径",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.dromara.hodor.actuator.java.config.HodorActuatorJavaProperties",
+      "defaultValue": null,
+      "name": "hodor.commons.dataSourceConfig",
+      "description": "数据库配置",
+      "type": "org.dromara.hodor.common.storage.db.DataSourceConfig"
+    },
+    {
+      "sourceType": "org.dromara.hodor.actuator.java.config.HodorActuatorJavaProperties",
+      "defaultValue": null,
+      "name": "hodor.commons.dataSourceConfig.dataSourceProperties",
+      "description": "数据库连接池扩展属性配置",
+      "type": "java.util.Properties"
+    },
+    {
+      "sourceType": "org.dromara.hodor.actuator.java.config.HodorActuatorJavaProperties",
+      "defaultValue": null,
+      "name": "hodor.commons.dataSourceConfig.url",
+      "description": "数据库url配置",
+      "type": "java.util.String"
+    },
+    {
+      "sourceType": "org.dromara.hodor.actuator.java.config.HodorActuatorJavaProperties",
+      "defaultValue": null,
+      "name": "hodor.commons.dataSourceConfig.dataSourceClassName",
+      "description": "数据库驱动全类名",
+      "type": "java.util.String"
+    },
+    {
+      "sourceType": "org.dromara.hodor.actuator.java.config.HodorActuatorJavaProperties",
+      "defaultValue": null,
+      "name": "hodor.commons.dataSourceConfig.username",
+      "description": "数据库用户名",
+      "type": "java.util.String"
+    },
+    {
+      "sourceType": "org.dromara.hodor.actuator.java.config.HodorActuatorJavaProperties",
+      "defaultValue": null,
+      "name": "hodor.commons.dataSourceConfig.password",
+      "description": "数据库密码",
+      "type": "java.util.String"
+    }
+  ]
+}

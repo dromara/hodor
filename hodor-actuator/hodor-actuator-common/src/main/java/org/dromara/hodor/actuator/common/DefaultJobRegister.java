@@ -19,7 +19,7 @@ import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
  * @since 2021/1/4
  */
 @Slf4j
-public class DefaultJobRegistrar implements JobRegistrar {
+public class DefaultJobRegister implements JobRegister {
 
     private final Map<JobKey, JobDesc> jobCache = new ConcurrentHashMap<>(32);
 
@@ -27,7 +27,7 @@ public class DefaultJobRegistrar implements JobRegistrar {
 
     private final Set<String> groupNames = new HashSet<>();
 
-    public DefaultJobRegistrar() {
+    public DefaultJobRegister() {
     }
 
     @Override

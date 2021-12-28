@@ -24,12 +24,12 @@ import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 
 /**
- * JobRegistrar
+ * JobRegister
  *
  * @author tomgs
  * @since 2021/11/23
  */
-public interface JobRegistrar {
+public interface JobRegister {
 
     /**
      * supported group name set
@@ -39,9 +39,9 @@ public interface JobRegistrar {
     Set<String> supportedGroupNames();
 
     /**
-     * 任务注册
+     * register job to scheduler
      *
-     * @throws Exception 任务注册异常
+     * @throws Exception register exception
      */
     List<JobDesc> registerJobs() throws Exception;
 
