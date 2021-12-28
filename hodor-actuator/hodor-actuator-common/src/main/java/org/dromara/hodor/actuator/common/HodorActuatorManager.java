@@ -86,25 +86,17 @@ public class HodorActuatorManager {
     }
 
     public void start() throws Exception {
-        // TODO: 这里可以改造为SPI的方式加载服务
         // init data
         initHodorClientData();
         // start executor server
         log.info("HodorClient starting executor server...");
         startExecutorServer();
-
-        // start register jobs after executor server start success
-        log.info("HodorClient starting register jobs...");
-        //jobRegistrar.registerJobs();
-
         // start heartbeat sender server
         log.info("HodorClient starting heartbeat sender server...");
         startHeartbeatSender();
-
         // start register jobs after executor server start success
         log.info("HodorClient starting register jobs...");
         registerJobs();
-
         // add close shutdown hook
         Runtime.getRuntime().addShutdownHook(new Thread(this::close));
     }
