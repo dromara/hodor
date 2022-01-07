@@ -71,7 +71,7 @@
         <quartz.version>2.3.2</quartz.version>
         <commons-dbutils.version>1.7</commons-dbutils.version>
         <metrics.version>4.2.3</metrics.version>
-        <h2.version>1.4.200</h2.version>
+        <h2.version>2.0.206</h2.version>
         <commons-text.version>1.9</commons-text.version>
     </properties>
 
