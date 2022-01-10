@@ -18,16 +18,22 @@
   ],
   "properties": [
     {
+      "name": "hodor.clusterName",
+      "type": "java.lang.String",
+      "sourceType": "org.dromara.hodor.server.config.HodorServerProperties",
+      "description": "scheduler cluster name"
+    },
+    {
+      "name": "hodor.clusterNodes",
+      "type": "java.lang.Integer",
+      "sourceType": "org.dromara.hodor.server.config.HodorServerProperties",
+      "description": "scheduler cluster node size"
+    },
+    {
       "name": "hodor.logDir",
       "type": "java.lang.String",
       "sourceType": "org.dromara.hodor.server.config.HodorServerProperties",
       "description": "log job execute detail info"
-    },
-    {
-      "name": "hodor.net-server.appName",
-      "type": "java.lang.String",
-      "sourceType": "org.dromara.hodor.server.config.HodorServerProperties$NetServerProperties",
-      "description": "hodor net server app name config"
     },
     {
       "name": "hodor.net-server.host",
@@ -54,19 +60,19 @@
       "description": "hodor registry server servers config"
     },
     {
-      "name": "database.url",
+      "name": "hodor.database.url",
       "type": "java.lang.String",
       "description": "database.url."
     }, {
-      "name": "database.username",
+      "name": "hodor.database.username",
       "type": "java.lang.String",
       "description": "database.username."
     }, {
-      "name": "database.password",
+      "name": "hodor.database.password",
       "type": "java.lang.String",
       "description": "database.password."
     }, {
-      "name": "database.driverClass",
+      "name": "hodor.database.driverClass",
       "type": "java.lang.String",
       "description": "database.driverClass."
     }

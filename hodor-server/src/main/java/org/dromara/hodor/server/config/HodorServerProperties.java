@@ -17,6 +17,10 @@ public class HodorServerProperties {
 
     private String logDir;
 
+    private String clusterName;
+
+    private int clusterNodes;
+
     private NetServerProperties netServer;
 
     private RegistryProperties registry;
@@ -37,13 +41,12 @@ public class HodorServerProperties {
         return netServer.getPort();
     }
 
-    public String getNetServerName() {
-        return netServer.getAppName();
+    public String getClusterServerName() {
+        return this.clusterName;
     }
 
     @Data
     static class NetServerProperties {
-        private String appName;
         private String host;
         private Integer port;
     }
