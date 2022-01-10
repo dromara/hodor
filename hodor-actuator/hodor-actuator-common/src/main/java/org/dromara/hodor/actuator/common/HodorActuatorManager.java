@@ -40,6 +40,8 @@ public class HodorActuatorManager {
 
     private final HodorApiClient hodorApiClient;
 
+    private final ExecutorManager executorManager;
+
     private final RequestHandleManager requestHandleManager;
 
     private final RemotingMessageSerializer remotingMessageSerializer;
@@ -61,15 +63,16 @@ public class HodorActuatorManager {
         this.properties = properties;
         this.jobRegister = jobRegister;
         this.dbOperator = dbOperator();
+        this.executorManager = ExecutorManager.getInstance();
         this.hodorApiClient = new HodorApiClient(properties);
-        this.requestHandleManager = new RequestHandleManager(properties, jobRegister, ExecutorManager.getInstance(),
+        this.requestHandleManager = new RequestHandleManager(properties, jobRegister, executorManager,
             ClientChannelManager.getInstance(), dbOperator);
         this.remotingMessageSerializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
         init();
     }
 
     private void init() {
-        final NodeManager nodeManager = new NodeManager(properties, ExecutorManager.getInstance());
+        final NodeManager nodeManager = new NodeManager(properties, executorManager);
         this.executorServer = new ExecutorServer(requestHandleManager, remotingMessageSerializer, properties);
         this.msgSender = new MsgSender(hodorApiClient, nodeManager, jobRegister);
         this.hodorDatabaseSetup = new HodorDatabaseSetup(dbOperator);

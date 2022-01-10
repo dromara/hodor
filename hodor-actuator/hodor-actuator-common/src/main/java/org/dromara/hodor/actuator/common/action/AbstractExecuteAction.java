@@ -38,6 +38,8 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
 
     private final HodorProperties properties;
 
+    private final ExecutorManager executorManager;
+
     private final JobExecutionPersistence jobExecutionPersistence;
 
     private final JobLoggerManager jobLoggerManager;
@@ -46,10 +48,12 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
 
     public AbstractExecuteAction(final RequestContext context,
                                  final HodorProperties properties,
+                                 final ExecutorManager executorManager,
                                  final JobExecutionPersistence jobExecutionPersistence,
                                  final RequestHandleManager requestHandleManager) {
         super(context, requestHandleManager);
         this.properties = properties;
+        this.executorManager = executorManager;
         this.jobExecutionPersistence = jobExecutionPersistence;
         this.jobLoggerManager = JobLoggerManager.getInstance();
         this.stopwatch = Stopwatch.create();
@@ -69,8 +73,6 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
         jobLogger.info("job ready.");
         // send start execute response
         sendStartExecuteResponse(request);
-        // log current thread
-        ExecutorManager.getInstance().addRunningThread(requestId, Thread.currentThread());
 
         // executing job
         jobLogger.info("job start executing.");
@@ -133,7 +135,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
     @Override
     public void afterProcess() {
         jobLogger.info("job execution finished.");
-        ExecutorManager.getInstance().removeRunningThread(requestId);
+        executorManager.removeExecutableNode(requestId);
         jobLoggerManager.stopJobLogger(loggerName);
     }
 

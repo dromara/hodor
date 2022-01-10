@@ -17,10 +17,17 @@
 
 package org.dromara.hodor.actuator.common;
 
+import java.io.File;
+import java.io.IOException;
+import org.dromara.hodor.actuator.common.core.ExecutableJob;
+import org.dromara.hodor.actuator.common.core.JobLoggerManager;
 import org.dromara.hodor.actuator.common.exceptions.JobExecutionException;
+import org.dromara.hodor.common.utils.FileIOUtils;
+import org.dromara.hodor.model.enums.JobExecuteStatus;
+import org.dromara.hodor.model.job.JobKey;
 
 /**
- * Job instance
+ * Job runnable
  *
  * @author tomgs
  * @since 2021/11/23
@@ -30,18 +37,48 @@ public interface JobRunnable {
     /**
      * 执行任务
      *
-     * @param context 任务上下文
+     * @param executableJob 待执行任务
      * @return 任务执行结果
      * @throws JobExecutionException 任务执行异常
      */
-    Object execute(JobExecutionContext context) throws JobExecutionException;
+    Object execute(ExecutableJob executableJob) throws JobExecutionException;
 
     /**
      * 停止任务
      *
-     * @param context 任务上下文
+     * @param executableJob 待执行任务
      * @throws JobExecutionException 任务停止异常
      */
-    void stop(JobExecutionContext context) throws JobExecutionException;
+    void stop(ExecutableJob executableJob) throws JobExecutionException;
+
+    /**
+     * 获取任务状态
+     *
+     * @param executableJob 待执行任务
+     * @return JobExecuteStatus 任务状态
+     * @throws JobExecutionException 任务状态异常
+     */
+    default JobExecuteStatus status(ExecutableJob executableJob) throws JobExecutionException {
+        if (executableJob == null) {
+            return JobExecuteStatus.FINISHED;
+        }
+        return executableJob.getExecuteStatus();
+    }
+
+    /**
+     * 获取任务日志
+     *
+     * @param executableJob 待执行任务
+     * @param offset 日志起始位置
+     * @param length 日志长度
+     * @return 日志数据
+     * @throws IOException 读取日志文件异常
+     */
+    default FileIOUtils.LogData getLog(ExecutableJob executableJob, int offset, int length) throws IOException {
+        JobKey jobKey = executableJob.getJobKey();
+        File jobLoggerFile = JobLoggerManager.getInstance()
+            .buildJobLoggerFile(executableJob.getDataPath(), jobKey.getGroupName(), jobKey.getJobName(), executableJob.getRequestId());
+        return FileIOUtils.readUtf8File(jobLoggerFile, offset, length);
+    }
 
 }

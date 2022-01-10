@@ -89,10 +89,10 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
         this.addListener(e -> {
             RequestContext context = e.getValue();
             long requestId = context.requestHeader().getId();
-            if (!executorManager.executeReady(requestId)) {
+            if (!executorManager.readyExecutableJob(requestId)) {
                 retryableSendMessage(context, RemotingResponse.failed(String.format("RequestId %s has running.", requestId)));
             }
-            executorManager.execute(new JobExecuteAction(context, properties, jobExecutionPersistence, jobRegister, this));
+            executorManager.execute(new JobExecuteAction(context, properties, jobExecutionPersistence, jobRegister, executorManager, this));
         }, MessageType.JOB_EXEC_REQUEST);
     }
 
