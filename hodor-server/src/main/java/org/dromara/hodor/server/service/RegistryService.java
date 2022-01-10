@@ -1,10 +1,13 @@
 package org.dromara.hodor.server.service;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.utils.GsonUtils;
 import org.dromara.hodor.common.utils.HostUtils;
+import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.model.actuator.ActuatorInfo;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
 import org.dromara.hodor.register.api.ConnectionStateChangeListener;
@@ -25,6 +28,7 @@ import org.springframework.stereotype.Service;
  * @author tomgs
  * @version 2020/6/29 1.0
  */
+@Slf4j
 @Service
 public class RegistryService implements HodorLifecycle {
 
@@ -64,6 +68,15 @@ public class RegistryService implements HodorLifecycle {
         // init path
         // init data
         createServerNode(SchedulerNode.getServerNodePath(getServerEndpoint()), getServerEndpoint());
+    }
+
+    public void waitServerStarted() {
+        Integer currRunningNodeCount = this.getRunningNodeCount();
+        while (currRunningNodeCount < this.getLeastNodeCount()) {
+            log.warn("waiting for the node to join the cluster ...");
+            ThreadUtils.sleep(TimeUnit.MILLISECONDS, 1000);
+            currRunningNodeCount = this.getRunningNodeCount();
+        }
     }
 
     public Integer getRunningNodeCount() {
@@ -117,8 +130,8 @@ public class RegistryService implements HodorLifecycle {
     }
 
     public Integer getLeastNodeCount() {
-        //return properties.getClusterNodes();
-        return Integer.parseInt(System.getProperty("clusters", "1"));
+        int clusterNodes = properties.getClusterNodes();
+        return clusterNodes <= 0 ? Integer.parseInt(System.getProperty("clusters", "1")) : clusterNodes;
     }
 
     public void createActuator(final ActuatorInfo actuatorInfo) {

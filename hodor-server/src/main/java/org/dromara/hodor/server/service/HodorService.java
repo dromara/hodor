@@ -64,13 +64,7 @@ public class HodorService implements HodorLifecycle {
     @Override
     public void start() {
         // waiting node ready
-        Integer currRunningNodeCount = registryService.getRunningNodeCount();
-        while (currRunningNodeCount < registryService.getLeastNodeCount()) {
-            log.warn("waiting for the node to join the cluster ...");
-            ThreadUtils.sleep(TimeUnit.MILLISECONDS, 1000);
-            currRunningNodeCount = registryService.getRunningNodeCount();
-        }
-
+        registryService.waitServerStarted();
         // init data
         registryService.registrySchedulerNodeListener(new SchedulerNodeChangeListener(schedulerNodeManager, this, registryService));
         registryService.registryActuatorNodeListener(new ActuatorNodeChangeListener(actuatorNodeManager, registryService));
