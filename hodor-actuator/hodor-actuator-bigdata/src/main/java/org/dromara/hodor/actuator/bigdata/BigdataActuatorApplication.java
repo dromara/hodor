@@ -17,6 +17,7 @@
 
 package org.dromara.hodor.actuator.bigdata;
 
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
@@ -30,6 +31,7 @@ public class BigdataActuatorApplication {
 
     public static void main(String[] args) {
         System.out.println("bigdata actuator bootstrap");
+        SpringApplication.run(BigdataActuatorApplication.class, args);
     }
 
 }
