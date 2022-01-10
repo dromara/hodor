@@ -29,7 +29,7 @@ public class JobExecuteLogAction extends AbstractAction<JobExecuteLogRequest, Jo
 
     @Override
     public JobExecuteLogResponse executeRequest(JobExecuteLogRequest request) throws Exception {
-        File jobLoggerFile = jobLoggerManager.buildJobLoggerFile(properties.getRootJobLogPath(), request.getGroupName(), request.getJobName(), request.getRequestId());
+        File jobLoggerFile = jobLoggerManager.buildJobLoggerFile(properties.getDataPath(), request.getGroupName(), request.getJobName(), request.getRequestId());
         FileIOUtils.LogData logData = FileIOUtils.readUtf8File(jobLoggerFile, request.getOffset(), request.getLength());
 
         JobExecuteLogResponse response = new JobExecuteLogResponse();

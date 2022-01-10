@@ -87,8 +87,8 @@
     {
       "sourceType": "org.dromara.hodor.actuator.java.config.HodorActuatorJavaProperties",
       "defaultValue": null,
-      "name": "hodor.commons.rootJobLogPath",
-      "description": "任务日志路径",
+      "name": "hodor.commons.dataPath",
+      "description": "任务数据存储路径",
       "type": "java.lang.String"
     },
     {

@@ -59,9 +59,9 @@ public class HodorProperties {
     private Integer longTaskTime = 60;
 
     /**
-     * 任务日志路径
+     * 任务数据存储路径
      */
-    private String rootJobLogPath;
+    private String dataPath;
 
     /**
      * 数据库配置

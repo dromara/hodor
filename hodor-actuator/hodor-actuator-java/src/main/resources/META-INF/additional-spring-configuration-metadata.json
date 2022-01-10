@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "hodor.java",
+      "type": "java.util.Map",
+      "description": "java type job configurations."
+    },
+    {
+      "name": "hodor.java.supportType",
+      "type": "java.util.List",
+      "description": "supported java type."
+    }
+  ]
+}

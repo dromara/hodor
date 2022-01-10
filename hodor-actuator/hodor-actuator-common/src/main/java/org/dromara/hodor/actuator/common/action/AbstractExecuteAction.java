@@ -62,7 +62,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
         requestId = request.getRequestId();
         jobKey = JobKey.of(request.getGroupName(), request.getJobName());
         // create job logger
-        File jobLoggerFile = jobLoggerManager.buildJobLoggerFile(properties.getRootJobLogPath(), request.getGroupName(), request.getJobName(), requestId);
+        File jobLoggerFile = jobLoggerManager.buildJobLoggerFile(properties.getDataPath(), request.getGroupName(), request.getJobName(), requestId);
         this.loggerName = jobLoggerManager.createLoggerName(request.getGroupName(), request.getJobName(), requestId);
         this.jobLogger = jobLoggerManager.createJobLogger(this.loggerName, jobLoggerFile);
 
