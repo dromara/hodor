@@ -17,6 +17,7 @@
 
 package org.dromara.hodor.actuator.bigdata.register;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import org.dromara.hodor.actuator.common.JobRegister;
@@ -40,7 +41,7 @@ public class BigdataJobRegister implements JobRegister {
 
     @Override
     public List<JobDesc> registerJobs() throws Exception {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
