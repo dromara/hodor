@@ -18,8 +18,7 @@
 package org.dromara.hodor.actuator.java.job;
 
 import org.dromara.hodor.actuator.common.JobRunnable;
-import org.dromara.hodor.actuator.common.JobExecutionContext;
-import org.dromara.hodor.actuator.common.exceptions.JobExecutionException;
+import org.dromara.hodor.actuator.common.core.ExecutableJob;
 
 /**
  * MRJavaJob
@@ -30,12 +29,12 @@ import org.dromara.hodor.actuator.common.exceptions.JobExecutionException;
 public class MRJavaJob implements JobRunnable {
 
     @Override
-    public Object execute(JobExecutionContext context) throws JobExecutionException {
+    public Object execute(ExecutableJob context) {
         return null;
     }
 
     @Override
-    public void stop(JobExecutionContext context) throws JobExecutionException {
+    public void stop(ExecutableJob job) {
 
     }
 
