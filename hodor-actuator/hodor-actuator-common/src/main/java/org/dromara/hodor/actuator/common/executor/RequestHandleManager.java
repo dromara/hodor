@@ -1,6 +1,8 @@
 package org.dromara.hodor.actuator.common.executor;
 
 import java.net.SocketAddress;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.actuator.common.JobRegister;
 import org.dromara.hodor.actuator.common.action.HeartbeatAction;
@@ -9,10 +11,14 @@ import org.dromara.hodor.actuator.common.action.JobExecuteLogAction;
 import org.dromara.hodor.actuator.common.action.JobExecuteStatusAction;
 import org.dromara.hodor.actuator.common.action.KillRunningJobAction;
 import org.dromara.hodor.actuator.common.config.HodorProperties;
+import org.dromara.hodor.actuator.common.core.ExecutableJob;
 import org.dromara.hodor.common.event.AbstractEventPublisher;
 import org.dromara.hodor.common.event.Event;
+import org.dromara.hodor.common.exception.HodorExecutorException;
 import org.dromara.hodor.common.storage.db.DBOperator;
 import org.dromara.hodor.common.utils.HostUtils;
+import org.dromara.hodor.common.utils.StringUtils;
+import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.HodorChannelFuture;
 import org.dromara.hodor.remoting.api.message.Header;
@@ -42,6 +48,8 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
 
     private final JobRegister jobRegister;
 
+    private final Map<Long, ExecutableJob> executableNodeMap;
+
     public RequestHandleManager(final HodorProperties properties,
                                 final JobRegister jobRegister,
                                 final ExecutorManager executorManager,
@@ -53,6 +61,7 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
         this.clientChannelManager = clientChannelManager;
         this.jobExecutionPersistence = new JobExecutionPersistence(dbOperator);
         this.failureRequestHandleManager = new FailureRequestHandleManager(clientChannelManager, executorManager, dbOperator);
+        this.executableNodeMap = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -81,7 +90,7 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
     private void registerKillRunningListener() {
         this.addListener(e -> {
             RequestContext context = e.getValue();
-            executorManager.commonExecute(new KillRunningJobAction(context, jobExecutionPersistence, executorManager, this));
+            executorManager.commonExecute(new KillRunningJobAction(context, jobExecutionPersistence, this));
         }, MessageType.KILL_JOB_REQUEST);
     }
 
@@ -89,10 +98,10 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
         this.addListener(e -> {
             RequestContext context = e.getValue();
             long requestId = context.requestHeader().getId();
-            if (!executorManager.readyExecutableJob(requestId)) {
+            if (!readyExecutableJob(requestId)) {
                 retryableSendMessage(context, RemotingResponse.failed(String.format("RequestId %s has running.", requestId)));
             }
-            executorManager.execute(new JobExecuteAction(context, properties, jobExecutionPersistence, jobRegister, executorManager, this));
+            executorManager.execute(new JobExecuteAction(context, properties, jobExecutionPersistence, jobRegister, this));
         }, MessageType.JOB_EXEC_REQUEST);
     }
 
@@ -157,6 +166,35 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
             .header(header)
             .body(body)
             .build();
+    }
+
+    public void addExecutableNode(ExecutableJob executableJob) {
+        if (executableNodeMap.containsKey(executableJob.getRequestId())) {
+            throw new HodorExecutorException(StringUtils.format("execute job {} exception, job request [{}] has already running.",
+                executableJob.getJobKey(), executableJob.getRequestId()));
+        }
+        executableNodeMap.put(executableJob.getRequestId(), executableJob);
+    }
+
+    public ExecutableJob getExecutableJob(Long requestId) {
+        return executableNodeMap.get(requestId);
+    }
+
+    public void removeExecutableNode(Long requestId) {
+        executableNodeMap.remove(requestId);
+    }
+
+    public boolean readyExecutableJob(Long requestId) {
+        ExecutableJob executableJob = getExecutableJob(requestId);
+        if (executableJob != null) {
+            return false;
+        }
+        ExecutableJob readyJob = ExecutableJob.builder()
+            .requestId(requestId)
+            .executeStatus(JobExecuteStatus.READY)
+            .build();
+        addExecutableNode(readyJob);
+        return true;
     }
 
 }

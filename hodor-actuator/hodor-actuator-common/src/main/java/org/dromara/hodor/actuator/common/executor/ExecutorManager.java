@@ -1,14 +1,8 @@
 package org.dromara.hodor.actuator.common.executor;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import org.dromara.hodor.actuator.common.core.ExecutableJob;
-import org.dromara.hodor.common.exception.HodorExecutorException;
 import org.dromara.hodor.common.executor.HodorExecutor;
 import org.dromara.hodor.common.executor.HodorExecutorFactory;
 import org.dromara.hodor.common.executor.HodorRunnable;
-import org.dromara.hodor.common.utils.StringUtils;
-import org.dromara.hodor.model.enums.JobExecuteStatus;
 
 /**
  * executor manager
@@ -23,8 +17,6 @@ public class ExecutorManager {
     private final HodorExecutor hodorExecutor;
 
     private final HodorExecutor commonExecutor;
-
-    private final Map<Long, ExecutableJob> executableNodeMap = new ConcurrentHashMap<>();
 
     private ExecutorManager() {
         final int threadSize = Runtime.getRuntime().availableProcessors() * 2;
@@ -59,35 +51,6 @@ public class ExecutorManager {
 
     public HodorExecutor getCommonExecutor() {
         return commonExecutor;
-    }
-
-    public void addExecutableNode(ExecutableJob executableJob) {
-        if (executableNodeMap.containsKey(executableJob.getRequestId())) {
-            throw new HodorExecutorException(StringUtils.format("execute job {} exception, job request [{}] has already running.",
-                executableJob.getJobKey(), executableJob.getRequestId()));
-        }
-        executableNodeMap.put(executableJob.getRequestId(), executableJob);
-    }
-
-    public ExecutableJob getExecutableJob(Long requestId) {
-        return executableNodeMap.get(requestId);
-    }
-
-    public void removeExecutableNode(Long requestId) {
-        executableNodeMap.remove(requestId);
-    }
-
-    public boolean readyExecutableJob(Long requestId) {
-        ExecutableJob executableJob = getExecutableJob(requestId);
-        if (executableJob != null) {
-            return false;
-        }
-        ExecutableJob readyJob = ExecutableJob.builder()
-            .requestId(requestId)
-            .executeStatus(JobExecuteStatus.READY)
-            .build();
-        addExecutableNode(readyJob);
-        return true;
     }
 
 }

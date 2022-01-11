@@ -40,6 +40,10 @@ public abstract class AbstractAction<I extends RequestBody, O extends ResponseBo
         return context;
     }
 
+    public RequestHandleManager getRequestHandleManager() {
+        return requestHandleManager;
+    }
+
     public abstract O executeRequest(I request) throws Exception;
 
     @Override

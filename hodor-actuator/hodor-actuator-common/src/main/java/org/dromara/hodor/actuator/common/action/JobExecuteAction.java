@@ -9,7 +9,6 @@ import org.dromara.hodor.actuator.common.JobRunnable;
 import org.dromara.hodor.actuator.common.config.HodorProperties;
 import org.dromara.hodor.actuator.common.core.ExecutableJob;
 import org.dromara.hodor.actuator.common.exceptions.JobExecutionException;
-import org.dromara.hodor.actuator.common.executor.ExecutorManager;
 import org.dromara.hodor.actuator.common.executor.JobExecutionPersistence;
 import org.dromara.hodor.actuator.common.executor.RequestHandleManager;
 import org.dromara.hodor.common.utils.StringUtils;
@@ -29,16 +28,12 @@ public class JobExecuteAction extends AbstractExecuteAction {
 
     private final JobRegister jobRegister;
 
-    private final ExecutorManager executorManager;
-
     public JobExecuteAction(final RequestContext context,
                             final HodorProperties properties,
                             final JobExecutionPersistence jobExecutionPersistence,
                             final JobRegister jobRegister,
-                            final ExecutorManager executorManager,
                             final RequestHandleManager requestHandleManager) {
-        super(context, properties, executorManager, jobExecutionPersistence, requestHandleManager);
-        this.executorManager = executorManager;
+        super(context, properties, jobExecutionPersistence, requestHandleManager);
         this.jobRegister = jobRegister;
     }
 
@@ -49,7 +44,7 @@ public class JobExecuteAction extends AbstractExecuteAction {
             request.getJobParameters(), request.getShardId(), request.getShardName());
         final JobExecutionContext context = new JobExecutionContext(getLogger(), jobParameter);
 
-        ExecutableJob executableJob = executorManager.getExecutableJob(request.getRequestId());
+        ExecutableJob executableJob = getRequestHandleManager().getExecutableJob(request.getRequestId());
         executableJob.setJobKey(jobKey);
         executableJob.setCurrentThread(Thread.currentThread());
         executableJob.setExecuteStatus(JobExecuteStatus.PENDING);

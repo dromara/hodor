@@ -5,7 +5,6 @@ import java.util.Date;
 import org.dromara.hodor.actuator.common.core.ExecutableJob;
 import org.dromara.hodor.actuator.common.core.HodorJobExecution;
 import org.dromara.hodor.actuator.common.exceptions.JobExecutionException;
-import org.dromara.hodor.actuator.common.executor.ExecutorManager;
 import org.dromara.hodor.actuator.common.executor.JobExecutionPersistence;
 import org.dromara.hodor.actuator.common.executor.RequestHandleManager;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
@@ -21,16 +20,12 @@ import org.dromara.hodor.remoting.api.message.response.KillRunningJobResponse;
  */
 public class KillRunningJobAction extends AbstractAction<KillRunningJobRequest, KillRunningJobResponse> {
 
-    private final ExecutorManager executorManager;
-
     private final JobExecutionPersistence jobExecutionPersistence;
 
     public KillRunningJobAction(final RequestContext context,
                                 final JobExecutionPersistence jobExecutionPersistence,
-                                final ExecutorManager executorManager,
                                 final RequestHandleManager requestHandleManager) {
         super(context, requestHandleManager);
-        this.executorManager = executorManager;
         this.jobExecutionPersistence = jobExecutionPersistence;
     }
 
@@ -40,7 +35,7 @@ public class KillRunningJobAction extends AbstractAction<KillRunningJobRequest, 
         response.setCompleteTime(DateUtil.formatDateTime(new Date()));
         response.setStatus(JobExecuteStatus.KILLED);
 
-        ExecutableJob executableJob = executorManager.getExecutableJob(request.getRequestId());
+        ExecutableJob executableJob = getRequestHandleManager().getExecutableJob(request.getRequestId());
         if (executableJob == null) {
             response.setStatus(JobExecuteStatus.FINISHED);
             return response;
