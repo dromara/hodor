@@ -51,6 +51,8 @@ public class BigdataJobRegister implements JobRegister {
 
     @Override
     public JobRunnable getRunnableJob(JobExecuteRequest request) {
+        String jobCommandType = request.getJobCommandType();
+
         return null;
     }
 
