@@ -48,7 +48,7 @@
         <log4j2.version>2.17.0</log4j2.version>
         <hutool.version>5.7.4</hutool.version>
         <jasypt.version>1.9.2</jasypt.version>
-        <lombok.version>1.16.20</lombok.version>
+        <lombok.version>1.18.20</lombok.version>
         <springfox.version>2.6.1</springfox.version>
         <mybatis.starter.version>1.1.1</mybatis.starter.version>
         <mybatis-plus.starter.version>3.3.2</mybatis-plus.starter.version>
@@ -90,6 +90,8 @@
 
         <httpclient.version>4.2.5</httpclient.version>
         <joda-time.version>2.9.9</joda-time.version>
+
+        <junit.version>4.13.2</junit.version>
     </properties>
 
     <dependencyManagement>
@@ -388,15 +390,23 @@
                 <artifactId>h2</artifactId>
                 <version>${h2.version}</version>
             </dependency>
-
-            <!--<dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>${lombok.version}</version>
-                <scope>provided</scope>
-            </dependency>-->
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
