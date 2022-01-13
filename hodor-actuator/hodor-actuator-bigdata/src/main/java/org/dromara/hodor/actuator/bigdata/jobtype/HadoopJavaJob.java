@@ -67,7 +67,7 @@ public class HadoopJavaJob extends JavaProcessJob {
         getSysProps().getBoolean(HadoopSecurityManager.OBTAIN_BINARY_TOKEN,
             false);
     noUserClasspath =
-        getSysProps().getBoolean("ejob.no.user.classpath", false);
+        getSysProps().getBoolean("hodor.actuator.no.user.classpath", false);
 
     if (shouldProxy && obtainTokens) {
       getLog().info("Initiating hadoop security manager.");

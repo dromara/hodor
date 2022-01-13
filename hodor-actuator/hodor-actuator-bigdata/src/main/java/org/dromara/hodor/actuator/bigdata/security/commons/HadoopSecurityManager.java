@@ -26,7 +26,7 @@ import org.dromara.hodor.actuator.common.utils.Props;
 
 public abstract class HadoopSecurityManager {
 
-  public static final String ENABLE_PROXYING = "ejob.should.proxy"; // boolean
+  public static final String ENABLE_PROXYING = "hodor.actuator.should.proxy"; // boolean
 
   public static final String PROXY_KEYTAB_LOCATION = "proxy.keytab.location";
   public static final String PROXY_USER = "proxy.user";

@@ -16,15 +16,6 @@
 
 package org.dromara.hodor.actuator.bigdata.jobtype.javautils;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.FileStatus;
@@ -32,17 +23,20 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.*;
 import org.apache.hadoop.mapred.Counters.Counter;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Layout;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
+import org.apache.log4j.*;
 import org.dromara.hodor.actuator.bigdata.jobtype.MapReduceJobState;
 import org.dromara.hodor.actuator.bigdata.jobtype.StatsUtils;
 import org.dromara.hodor.actuator.bigdata.utils.JSONUtils;
 import org.dromara.hodor.actuator.common.utils.Props;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
+
 import static org.apache.hadoop.security.UserGroupInformation.HADOOP_TOKEN_FILE_LOCATION;
+import static org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties.JOB_ATTACHMENT_FILE;
 import static org.dromara.hodor.actuator.bigdata.security.commons.HadoopSecurityManager.MAPREDUCE_JOB_CREDENTIALS_BINARY;
 
 public abstract class AbstractHadoopJob {
@@ -75,7 +69,7 @@ public abstract class AbstractHadoopJob {
 
     visualizer = props.getBoolean("mr.listener.visualizer", false) == true;
     if (visualizer == true) {
-      jobStatsFileName = props.getString("ejob.job.attachment.file");
+      jobStatsFileName = props.getString(JOB_ATTACHMENT_FILE);
     }
   }
 

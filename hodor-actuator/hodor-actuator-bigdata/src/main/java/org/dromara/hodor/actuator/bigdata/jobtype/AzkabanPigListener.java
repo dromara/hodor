@@ -16,17 +16,6 @@
 
 package org.dromara.hodor.actuator.bigdata.jobtype;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Queue;
-import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.mapred.JobClient;
 import org.apache.hadoop.mapred.JobID;
@@ -42,6 +31,12 @@ import org.dromara.hodor.actuator.bigdata.jobtype.pig.PigJobStats;
 import org.dromara.hodor.actuator.bigdata.utils.JSONUtils;
 import org.dromara.hodor.actuator.common.utils.Props;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
+import static org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties.JOB_ATTACHMENT_FILE;
+
 public class AzkabanPigListener implements PigProgressNotificationListener {
   private static Logger logger = Logger.getLogger(AzkabanPigListener.class);
   private String statsFile;
@@ -53,7 +48,7 @@ public class AzkabanPigListener implements PigProgressNotificationListener {
   private Set<String> completedJobIds = new HashSet<String>();
 
   public AzkabanPigListener(Props props) {
-    statsFile = props.getString("ejob.job.attachment.file");
+    statsFile = props.getString(JOB_ATTACHMENT_FILE);
   }
 
   @Override

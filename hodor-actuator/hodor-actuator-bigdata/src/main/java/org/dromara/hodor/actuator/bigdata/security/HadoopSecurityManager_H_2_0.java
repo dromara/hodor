@@ -80,7 +80,7 @@ public class HadoopSecurityManager_H_2_0 extends HadoopSecurityManager {
 
   // Use azkaban.Constants.ConfigurationKeys.AZKABAN_SERVER_NATIVE_LIB_FOLDER instead
   @Deprecated
-  public static final String NATIVE_LIB_FOLDER = "ejob.native.lib";
+  public static final String NATIVE_LIB_FOLDER = "actuator.native.lib";
   /**
    * TODO: This should be exposed as a configurable parameter
    *

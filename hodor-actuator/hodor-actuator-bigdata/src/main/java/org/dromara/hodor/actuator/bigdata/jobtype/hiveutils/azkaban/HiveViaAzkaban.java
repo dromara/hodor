@@ -16,11 +16,12 @@
 
 package org.dromara.hodor.actuator.bigdata.jobtype.hiveutils.azkaban;
 
-import com.globalegrow.ejob.bigdata.plugin.hiveutils.HiveQueryExecutor;
-import com.globalegrow.ejob.bigdata.plugin.hiveutils.HiveUtils;
-import com.globalegrow.ejob.bigdata.plugin.hiveutils.azkaban.hive.actions.DropAllPartitionsAddLatest;
-import com.globalegrow.ejob.bigdata.plugin.hiveutils.azkaban.hive.actions.ExecuteHiveQuery;
-import com.globalegrow.ejob.bigdata.plugin.hiveutils.azkaban.hive.actions.UpdateTableLocationToLatest;
+import org.dromara.hodor.actuator.bigdata.jobtype.hiveutils.HiveQueryExecutor;
+import org.dromara.hodor.actuator.bigdata.jobtype.hiveutils.HiveUtils;
+import org.dromara.hodor.actuator.bigdata.jobtype.hiveutils.azkaban.hive.actions.DropAllPartitionsAddLatest;
+import org.dromara.hodor.actuator.bigdata.jobtype.hiveutils.azkaban.hive.actions.ExecuteHiveQuery;
+import org.dromara.hodor.actuator.bigdata.jobtype.hiveutils.azkaban.hive.actions.UpdateTableLocationToLatest;
+
 import java.util.Properties;
 
 /**

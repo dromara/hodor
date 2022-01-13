@@ -172,7 +172,7 @@ public class HadoopConfigurationInjector {
     if ((dirSuffix == null) || (dirSuffix.length() == 0)) {
       dirSuffix = props.get(CommonJobProperties.JOB_ID);
       if ((dirSuffix == null) || (dirSuffix.length() == 0)) {
-        throw new RuntimeException("azkaban.flow.nested.path and ejob.job.id were not set");
+        throw new RuntimeException("azkaban.flow.nested.path and job.id were not set");
       }
     }
 

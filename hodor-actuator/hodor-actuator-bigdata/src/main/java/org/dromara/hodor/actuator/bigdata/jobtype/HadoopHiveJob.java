@@ -37,8 +37,8 @@ public class HadoopHiveJob extends JavaProcessJob {
   public static final String HIVE_SCRIPT = "hive.script";
   private static final String HIVECONF_PARAM_PREFIX = "hiveconf.";
   private static final String HIVEVAR_PARAM_PREFIX = "hivevar.";
-  public static final String HADOOP_SECURE_HIVE_WRAPPER =
-      "com.globalegrow.ejob.bigdata.plugin.HadoopSecureHiveWrapper";
+  // org.dromara.hodor.actuator.bigdata.jobtype.HadoopSecureHiveWrapper
+  public static final String HADOOP_SECURE_HIVE_WRAPPER = HadoopSecureHiveWrapper.class.getName();
 
   private String userToProxy = null;
   private boolean shouldProxy = false;

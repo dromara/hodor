@@ -54,8 +54,7 @@ public class HadoopPigJob extends JavaProcessJob {
   public static final String HADOOP_UGI = "hadoop.job.ugi";
   public static final String DEBUG = "debug";
 
-  public static String HADOOP_SECURE_PIG_WRAPPER =
-      "com.globalegrow.ejob.bigdata.plugin.HadoopSecurePigWrapper";
+  public static String HADOOP_SECURE_PIG_WRAPPER = HadoopSecurePigWrapper.class.getName();
 
   private String userToProxy = null;
   private boolean shouldProxy = false;
