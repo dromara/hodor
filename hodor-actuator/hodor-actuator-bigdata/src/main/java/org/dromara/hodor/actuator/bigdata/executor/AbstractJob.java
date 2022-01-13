@@ -17,7 +17,6 @@
 package org.dromara.hodor.actuator.bigdata.executor;
 
 import org.apache.log4j.Logger;
-import org.dromara.hodor.actuator.bigdata.core.ExecuteContext;
 import org.dromara.hodor.actuator.common.utils.Props;
 
 public abstract class AbstractJob implements Job {
@@ -98,29 +97,12 @@ public abstract class AbstractJob implements Job {
     return new Props();
   }
 
-  //@Override
-  //public abstract void run() throws Exception;
-
   @Override
   public boolean isCanceled() {
     return false;
   }
 
   @Override
-  public void beforeExecute(ExecuteContext context) {
+  public abstract void run() throws Exception;
 
-  }
-
-  @Override
-  public abstract void execute(ExecuteContext context) throws Exception;
-
-  @Override
-  public void executeSuccess(ExecuteContext context) {
-
-  }
-
-  @Override
-  public void executeFail(ExecuteContext context) {
-
-  }
 }

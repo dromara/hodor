@@ -10,19 +10,23 @@ import org.dromara.hodor.actuator.bigdata.queue.PriorityTaskQueue;
  * @author tangzhongyuan
  * @create 2019-03-15 12:08
  **/
-public class JobExecutorStateCheckHandler {
+public class JobExecutorStateChecker {
 
-    private static volatile JobExecutorStateCheckHandler instance = null;
+    private static volatile JobExecutorStateChecker instance = null;
     private static PriorityTaskQueue queue;
 
-    private JobExecutorStateCheckHandler() {
+    private JobExecutorStateChecker() {
         queue = new PriorityTaskQueue(1);
         queue.start();
     }
 
-    public static synchronized JobExecutorStateCheckHandler getInstance() {
+    public static JobExecutorStateChecker getInstance() {
         if (instance == null) {
-            instance = new JobExecutorStateCheckHandler();
+            synchronized (JobExecutorStateChecker.class) {
+                if (instance == null) {
+                    instance = new JobExecutorStateChecker();
+                }
+            }
         }
         return instance;
     }

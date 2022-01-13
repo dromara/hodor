@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
 import org.apache.pig.PigRunner;
-import org.dromara.hodor.actuator.bigdata.core.ExecuteContext;
 import org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties;
 import org.dromara.hodor.actuator.bigdata.executor.JavaProcessJob;
 import org.dromara.hodor.actuator.bigdata.security.commons.HadoopSecurityManager;
@@ -97,7 +96,7 @@ public class HadoopPigJob extends JavaProcessJob {
   }
 
   @Override
-  public void execute(ExecuteContext context) throws Exception {
+  public void run() throws Exception {
     String[] tagKeys = new String[] { CommonJobProperties.EXEC_ID,
         CommonJobProperties.FLOW_ID, CommonJobProperties.PROJECT_NAME };
     getJobProps().put(HadoopConfigurationInjector.INJECT_PREFIX
@@ -121,7 +120,7 @@ public class HadoopPigJob extends JavaProcessJob {
           tokenFile.getAbsolutePath());
     }
     try {
-      super.execute(context);
+      super.run();
     } catch (Throwable t) {
       t.printStackTrace();
       getLog().error("caught error running the job", t);

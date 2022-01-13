@@ -26,7 +26,7 @@ public class HodorSchedulerConfiguration {
 
     @Bean
     public JobRegister jobRegistrar() {
-        return new BigdataJobRegister();
+        return new BigdataJobRegister(properties);
     }
 
     @Bean

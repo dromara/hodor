@@ -17,7 +17,6 @@
 package org.dromara.hodor.actuator.bigdata.executor;
 
 import org.apache.log4j.Logger;
-import org.dromara.hodor.actuator.bigdata.core.ExecuteContext;
 import org.dromara.hodor.actuator.common.exceptions.JobExecutionException;
 import org.dromara.hodor.actuator.common.utils.Props;
 
@@ -42,28 +41,9 @@ public class NoopJob implements Job {
   }
 
   @Override
-  public void beforeExecute(ExecuteContext context) {
+  public void run() throws JobExecutionException {
 
   }
-
-  @Override
-  public void execute(ExecuteContext context) throws JobExecutionException {
-
-  }
-
-  @Override
-  public void executeSuccess(ExecuteContext context) {
-
-  }
-
-  @Override
-  public void executeFail(ExecuteContext context) {
-
-  }
-
-  /*@Override
-  public void run() throws Exception {
-  }*/
 
   @Override
   public void cancel() throws Exception {

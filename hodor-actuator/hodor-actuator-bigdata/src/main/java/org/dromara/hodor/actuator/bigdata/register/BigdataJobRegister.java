@@ -17,14 +17,24 @@
 
 package org.dromara.hodor.actuator.bigdata.register;
 
+import com.google.common.collect.Sets;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.dromara.hodor.actuator.bigdata.config.HodorActuatorBigdataProperties;
+import org.dromara.hodor.actuator.bigdata.core.BigdataJobRunnable;
+import org.dromara.hodor.actuator.bigdata.core.JobTypeManager;
+import org.dromara.hodor.actuator.bigdata.executor.Constants;
+import org.dromara.hodor.actuator.bigdata.executor.Job;
 import org.dromara.hodor.actuator.common.JobRegister;
 import org.dromara.hodor.actuator.common.JobRunnable;
-import org.dromara.hodor.actuator.common.core.JobInstance;
+import org.dromara.hodor.actuator.common.core.ExecutableJob;
+import org.dromara.hodor.actuator.common.utils.Props;
+import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.model.job.JobDesc;
-import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
+
+import static org.dromara.hodor.actuator.bigdata.core.JobTypeManager.DEFAULT_JOBTYPEPLUGINDIR;
 
 /**
  * BigdataJobRegister
@@ -34,31 +44,35 @@ import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
  */
 public class BigdataJobRegister implements JobRegister {
 
-    @Override
-    public Set<String> supportedGroupNames() {
-        return null;
+    private final JobTypeManager jobTypeManager;
+
+    private final HodorActuatorBigdataProperties properties;
+
+    public BigdataJobRegister(HodorActuatorBigdataProperties properties) {
+        this.properties = properties;
+        String jobTypePluginDir = StringUtils.join(properties.getCommonProperties().getDataPath(), File.separator, DEFAULT_JOBTYPEPLUGINDIR);
+        Props globalProps = new Props();
+        globalProps.putAll(properties.getBigdata());
+        this.jobTypeManager = new JobTypeManager(jobTypePluginDir, globalProps, getClass().getClassLoader());
     }
 
     @Override
-    public List<JobDesc> registerJobs() throws Exception {
+    public Set<String> supportedGroupNames() {
+        return Sets.newHashSet(properties.getCommonProperties().getAppName());
+    }
+
+    @Override
+    public List<JobDesc> registerJobs() {
         return new ArrayList<>();
     }
 
     @Override
-    public void registerJob(JobInstance jobInstance) {
-
-    }
-
-    @Override
-    public JobRunnable getRunnableJob(JobExecuteRequest request) {
-        String jobCommandType = request.getJobCommandType();
-
-        return null;
-    }
-
-    @Override
-    public void clear() {
-
+    public JobRunnable getRunnableJob(ExecutableJob executableJob) {
+        String jobCommandType = executableJob.getJobCommandType();
+        Props jobPros = new Props();
+        jobPros.put(Constants.JobProperties.JOB_TYPE, jobCommandType);
+        Job job = jobTypeManager.buildJobExecutor(executableJob.getJobKey().toString(), jobPros, executableJob.getJobLogger());
+        return new BigdataJobRunnable(job);
     }
 
 }

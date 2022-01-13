@@ -12,7 +12,8 @@ import java.util.concurrent.TimeUnit;
 public class TaskExecutor extends Thread {
 
     private final BlockingQueue<ITask> taskQueue;
-    private volatile boolean isRuning = true;
+
+    private volatile boolean isRunning = true;
 
     TaskExecutor(BlockingQueue<ITask> taskQueue) {
         this.taskQueue = taskQueue;
@@ -20,17 +21,13 @@ public class TaskExecutor extends Thread {
 
     @Override
     public void run() {
-        while (isRuning) {
+        while (isRunning) {
             try {
                 ITask task = taskQueue.take();
                 consumer(task);
-
-                //延迟3s再去消费
                 TimeUnit.SECONDS.sleep(3);
             } catch (InterruptedException e) {
-                e.printStackTrace();
-
-                if (isRuning) {
+                if (isRunning) {
                     continue;
                 }
                 interrupt();
@@ -40,7 +37,7 @@ public class TaskExecutor extends Thread {
     }
 
     void shutdown() {
-        isRuning = false;
+        isRunning = false;
         interrupt();
     }
 

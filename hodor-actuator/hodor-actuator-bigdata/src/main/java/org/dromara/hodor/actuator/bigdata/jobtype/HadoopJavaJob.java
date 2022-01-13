@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
-import org.dromara.hodor.actuator.bigdata.core.ExecuteContext;
 import org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties;
 import org.dromara.hodor.actuator.bigdata.executor.JavaProcessJob;
 import org.dromara.hodor.actuator.bigdata.security.commons.HadoopSecurityManager;
@@ -174,7 +173,7 @@ public class HadoopJavaJob extends JavaProcessJob {
   }
 
   @Override
-  public void execute(ExecuteContext context) throws Exception {
+  public void run() throws Exception {
     String[] tagKeys = new String[] { CommonJobProperties.EXEC_ID,
         CommonJobProperties.JOB_ID};
       getJobProps().put(HadoopConfigurationInjector.INJECT_PREFIX + HadoopJobUtils.MAPREDUCE_JOB_TAGS,
@@ -202,7 +201,7 @@ public class HadoopJavaJob extends JavaProcessJob {
     }
     try {
       //super.run();
-      super.execute(context);
+      super.run();
     } catch (Exception e) {
       e.printStackTrace();
       throw new Exception(e);

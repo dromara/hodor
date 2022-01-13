@@ -16,7 +16,6 @@
 
 package org.dromara.hodor.actuator.bigdata.executor;
 
-import org.dromara.hodor.actuator.bigdata.core.ExecuteContext;
 import org.dromara.hodor.actuator.common.utils.Props;
 
 /**
@@ -32,43 +31,35 @@ public interface Job {
   /**
    * Returns a unique(should be checked in xml) string name/id for the Job.
    */
-  public String getId();
+  String getId();
 
   /**
-   * Run the job. In general this method can only be run once. Must either succeed or throw an
+   * execute the job. In general this method can only be run once. Must either succeed or throw an
    * exception.
    */
-  //public void run() throws Exception;
-
-  public void beforeExecute(ExecuteContext context) ;
-
-  public void execute(ExecuteContext context) throws Exception;
-
-  public void executeSuccess(ExecuteContext context);
-
-  public void executeFail(ExecuteContext context);
+  void run() throws Exception;
 
   /**
    * Best effort attempt to cancel the job.
    *
    * @throws Exception If cancel fails
    */
-  public void cancel() throws Exception;
+  void cancel() throws Exception;
 
   /**
    * Returns a progress report between [0 - 1.0] to indicate the percentage complete
    *
    * @throws Exception If getting progress fails
    */
-  public double getProgress() throws Exception;
+  double getProgress() throws Exception;
 
   /**
    * Get the generated properties from this job.
    */
-  public Props getJobGeneratedProperties();
+  Props getJobGeneratedProperties();
 
   /**
    * Determine if the job was cancelled.
    */
-  public boolean isCanceled();
+  boolean isCanceled();
 }

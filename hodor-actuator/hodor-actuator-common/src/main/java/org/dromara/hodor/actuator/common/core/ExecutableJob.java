@@ -22,7 +22,6 @@ import lombok.Data;
 import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.common.JobExecutionContext;
 import org.dromara.hodor.actuator.common.JobRunnable;
-import org.dromara.hodor.actuator.common.exceptions.JobExecutionException;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.model.job.JobKey;
 
@@ -40,6 +39,8 @@ public class ExecutableJob {
 
     private JobKey jobKey;
 
+    private String jobCommandType;
+
     private JobRunnable jobRunnable;
 
     private JobExecutionContext executionContext;
@@ -51,9 +52,5 @@ public class ExecutableJob {
     private String dataPath;
 
     private Logger jobLogger;
-
-    public void stop() throws JobExecutionException {
-        this.getJobRunnable().stop(this);
-    }
 
 }

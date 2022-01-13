@@ -4,35 +4,34 @@ import java.io.IOException;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.yarn.api.records.ApplicationReport;
 import org.apache.hadoop.yarn.api.records.YarnApplicationState;
 import org.apache.hadoop.yarn.exceptions.YarnException;
-import org.dromara.hodor.actuator.bigdata.core.ExecuteContext;
 import org.dromara.hodor.actuator.bigdata.jobtype.HadoopJobUtils;
 import org.dromara.hodor.actuator.bigdata.queue.AbstractTask;
 import org.dromara.hodor.actuator.bigdata.queue.ITask;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.hadoop.yarn.api.records.YarnApplicationState.FAILED;
 import static org.apache.hadoop.yarn.api.records.YarnApplicationState.FINISHED;
 import static org.apache.hadoop.yarn.api.records.YarnApplicationState.KILLED;
 
 /**
- * @author tangzhongyuan
- * @create 2019-03-15 15:29
+ * AsyncJobStateTask
+ *
+ * @author tomgs
+ * @since 2021.11.23
  **/
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
+@Slf4j
 public class AsyncJobStateTask extends AbstractTask {
 
-    private static final Logger logger = LoggerFactory.getLogger(AsyncJobStateTask.class);
-
     private String appId;
+
     private String requestId;
-    private ExecuteContext context;
 
     @Override
     public ITask runTask() {
@@ -40,9 +39,9 @@ public class AsyncJobStateTask extends AbstractTask {
         try {
             report = HadoopJobUtils.fetchJobStateOnCluster(getAppId());
         } catch (YarnException | IOException e) {
-            logger.error("AsyncJobStateTask ## get report error, errorMsg:" + e.getMessage(), e);
+            log.error("AsyncJobStateTask ## get report error, errorMsg: {}.", e.getMessage(), e);
         }
-        logger.info("AsyncJobStateTask ## report: " + report);
+        log.info("AsyncJobStateTask ## report: {}", report);
 
         if (report != null && isFinished(report)) {
             /*RpcResponse response = new RpcResponse();
@@ -58,6 +57,9 @@ public class AsyncJobStateTask extends AbstractTask {
             ClientLinkedService.removeChannelWithRequestId(getRequestId());
             ExecutorManager.INSTANCE.removeRunningJob(getRequestId());
             ExecutorManager.INSTANCE.putFinishedJob(getRequestId(), getContext());*/
+
+
+
             return null;
         }
 
@@ -66,8 +68,8 @@ public class AsyncJobStateTask extends AbstractTask {
 
     private boolean isFinished(ApplicationReport report) {
         return report.getYarnApplicationState() == FINISHED
-                || report.getYarnApplicationState() == FAILED
-                || report.getYarnApplicationState() == KILLED;
+            || report.getYarnApplicationState() == FAILED
+            || report.getYarnApplicationState() == KILLED;
     }
 
     private JobExecuteStatus changeStatusCode(ApplicationReport report) {

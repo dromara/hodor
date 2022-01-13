@@ -19,7 +19,6 @@ package org.dromara.hodor.actuator.bigdata.jobtype;
 import java.io.File;
 import java.util.List;
 import org.apache.log4j.Logger;
-import org.dromara.hodor.actuator.bigdata.core.ExecuteContext;
 import org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties;
 import org.dromara.hodor.actuator.bigdata.executor.ProcessJob;
 import org.dromara.hodor.actuator.bigdata.security.commons.HadoopSecurityManager;
@@ -65,7 +64,7 @@ public class HadoopShell extends ProcessJob {
 	}
 
 	@Override
-	public void execute(ExecuteContext context) throws Exception {
+	public void run() throws Exception {
 		setupHadoopOpts(getJobProps());
 		HadoopConfigurationInjector.prepareResourcesToInject(getJobProps(), getWorkingDirectory());
 		if (shouldProxy && obtainTokens) {
@@ -79,8 +78,7 @@ public class HadoopShell extends ProcessJob {
 			getJobProps().put("env." + HADOOP_TOKEN_FILE_LOCATION, tokenFile.getAbsolutePath());
 		}
 		try {
-			//super.run();
-			super.execute(context);
+			super.run();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new Exception(e);

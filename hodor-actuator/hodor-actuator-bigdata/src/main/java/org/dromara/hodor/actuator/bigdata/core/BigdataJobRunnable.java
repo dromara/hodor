@@ -15,33 +15,35 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.actuator.bigdata.config;
+package org.dromara.hodor.actuator.bigdata.core;
 
-import java.util.Map;
-import lombok.Data;
-import org.dromara.hodor.actuator.common.config.HodorProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.dromara.hodor.actuator.bigdata.executor.Job;
+import org.dromara.hodor.actuator.common.JobRunnable;
+import org.dromara.hodor.actuator.common.core.ExecutableJob;
 
 /**
- * HodorActuatorJavaProperties
+ * BigdataJobRunnable
  *
  * @author tomgs
- * @since 2021/11/23
+ * @since 2022/1/13
  */
-@Data
-@ConfigurationProperties(prefix = "hodor")
-public class HodorActuatorBigdataProperties {
+public class BigdataJobRunnable implements JobRunnable {
 
-    /**
-     * common properties
-     */
-    private HodorProperties commons;
+    private final Job job;
 
-    // TODO: add actuator java properties
-    private Map<String, String> bigdata;
+    public BigdataJobRunnable(final Job job) {
+        this.job = job;
+    }
 
-    public HodorProperties getCommonProperties() {
-        return this.commons;
+    @Override
+    public Object execute(ExecutableJob executableJob) throws Exception {
+        job.run();
+        return null;
+    }
+
+    @Override
+    public void stop(ExecutableJob executableJob) throws Exception {
+        job.cancel();
     }
 
 }

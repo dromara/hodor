@@ -4,7 +4,6 @@ import cn.hutool.core.date.DateUtil;
 import java.util.Date;
 import org.dromara.hodor.actuator.common.core.ExecutableJob;
 import org.dromara.hodor.actuator.common.core.HodorJobExecution;
-import org.dromara.hodor.actuator.common.exceptions.JobExecutionException;
 import org.dromara.hodor.actuator.common.executor.JobExecutionPersistence;
 import org.dromara.hodor.actuator.common.executor.RequestHandleManager;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
@@ -30,7 +29,7 @@ public class KillRunningJobAction extends AbstractAction<KillRunningJobRequest, 
     }
 
     @Override
-    public KillRunningJobResponse executeRequest(KillRunningJobRequest request) throws JobExecutionException {
+    public KillRunningJobResponse executeRequest(KillRunningJobRequest request) throws Exception {
         KillRunningJobResponse response = new KillRunningJobResponse();
         response.setCompleteTime(DateUtil.formatDateTime(new Date()));
         response.setStatus(JobExecuteStatus.KILLED);
@@ -41,7 +40,7 @@ public class KillRunningJobAction extends AbstractAction<KillRunningJobRequest, 
             return response;
         }
 
-        executableJob.stop();
+        executableJob.getJobRunnable().stop(executableJob);
 
         HodorJobExecution killedJobExecution = HodorJobExecution.createKilledJobExecution(request.getRequestId());
         jobExecutionPersistence.fireJobExecutionEvent(killedJobExecution);

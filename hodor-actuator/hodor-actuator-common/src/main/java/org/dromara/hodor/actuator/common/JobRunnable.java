@@ -41,7 +41,7 @@ public interface JobRunnable {
      * @return 任务执行结果
      * @throws JobExecutionException 任务执行异常
      */
-    Object execute(ExecutableJob executableJob) throws JobExecutionException;
+    Object execute(ExecutableJob executableJob) throws Exception;
 
     /**
      * 停止任务
@@ -49,7 +49,7 @@ public interface JobRunnable {
      * @param executableJob 待执行任务
      * @throws JobExecutionException 任务停止异常
      */
-    void stop(ExecutableJob executableJob) throws JobExecutionException;
+    void stop(ExecutableJob executableJob) throws Exception;
 
     /**
      * 获取任务状态
@@ -58,7 +58,7 @@ public interface JobRunnable {
      * @return JobExecuteStatus 任务状态
      * @throws JobExecutionException 任务状态异常
      */
-    default JobExecuteStatus status(ExecutableJob executableJob) throws JobExecutionException {
+    default JobExecuteStatus status(ExecutableJob executableJob) throws Exception {
         if (executableJob == null) {
             return JobExecuteStatus.FINISHED;
         }
@@ -74,7 +74,7 @@ public interface JobRunnable {
      * @return 日志数据
      * @throws IOException 读取日志文件异常
      */
-    default FileIOUtils.LogData getLog(ExecutableJob executableJob, int offset, int length) throws IOException {
+    default FileIOUtils.LogData getLog(ExecutableJob executableJob, int offset, int length) throws Exception {
         JobKey jobKey = executableJob.getJobKey();
         File jobLoggerFile = JobLoggerManager.getInstance()
             .buildJobLoggerFile(executableJob.getDataPath(), jobKey.getGroupName(), jobKey.getJobName(), executableJob.getRequestId());

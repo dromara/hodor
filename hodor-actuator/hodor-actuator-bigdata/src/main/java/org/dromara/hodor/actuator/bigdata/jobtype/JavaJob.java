@@ -20,7 +20,6 @@ import java.io.File;
 import java.util.List;
 import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
-import org.dromara.hodor.actuator.bigdata.core.ExecuteContext;
 import org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties;
 import org.dromara.hodor.actuator.bigdata.executor.JavaProcessJob;
 import org.dromara.hodor.actuator.bigdata.security.commons.SecurityUtils;
@@ -156,9 +155,9 @@ public class JavaJob extends JavaProcessJob {
 
 
   @Override
-  public void execute(ExecuteContext context) throws Exception {
+  public void run() throws Exception {
     HadoopConfigurationInjector.prepareResourcesToInject(getJobProps(),
         getWorkingDirectory());
-    super.execute(context);
+    super.run();
   }
 }

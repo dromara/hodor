@@ -5,14 +5,16 @@ import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * PriorityTaskQueue
+ *
  * @author tangzhongyuan
  * @create 2019-03-14 9:45
  **/
 public class PriorityTaskQueue {
 
-    private AtomicInteger seqInteger = new AtomicInteger(0);
-    private BlockingQueue<ITask> queue;
-    private TaskExecutor[] executors;
+    private final AtomicInteger seqInteger = new AtomicInteger(0);
+    private final BlockingQueue<ITask> queue;
+    private final TaskExecutor[] executors;
 
     public PriorityTaskQueue(int executorSize) {
         queue = new PriorityBlockingQueue<>();
@@ -28,9 +30,6 @@ public class PriorityTaskQueue {
     }
 
     public void shutdown() {
-        if (executors == null) {
-            return;
-        }
         for (TaskExecutor executor : executors) {
             if (executor != null) {
                 executor.shutdown();

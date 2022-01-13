@@ -30,7 +30,6 @@ import java.util.StringTokenizer;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.DirectoryScanner;
-import org.dromara.hodor.actuator.bigdata.core.ExecuteContext;
 import org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties;
 import org.dromara.hodor.actuator.bigdata.executor.JavaProcessJob;
 import org.dromara.hodor.actuator.bigdata.security.commons.HadoopSecurityManager;
@@ -344,7 +343,7 @@ public class HadoopSparkJob extends JavaProcessJob {
   }
 
   @Override
-  public void execute(ExecuteContext context) throws Exception {
+  public void run() throws Exception {
     HadoopConfigurationInjector.prepareResourcesToInject(getJobProps(),
         getWorkingDirectory());
 
@@ -404,7 +403,7 @@ public class HadoopSparkJob extends JavaProcessJob {
       getJobProps().put("env." + SPARK_MIN_MEM_SIZE_ENV_VAR, minMemSize);
     }
     try {
-      super.execute(context);
+      super.run();
     } catch (final Throwable t) {
       t.printStackTrace();
       getLog().error("caught error running the job", t);

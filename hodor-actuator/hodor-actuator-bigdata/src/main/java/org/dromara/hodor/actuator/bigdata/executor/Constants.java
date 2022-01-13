@@ -149,7 +149,7 @@ public class Constants {
     public static final String BLACK_LISTED_USERS = "azkaban.server.blacklist.users";
 
     // Path name of execute-as-user executable
-    public static final String AZKABAN_SERVER_NATIVE_LIB_FOLDER = "ejob.native.lib";
+    public static final String AZKABAN_SERVER_NATIVE_LIB_FOLDER = "azkaban.native.lib";
 
     // Name of *nix group associated with the process running Azkaban
     public static final String AZKABAN_SERVER_GROUP_NAME = "azkaban.group.name";
@@ -278,16 +278,17 @@ public class Constants {
     // The hadoop user the job should run under. If not specified, it will default to submit user.
     public static final String USER_TO_PROXY = "user.to.proxy";
 
+    public static final String JOB_TYPE = "job.type";
     /**
      * Format string for Log4j's EnhancedPatternLayout
      */
-    public static final String JOB_LOG_PATH = "ejob.job.log.path";
-    public static final String JOB_LOG_LAYOUT = "ejob.job.log.layout";
-    public static final String JOB_LOG_CHUNK_SIZE = "ejob.job.log.chunksize";
-    public static final String JOB_LOG_BACKUP_INDEX = "ejob.job.log.backupindex";
+    public static final String JOB_LOG_PATH = "job.log.path";
+    public static final String JOB_LOG_LAYOUT = "job.log.layout";
+    public static final String JOB_LOG_CHUNK_SIZE = "job.log.chunksize";
+    public static final String JOB_LOG_BACKUP_INDEX = "job.log.backupindex";
 
-    public static final String JOB_EXECUTION_TMP_DIR = "ejob.job.execution.tmp.dir";
-    public static final String JOB_STORAGE_HDFS_PATH = "ejob.storage.hdfs.path";
+    public static final String JOB_EXECUTION_TMP_DIR = "job.execution.tmp.dir";
+    public static final String JOB_STORAGE_HDFS_PATH = "storage.hdfs.path";
   }
 
   public static class JobCallbackProperties {

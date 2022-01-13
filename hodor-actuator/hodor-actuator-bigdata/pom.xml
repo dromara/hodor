@@ -177,4 +177,12 @@
             <version>${spark-core_2.10.version}</version>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>pentaho-repository</id>
+            <name>pentaho repository</name>
+            <url>https://public.nexus.pentaho.org/repository/</url>
+        </repository>
+    </repositories>
 </project>

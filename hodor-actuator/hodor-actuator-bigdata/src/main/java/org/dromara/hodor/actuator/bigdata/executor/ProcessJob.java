@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
-import org.dromara.hodor.actuator.bigdata.core.ExecuteContext;
 import org.dromara.hodor.actuator.bigdata.executor.process.ExecutorProcess;
 import org.dromara.hodor.actuator.bigdata.executor.process.ExecutorProcessBuilder;
 import org.dromara.hodor.actuator.bigdata.utils.Pair;
@@ -123,7 +122,7 @@ public class ProcessJob extends AbstractProcessJob {
   }
 
   @Override
-  public void execute(ExecuteContext context) throws Exception {
+  public void run() throws Exception {
     try {
       resolveProps();
     } catch (final Exception e) {

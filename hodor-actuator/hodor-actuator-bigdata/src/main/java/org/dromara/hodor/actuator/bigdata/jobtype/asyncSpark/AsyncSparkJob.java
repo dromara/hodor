@@ -8,8 +8,7 @@ import java.util.List;
 import java.util.Properties;
 import org.apache.hadoop.yarn.api.records.ApplicationReport;
 import org.apache.log4j.Logger;
-import org.dromara.hodor.actuator.bigdata.core.ExecuteContext;
-import org.dromara.hodor.actuator.bigdata.core.JobExecutorStateCheckHandler;
+import org.dromara.hodor.actuator.bigdata.core.JobExecutorStateChecker;
 import org.dromara.hodor.actuator.bigdata.executor.JavaProcessJob;
 import org.dromara.hodor.actuator.bigdata.jobtype.HadoopJobUtils;
 import org.dromara.hodor.actuator.bigdata.jobtype.javautils.AsyncJobStateTask;
@@ -45,7 +44,7 @@ public class AsyncSparkJob extends JavaProcessJob {
     }
 
     @Override
-    public void execute(ExecuteContext context) throws Exception {
+    public void run() throws Exception {
         try {
             resolveProps();
             resolverJars();
@@ -113,16 +112,14 @@ public class AsyncSparkJob extends JavaProcessJob {
         if (applicationId == null) {
             throw new JobExecutionException("applicationId is null, failed to run job " + jobid);
         }
-        context.setAppId(applicationId);
-
         ApplicationReport report = HadoopJobUtils.fetchJobStateOnCluster(applicationId);
         String trackingUrl = report.getTrackingUrl();
         logger.info("详细情况请查看tracking url :" + trackingUrl);
 
         String requestId = jobProps.getString("requestId");
         AsyncJobStateTask task = AsyncJobStateTask.builder().appId(applicationId)
-                .requestId(requestId).context(context).build();
-        JobExecutorStateCheckHandler stateCheckHandler = JobExecutorStateCheckHandler.getInstance();
+                .requestId(requestId).build();
+        JobExecutorStateChecker stateCheckHandler = JobExecutorStateChecker.getInstance();
         int queueSize = stateCheckHandler.addTask(task);
 
         logger.info("current queue size : " + queueSize);

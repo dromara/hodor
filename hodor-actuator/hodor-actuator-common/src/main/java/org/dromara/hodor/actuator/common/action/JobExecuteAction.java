@@ -46,12 +46,13 @@ public class JobExecuteAction extends AbstractExecuteAction {
 
         ExecutableJob executableJob = getRequestHandleManager().getExecutableJob(request.getRequestId());
         executableJob.setJobKey(jobKey);
+        executableJob.setJobCommandType(request.getJobCommandType());
         executableJob.setCurrentThread(Thread.currentThread());
         executableJob.setExecuteStatus(JobExecuteStatus.PENDING);
         executableJob.setJobLogger(getLogger());
         executableJob.setExecutionContext(context);
 
-        JobRunnable runnableJob = jobRegister.getRunnableJob(request);
+        JobRunnable runnableJob = jobRegister.getRunnableJob(executableJob);
         if (runnableJob == null) {
             throw new JobExecutionException(StringUtils.format("not found job {}.", jobKey));
         }
