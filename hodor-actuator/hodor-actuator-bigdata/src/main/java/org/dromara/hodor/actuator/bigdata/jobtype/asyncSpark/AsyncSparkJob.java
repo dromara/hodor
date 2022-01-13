@@ -52,7 +52,7 @@ public class AsyncSparkJob extends JavaProcessJob {
             handleError("Bad property definition! " + e.getMessage(), e);
         }
 
-        EjobSparkOnYarn instance = EjobSparkOnYarn.getInstance();
+        SparkOnYarn instance = SparkOnYarn.getInstance();
         YarnSubmitConditions conditions = YarnSubmitConditions.builder().build();
 
         //set application config

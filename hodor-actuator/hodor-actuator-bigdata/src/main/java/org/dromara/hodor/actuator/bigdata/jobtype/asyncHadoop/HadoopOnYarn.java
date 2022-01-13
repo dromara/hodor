@@ -8,20 +8,20 @@ import org.slf4j.LoggerFactory;
  * @author tangzhongyuan
  * @create 2019-03-11 18:24
  **/
-public class EjobHadoopOnYarn {
+public class HadoopOnYarn {
 
-    private static final Logger logger = LoggerFactory.getLogger(EjobHadoopOnYarn.class);
+    private static final Logger logger = LoggerFactory.getLogger(HadoopOnYarn.class);
     private static final String SPLIT_COMMA = ",";
 
-    private static volatile EjobHadoopOnYarn hadoopOnYarn = null;
+    private static volatile HadoopOnYarn hadoopOnYarn = null;
 
-    private EjobHadoopOnYarn() {
+    private HadoopOnYarn() {
 
     }
 
-    public static synchronized EjobHadoopOnYarn getInstance() {
+    public static synchronized HadoopOnYarn getInstance() {
         if (hadoopOnYarn == null) {
-            hadoopOnYarn = new EjobHadoopOnYarn();
+            hadoopOnYarn = new HadoopOnYarn();
         }
         return hadoopOnYarn;
     }

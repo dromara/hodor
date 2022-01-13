@@ -1,10 +1,6 @@
 package org.dromara.hodor.actuator.bigdata.jobtype.asyncSpark;
 
-import com.alibaba.fastjson.JSON;
-import com.globalegrow.ejob.bigdata.exception.JobExecutionException;
-import com.globalegrow.ejob.bigdata.plugin.javautils.JobUtils;
 import com.google.common.collect.Lists;
-import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
@@ -16,8 +12,13 @@ import org.apache.hadoop.yarn.util.ConverterUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.deploy.yarn.Client;
 import org.apache.spark.deploy.yarn.ClientArguments;
+import org.dromara.hodor.actuator.bigdata.exception.JobExecutionException;
+import org.dromara.hodor.actuator.bigdata.jobtype.javautils.JobUtils;
+import org.dromara.hodor.actuator.bigdata.utils.JSONUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * 用于spark 提交到yarn
@@ -25,19 +26,19 @@ import org.slf4j.LoggerFactory;
  * @author tangzhongyuan
  * @create 2019-03-06 15:49
  **/
-public class EjobSparkOnYarn {
+public class SparkOnYarn {
 
-    private static final Logger logger = LoggerFactory.getLogger(EjobSparkOnYarn.class);
+    private static final Logger logger = LoggerFactory.getLogger(SparkOnYarn.class);
 
-    private static volatile EjobSparkOnYarn sparkOnYarn = null;
+    private static volatile SparkOnYarn sparkOnYarn = null;
 
-    private EjobSparkOnYarn() {
+    private SparkOnYarn() {
 
     }
 
-    public static synchronized EjobSparkOnYarn getInstance() {
+    public static synchronized SparkOnYarn getInstance() {
         if (sparkOnYarn == null) {
-            sparkOnYarn = new EjobSparkOnYarn();
+            sparkOnYarn = new SparkOnYarn();
         }
         return sparkOnYarn;
     }
@@ -188,7 +189,7 @@ public class EjobSparkOnYarn {
 
         // 关闭yarn客户端
         yarnClient.stop();
-        logger.info("获取任务状态结束，任务状态： {}", JSON.toJSONString(taskState));
+        logger.info("获取任务状态结束，任务状态： {}", JSONUtils.toJSON(taskState));
         return taskState;
     }
 
