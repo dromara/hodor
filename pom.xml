@@ -459,6 +459,10 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
 
             <plugin>
