@@ -30,7 +30,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class BigdataActuatorApplication {
 
     public static void main(String[] args) {
-        System.out.println("bigdata actuator bootstrap");
+        // Fix error: java.lang.AbstractMethodError: javax.xml.parsers.DocumentBuilderFactory.setFeature(Ljava/lang/String;Z)
+        System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
+                "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl");
         SpringApplication.run(BigdataActuatorApplication.class, args);
     }
 

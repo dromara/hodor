@@ -95,7 +95,8 @@ public class HadoopJavaJobRunnerMain {
 
             _logger = Logger.getRootLogger();
             _logger.removeAllAppenders();
-            ConsoleAppender appender = new ConsoleAppender(DEFAULT_LAYOUT);
+            ConsoleAppender appender = new ConsoleAppender();
+            appender.setLayout(DEFAULT_LAYOUT);
             appender.activateOptions();
             _logger.addAppender(appender);
             _logger.setLevel(Level.INFO); //Explicitly setting level to INFO

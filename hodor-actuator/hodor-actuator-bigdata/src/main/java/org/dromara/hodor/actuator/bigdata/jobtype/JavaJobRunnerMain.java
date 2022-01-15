@@ -86,7 +86,8 @@ public class JavaJobRunnerMain {
 
             _logger = Logger.getRootLogger();
             _logger.removeAllAppenders();
-            ConsoleAppender appender = new ConsoleAppender(DEFAULT_LAYOUT);
+            ConsoleAppender appender = new ConsoleAppender();
+            appender.setLayout(DEFAULT_LAYOUT);
             appender.activateOptions();
             _logger.addAppender(appender);
 

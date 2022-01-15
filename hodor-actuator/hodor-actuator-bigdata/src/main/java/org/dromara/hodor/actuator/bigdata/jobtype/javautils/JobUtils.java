@@ -23,7 +23,8 @@ public class JobUtils {
     public static Logger initJobLogger() {
         Logger rootLogger = Logger.getRootLogger();
         rootLogger.removeAllAppenders();
-        ConsoleAppender appender = new ConsoleAppender(new PatternLayout("%p %m\n"));
+        ConsoleAppender appender = new ConsoleAppender();
+        appender.setLayout(new PatternLayout("%p %m\n"));
         appender.activateOptions();
         rootLogger.addAppender(appender);
         return rootLogger;
