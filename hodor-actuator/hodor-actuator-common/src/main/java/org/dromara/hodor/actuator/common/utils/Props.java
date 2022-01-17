@@ -52,7 +52,7 @@ public class Props {
     /**
      * 存储当前.job文件信息
      */
-    private final Map<String, String> _current;
+    private final Map<String, Object> _current;
 
     /**
      * 上级job的存储信息
@@ -114,7 +114,8 @@ public class Props {
     /**
      * Create properties from maps of properties
      */
-    public Props(final Props parent, final Map<String, String>... props) {
+    @SafeVarargs
+    public Props(final Props parent, final Map<String, Object>... props) {
         this(parent);
         for (int i = props.length - 1; i >= 0; i--) {
             this.putAll(props[i]);
@@ -158,7 +159,7 @@ public class Props {
                 "Must have an equal number of keys and values.");
         }
 
-        final Map<String, String> vals = new HashMap<>(args.length / 2);
+        final Map<String, Object> vals = new HashMap<>(args.length / 2);
 
         for (int i = 0; i < args.length; i += 2) {
             vals.put(args[i], args[i + 1]);
@@ -239,7 +240,7 @@ public class Props {
     /**
      * Return value if available in current Props otherwise return from parent
      */
-    public String get(final Object key) {
+    public Object get(final Object key) {
         if (this._current.containsKey(key)) {
             return this._current.get(key);
         } else if (this._parent != null) {
@@ -276,7 +277,7 @@ public class Props {
      * @throws IllegalArgumentException If the variable given for substitution is not a valid key in
      *                                  this Props.
      */
-    public String put(final String key, final String value) {
+    public Object put(final String key, final Object value) {
         return this._current.put(key, value);
     }
 
@@ -315,33 +316,33 @@ public class Props {
     /**
      * Put integer
      */
-    public String put(final String key, final Integer value) {
-        return this._current.put(key, value.toString());
+    public Integer put(final String key, final Integer value) {
+        return (Integer) this._current.put(key, value);
     }
 
     /**
      * Put Long. Stores as String.
      */
-    public String put(final String key, final Long value) {
-        return this._current.put(key, value.toString());
+    public Long put(final String key, final Long value) {
+        return (Long) this._current.put(key, value);
     }
 
     /**
      * Put Double. Stores as String.
      */
-    public String put(final String key, final Double value) {
-        return this._current.put(key, value.toString());
+    public Double put(final String key, final Double value) {
+        return (Double) this._current.put(key, value);
     }
 
     /**
      * Put everything in the map into the props.
      */
-    public void putAll(final Map<? extends String, ? extends String> m) {
+    public void putAll(final Map<String, Object> m) {
         if (m == null) {
             return;
         }
 
-        for (final Map.Entry<? extends String, ? extends String> entry : m.entrySet()) {
+        for (final Map.Entry<String, Object> entry : m.entrySet()) {
             this.put(entry.getKey(), entry.getValue());
         }
     }
@@ -395,7 +396,7 @@ public class Props {
     /**
      * Remove only the local value of key s, and not the parents.
      */
-    public String removeLocal(final Object s) {
+    public Object removeLocal(final Object s) {
         return this._current.remove(s);
     }
 
@@ -421,7 +422,7 @@ public class Props {
     public Class<?> getClass(final String key) {
         try {
             if (containsKey(key)) {
-                return Class.forName(get(key));
+                return Class.forName((String) get(key));
             } else {
                 throw new UndefinedPropertyException("Missing required property '"
                     + key + "'");
@@ -434,7 +435,7 @@ public class Props {
     public Class<?> getClass(final String key, final boolean initialize, final ClassLoader cl) {
         try {
             if (containsKey(key)) {
-                return Class.forName(get(key), initialize, cl);
+                return Class.forName((String) get(key), initialize, cl);
             } else {
                 throw new UndefinedPropertyException("Missing required property '"
                     + key + "'");
@@ -460,7 +461,7 @@ public class Props {
      */
     public String getString(final String key, final String defaultValue) {
         if (containsKey(key)) {
-            return get(key);
+            return (String) get(key);
         } else {
             return defaultValue;
         }
@@ -471,7 +472,7 @@ public class Props {
      */
     public String getString(final String key) {
         if (containsKey(key)) {
-            return get(key);
+            return (String) get(key);
         } else {
             throw new UndefinedPropertyException("Missing required property '" + key
                 + "'");
@@ -506,7 +507,7 @@ public class Props {
      * Returns a list of strings with the sep as the separator of the value
      */
     public List<String> getStringList(final String key, final String sep) {
-        final String val = get(key);
+        final String val = (String) get(key);
         if (val == null || val.trim().length() == 0) {
             return Collections.emptyList();
         }
@@ -549,10 +550,16 @@ public class Props {
      * returned.
      */
     public boolean getBoolean(final String key, final boolean defaultValue) {
-        if (containsKey(key)) {
-            return "true".equalsIgnoreCase(get(key).trim());
-        } else {
+        Object obj = get(key);
+        if (obj == null) {
             return defaultValue;
+        }
+        try {
+            if(obj instanceof Boolean)
+                return (Boolean) obj;
+            return Boolean.parseBoolean((String)obj);
+        } catch (Exception e) {
+            throw new ClassCastException("Identified object is not a Boolean.");
         }
     }
 
@@ -562,7 +569,7 @@ public class Props {
      */
     public boolean getBoolean(final String key) {
         if (containsKey(key)) {
-            return "true".equalsIgnoreCase(get(key));
+            return "true".equalsIgnoreCase((String) get(key));
         } else {
             throw new UndefinedPropertyException("Missing required property '" + key
                 + "'");
@@ -575,7 +582,7 @@ public class Props {
      */
     public long getLong(final String name, final long defaultValue) {
         if (containsKey(name)) {
-            return Long.parseLong(get(name));
+            return get(name) instanceof Long ? (Long) get(name) : Long.parseLong((String) get(name));
         } else {
             return defaultValue;
         }
@@ -587,11 +594,13 @@ public class Props {
      * will be thrown.
      */
     public long getLong(final String name) {
-        if (containsKey(name)) {
-            return Long.parseLong(get(name));
-        } else {
-            throw new UndefinedPropertyException("Missing required property '" + name
-                + "'");
+        Object obj = get(name);
+        try {
+            if(obj instanceof Long)
+                return (Long) obj;
+            return Long.parseLong((String)obj);
+        } catch (Exception e) {
+            throw new ClassCastException("Identified object is not a Long.");
         }
     }
 
@@ -600,10 +609,16 @@ public class Props {
      * returned. If the value isn't a int, then a parse exception will be thrown.
      */
     public int getInt(final String name, final int defaultValue) {
-        if (containsKey(name)) {
-            return Integer.parseInt(get(name).trim());
-        } else {
+        Object obj = get(name);
+        if (obj == null) {
             return defaultValue;
+        }
+        try {
+            if(obj instanceof Integer)
+                return (Integer) obj;
+            return Integer.parseInt((String)obj);
+        } catch (Exception e) {
+            throw new ClassCastException("Identified object is not an Integer.");
         }
     }
 
@@ -613,11 +628,13 @@ public class Props {
      * will be thrown.
      */
     public int getInt(final String name) {
-        if (containsKey(name)) {
-            return Integer.parseInt(get(name).trim());
-        } else {
-            throw new UndefinedPropertyException("Missing required property '" + name
-                + "'");
+        Object obj = get(name);
+        try {
+            if(obj instanceof Integer)
+                return (Integer) obj;
+            return Integer.parseInt((String)obj);
+        } catch (Exception e) {
+            throw new ClassCastException("Identified object is not an Integer.");
         }
     }
 
@@ -626,10 +643,16 @@ public class Props {
      * returned. If the value isn't a double, then a parse exception will be thrown.
      */
     public double getDouble(final String name, final double defaultValue) {
-        if (containsKey(name)) {
-            return Double.parseDouble(get(name).trim());
-        } else {
+        Object obj = get(name);
+        if (obj == null) {
             return defaultValue;
+        }
+        try {
+            if(obj instanceof Double)
+                return (Double) obj;
+            return Double.parseDouble((String)obj);
+        } catch (Exception e) {
+            throw new ClassCastException("Identified object is not a Double.");
         }
     }
 
@@ -639,11 +662,13 @@ public class Props {
      * will be thrown.
      */
     public double getDouble(final String name) {
-        if (containsKey(name)) {
-            return Double.parseDouble(get(name).trim());
-        } else {
-            throw new UndefinedPropertyException("Missing required property '" + name
-                + "'");
+        Object obj = get(name);
+        try {
+            if(obj instanceof Double)
+                return (Double) obj;
+            return Double.parseDouble((String)obj);
+        } catch (Exception e) {
+            throw new ClassCastException("Identified object is not a Double.");
         }
     }
 
@@ -654,7 +679,7 @@ public class Props {
     public URI getUri(final String name) {
         if (containsKey(name)) {
             try {
-                return new URI(get(name));
+                return new URI((String) get(name));
             } catch (final URISyntaxException e) {
                 throw new IllegalArgumentException(e.getMessage());
             }
@@ -716,7 +741,7 @@ public class Props {
     public void storeLocal(final OutputStream out) throws IOException {
         final Properties p = new Properties();
         for (final String key : this._current.keySet()) {
-            p.setProperty(key, get(key));
+            p.setProperty(key, String.valueOf(get(key)));
         }
         p.store(out, null);
     }
@@ -729,7 +754,7 @@ public class Props {
     public Properties toProperties() {
         final Properties p = new Properties();
         for (final String key : this._current.keySet()) {
-            p.setProperty(key, get(key));
+            p.setProperty(key, String.valueOf(get(key)));
         }
 
         return p;
@@ -744,9 +769,9 @@ public class Props {
         allProp.putAll(toProperties());
 
         // import parent properties
-      if (_parent != null) {
-        allProp.putAll(_parent.toProperties());
-      }
+        if (_parent != null) {
+            allProp.putAll(_parent.toProperties());
+        }
 
         return allProp;
     }
@@ -778,7 +803,7 @@ public class Props {
         for (Props curr = this; curr != null; curr = curr.getParent()) {
             for (final String key : curr.localKeySet()) {
                 if (!p.containsKey(key)) {
-                    p.setProperty(key, get(key));
+                    p.setProperty(key, String.valueOf(get(key)));
                 }
             }
         }
@@ -810,7 +835,7 @@ public class Props {
         // when there is a conflict, value from the child takes the priority.
         for (final String key : this.localKeySet()) {
             if (key.startsWith(prefix)) {
-                values.put(key.substring(prefix.length()), get(key));
+                values.put(key.substring(prefix.length()), String.valueOf(get(key)));
             }
         }
         return values;
@@ -895,7 +920,7 @@ public class Props {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder("{");
-        for (final Map.Entry<String, String> entry : this._current.entrySet()) {
+        for (final Map.Entry<String, Object> entry : this._current.entrySet()) {
             builder.append(entry.getKey());
             builder.append(": ");
             builder.append(entry.getValue());
