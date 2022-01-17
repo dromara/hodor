@@ -180,7 +180,7 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
         return executableNodeMap.get(requestId);
     }
 
-    public void removeExecutableNode(Long requestId) {
+    public void removeExecutableJob(Long requestId) {
         executableNodeMap.remove(requestId);
     }
 

@@ -24,6 +24,7 @@ import org.dromara.hodor.actuator.common.JobExecutionContext;
 import org.dromara.hodor.actuator.common.JobRunnable;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.model.job.JobKey;
+import org.dromara.hodor.remoting.api.message.RequestContext;
 
 /**
  * ExecutableJob
@@ -42,6 +43,8 @@ public class ExecutableJob {
     private String jobCommandType;
 
     private JobRunnable jobRunnable;
+
+    private RequestContext requestContext;
 
     private JobExecutionContext executionContext;
 

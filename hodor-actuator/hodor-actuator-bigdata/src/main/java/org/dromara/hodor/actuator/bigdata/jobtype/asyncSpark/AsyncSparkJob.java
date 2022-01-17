@@ -19,21 +19,24 @@ import org.dromara.hodor.actuator.common.utils.Props;
  * 异步提交spark任务入口
  * <br/>
  * <p>
- *     请求参数：<br/>
- *          job.name -- 任务名称，非必填<br/>
- *          job.class -- 任务运行主类名，必填<br/>
- *          job.execution.jar -- 任务运行jar包，必填<br/>
- *          queue -- yarn队列设置，默认default<br/>
- *          job.executon.args -- 任务运行参数，非必填<br/>
+ * 请求参数：<br/>
+ * job.name -- 任务名称，非必填<br/>
+ * job.class -- 任务运行主类名，必填<br/>
+ * job.execution.jar -- 任务运行jar包，必填<br/>
+ * queue -- yarn队列设置，默认default<br/>
+ * job.executon.args -- 任务运行参数，非必填<br/>
  *
  * </p>
+ *
  * @author tangzhongyuan
  * @create 2019-03-07 19:02
  **/
 public class AsyncSparkJob extends JavaProcessJob {
 
     private final Logger logger;
+
     private final String jobid;
+
     private final Props jobProps;
 
     public AsyncSparkJob(String jobid, Props sysProps, Props jobProps, Logger logger) {
@@ -73,7 +76,7 @@ public class AsyncSparkJob extends JavaProcessJob {
         //set yarn config
         conditions.setYarnJars(jobProps.getString("yarn.jars", sysProps.getString("yarn.jars")));
         String resourceManagerAddress = jobProps.getString("resourceManagerAddress",
-                sysProps.getString("yarn.resource.manager.address"));
+            sysProps.getString("yarn.resource.manager.address"));
         conditions.setYarnResourcemanagerAddress(resourceManagerAddress);
 
         if (jobProps.containsKey("job.execution.dependJars")) {
@@ -116,9 +119,12 @@ public class AsyncSparkJob extends JavaProcessJob {
         String trackingUrl = report.getTrackingUrl();
         logger.info("详细情况请查看tracking url :" + trackingUrl);
 
-        String requestId = jobProps.getString("requestId");
-        AsyncJobStateTask task = AsyncJobStateTask.builder().appId(applicationId)
-                .requestId(requestId).build();
+        Long requestId = jobProps.getLong("requestId");
+        AsyncJobStateTask task = AsyncJobStateTask.builder()
+            .appId(applicationId)
+            .requestId(requestId)
+            .props(jobProps)
+            .build();
         JobExecutorStateChecker stateCheckHandler = JobExecutorStateChecker.getInstance();
         int queueSize = stateCheckHandler.addTask(task);
 
@@ -139,7 +145,7 @@ public class AsyncSparkJob extends JavaProcessJob {
             @Override
             public boolean accept(File dir, String name) {
                 if (name.endsWith(".jar") || "lib".equalsIgnoreCase(name)
-                        || "conf".equalsIgnoreCase(name)) {
+                    || "conf".equalsIgnoreCase(name)) {
                     return true;
                 }
                 return false;
@@ -151,8 +157,7 @@ public class AsyncSparkJob extends JavaProcessJob {
             if (file.getName().endsWith(".jar")) {
                 if (file.getName().equalsIgnoreCase(appJar)) {
                     jobProps.put("job.executor.jar", file.getAbsolutePath());
-                }
-                else {
+                } else {
                     dependJarSb.append(file.getAbsolutePath()).append(",");
                 }
             }

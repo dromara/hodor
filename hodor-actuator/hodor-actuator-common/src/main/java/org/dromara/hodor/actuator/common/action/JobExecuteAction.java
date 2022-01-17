@@ -51,6 +51,7 @@ public class JobExecuteAction extends AbstractExecuteAction {
         executableJob.setExecuteStatus(JobExecuteStatus.PENDING);
         executableJob.setJobLogger(getLogger());
         executableJob.setExecutionContext(context);
+        executableJob.setRequestContext(getRequestContext());
 
         JobRunnable runnableJob = jobRegister.getRunnableJob(executableJob);
         if (runnableJob == null) {

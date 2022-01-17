@@ -25,7 +25,7 @@ import java.util.Set;
 import org.dromara.hodor.actuator.bigdata.config.HodorActuatorBigdataProperties;
 import org.dromara.hodor.actuator.bigdata.core.BigdataJobRunnable;
 import org.dromara.hodor.actuator.bigdata.core.JobTypeManager;
-import org.dromara.hodor.actuator.bigdata.executor.Constants;
+import org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties;
 import org.dromara.hodor.actuator.bigdata.executor.Job;
 import org.dromara.hodor.actuator.common.JobRegister;
 import org.dromara.hodor.actuator.common.JobRunnable;
@@ -70,7 +70,8 @@ public class BigdataJobRegister implements JobRegister {
     public JobRunnable getRunnableJob(ExecutableJob executableJob) {
         String jobCommandType = executableJob.getJobCommandType();
         Props jobPros = new Props();
-        jobPros.put(Constants.JobProperties.JOB_TYPE, jobCommandType);
+        jobPros.put(CommonJobProperties.JOB_TYPE, jobCommandType);
+        jobPros.put(CommonJobProperties.JOB_CONTEXT, executableJob.getRequestContext());
         Job job = jobTypeManager.buildJobExecutor(executableJob.getJobKey().toString(), jobPros, executableJob.getJobLogger());
         return new BigdataJobRunnable(job);
     }

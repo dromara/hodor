@@ -1,5 +1,6 @@
 package org.dromara.hodor.actuator.bigdata.jobtype.javautils;
 
+import cn.hutool.core.date.DateUtil;
 import java.io.IOException;
 import lombok.Builder;
 import lombok.Data;
@@ -8,10 +9,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.yarn.api.records.ApplicationReport;
 import org.apache.hadoop.yarn.api.records.YarnApplicationState;
 import org.apache.hadoop.yarn.exceptions.YarnException;
+import org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties;
 import org.dromara.hodor.actuator.bigdata.jobtype.HadoopJobUtils;
 import org.dromara.hodor.actuator.bigdata.queue.AbstractTask;
 import org.dromara.hodor.actuator.bigdata.queue.ITask;
+import org.dromara.hodor.actuator.common.utils.Props;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
+import org.dromara.hodor.remoting.api.message.Header;
+import org.dromara.hodor.remoting.api.message.RemotingMessage;
+import org.dromara.hodor.remoting.api.message.RemotingResponse;
+import org.dromara.hodor.remoting.api.message.RequestContext;
+import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
 
 import static org.apache.hadoop.yarn.api.records.YarnApplicationState.FAILED;
 import static org.apache.hadoop.yarn.api.records.YarnApplicationState.FINISHED;
@@ -23,15 +31,17 @@ import static org.apache.hadoop.yarn.api.records.YarnApplicationState.KILLED;
  * @author tomgs
  * @since 2021.11.23
  **/
-@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
 @Slf4j
+@Builder
+@EqualsAndHashCode(callSuper = true)
 public class AsyncJobStateTask extends AbstractTask {
 
     private String appId;
 
-    private String requestId;
+    private Long requestId;
+
+    private Props props;
 
     @Override
     public ITask runTask() {
@@ -44,22 +54,25 @@ public class AsyncJobStateTask extends AbstractTask {
         log.info("AsyncJobStateTask ## report: {}", report);
 
         if (report != null && isFinished(report)) {
-            /*RpcResponse response = new RpcResponse();
-            response.setRequestId(getRequestId());
-            response.setJobCompleteTime(DateUtil.local2Utc(new Date()));
-            response.setException(report.getFinalApplicationStatus().name());
-            response.setCode(String.valueOf(changeStatusCode(report)));
+            RequestContext context = (RequestContext) props.get(CommonJobProperties.JOB_CONTEXT);
+            JobExecuteResponse response = new JobExecuteResponse();
+            response.setRequestId(requestId);
+            response.setStatus(changeStatusCode(report));
+            response.setCompleteTime(DateUtil.formatDateTime(DateUtil.date(report.getFinishTime())));
+            response.setProcessTime(report.getFinishTime() - report.getStartTime());
 
-            ChannelFuture channelFuture = getChannel().writeAndFlush(response);
-            channelFuture.addListener(new ResendFutureListener(response, getChannel()));
-
-            //将任务从执行中map移出到完成map
-            ClientLinkedService.removeChannelWithRequestId(getRequestId());
-            ExecutorManager.INSTANCE.removeRunningJob(getRequestId());
-            ExecutorManager.INSTANCE.putFinishedJob(getRequestId(), getContext());*/
-
-
-
+            byte[] body = context.serializer().serialize(RemotingResponse.succeeded(response));
+            RemotingMessage remotingMessage = new RemotingMessage();
+            remotingMessage.setHeader(Header.builder()
+                .magic(context.requestHeader().getMagic())
+                .id(context.requestHeader().getId())
+                .version(context.requestHeader().getVersion())
+                .attachment(context.requestHeader().getAttachment())
+                .type(context.requestHeader().getType())
+                .length(body.length)
+                .build());
+            remotingMessage.setBody(body);
+            context.channel().send(remotingMessage);
             return null;
         }
 

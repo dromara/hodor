@@ -7,6 +7,7 @@ package org.dromara.hodor.actuator.bigdata.queue;
 public abstract class AbstractTask implements ITask {
 
     private Priority priority = Priority.DEFAULT;
+
     private int seq;
 
     @Override
@@ -43,6 +44,6 @@ public abstract class AbstractTask implements ITask {
         Priority thisPriority = this.getPriority();
 
         return thisPriority == otherPriority ? this.getSeq() - task.getSeq()
-                : otherPriority.ordinal() - thisPriority.ordinal();
+            : otherPriority.ordinal() - thisPriority.ordinal();
     }
 }

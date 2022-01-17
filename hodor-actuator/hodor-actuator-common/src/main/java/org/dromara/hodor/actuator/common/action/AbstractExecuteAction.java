@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.common.config.HodorProperties;
 import org.dromara.hodor.actuator.common.core.HodorJobExecution;
 import org.dromara.hodor.actuator.common.core.JobLoggerManager;
-import org.dromara.hodor.actuator.common.executor.ExecutorManager;
 import org.dromara.hodor.actuator.common.executor.JobExecutionPersistence;
 import org.dromara.hodor.actuator.common.executor.RequestHandleManager;
 import org.dromara.hodor.common.utils.Stopwatch;
@@ -131,7 +130,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
     @Override
     public void afterProcess() {
         jobLogger.info("job execution finished.");
-        getRequestHandleManager().removeExecutableNode(requestId);
+        getRequestHandleManager().removeExecutableJob(requestId);
         jobLoggerManager.stopJobLogger(loggerName);
     }
 

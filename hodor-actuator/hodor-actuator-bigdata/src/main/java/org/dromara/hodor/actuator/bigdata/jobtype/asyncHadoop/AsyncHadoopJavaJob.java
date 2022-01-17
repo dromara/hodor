@@ -21,7 +21,9 @@ import static org.dromara.hodor.actuator.bigdata.executor.Constants.JobPropertie
 public class AsyncHadoopJavaJob extends HadoopJavaJob {
 
     private final Logger logger;
+
     private final Props props;
+
     private final String jobid;
 
     public AsyncHadoopJavaJob(String jobid, Props sysProps, Props jobProps, Logger logger) throws RuntimeException {
@@ -43,10 +45,13 @@ public class AsyncHadoopJavaJob extends HadoopJavaJob {
         }
         //这里只处理一个任务的情况
         String applicationId = applicationIds.iterator().next();
-        String requestId = jobProps.getString("requestId");
+        Long requestId = jobProps.getLong("requestId");
 
-        AsyncJobStateTask task = AsyncJobStateTask.builder().appId(applicationId)
-                .requestId(requestId).build();
+        AsyncJobStateTask task = AsyncJobStateTask.builder()
+            .appId(applicationId)
+            .requestId(requestId)
+            .props(props)
+            .build();
         JobExecutorStateChecker stateCheckHandler = JobExecutorStateChecker.getInstance();
         int queueSize = stateCheckHandler.addTask(task);
 

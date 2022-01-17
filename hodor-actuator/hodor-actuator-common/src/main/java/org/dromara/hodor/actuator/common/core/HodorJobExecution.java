@@ -66,7 +66,7 @@ public class HodorJobExecution {
     public static HodorJobExecution createSuccessJobExecution(Long requestId, byte[] result) {
         return HodorJobExecution.builder()
             .requestId(requestId)
-            .status(JobExecuteStatus.FAILED)
+            .status(JobExecuteStatus.SUCCEEDED)
             .comments("success")
             .result(result)
             .completeTime(new Date())

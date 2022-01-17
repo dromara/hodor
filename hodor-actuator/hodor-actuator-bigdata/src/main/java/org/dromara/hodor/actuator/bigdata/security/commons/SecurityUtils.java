@@ -38,7 +38,7 @@ import org.dromara.hodor.actuator.common.utils.Props;
 public class SecurityUtils {
 
   // Secure Hadoop proxy user params
-  public static final String ENABLE_PROXYING = "hodor.actuator.should.proxy"; // boolean
+  public static final String ENABLE_PROXYING = "execute.should.proxy"; // boolean
   public static final String PROXY_KEYTAB_LOCATION = "proxy.keytab.location";
   public static final String PROXY_USER = "proxy.user";
   public static final String OBTAIN_BINARY_TOKEN = "obtain.binary.token";

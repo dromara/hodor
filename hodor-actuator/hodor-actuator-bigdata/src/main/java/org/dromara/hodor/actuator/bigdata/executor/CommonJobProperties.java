@@ -24,7 +24,12 @@ public class CommonJobProperties {
   /**
    * The type of job that will be executed. Examples: command, java, etc.
    */
-  public static final String JOB_TYPE = "type";
+  public static final String JOB_TYPE = "job.type";
+
+  /**
+   * The scheduler remote ip.
+   */
+  public static final String JOB_CONTEXT = "job.context";
 
   /**
    * Force a node to be a root node in a flow, even if there are other jobs dependent on it.

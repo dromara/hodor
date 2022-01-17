@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.exception.JobExecutionException;
 import org.dromara.hodor.actuator.bigdata.exception.JobTypeManagerException;
-import org.dromara.hodor.actuator.bigdata.executor.Constants;
+import org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties;
 import org.dromara.hodor.actuator.bigdata.executor.JavaProcessJob;
 import org.dromara.hodor.actuator.bigdata.executor.Job;
 import org.dromara.hodor.actuator.bigdata.executor.NoopJob;
@@ -318,7 +318,7 @@ public class JobTypeManager {
 
     Job job = null;
     try {
-      final String jobType = jobProps.getString(Constants.JobProperties.JOB_TYPE);
+      final String jobType = jobProps.getString(CommonJobProperties.JOB_TYPE);
       if (jobType == null || jobType.length() == 0) {
         /* throw an exception when job name is null or empty */
         throw new JobExecutionException(String.format(

@@ -38,7 +38,7 @@ public class HodorActuatorBigdataProperties {
     private HodorProperties commons;
 
     // TODO: add actuator java properties
-    private Map<String, String> bigdata;
+    private Map<String, Object> bigdata;
 
     public HodorProperties getCommonProperties() {
         return this.commons;
