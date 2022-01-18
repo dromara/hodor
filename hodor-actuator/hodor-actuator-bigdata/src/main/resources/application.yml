@@ -6,7 +6,7 @@ server:
 
 hodor:
   commons:
-    appName: hodor-client
+    appName: hodor-actuator-bigdata
     appKey: 1234567
     registryAddress: http://localhost:8081,localhost:8082,localhost:8083/hodor
     queueSize: 5000
