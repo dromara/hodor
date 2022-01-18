@@ -10,7 +10,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>hodor-server</artifactId>
-
+    <properties>
+        <m2e.apt.activation>jdt_apt</m2e.apt.activation>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.dromara</groupId>
