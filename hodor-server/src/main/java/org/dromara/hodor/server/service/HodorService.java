@@ -2,12 +2,10 @@ package org.dromara.hodor.server.service;
 
 import com.google.common.collect.Lists;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.hodor.common.exception.HodorException;
 import org.dromara.hodor.common.utils.CopySets;
-import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.core.Constants.CopySetConstants;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.core.service.JobInfoService;
@@ -120,7 +118,8 @@ public class HodorService implements HodorLifecycle {
         List<Long> intervalOffsets = Lists.newArrayListWithCapacity(setsNum);
         for (int i = 0; i < setsNum; i++) {
             Long hashId = jobInfoService.queryJobHashIdByOffset(offset * i);
-            if (hashId < 0 && i > 0) {
+            // hashId == -1 -> end
+            if (hashId <= -1 && i > 0) {
                 Long preMin = intervalOffsets.get(i - 1);
                 hashId = preMin + ((Long.MAX_VALUE - preMin) >> 1);
             }
