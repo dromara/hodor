@@ -20,11 +20,11 @@ package org.dromara.hodor.actuator.common.core;
 import lombok.Builder;
 import lombok.Data;
 import org.apache.logging.log4j.Logger;
-import org.dromara.hodor.actuator.common.JobExecutionContext;
 import org.dromara.hodor.actuator.common.JobRunnable;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.remoting.api.message.RequestContext;
+import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 
 /**
  * ExecutableJob
@@ -44,9 +44,9 @@ public class ExecutableJob {
 
     private JobRunnable jobRunnable;
 
-    private RequestContext requestContext;
+    private JobExecuteRequest executeRequest;
 
-    private JobExecutionContext executionContext;
+    private RequestContext requestContext;
 
     private JobExecuteStatus executeStatus;
 

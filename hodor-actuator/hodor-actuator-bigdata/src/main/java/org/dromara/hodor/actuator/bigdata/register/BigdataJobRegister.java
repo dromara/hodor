@@ -57,8 +57,13 @@ public class BigdataJobRegister implements JobRegister {
     }
 
     @Override
-    public Set<String> supportedGroupNames() {
-        return Sets.newHashSet(properties.getCommonProperties().getAppName());
+    public Set<String> bindingGroup() {
+        return Sets.newHashSet();
+    }
+
+    @Override
+    public String bindingCluster() {
+        return properties.getCommonProperties().getAppName();
     }
 
     @Override

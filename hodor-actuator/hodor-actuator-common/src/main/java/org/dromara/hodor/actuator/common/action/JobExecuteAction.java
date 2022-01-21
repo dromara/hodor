@@ -2,8 +2,6 @@ package org.dromara.hodor.actuator.common.action;
 
 import cn.hutool.core.date.DateUtil;
 import java.util.Date;
-import org.dromara.hodor.actuator.common.JobExecutionContext;
-import org.dromara.hodor.actuator.common.JobParameter;
 import org.dromara.hodor.actuator.common.JobRegister;
 import org.dromara.hodor.actuator.common.JobRunnable;
 import org.dromara.hodor.actuator.common.config.HodorProperties;
@@ -40,20 +38,16 @@ public class JobExecuteAction extends AbstractExecuteAction {
     @Override
     public JobExecuteResponse executeRequest0(final JobExecuteRequest request) throws Exception {
         final JobKey jobKey = JobKey.of(request.getGroupName(), request.getJobName());
-        final JobParameter jobParameter = new JobParameter(request.getGroupName(), request.getJobName(), request.getRequestId(),
-            request.getJobParameters(), request.getShardId(), request.getShardName());
-        final JobExecutionContext context = new JobExecutionContext(getLogger(), jobParameter);
-
-        ExecutableJob executableJob = getRequestHandleManager().getExecutableJob(request.getRequestId());
+        final ExecutableJob executableJob = getRequestHandleManager().getExecutableJob(request.getRequestId());
         executableJob.setJobKey(jobKey);
+        executableJob.setExecuteRequest(request);
         executableJob.setJobCommandType(request.getJobCommandType());
         executableJob.setCurrentThread(Thread.currentThread());
         executableJob.setExecuteStatus(JobExecuteStatus.PENDING);
         executableJob.setJobLogger(getLogger());
-        executableJob.setExecutionContext(context);
         executableJob.setRequestContext(getRequestContext());
 
-        JobRunnable runnableJob = jobRegister.getRunnableJob(executableJob);
+        final JobRunnable runnableJob = jobRegister.getRunnableJob(executableJob);
         if (runnableJob == null) {
             throw new JobExecutionException(StringUtils.format("not found job {}.", jobKey));
         }

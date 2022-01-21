@@ -17,6 +17,7 @@
 
 package org.dromara.hodor.actuator.java.job;
 
+import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.common.JobExecutionContext;
 import org.dromara.hodor.actuator.common.JobParameter;
 import org.dromara.hodor.actuator.common.JobRunnable;
@@ -24,6 +25,7 @@ import org.dromara.hodor.actuator.common.core.ExecutableJob;
 import org.dromara.hodor.actuator.common.exceptions.JobExecutionException;
 import org.dromara.hodor.actuator.java.core.ScheduledMethodRunnable;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
+import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 
 /**
  * JavaJob
@@ -41,7 +43,11 @@ public class JavaJob implements JobRunnable {
 
     @Override
     public Object execute(ExecutableJob job) throws JobExecutionException {
-        JobExecutionContext context = job.getExecutionContext();
+        final Logger jobLogger = job.getJobLogger();
+        final JobExecuteRequest request = job.getExecuteRequest();
+        final JobParameter jobParameter = new JobParameter(request.getGroupName(), request.getJobName(), request.getRequestId(),
+            request.getJobParameters(), request.getShardId(), request.getShardName());
+        final JobExecutionContext context = new JobExecutionContext(jobLogger, jobParameter);
         JobParameter jobInfo = context.getJobParameter();
         if (jobRunnable == null) {
             throw new IllegalArgumentException(String.format("not found job %s_%s.", jobInfo.getGroupName(), jobInfo.getJobName()));

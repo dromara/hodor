@@ -31,8 +31,13 @@ public class DefaultJobRegister implements JobRegister {
     }
 
     @Override
-    public Set<String> supportedGroupNames() {
+    public Set<String> bindingGroup() {
         return groupNames;
+    }
+
+    @Override
+    public String bindingCluster() {
+        return null;
     }
 
     @Override

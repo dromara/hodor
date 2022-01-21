@@ -29,7 +29,7 @@ import org.dromara.hodor.actuator.common.core.ExecutableJob;
 public class MRJavaJob implements JobRunnable {
 
     @Override
-    public Object execute(ExecutableJob context) {
+    public Object execute(ExecutableJob job) {
         return null;
     }
 

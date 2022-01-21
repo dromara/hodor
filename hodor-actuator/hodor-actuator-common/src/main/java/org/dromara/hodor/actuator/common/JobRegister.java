@@ -32,11 +32,18 @@ import org.dromara.hodor.model.job.JobDesc;
 public interface JobRegister {
 
     /**
-     * supported group name set
+     * Binding group name set，Preferred to use this, when config bindingCluster.
      *
      * @return groupName set
      */
-    Set<String> supportedGroupNames();
+    Set<String> bindingGroup();
+
+    /**
+     * binding cluster name
+     *
+     * @return cluster name
+     */
+    String bindingCluster();
 
     /**
      * register job to scheduler
