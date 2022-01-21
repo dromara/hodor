@@ -158,7 +158,7 @@ public class PropsUtils {
 
         final LinkedHashSet<String> visitedVariables = new LinkedHashSet<>();
         for (final String key : props.getKeySet()) {
-            String value = props.get(key);
+            String value = props.getString(key);
             if (value == null) {
                 log.warn("Null value in props for key '" + key + "'. Replacing with empty string.");
                 value = "";
@@ -173,7 +173,7 @@ public class PropsUtils {
         }
 
         for (final String key : resolvedProps.getKeySet()) {
-            final String value = resolvedProps.get(key);
+            final String value = resolvedProps.getString(key);
             final String expressedValue = resolveVariableExpression(value);
             resolvedProps.put(key, expressedValue);
         }
@@ -201,7 +201,7 @@ public class PropsUtils {
                     StringUtils.join(visitedVariables, "->"), subVariable));
             } else {
                 // Add substitute variable and recurse.
-                final String replacement = props.get(subVariable);
+                final String replacement = props.getString(subVariable);
                 visitedVariables.add(subVariable);
 
                 if (replacement == null) {
@@ -312,7 +312,7 @@ public class PropsUtils {
         final Set<String> keyset = localOnly ? props.localKeySet() : props.getKeySet();
 
         for (final String key : keyset) {
-            final String value = props.get(key);
+            final String value = props.getString(key);
             map.put(key, value);
         }
 
@@ -325,8 +325,8 @@ public class PropsUtils {
         }
 
         final String source = (String) propsMap.get("source");
-        final Map<String, String> propsParams =
-            (Map<String, String>) propsMap.get("props");
+        final Map<String, Object> propsParams =
+            (Map<String, Object>) propsMap.get("props");
 
         final Map<String, Object> parent = (Map<String, Object>) propsMap.get("parent");
         final Props parentProps = fromHierarchicalMap(parent);
@@ -394,13 +394,4 @@ public class PropsUtils {
         return builder.toString();
     }
 
-
-    public static void main(String[] args) {
-        System.out.println(resolveVariableExpression("sh log_clean/log_clean/hive2ESDataxJob.sh $(YEAR)-$(MONTH)-$($(DAY)+0) dm_complete_burial_agg_d_p_uvJob.sh $(YEAR)$(MONTH)$($(DAY)+0)"));
-        Props props = new Props();
-        props.put("a", 123);
-        props.put("b", "${a}");
-        Props props1 = resolveProps(props);
-        System.out.println(props1);
-    }
 }

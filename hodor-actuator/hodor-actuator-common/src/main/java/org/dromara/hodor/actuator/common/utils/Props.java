@@ -461,7 +461,7 @@ public class Props {
      */
     public String getString(final String key, final String defaultValue) {
         if (containsKey(key)) {
-            return (String) get(key);
+            return String.valueOf(get(key));
         } else {
             return defaultValue;
         }
@@ -472,7 +472,7 @@ public class Props {
      */
     public String getString(final String key) {
         if (containsKey(key)) {
-            return (String) get(key);
+            return String.valueOf(get(key));
         } else {
             throw new UndefinedPropertyException("Missing required property '" + key
                 + "'");

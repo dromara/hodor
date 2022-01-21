@@ -208,7 +208,7 @@ public class JobTypeManager {
 
     final ClassLoader jobTypeLoader =
         loadJobTypeClassLoader(pluginDir, jobTypeName, plugins);
-    final String jobtypeClass = pluginLoadProps.get("jobtype.class");
+    final String jobtypeClass = pluginLoadProps.getString("jobtype.class");
 
     if (jobtypeClass == null) {
       log.error("jobtype.class not found in private.properties.");
