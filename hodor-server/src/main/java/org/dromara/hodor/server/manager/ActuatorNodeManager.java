@@ -159,4 +159,8 @@ public class ActuatorNodeManager {
         actuatorInfo.setLastHeartbeat(lastHeartbeat);
     }
 
+    public List<String> getGroupByClusterName(String clusterName) {
+        return null;
+    }
+
 }

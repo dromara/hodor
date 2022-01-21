@@ -64,8 +64,8 @@ public class HodorService implements HodorLifecycle {
         // waiting node ready
         registryService.waitServerStarted();
         // init data
-        registryService.registrySchedulerNodeListener(new SchedulerNodeChangeListener(schedulerNodeManager, this, registryService));
-        registryService.registryActuatorNodeListener(new ActuatorNodeChangeListener(actuatorNodeManager, registryService));
+        registryService.registrySchedulerNodeListener(new SchedulerNodeChangeListener(schedulerNodeManager, this));
+        registryService.registryActuatorNodeListener(new ActuatorNodeChangeListener(actuatorNodeManager));
         registryService.registryMetadataListener(new MetadataChangeListener(this));
         registryService.registryElectLeaderListener(new LeaderElectChangeListener(this));
         //registerService.registryJobEventListener(new JobEventDispatchListener(this));
@@ -162,6 +162,10 @@ public class HodorService implements HodorLifecycle {
         }
         // 节点下线，由主节点通知进行CopySet的主从切换
         return leaderService.isLeader();
+    }
+
+    public void updateMetadata(HodorMetadata metadata) {
+        registryService.createMetadata(metadata);
     }
 
 }

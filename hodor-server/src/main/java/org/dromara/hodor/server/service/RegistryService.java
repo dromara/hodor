@@ -119,6 +119,7 @@ public class RegistryService implements HodorLifecycle {
     public void registryActuatorNodeListener(DataChangeListener listener) {
         registryListener(ActuatorNode.ACTUATOR_NODES_PATH, listener);
         registryListener(ActuatorNode.ACTUATOR_GROUPS_PATH, listener);
+        registryListener(ActuatorNode.ACTUATOR_CLUSTERS_PATH, listener);
     }
 
     public void registryListener(String path, DataChangeListener listener) {
@@ -136,9 +137,13 @@ public class RegistryService implements HodorLifecycle {
 
     public void createActuator(final ActuatorInfo actuatorInfo) {
         String endpoint = actuatorInfo.getNodeInfo().getEndpoint();
+        // create node
         registryCenter.createPersistent(ActuatorNode.createNodePath(endpoint), gsonUtils.toJson(actuatorInfo.getNodeInfo()));
+        // create groups
         actuatorInfo.getGroupNames().forEach(groupName ->
             registryCenter.createPersistent(ActuatorNode.createGroupPath(groupName, endpoint), String.valueOf(actuatorInfo.getLastHeartbeat())));
+        // create clusters
+        registryCenter.createPersistent(ActuatorNode.createClusterPath(actuatorInfo.getName(), endpoint), String.valueOf(actuatorInfo.getLastHeartbeat()));
     }
 
     public void removeActuator(final ActuatorInfo actuatorInfo) {
@@ -146,6 +151,7 @@ public class RegistryService implements HodorLifecycle {
         registryCenter.remove(ActuatorNode.createNodePath(endpoint));
         actuatorInfo.getGroupNames().forEach(groupName ->
             registryCenter.remove(ActuatorNode.createGroupPath(groupName, endpoint)));
+        registryCenter.remove(ActuatorNode.createClusterPath(actuatorInfo.getName(), endpoint));
     }
 
     public void registryJobEventListener(JobEventDispatchListener jobEventDispatchListener) {
