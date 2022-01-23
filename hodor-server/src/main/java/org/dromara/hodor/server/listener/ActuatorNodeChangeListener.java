@@ -1,6 +1,5 @@
 package org.dromara.hodor.server.listener;
 
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.common.utils.StringUtils;
@@ -9,6 +8,9 @@ import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.node.ActuatorNode;
 import org.dromara.hodor.server.manager.ActuatorNodeManager;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * actuator node listener
@@ -40,6 +42,26 @@ public class ActuatorNodeChangeListener implements DataChangeListener {
         if (ActuatorNode.isClusterPath(actuatorPath)) {
             changeActuatorClusterData(event, actuatorPath);
         }
+
+        if (ActuatorNode.isBindingPath(actuatorPath)) {
+            changeActuatorBindingData(event, actuatorPath);
+        }
+    }
+
+    private void changeActuatorBindingData(DataChangeEvent event, String actuatorPath) {
+        log.debug("ActuatorBindingChange, eventType: {}, path: {}", event.getType(), actuatorPath);
+        // path: /actuator/binding/${clusterName}/${groupName}
+        List<String> actuatorClusterPath = StringUtils.splitPath(actuatorPath);
+        if (actuatorClusterPath.size() != 4) {
+            return;
+        }
+        String clusterName = actuatorClusterPath.get(2);
+        String groupName = actuatorClusterPath.get(3);
+        if (event.getType() == DataChangeEvent.Type.NODE_UPDATED || event.getType() == DataChangeEvent.Type.NODE_ADDED) {
+            actuatorNodeManager.addClusterGroupEntry(clusterName, groupName);
+        } else if (event.getType() == DataChangeEvent.Type.NODE_REMOVED) {
+            actuatorNodeManager.removeClusterGroupEntry(clusterName, groupName);
+        }
     }
 
     private void changeActuatorClusterData(DataChangeEvent event, String actuatorPath) {
@@ -51,7 +73,7 @@ public class ActuatorNodeChangeListener implements DataChangeListener {
         }
         String clusterName = actuatorClusterPath.get(2);
         String nodeEndpoint = actuatorClusterPath.get(3);
-        List<String> groupNames = actuatorNodeManager.getGroupByClusterName(clusterName);
+        Set<String> groupNames = actuatorNodeManager.getGroupByClusterName(clusterName);
         if (event.getType() == DataChangeEvent.Type.NODE_UPDATED || event.getType() == DataChangeEvent.Type.NODE_ADDED) {
             long lastHeartbeat = Long.parseLong(StringUtils.decodeString(event.getData()));
             for (String groupName : groupNames) {

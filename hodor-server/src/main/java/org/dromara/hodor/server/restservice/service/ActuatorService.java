@@ -38,6 +38,22 @@ public class ActuatorService {
         return HodorResult.success("success");
     }
 
+    @RestMethod("binding")
+    public HodorResult<String> binding(String clusterName, String groupName) {
+        Preconditions.checkNotNull(clusterName, "clusterName must be not null.");
+        Preconditions.checkNotNull(groupName, "groupName must be not null.");
+        registryService.createBindingPath(clusterName, groupName);
+        return HodorResult.success("success");
+    }
+
+    @RestMethod("unbinding")
+    public HodorResult<String> unbinding(String clusterName, String groupName) {
+        Preconditions.checkNotNull(clusterName, "clusterName must be not null.");
+        Preconditions.checkNotNull(groupName, "groupName must be not null.");
+        registryService.removeBindingPath(clusterName, groupName);
+        return HodorResult.success("success");
+    }
+
     private void checkActuatorInfo(ActuatorInfo actuatorInfo) {
         Preconditions.checkNotNull(actuatorInfo.getNodeInfo(), "actuator node info must be not null.");
         Preconditions.checkNotNull(actuatorInfo.getGroupNames(), "actuator group names must be not null.");

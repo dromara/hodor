@@ -1,7 +1,5 @@
 package org.dromara.hodor.server.service;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.extension.ExtensionLoader;
@@ -21,6 +19,9 @@ import org.dromara.hodor.server.config.HodorServerProperties;
 import org.dromara.hodor.server.listener.JobEventDispatchListener;
 import org.dromara.hodor.server.listener.RegistryConnectionStateListener;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * register service
@@ -152,6 +153,17 @@ public class RegistryService implements HodorLifecycle {
         actuatorInfo.getGroupNames().forEach(groupName ->
             registryCenter.remove(ActuatorNode.createGroupPath(groupName, endpoint)));
         registryCenter.remove(ActuatorNode.createClusterPath(actuatorInfo.getName(), endpoint));
+    }
+
+    public void createBindingPath(String clusterName, String groupName) {
+        // create binding
+        registryCenter.createPersistent(ActuatorNode.createBindingPath(clusterName, groupName),
+                String.valueOf(System.currentTimeMillis()));
+    }
+
+    public void removeBindingPath(String clusterName, String groupName) {
+        // create binding
+        registryCenter.remove(ActuatorNode.createBindingPath(clusterName, groupName));
     }
 
     public void registryJobEventListener(JobEventDispatchListener jobEventDispatchListener) {

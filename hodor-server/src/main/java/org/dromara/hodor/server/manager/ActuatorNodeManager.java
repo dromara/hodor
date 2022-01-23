@@ -4,14 +4,6 @@ import cn.hutool.core.lang.Assert;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.concurrent.HodorThreadFactory;
@@ -20,6 +12,12 @@ import org.dromara.hodor.common.loadbalance.LoadBalanceEnum;
 import org.dromara.hodor.common.loadbalance.LoadBalanceFactory;
 import org.dromara.hodor.model.actuator.ActuatorInfo;
 import org.dromara.hodor.model.node.NodeInfo;
+
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  *  actuator node manager
@@ -34,6 +32,9 @@ public class ActuatorNodeManager {
 
     // groupName -> endpoint set
     private final Map<String, Set<String>> actuatorEndpoints = Maps.newConcurrentMap();
+
+    // clusterName -> groupName set
+    private final Map<String, Set<String>> clusterGroupMap = Maps.newConcurrentMap();
 
     // endpoint -> actuatorNodeInfo
     private final Map<String, ActuatorInfo> actuatorNodeInfos = Maps.newConcurrentMap();
@@ -159,8 +160,17 @@ public class ActuatorNodeManager {
         actuatorInfo.setLastHeartbeat(lastHeartbeat);
     }
 
-    public List<String> getGroupByClusterName(String clusterName) {
-        return null;
+    public Set<String> getGroupByClusterName(String clusterName) {
+        return clusterGroupMap.getOrDefault(clusterName, new HashSet<>());
     }
 
+    public void addClusterGroupEntry(String clusterName, String groupName) {
+        Set<String> groupSet = clusterGroupMap.computeIfAbsent(clusterName, Sets::newHashSet);
+        groupSet.add(groupName);
+    }
+
+    public void removeClusterGroupEntry(String clusterName, String groupName) {
+        Set<String> groupSet = clusterGroupMap.computeIfAbsent(clusterName, Sets::newHashSet);
+        groupSet.remove(groupName);
+    }
 }
