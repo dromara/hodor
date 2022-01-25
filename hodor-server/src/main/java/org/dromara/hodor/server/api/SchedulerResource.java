@@ -1,4 +1,4 @@
-package org.dromara.hodor.server.restservice.service;
+package org.dromara.hodor.server.api;
 
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.lang.TypeReference;
@@ -43,7 +43,7 @@ import org.dromara.hodor.server.service.RegistryService;
  */
 @HodorRestService(value = "scheduler", desc = "scheduler rest service")
 @SuppressWarnings("unused")
-public class SchedulerService {
+public class SchedulerResource {
 
     private final RegistryService registryService;
 
@@ -51,7 +51,7 @@ public class SchedulerService {
 
     private final SchedulerManager schedulerManager;
 
-    public SchedulerService(final RegistryService registryService, final JobInfoService jobInfoService) {
+    public SchedulerResource(final RegistryService registryService, final JobInfoService jobInfoService) {
         this.registryService = registryService;
         this.jobInfoService = jobInfoService;
         this.schedulerManager = SchedulerManager.getInstance();

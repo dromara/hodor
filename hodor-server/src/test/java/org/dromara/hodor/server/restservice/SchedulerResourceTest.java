@@ -22,7 +22,7 @@ import org.junit.Test;
  * @author tomgs
  * @since 2021/8/9
  */
-public class SchedulerServiceTest {
+public class SchedulerResourceTest {
 
     @Test
     public void testCreateJob() {

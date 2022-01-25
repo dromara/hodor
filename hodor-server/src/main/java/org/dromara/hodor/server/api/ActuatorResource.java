@@ -1,6 +1,7 @@
-package org.dromara.hodor.server.restservice.service;
+package org.dromara.hodor.server.api;
 
 import com.google.common.base.Preconditions;
+import org.dromara.hodor.core.service.ActuatorBindingService;
 import org.dromara.hodor.model.actuator.ActuatorInfo;
 import org.dromara.hodor.model.common.HodorResult;
 import org.dromara.hodor.server.restservice.HodorRestService;
@@ -15,12 +16,15 @@ import org.dromara.hodor.server.service.RegistryService;
  */
 @HodorRestService(value = "actuator", desc = "actuator rest service")
 @SuppressWarnings("unused")
-public class ActuatorService {
+public class ActuatorResource {
 
     private final RegistryService registryService;
 
-    public ActuatorService(RegistryService registryService) {
+    private final ActuatorBindingService actuatorBindingService;
+
+    public ActuatorResource(final RegistryService registryService, final ActuatorBindingService actuatorBindingService) {
         this.registryService = registryService;
+        this.actuatorBindingService = actuatorBindingService;
     }
 
     @RestMethod("heartbeat")
@@ -43,6 +47,7 @@ public class ActuatorService {
         Preconditions.checkNotNull(clusterName, "clusterName must be not null.");
         Preconditions.checkNotNull(groupName, "groupName must be not null.");
         registryService.createBindingPath(clusterName, groupName);
+        actuatorBindingService.bind(clusterName, groupName);
         return HodorResult.success("success");
     }
 
@@ -51,6 +56,7 @@ public class ActuatorService {
         Preconditions.checkNotNull(clusterName, "clusterName must be not null.");
         Preconditions.checkNotNull(groupName, "groupName must be not null.");
         registryService.removeBindingPath(clusterName, groupName);
+        actuatorBindingService.unbind(clusterName, groupName);
         return HodorResult.success("success");
     }
 
