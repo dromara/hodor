@@ -96,12 +96,13 @@ CREATE TABLE `hodor_flow_job_exec_detail` (
 CREATE INDEX index_job_key_status USING BTREE ON hodor.hodor_flow_job_exec_detail (group_name, job_name, status);
 
 CREATE TABLE `hodor_actuator_binding` (
-  `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
   `cluster_name` varchar(100) NOT NULL COMMENT '执行器集群名称',
   `group_name` varchar(100) NOT NULL COMMENT '绑定任务分组名称',
   `create_time` timestamp DEFAULT NULL COMMENT '创建时间',
   `update_time` timestamp DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+ALTER TABLE hodor.hodor_actuator_binding ADD CONSTRAINT hodor_actuator_binding_UN UNIQUE KEY (group_name,cluster_name);
 
 SET FOREIGN_KEY_CHECKS = 1;
