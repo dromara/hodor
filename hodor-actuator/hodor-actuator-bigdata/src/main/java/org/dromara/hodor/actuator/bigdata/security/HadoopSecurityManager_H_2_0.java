@@ -173,7 +173,7 @@ public class HadoopSecurityManager_H_2_0 extends HadoopSecurityManager {
       logger.info("Setting " + FS_HDFS_IMPL_DISABLE_CACHE + " to "
           + props.get(FS_HDFS_IMPL_DISABLE_CACHE));
       this.conf.setBoolean(FS_HDFS_IMPL_DISABLE_CACHE,
-          Boolean.valueOf(props.get(FS_HDFS_IMPL_DISABLE_CACHE)));
+          Boolean.parseBoolean(props.getString(FS_HDFS_IMPL_DISABLE_CACHE)));
     }
 
     logger.info(CommonConfigurationKeys.HADOOP_SECURITY_AUTHENTICATION + ": "
@@ -659,7 +659,7 @@ public class HadoopSecurityManager_H_2_0 extends HadoopSecurityManager {
             cred.addToken(fsToken.getService(), fsToken);
 
             // getting additional name nodes tokens
-            final String otherNamenodes = props.get(OTHER_NAMENODES_TO_GET_TOKEN);
+            final String otherNamenodes = props.getString(OTHER_NAMENODES_TO_GET_TOKEN);
             if ((otherNamenodes != null) && (otherNamenodes.length() > 0)) {
               logger.info(OTHER_NAMENODES_TO_GET_TOKEN + ": '" + otherNamenodes
                   + "'");

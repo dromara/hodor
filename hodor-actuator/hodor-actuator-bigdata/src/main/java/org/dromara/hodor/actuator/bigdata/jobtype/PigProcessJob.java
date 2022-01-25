@@ -181,7 +181,7 @@ public class PigProcessJob extends JavaProcessJob {
         getSysProps().getStringList("jobtype.classpath", null, ",");
     if (typeClassPath != null) {
       // fill in this when load this jobtype
-      final String pluginDir = getSysProps().get("plugin.dir");
+      final String pluginDir = getSysProps().getString("plugin.dir");
       for (final String jar : typeClassPath) {
         File jarFile = new File(jar);
         if (!jarFile.isAbsolute()) {

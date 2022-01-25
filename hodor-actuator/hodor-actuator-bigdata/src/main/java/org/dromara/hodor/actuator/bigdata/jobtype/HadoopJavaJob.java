@@ -158,7 +158,7 @@ public class HadoopJavaJob extends JavaProcessJob {
                                List<String> typeClassPath) {
     if (typeClassPath != null) {
       // fill in this when load this jobtype
-      String pluginDir = getSysProps().get("plugin.dir");
+      String pluginDir = getSysProps().getString("plugin.dir");
       for (String jar : typeClassPath) {
         File jarFile = new File(jar);
         if (!jarFile.isAbsolute()) {

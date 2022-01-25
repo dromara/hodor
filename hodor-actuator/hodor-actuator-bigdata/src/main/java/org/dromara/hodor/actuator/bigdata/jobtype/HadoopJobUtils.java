@@ -182,7 +182,7 @@ public class HadoopJobUtils {
    *                            delegation tokens.
    */
   public static void addAdditionalNamenodesToProps(Props props, String additionalNamenodes) {
-    String otherNamenodes = props.get(OTHER_NAMENODES_PROPERTY);
+    String otherNamenodes = props.getString(OTHER_NAMENODES_PROPERTY);
     if (otherNamenodes != null && otherNamenodes.length() > 0) {
       props.put(OTHER_NAMENODES_PROPERTY, otherNamenodes + "," + additionalNamenodes);
     } else {
@@ -607,7 +607,7 @@ public class HadoopJobUtils {
    *         present
    */
   public static String javaOptStringFromAzkabanProps(Props props, String key) {
-    String value = props.get(key);
+    String value = props.getString(key);
     if (value == null) {
       throw new RuntimeException(String.format("Cannot find property [%s], in azkaban props: [%s]",
               key, value));

@@ -337,12 +337,12 @@ public class Props {
     /**
      * Put everything in the map into the props.
      */
-    public void putAll(final Map<String, Object> m) {
+    public void putAll(final Map<String, ?> m) {
         if (m == null) {
             return;
         }
 
-        for (final Map.Entry<String, Object> entry : m.entrySet()) {
+        for (final Map.Entry<String, ?> entry : m.entrySet()) {
             this.put(entry.getKey(), entry.getValue());
         }
     }

@@ -167,10 +167,10 @@ public class HadoopConfigurationInjector {
    * @param props The Azkaban properties
    */
   public static String getDirName(Props props) {
-    String dirSuffix = props.get(CommonJobProperties.NESTED_FLOW_PATH);
+    String dirSuffix = props.getString(CommonJobProperties.NESTED_FLOW_PATH);
 
     if ((dirSuffix == null) || (dirSuffix.length() == 0)) {
-      dirSuffix = props.get(CommonJobProperties.JOB_ID);
+      dirSuffix = props.getString(CommonJobProperties.JOB_ID);
       if ((dirSuffix == null) || (dirSuffix.length() == 0)) {
         throw new RuntimeException("azkaban.flow.nested.path and job.id were not set");
       }
@@ -198,7 +198,7 @@ public class HadoopConfigurationInjector {
    * @param name The property name to load from the Azkaban properties into the Hadoop configuration
    */
   public static void loadProp(Props props, Configuration conf, String name) {
-    String prop = props.get(name);
+    String prop = props.getString(name);
     if (prop != null) {
       conf.set(name, prop);
     }

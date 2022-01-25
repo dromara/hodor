@@ -93,7 +93,7 @@ public class GeneralHadoopJob extends AbstractHadoopJob {
         FileInputFormat.addInputPath(jobConf, new Path(props.getString(INPUT_PATH)));
         logger.info("Input path:" + props.getString(INPUT_PATH));
 
-        FileOutputFormat.setOutputPath(jobConf, new Path(props.get(OUTPUT_PATH)));
+        FileOutputFormat.setOutputPath(jobConf, new Path(props.getString(OUTPUT_PATH)));
         logger.info("Output path:" + props.getString(OUTPUT_PATH));
 
         if (props.getBoolean(FORCE_OUTPUT_OVERWRITE, true)) {

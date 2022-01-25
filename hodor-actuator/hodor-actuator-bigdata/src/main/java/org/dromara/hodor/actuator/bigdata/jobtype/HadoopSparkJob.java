@@ -374,7 +374,7 @@ public class HadoopSparkJob extends JavaProcessJob {
     }
 
     if (getSysProps().getBoolean(SPARK_AUTO_NODE_LABELING_JOBTYPE_PROPERTY, Boolean.FALSE)) {
-      final String desiredNodeLabel = getSysProps().get(SPARK_DESIRED_NODE_LABEL_JOBTYPE_PROPERTY);
+      final String desiredNodeLabel = getSysProps().getString(SPARK_DESIRED_NODE_LABEL_JOBTYPE_PROPERTY);
       if (desiredNodeLabel == null) {
         throw new RuntimeException(SPARK_DESIRED_NODE_LABEL_JOBTYPE_PROPERTY  + " must be configured when " +
             SPARK_AUTO_NODE_LABELING_JOBTYPE_PROPERTY + " is set to true.");
@@ -385,8 +385,8 @@ public class HadoopSparkJob extends JavaProcessJob {
 
     if (getSysProps().getBoolean(SPARK_DYNAMIC_RES_JOBTYPE_PROPERTY, Boolean.FALSE) || getSysProps()
         .getBoolean(SPARK_AUTO_NODE_LABELING_JOBTYPE_PROPERTY, Boolean.FALSE)) {
-      final String minMemVcoreRatio = getSysProps().get(SPARK_MIN_MEM_VCORE_RATIO_JOBTYPE_PROPERTY);
-      final String minMemSize = getSysProps().get(SPARK_MIN_MEM_SIZE_JOBTYPE_PROPERTY);
+      final String minMemVcoreRatio = getSysProps().getString(SPARK_MIN_MEM_VCORE_RATIO_JOBTYPE_PROPERTY);
+      final String minMemSize = getSysProps().getString(SPARK_MIN_MEM_SIZE_JOBTYPE_PROPERTY);
       if (minMemVcoreRatio == null || minMemSize == null) {
         throw new RuntimeException(SPARK_MIN_MEM_SIZE_JOBTYPE_PROPERTY + " and " +
             SPARK_MIN_MEM_VCORE_RATIO_JOBTYPE_PROPERTY + " must be configured.");
@@ -492,7 +492,7 @@ public class HadoopSparkJob extends JavaProcessJob {
   @Override
   protected List<String> getClassPaths() {
     // The classpath for the process that runs HadoopSecureSparkWrapper
-    final String pluginDir = getSysProps().get("plugin.dir");
+    final String pluginDir = getSysProps().getString("plugin.dir");
     final List<String> classPath = super.getClassPaths();
 
     // To add az-core jar classpath
@@ -558,12 +558,12 @@ public class HadoopSparkJob extends JavaProcessJob {
     String sparkHome = null;
     String sparkConf = null;
     // If user has specified version in job property. e.g. spark-version=1.6.0
-    final String jobSparkVer = getJobProps().get(SparkJobArg.SPARK_VERSION.azPropName);
+    final String jobSparkVer = getJobProps().getString(SparkJobArg.SPARK_VERSION.azPropName);
     if (jobSparkVer != null) {
       info("This job sets spark version: " + jobSparkVer);
       // Spark jobtype supports this version through plugin's jobtype config
       sparkHome = getSparkHome(jobSparkVer);
-      sparkConf = getSysProps().get("spark." + jobSparkVer + ".conf");
+      sparkConf = getSysProps().getString("spark." + jobSparkVer + ".conf");
       if (sparkConf == null) {
         sparkConf = sparkHome + "/conf";
       }
@@ -574,7 +574,7 @@ public class HadoopSparkJob extends JavaProcessJob {
     } else {
       // User job doesn't give spark-version
       // Use default spark.home. Configured in the jobtype plugin's config
-      sparkHome = getSysProps().get("spark.home");
+      sparkHome = getSysProps().getString("spark.home");
       if (sparkHome == null) {
         // Use system default SPARK_HOME env
         sparkHome = System.getenv(SPARK_HOME_ENV_VAR);
@@ -616,16 +616,16 @@ public class HadoopSparkJob extends JavaProcessJob {
    * @return
    */
   private String getSparkHome(final String sparkVersion) {
-    String sparkHome = getSysProps().get("spark." + sparkVersion + ".home");
+    String sparkHome = getSysProps().getString("spark." + sparkVersion + ".home");
     if (sparkHome == null) {
       info("Couldn't find spark." + sparkVersion + ".home property.");
-      final String sparkDir = getSysProps().get(SPARK_BASE_DIR);
+      final String sparkDir = getSysProps().getString(SPARK_BASE_DIR);
       final String sparkHomePrefix =
-          getSysProps().get(SPARK_HOME_PREFIX) != null ? getSysProps().get(SPARK_HOME_PREFIX) : "*";
-      final String replaceTo = getSysProps().get(SPARK_VERSION_REGEX_TO_REPLACE);
+          getSysProps().get(SPARK_HOME_PREFIX) != null ? getSysProps().getString(SPARK_HOME_PREFIX) : "*";
+      final String replaceTo = getSysProps().getString(SPARK_VERSION_REGEX_TO_REPLACE);
       final String replaceWith =
-          getSysProps().get(SPARK_VERSION_REGEX_TO_REPLACE_WITH) != null ? getSysProps()
-          .get(SPARK_VERSION_REGEX_TO_REPLACE_WITH) : "";
+          getSysProps().getString(SPARK_VERSION_REGEX_TO_REPLACE_WITH) != null ? getSysProps()
+          .getString(SPARK_VERSION_REGEX_TO_REPLACE_WITH) : "";
       final String versionPatterToMatch =
           sparkHomePrefix + ( replaceTo != null ? sparkVersion
               .replace(replaceTo, replaceWith) : sparkVersion) + "*";
@@ -639,7 +639,7 @@ public class HadoopSparkJob extends JavaProcessJob {
       if (directories != null && directories.length > 0) {
         sparkHome = sparkDir + "/" + directories[directories.length - 1];
       } else {
-        final String sparkReferenceDoc = getSysProps().get(SPARK_REFERENCE_DOCUMENT);
+        final String sparkReferenceDoc = getSysProps().getString(SPARK_REFERENCE_DOCUMENT);
         final String exceptionMessage =
             sparkReferenceDoc == null ? "SPARK version specified by User is not available."
             : "SPARK version specified by User is not available. Available versions are mentioned at: "

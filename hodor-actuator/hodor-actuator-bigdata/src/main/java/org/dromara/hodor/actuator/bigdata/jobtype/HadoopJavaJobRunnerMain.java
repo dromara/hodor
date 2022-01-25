@@ -269,7 +269,7 @@ public class HadoopJavaJobRunnerMain {
 
         Map<String, String> properties = new LinkedHashMap<String, String>();
         for (String key : outputProperties.getKeySet()) {
-            properties.put(key, outputProperties.get(key));
+            properties.put(key, outputProperties.getString(key));
         }
 
         Writer writer = null;

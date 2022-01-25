@@ -37,6 +37,7 @@ public class BigdataJobRunnable implements JobRunnable {
 
     @Override
     public Object execute(ExecutableJob executableJob) throws Exception {
+        // TODO: ready resources
         job.run();
         return null;
     }

@@ -180,7 +180,7 @@ public abstract class AbstractHadoopJob {
     }
 
     if (props.containsKey("output.path")) {
-      String location = props.get("output.path");
+      String location = props.getString("output.path");
       FileOutputFormat.setOutputPath(conf, new Path(location));
 
       // For testing purpose only remove output file if exists
@@ -254,7 +254,7 @@ public abstract class AbstractHadoopJob {
       String lowerCase = key.toLowerCase();
       if (lowerCase.startsWith(HADOOP_PREFIX)) {
         String newKey = key.substring(HADOOP_PREFIX.length());
-        conf.set(newKey, getProps().get(key));
+        conf.set(newKey, getProps().getString(key));
       }
     }
 

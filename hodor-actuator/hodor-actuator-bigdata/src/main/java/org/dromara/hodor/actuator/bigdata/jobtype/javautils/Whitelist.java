@@ -75,10 +75,10 @@ public class Whitelist {
   public void validateWhitelisted(Props props) {
     String id = null;
     if (props.containsKey(PROXY_USER_KEY)) {
-      id = props.get(PROXY_USER_KEY);
+      id = props.getString(PROXY_USER_KEY);
       Preconditions.checkArgument(!StringUtils.isEmpty(id), PROXY_USER_KEY + " is required.");
     } else if (props.containsKey(CommonJobProperties.SUBMIT_USER)) {
-      id = props.get(CommonJobProperties.SUBMIT_USER);
+      id = props.getString(CommonJobProperties.SUBMIT_USER);
       Preconditions.checkArgument(!StringUtils.isEmpty(id), CommonJobProperties.SUBMIT_USER + " is required.");
     } else {
       throw new IllegalArgumentException("Property neither has " + PROXY_USER_KEY + " nor " + CommonJobProperties.SUBMIT_USER);
