@@ -17,9 +17,15 @@
 
 package org.dromara.hodor.core.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import java.util.Date;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.core.entity.ActuatorBinding;
+import org.dromara.hodor.core.mapper.ActuatorBindingMapper;
 import org.dromara.hodor.core.service.ActuatorBindingService;
+import org.springframework.stereotype.Service;
 
 /**
  * ActuatorBindingServiceImpl
@@ -27,21 +33,41 @@ import org.dromara.hodor.core.service.ActuatorBindingService;
  * @author tomgs
  * @since 2022/1/24
  */
+@Slf4j
+@Service
+@RequiredArgsConstructor
 public class ActuatorBindingServiceImpl implements ActuatorBindingService {
+
+    private final ActuatorBindingMapper actuatorBindingMapper;
 
     @Override
     public boolean bind(String clusterName, String groupName) {
-        return false;
+        ActuatorBinding actuatorBinding = new ActuatorBinding();
+        actuatorBinding.setClusterName(clusterName);
+        actuatorBinding.setGroupName(groupName);
+        actuatorBinding.setUpdateTime(new Date());
+        int update = actuatorBindingMapper.update(actuatorBinding, Wrappers.<ActuatorBinding>lambdaUpdate()
+            .eq(ActuatorBinding::getClusterName, clusterName)
+            .eq(ActuatorBinding::getGroupName, groupName));
+        if (update > 0) {
+            return true;
+        }
+        actuatorBinding.setCreateTime(new Date());
+        int insert = actuatorBindingMapper.insert(actuatorBinding);
+        return insert > 0;
     }
 
     @Override
     public boolean unbind(String clusterName, String groupName) {
-        return false;
+        int delete = actuatorBindingMapper.delete(Wrappers.<ActuatorBinding>lambdaQuery()
+            .eq(ActuatorBinding::getClusterName, clusterName)
+            .eq(ActuatorBinding::getGroupName, groupName));
+        return delete > 0;
     }
 
     @Override
     public List<ActuatorBinding> listBinding() {
-        return null;
+        return actuatorBindingMapper.selectList(null);
     }
 
 }
