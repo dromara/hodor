@@ -17,9 +17,12 @@
 
 package org.dromara.hodor.actuator.bigdata.core;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.dromara.hodor.actuator.bigdata.executor.Job;
 import org.dromara.hodor.actuator.common.JobRunnable;
 import org.dromara.hodor.actuator.common.core.ExecutableJob;
+import org.dromara.hodor.common.storage.filesystem.FileStorage;
 
 /**
  * BigdataJobRunnable
@@ -31,13 +34,18 @@ public class BigdataJobRunnable implements JobRunnable {
 
     private final Job job;
 
-    public BigdataJobRunnable(final Job job) {
+    private final FileStorage fileStorage;
+
+    public BigdataJobRunnable(final Job job, FileStorage fileStorage) {
         this.job = job;
+        this.fileStorage = fileStorage;
     }
 
     @Override
     public Object execute(ExecutableJob executableJob) throws Exception {
         // TODO: ready resources
+        Path path = Paths.get(executableJob.getDataPath(), "");
+        fileStorage.fetchFile(path);
         job.run();
         return null;
     }

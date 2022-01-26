@@ -31,6 +31,10 @@ import org.dromara.hodor.actuator.common.JobRegister;
 import org.dromara.hodor.actuator.common.JobRunnable;
 import org.dromara.hodor.actuator.common.core.ExecutableJob;
 import org.dromara.hodor.actuator.common.utils.Props;
+import org.dromara.hodor.common.extension.ExtensionLoader;
+import org.dromara.hodor.common.storage.cache.CacheSourceConfig;
+import org.dromara.hodor.common.storage.cache.HodorCacheSource;
+import org.dromara.hodor.common.storage.filesystem.FileStorage;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.model.job.JobDesc;
 
@@ -48,12 +52,15 @@ public class BigdataJobRegister implements JobRegister {
 
     private final HodorActuatorBigdataProperties properties;
 
+    private final FileStorage fileStorage;
+
     public BigdataJobRegister(HodorActuatorBigdataProperties properties) {
         this.properties = properties;
         String jobTypePluginDir = StringUtils.join(properties.getCommonProperties().getDataPath(), File.separator, DEFAULT_JOBTYPEPLUGINDIR);
         Props globalProps = new Props();
         globalProps.putAll(properties.getBigdata());
         this.jobTypeManager = new JobTypeManager(jobTypePluginDir, globalProps, getClass().getClassLoader());
+        this.fileStorage = ExtensionLoader.getExtensionLoader(FileStorage.class).getDefaultJoin();
     }
 
     @Override
@@ -78,7 +85,7 @@ public class BigdataJobRegister implements JobRegister {
         jobPros.put(CommonJobProperties.JOB_TYPE, jobCommandType);
         jobPros.put(CommonJobProperties.JOB_CONTEXT, executableJob.getRequestContext());
         Job job = jobTypeManager.buildJobExecutor(executableJob.getJobKey().toString(), jobPros, executableJob.getJobLogger());
-        return new BigdataJobRunnable(job);
+        return new BigdataJobRunnable(job, fileStorage);
     }
 
 }
