@@ -2,6 +2,7 @@ package org.dromara.hodor.actuator.common.action;
 
 import cn.hutool.core.date.DateUtil;
 import java.util.Date;
+import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.common.JobRegister;
 import org.dromara.hodor.actuator.common.JobRunnable;
 import org.dromara.hodor.actuator.common.config.HodorProperties;
@@ -44,7 +45,7 @@ public class JobExecuteAction extends AbstractExecuteAction {
         executableJob.setJobCommandType(request.getJobCommandType());
         executableJob.setCurrentThread(Thread.currentThread());
         executableJob.setExecuteStatus(JobExecuteStatus.PENDING);
-        executableJob.setJobLogger(getLogger());
+        executableJob.setJobLogger(getJobLogger());
         executableJob.setRequestContext(getRequestContext());
 
         final JobRunnable runnableJob = jobRegister.getRunnableJob(executableJob);
@@ -52,20 +53,20 @@ public class JobExecuteAction extends AbstractExecuteAction {
             throw new JobExecutionException(StringUtils.format("not found job {}.", jobKey));
         }
         executableJob.setJobRunnable(runnableJob);
+        Logger log = getJobLogger().getLogger();
 
         Object result;
         for (int i = 0; ; i++) {
-            getLogger().info("execute job, attempts: {}", i);
+            log.info("execute job, attempts: {}", i);
             try {
                 executableJob.setExecuteStatus(JobExecuteStatus.RUNNING);
                 result = runnableJob.execute(executableJob);
                 executableJob.setExecuteStatus(JobExecuteStatus.SUCCEEDED);
                 break;
             } catch (Exception e) {
-                getLogger().error("execute job exception, attempts:{} , msg: {}", i, e.getMessage(), e);
+                log.error("execute job exception, attempts:{} , msg: {}", i, e.getMessage(), e);
                 if (i == request.getRetryCount()) {
                     executableJob.setExecuteStatus(JobExecuteStatus.FAILED);
-                    // 异常统一处理
                     throw e;
                 }
             }

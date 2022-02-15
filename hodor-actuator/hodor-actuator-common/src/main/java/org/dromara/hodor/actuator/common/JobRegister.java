@@ -67,7 +67,7 @@ public interface JobRegister {
      * @param request job key
      * @return runnable job
      */
-    JobRunnable getRunnableJob(ExecutableJob request);
+    JobRunnable getRunnableJob(ExecutableJob request) throws Exception;
 
     /**
      * clear register jobs cache

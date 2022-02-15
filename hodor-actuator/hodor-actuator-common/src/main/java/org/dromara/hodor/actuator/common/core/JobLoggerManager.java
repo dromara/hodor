@@ -48,13 +48,14 @@ public class JobLoggerManager {
         return buildJobLoggerFile(rootJobLogPath, createLogFileName(groupName, jobName, requestId));
     }
 
-    public Logger createJobLogger(String rootJobLogPath, String groupName, String jobName, Long requestId) {
+    public JobLogger createJobLogger(String rootJobLogPath, String groupName, String jobName, Long requestId) {
         File jobLoggerFile = buildJobLoggerFile(rootJobLogPath, createLogFileName(groupName, jobName, requestId));
-        return LogUtil.getInstance().createLogger(createLoggerName(groupName, jobName, requestId), jobLoggerFile);
+        return createJobLogger(createLoggerName(groupName, jobName, requestId), jobLoggerFile);
     }
 
-    public Logger createJobLogger(String loggerName, File logFile) {
-        return LogUtil.getInstance().createLogger(loggerName, logFile);
+    public JobLogger createJobLogger(String loggerName, File logFile) {
+        Logger logger = LogUtil.getInstance().createLogger(loggerName, logFile);
+        return new JobLogger(loggerName, logFile.toPath(), logger);
     }
 
     public void stopJobLogger(String loggerName) {

@@ -43,7 +43,7 @@ public class JavaJob implements JobRunnable {
 
     @Override
     public Object execute(ExecutableJob job) throws JobExecutionException {
-        final Logger jobLogger = job.getJobLogger();
+        final Logger jobLogger = job.getJobLogger().getLogger();
         final JobExecuteRequest request = job.getExecuteRequest();
         final JobParameter jobParameter = new JobParameter(request.getGroupName(), request.getJobName(), request.getRequestId(),
             request.getJobParameters(), request.getShardId(), request.getShardName());
@@ -72,7 +72,7 @@ public class JavaJob implements JobRunnable {
     public void stop(ExecutableJob job) {
         Thread runningThread = job.getCurrentThread();
         if (runningThread == null) {
-            job.getJobLogger().info("not found running job {}", job.getJobKey());
+            job.getJobLogger().getLogger().info("not found running job {}", job.getJobKey());
             return;
         }
         runningThread.interrupt();

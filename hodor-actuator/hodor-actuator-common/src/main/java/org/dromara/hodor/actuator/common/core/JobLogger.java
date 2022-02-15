@@ -17,42 +17,41 @@
 
 package org.dromara.hodor.actuator.common.core;
 
-import lombok.Builder;
-import lombok.Data;
-import org.dromara.hodor.actuator.common.JobRunnable;
-import org.dromara.hodor.model.enums.JobExecuteStatus;
-import org.dromara.hodor.model.job.JobKey;
-import org.dromara.hodor.remoting.api.message.RequestContext;
-import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
+import java.nio.file.Path;
+import org.apache.logging.log4j.Logger;
 
 /**
- * ExecutableJob
+ * JobLogger
  *
  * @author tomgs
- * @since 2022/1/10
+ * @since 2022/2/15
  */
-@Data
-@Builder
-public class ExecutableJob {
+public class JobLogger {
 
-    private Long requestId;
+    private final String name;
 
-    private JobKey jobKey;
+    private final Path logPath;
 
-    private String jobCommandType;
+    private final Logger logger;
 
-    private JobRunnable jobRunnable;
+    public JobLogger(String name, Path logPath, Logger logger) {
+        this.name = name;
+        this.logPath = logPath;
+        this.logger = logger;
+    }
 
-    private JobExecuteRequest executeRequest;
+    public String getName() {
+        return name;
+    }
 
-    private RequestContext requestContext;
+    public Path getLogPath() {
+        return logPath;
+    }
 
-    private JobExecuteStatus executeStatus;
+    public Logger getLogger() {
+        return logger;
+    }
 
-    private Thread currentThread;
 
-    private String dataPath;
-
-    private JobLogger jobLogger;
 
 }
