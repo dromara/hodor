@@ -21,19 +21,21 @@ import com.google.common.collect.Sets;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import org.apache.commons.beanutils.BeanUtils;
 import org.dromara.hodor.actuator.bigdata.config.HodorActuatorBigdataProperties;
 import org.dromara.hodor.actuator.bigdata.core.BigdataJobRunnable;
 import org.dromara.hodor.actuator.bigdata.core.JobTypeManager;
 import org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties;
+import org.dromara.hodor.actuator.bigdata.executor.Constants;
 import org.dromara.hodor.actuator.bigdata.executor.Job;
 import org.dromara.hodor.actuator.common.JobRegister;
 import org.dromara.hodor.actuator.common.JobRunnable;
 import org.dromara.hodor.actuator.common.core.ExecutableJob;
+import org.dromara.hodor.actuator.common.core.JobLogger;
 import org.dromara.hodor.actuator.common.utils.Props;
 import org.dromara.hodor.common.extension.ExtensionLoader;
-import org.dromara.hodor.common.storage.cache.CacheSourceConfig;
-import org.dromara.hodor.common.storage.cache.HodorCacheSource;
 import org.dromara.hodor.common.storage.filesystem.FileStorage;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.model.job.JobDesc;
@@ -79,12 +81,16 @@ public class BigdataJobRegister implements JobRegister {
     }
 
     @Override
-    public JobRunnable getRunnableJob(ExecutableJob executableJob) {
+    public JobRunnable getRunnableJob(ExecutableJob executableJob) throws Exception {
         String jobCommandType = executableJob.getJobCommandType();
+        JobLogger jobLogger = executableJob.getJobLogger();
+        Map<String, String> requestDescribe = BeanUtils.describe(executableJob.getExecuteRequest());
         Props jobPros = new Props();
         jobPros.put(CommonJobProperties.JOB_TYPE, jobCommandType);
         jobPros.put(CommonJobProperties.JOB_CONTEXT, executableJob.getRequestContext());
-        Job job = jobTypeManager.buildJobExecutor(executableJob.getJobKey().toString(), jobPros, executableJob.getJobLogger());
+        jobPros.put(Constants.JobProperties.JOB_LOG_PATH, jobLogger.getLogPath().toAbsolutePath().toString());
+        jobPros.putAll(requestDescribe);
+        Job job = jobTypeManager.buildJobExecutor(executableJob.getJobKey().toString(), jobPros, jobLogger.getLogger());
         return new BigdataJobRunnable(job, fileStorage);
     }
 
