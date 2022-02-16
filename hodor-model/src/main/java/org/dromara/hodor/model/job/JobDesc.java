@@ -62,4 +62,6 @@ public class JobDesc {
 
   private Integer retryCount;
 
+  private Integer version;
+
 }

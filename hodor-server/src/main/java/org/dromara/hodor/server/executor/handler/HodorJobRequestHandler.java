@@ -142,6 +142,7 @@ public class HodorJobRequestHandler implements RequestHandler {
             .extensibleParameters(jobDesc.getExtensibleParameters())
             .timeout(jobDesc.getTimeout())
             .retryCount(jobDesc.getRetryCount())
+            .version(jobDesc.getVersion())
             .build();
     }
 

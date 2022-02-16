@@ -38,7 +38,8 @@ CREATE TABLE `hodor_job_info` (
   `end_time` datetime DEFAULT NULL COMMENT '任务结束时间',
   `priority` int(11) NOT NULL DEFAULT 0 COMMENT '任务优先级，0：低，1：中，2：高；默认0',
   `job_data_path` varchar(255) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '任务的jar，sql文件，sh文件信息等',
-  `job_desc` varchar(1024) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '任务描述 ',
+  `job_desc` varchar(1024) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '任务描述',
+  `version` bigint(32) NOT NULL DEFAULT -1 COMMENT '任务版本号',
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_job_group` (`job_name`, `group_name`)
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4;

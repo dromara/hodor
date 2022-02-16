@@ -36,6 +36,8 @@ public class JobExecuteRequest extends AbstractRequestBody {
 
     private Integer retryCount;
 
+    private Integer version;
+
     public static Builder builder() {
         return new Builder();
     }
@@ -66,6 +68,9 @@ public class JobExecuteRequest extends AbstractRequestBody {
 
         // default 0 times
         private Integer retryCount = 0;
+
+        // default -1
+        private Integer version = -1;
 
         public Builder requestId(Long requestId) {
             this.requestId = requestId;
@@ -127,6 +132,11 @@ public class JobExecuteRequest extends AbstractRequestBody {
             return this;
         }
 
+        public Builder version(Integer version) {
+            this.version = version;
+            return this;
+        }
+
         public JobExecuteRequest build() {
             JobExecuteRequest request = new JobExecuteRequest();
             request.setRequestId(requestId);
@@ -141,6 +151,7 @@ public class JobExecuteRequest extends AbstractRequestBody {
             request.setShardName(shardName);
             request.setTimeout(timeout);
             request.setRetryCount(retryCount);
+            request.setVersion(version);
             return request;
         }
 
