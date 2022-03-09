@@ -17,12 +17,17 @@
 
 package org.dromara.hodor.actuator.bigdata.core;
 
+import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.apache.commons.io.FileUtils;
 import org.dromara.hodor.actuator.bigdata.executor.Job;
 import org.dromara.hodor.actuator.common.JobRunnable;
 import org.dromara.hodor.actuator.common.core.ExecutableJob;
 import org.dromara.hodor.common.storage.filesystem.FileStorage;
+import org.dromara.hodor.common.utils.FileIOUtils;
+import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 
 /**
  * BigdataJobRunnable
@@ -43,9 +48,14 @@ public class BigdataJobRunnable implements JobRunnable {
 
     @Override
     public Object execute(ExecutableJob executableJob) throws Exception {
-        // TODO: ready resources
-        Path path = Paths.get(executableJob.getDataPath(), "");
-        fileStorage.fetchFile(path);
+        JobExecuteRequest executeRequest = executableJob.getExecuteRequest();
+        // ${data_path}/resources/${job_key}/${version}
+        Path path = Paths.get(executableJob.getDataPath(), "resources", executableJob.getJobKey().toString(), String.valueOf(executeRequest.getVersion()));
+        File resourceFile = path.toFile();
+        if (!resourceFile.exists()) {
+            InputStream fileStream = fileStorage.fetchFile(Paths.get(executeRequest.getJobPath()));
+            FileUtils.copyInputStreamToFile(fileStream, resourceFile);
+        }
         job.run();
         return null;
     }
