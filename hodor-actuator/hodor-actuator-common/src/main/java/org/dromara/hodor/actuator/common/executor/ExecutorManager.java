@@ -1,5 +1,6 @@
 package org.dromara.hodor.actuator.common.executor;
 
+import org.dromara.hodor.actuator.common.config.HodorProperties;
 import org.dromara.hodor.common.executor.HodorExecutor;
 import org.dromara.hodor.common.executor.HodorExecutorFactory;
 import org.dromara.hodor.common.executor.HodorRunnable;
@@ -12,33 +13,22 @@ import org.dromara.hodor.common.executor.HodorRunnable;
  */
 public class ExecutorManager {
 
-    private static volatile ExecutorManager INSTANCE;
-
     private final HodorExecutor hodorExecutor;
 
     private final HodorExecutor commonExecutor;
 
-    private ExecutorManager() {
-        final int threadSize = Runtime.getRuntime().availableProcessors() * 2;
+    public ExecutorManager(final HodorProperties properties) {
+        final int threadSize = properties.getThreadSize() > 0 ? properties.getThreadSize() : Runtime.getRuntime().availableProcessors() * 2;
         // request job
-        hodorExecutor = HodorExecutorFactory.createDefaultExecutor("job-exec", threadSize, false);
+        hodorExecutor = HodorExecutorFactory.createExecutor("job-exec", threadSize, properties.getQueueSize(), false,
+            properties.getTaskStackingStrategy());
         // heartbeat, fetch log, job status, kill job
-        commonExecutor = HodorExecutorFactory.createDefaultExecutor("common-exec", threadSize / 4, true);
-    }
-
-    public static ExecutorManager getInstance() {
-        if (INSTANCE == null) {
-            synchronized (ExecutorManager.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = new ExecutorManager();
-                }
-            }
-        }
-        return INSTANCE;
+        commonExecutor = HodorExecutorFactory.createDefaultExecutor("common-exec", threadSize / 2, true);
     }
 
     public void execute(final HodorRunnable runnable) {
-        hodorExecutor.serialExecute(runnable);
+        //hodorExecutor.serialExecute(runnable);
+        hodorExecutor.parallelExecute(runnable);
     }
 
     public void commonExecute(final HodorRunnable runnable) {

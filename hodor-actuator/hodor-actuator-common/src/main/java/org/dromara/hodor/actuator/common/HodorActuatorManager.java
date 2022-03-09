@@ -63,7 +63,7 @@ public class HodorActuatorManager {
         this.properties = properties;
         this.jobRegister = jobRegister;
         this.dbOperator = dbOperator();
-        this.executorManager = ExecutorManager.getInstance();
+        this.executorManager = new ExecutorManager(properties);
         this.hodorApiClient = new HodorApiClient(properties);
         this.requestHandleManager = new RequestHandleManager(properties, jobRegister, executorManager,
             ClientChannelManager.getInstance(), dbOperator);
@@ -120,11 +120,10 @@ public class HodorActuatorManager {
     }
 
     private void startHeartbeatSender() {
-        // 第一次初始化
+        // first run for init
         MsgSender.HeartbeatSender heartbeatSender = msgSender.getHeartbeatSender();
         heartbeatSender.run();
         heartbeatSenderService.scheduleWithFixedDelay(() -> {
-            // 可能会出现大量的不必要任务，产生心跳风暴，直接丢弃
             while (heartbeatSenderService.getQueue().size() > 1) {
                 heartbeatSenderService.getQueue().poll();
             }
@@ -134,9 +133,8 @@ public class HodorActuatorManager {
 
     public void close() {
         log.info("Shutdown server ...");
-        // 发送下线通知
+        // send offline notify
         msgSender.getNodeOfflineSender().run();
-        // 关闭相应服务
         executorServer.close();
         heartbeatSenderService.shutdown();
         jobRegister.clear();

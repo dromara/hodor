@@ -31,7 +31,7 @@ public class JobDispatcher {
 
     public JobDispatcher(final RequestHandler requestHandler) {
         final int threadSize = Runtime.getRuntime().availableProcessors() * 2;
-        this.threadPoolExecutor = HodorExecutorFactory.createThreadPoolExecutor("job-dispatcher", threadSize, false);
+        this.threadPoolExecutor = HodorExecutorFactory.createThreadPoolExecutor("job-dispatcher", threadSize, 500, false);
         ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(2);
         scheduledThreadPoolExecutor.scheduleWithFixedDelay(this::clearUnavailableExecutor, 1, 1, TimeUnit.HOURS);
         this.requestHandler = requestHandler;

@@ -41,15 +41,15 @@ public class HodorProperties {
     /**
      * 任务执行队列大小，默认5000，短时任务队列为其1/2
      */
-    private Integer queueSize;
+    private Integer queueSize = 5000;
 
     /**
-     * 任务运行线程池大小
+     * 任务运行并发线程数
      */
-    private Integer poolSize;
+    private Integer threadSize = 0;
 
     /**
-     * 任务堆积策略，默认0，0：丢弃最老、1：继续等待（阻塞）、2：自适应调整队列大小、3：增大执行线程数量、4：转移任务到别的机器
+     * 任务堆积策略，默认0，0：丢弃最老、1：终止入队列、2：自适应调整队列大小、3：增大执行线程数量、4：转移任务到别的机器
      */
     private Integer taskStackingStrategy = 0;
 
