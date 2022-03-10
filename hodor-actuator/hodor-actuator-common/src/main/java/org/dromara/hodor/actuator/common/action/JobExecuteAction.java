@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.common.JobRegister;
 import org.dromara.hodor.actuator.common.JobRunnable;
 import org.dromara.hodor.actuator.common.config.HodorProperties;
-import org.dromara.hodor.actuator.common.core.ExecutableJob;
+import org.dromara.hodor.actuator.common.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.common.exceptions.JobExecutionException;
 import org.dromara.hodor.actuator.common.executor.JobExecutionPersistence;
 import org.dromara.hodor.actuator.common.executor.RequestHandleManager;
@@ -39,34 +39,22 @@ public class JobExecuteAction extends AbstractExecuteAction {
     @Override
     public JobExecuteResponse executeRequest0(final JobExecuteRequest request) throws Exception {
         final JobKey jobKey = JobKey.of(request.getGroupName(), request.getJobName());
-        final ExecutableJob executableJob = getRequestHandleManager().getExecutableJob(request.getRequestId());
-        executableJob.setJobKey(jobKey);
-        executableJob.setExecuteRequest(request);
-        executableJob.setJobCommandType(request.getJobCommandType());
-        executableJob.setCurrentThread(Thread.currentThread());
-        executableJob.setExecuteStatus(JobExecuteStatus.PENDING);
-        executableJob.setJobLogger(getJobLogger());
-        executableJob.setRequestContext(getRequestContext());
-
-        final JobRunnable runnableJob = jobRegister.getRunnableJob(executableJob);
-        if (runnableJob == null) {
-            throw new JobExecutionException(StringUtils.format("not found job {}.", jobKey));
-        }
-        executableJob.setJobRunnable(runnableJob);
-        Logger log = getJobLogger().getLogger();
+        final ExecutableJobContext executableJobContext = buildExecutableJobContext(request, jobKey);
+        final JobRunnable runnableJob = buildJobRunnable(executableJobContext);
+        final Logger log = getJobLogger().getLogger();
 
         Object result;
         for (int i = 0; ; i++) {
             log.info("execute job, attempts: {}", i);
             try {
-                executableJob.setExecuteStatus(JobExecuteStatus.RUNNING);
-                result = runnableJob.execute(executableJob);
-                executableJob.setExecuteStatus(JobExecuteStatus.SUCCEEDED);
+                executableJobContext.setExecuteStatus(JobExecuteStatus.RUNNING);
+                result = runnableJob.execute(executableJobContext);
+                executableJobContext.setExecuteStatus(JobExecuteStatus.SUCCEEDED);
                 break;
             } catch (Exception e) {
                 log.error("execute job exception, attempts:{} , msg: {}", i, e.getMessage(), e);
                 if (i == request.getRetryCount()) {
-                    executableJob.setExecuteStatus(JobExecuteStatus.FAILED);
+                    executableJobContext.setExecuteStatus(JobExecuteStatus.FAILED);
                     throw e;
                 }
             }
@@ -80,6 +68,27 @@ public class JobExecuteAction extends AbstractExecuteAction {
             response.setResult(getRequestContext().serializer().serialize(result));
         }
         return response;
+    }
+
+    private JobRunnable buildJobRunnable(ExecutableJobContext executableJobContext) throws Exception {
+        final JobRunnable runnableJob = jobRegister.getRunnableJob(executableJobContext);
+        if (runnableJob == null) {
+            throw new JobExecutionException(StringUtils.format("not found job {}.", executableJobContext.getJobKey()));
+        }
+        executableJobContext.setJobRunnable(runnableJob);
+        return runnableJob;
+    }
+
+    private ExecutableJobContext buildExecutableJobContext(JobExecuteRequest request, JobKey jobKey) {
+        final ExecutableJobContext executableJobContext = getRequestHandleManager().getExecutableJobContext(request.getRequestId());
+        executableJobContext.setJobKey(jobKey);
+        executableJobContext.setExecuteRequest(request);
+        executableJobContext.setJobCommandType(request.getJobCommandType());
+        executableJobContext.setCurrentThread(Thread.currentThread());
+        executableJobContext.setExecuteStatus(JobExecuteStatus.PENDING);
+        executableJobContext.setJobLogger(getJobLogger());
+        executableJobContext.setRequestContext(getRequestContext());
+        return executableJobContext;
     }
 
 }

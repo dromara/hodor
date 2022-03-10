@@ -17,23 +17,25 @@
 
 package org.dromara.hodor.actuator.common.core;
 
+import java.nio.file.Path;
 import lombok.Builder;
 import lombok.Data;
 import org.dromara.hodor.actuator.common.JobRunnable;
+import org.dromara.hodor.actuator.common.utils.JobPathUtils;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 
 /**
- * ExecutableJob
+ * ExecutableJobContext
  *
  * @author tomgs
  * @since 2022/1/10
  */
 @Data
 @Builder
-public class ExecutableJob {
+public class ExecutableJobContext {
 
     private Long requestId;
 
@@ -54,5 +56,19 @@ public class ExecutableJob {
     private String dataPath;
 
     private JobLogger jobLogger;
+
+    private Object result;
+
+    public Path getResourcesPath() {
+        return JobPathUtils.getResourcesPath(dataPath, jobKey, String.valueOf(executeRequest.getVersion()));
+    }
+
+    public Path getExecutionsPath() {
+        return JobPathUtils.getExecutionsPath(dataPath, requestId);
+    }
+
+    public Path getAbsoluteLogPath() {
+        return jobLogger.getLogPath().toAbsolutePath();
+    }
 
 }

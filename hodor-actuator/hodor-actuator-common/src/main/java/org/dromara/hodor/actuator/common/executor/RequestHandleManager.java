@@ -11,7 +11,7 @@ import org.dromara.hodor.actuator.common.action.JobExecuteLogAction;
 import org.dromara.hodor.actuator.common.action.JobExecuteStatusAction;
 import org.dromara.hodor.actuator.common.action.KillRunningJobAction;
 import org.dromara.hodor.actuator.common.config.HodorProperties;
-import org.dromara.hodor.actuator.common.core.ExecutableJob;
+import org.dromara.hodor.actuator.common.core.ExecutableJobContext;
 import org.dromara.hodor.common.event.AbstractEventPublisher;
 import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.exception.HodorExecutorException;
@@ -48,7 +48,7 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
 
     private final JobRegister jobRegister;
 
-    private final Map<Long, ExecutableJob> executableNodeMap;
+    private final Map<Long, ExecutableJobContext> executableJobContextMap;
 
     public RequestHandleManager(final HodorProperties properties,
                                 final JobRegister jobRegister,
@@ -61,7 +61,7 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
         this.clientChannelManager = clientChannelManager;
         this.jobExecutionPersistence = new JobExecutionPersistence(dbOperator);
         this.failureRequestHandleManager = new FailureRequestHandleManager(clientChannelManager, executorManager, dbOperator);
-        this.executableNodeMap = new ConcurrentHashMap<>();
+        this.executableJobContextMap = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -98,7 +98,7 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
         this.addListener(e -> {
             RequestContext context = e.getValue();
             long requestId = context.requestHeader().getId();
-            if (!readyExecutableJob(requestId)) {
+            if (!readyExecutableJobContext(requestId)) {
                 retryableSendMessage(context, RemotingResponse.failed(String.format("RequestId %s has running.", requestId)));
             }
             executorManager.execute(new JobExecuteAction(context, properties, jobExecutionPersistence, jobRegister, this));
@@ -168,32 +168,32 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
             .build();
     }
 
-    public void addExecutableNode(ExecutableJob executableJob) {
-        if (executableNodeMap.containsKey(executableJob.getRequestId())) {
+    public void addExecutableJobContext(ExecutableJobContext executableJobContext) {
+        if (executableJobContextMap.containsKey(executableJobContext.getRequestId())) {
             throw new HodorExecutorException(StringUtils.format("execute job {} exception, job request [{}] has already running.",
-                executableJob.getJobKey(), executableJob.getRequestId()));
+                executableJobContext.getJobKey(), executableJobContext.getRequestId()));
         }
-        executableNodeMap.put(executableJob.getRequestId(), executableJob);
+        executableJobContextMap.put(executableJobContext.getRequestId(), executableJobContext);
     }
 
-    public ExecutableJob getExecutableJob(Long requestId) {
-        return executableNodeMap.get(requestId);
+    public ExecutableJobContext getExecutableJobContext(Long requestId) {
+        return executableJobContextMap.get(requestId);
     }
 
-    public void removeExecutableJob(Long requestId) {
-        executableNodeMap.remove(requestId);
+    public void removeExecutableJobContext(Long requestId) {
+        executableJobContextMap.remove(requestId);
     }
 
-    public boolean readyExecutableJob(Long requestId) {
-        ExecutableJob executableJob = getExecutableJob(requestId);
-        if (executableJob != null) {
+    public boolean readyExecutableJobContext(Long requestId) {
+        ExecutableJobContext executableJobContext = getExecutableJobContext(requestId);
+        if (executableJobContext != null) {
             return false;
         }
-        ExecutableJob readyJob = ExecutableJob.builder()
+        ExecutableJobContext readyJobContext = ExecutableJobContext.builder()
             .requestId(requestId)
             .executeStatus(JobExecuteStatus.READY)
             .build();
-        addExecutableNode(readyJob);
+        addExecutableJobContext(readyJobContext);
         return true;
     }
 

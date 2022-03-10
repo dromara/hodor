@@ -2,7 +2,7 @@ package org.dromara.hodor.actuator.common.action;
 
 import cn.hutool.core.date.DateUtil;
 import java.util.Date;
-import org.dromara.hodor.actuator.common.core.ExecutableJob;
+import org.dromara.hodor.actuator.common.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.common.core.HodorJobExecution;
 import org.dromara.hodor.actuator.common.executor.JobExecutionPersistence;
 import org.dromara.hodor.actuator.common.executor.RequestHandleManager;
@@ -34,13 +34,13 @@ public class KillRunningJobAction extends AbstractAction<KillRunningJobRequest, 
         response.setCompleteTime(DateUtil.formatDateTime(new Date()));
         response.setStatus(JobExecuteStatus.KILLED);
 
-        ExecutableJob executableJob = getRequestHandleManager().getExecutableJob(request.getRequestId());
-        if (executableJob == null) {
+        ExecutableJobContext executableJobContext = getRequestHandleManager().getExecutableJobContext(request.getRequestId());
+        if (executableJobContext == null) {
             response.setStatus(JobExecuteStatus.FINISHED);
             return response;
         }
 
-        executableJob.getJobRunnable().stop(executableJob);
+        executableJobContext.getJobRunnable().stop(executableJobContext);
 
         HodorJobExecution killedJobExecution = HodorJobExecution.createKilledJobExecution(request.getRequestId());
         jobExecutionPersistence.fireJobExecutionEvent(killedJobExecution);

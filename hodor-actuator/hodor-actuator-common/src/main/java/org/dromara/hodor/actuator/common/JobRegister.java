@@ -19,7 +19,7 @@ package org.dromara.hodor.actuator.common;
 
 import java.util.List;
 import java.util.Set;
-import org.dromara.hodor.actuator.common.core.ExecutableJob;
+import org.dromara.hodor.actuator.common.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.common.core.JobInstance;
 import org.dromara.hodor.model.job.JobDesc;
 
@@ -67,7 +67,7 @@ public interface JobRegister {
      * @param request job key
      * @return runnable job
      */
-    JobRunnable getRunnableJob(ExecutableJob request) throws Exception;
+    JobRunnable getRunnableJob(ExecutableJobContext request) throws Exception;
 
     /**
      * clear register jobs cache

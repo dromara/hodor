@@ -19,7 +19,9 @@ public class JobExecuteStatusAction extends AbstractAction<JobExecuteStatusReque
 
     private final JobExecutionPersistence jobExecutionPersistence;
 
-    public JobExecuteStatusAction(final RequestContext context, final JobExecutionPersistence jobExecutionPersistence, final RequestHandleManager requestHandleManager) {
+    public JobExecuteStatusAction(final RequestContext context,
+                                  final JobExecutionPersistence jobExecutionPersistence,
+                                  final RequestHandleManager requestHandleManager) {
         super(context, requestHandleManager);
         this.jobExecutionPersistence = jobExecutionPersistence;
     }

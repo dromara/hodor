@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.actuator.common.core.ExecutableJob;
+import org.dromara.hodor.actuator.common.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.common.core.JobInstance;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.model.job.JobKey;
@@ -60,8 +60,8 @@ public class DefaultJobRegister implements JobRegister {
     }
 
     @Override
-    public JobRunnable getRunnableJob(ExecutableJob executableJob) {
-        return runnableJobCache.get(executableJob.getJobKey());
+    public JobRunnable getRunnableJob(ExecutableJobContext executableJobContext) {
+        return runnableJobCache.get(executableJobContext.getJobKey());
     }
 
     @Override

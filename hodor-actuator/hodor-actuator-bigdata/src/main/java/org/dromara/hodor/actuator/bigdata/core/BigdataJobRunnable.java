@@ -24,9 +24,9 @@ import java.nio.file.Paths;
 import org.apache.commons.io.FileUtils;
 import org.dromara.hodor.actuator.bigdata.executor.Job;
 import org.dromara.hodor.actuator.common.JobRunnable;
-import org.dromara.hodor.actuator.common.core.ExecutableJob;
+import org.dromara.hodor.actuator.common.core.ExecutableJobContext;
+import org.dromara.hodor.actuator.common.utils.Props;
 import org.dromara.hodor.common.storage.filesystem.FileStorage;
-import org.dromara.hodor.common.utils.FileIOUtils;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 
 /**
@@ -39,29 +39,46 @@ public class BigdataJobRunnable implements JobRunnable {
 
     private final Job job;
 
+    private final Props jobProps;
+
     private final FileStorage fileStorage;
 
-    public BigdataJobRunnable(final Job job, FileStorage fileStorage) {
+    private static final String JOB_CONFIG_FILE = "job.properties";
+
+    public BigdataJobRunnable(final Job job, final Props jobProps, final FileStorage fileStorage) {
         this.job = job;
+        this.jobProps = jobProps;
         this.fileStorage = fileStorage;
     }
 
     @Override
-    public Object execute(ExecutableJob executableJob) throws Exception {
-        JobExecuteRequest executeRequest = executableJob.getExecuteRequest();
+    public Object execute(ExecutableJobContext executableJobContext) throws Exception {
+        // ready job resource
+        JobExecuteRequest executeRequest = executableJobContext.getExecuteRequest();
+        File executionsFile = executableJobContext.getExecutionsPath().toFile();
+        if (!executionsFile.exists()) {
+            FileUtils.forceMkdir(executionsFile);
+        }
         // ${data_path}/resources/${job_key}/${version}
-        Path path = Paths.get(executableJob.getDataPath(), "resources", executableJob.getJobKey().toString(), String.valueOf(executeRequest.getVersion()));
-        File resourceFile = path.toFile();
+        File resourceFile = executableJobContext.getResourcesPath().toFile();
         if (!resourceFile.exists()) {
+            //download job file from storage
             InputStream fileStream = fileStorage.fetchFile(Paths.get(executeRequest.getJobPath()));
             FileUtils.copyInputStreamToFile(fileStream, resourceFile);
+            // unzip file
         }
+        //load job.properties to props
+        final File jobPropsFile = new File(resourceFile, JOB_CONFIG_FILE);
+        if (jobPropsFile.exists()) {
+            jobProps.put(jobPropsFile);
+        }
+
         job.run();
         return null;
     }
 
     @Override
-    public void stop(ExecutableJob executableJob) throws Exception {
+    public void stop(ExecutableJobContext executableJobContext) throws Exception {
         job.cancel();
     }
 

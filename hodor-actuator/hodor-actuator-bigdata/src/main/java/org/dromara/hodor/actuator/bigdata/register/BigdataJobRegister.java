@@ -27,20 +27,19 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.dromara.hodor.actuator.bigdata.config.HodorActuatorBigdataProperties;
 import org.dromara.hodor.actuator.bigdata.core.BigdataJobRunnable;
 import org.dromara.hodor.actuator.bigdata.core.JobTypeManager;
+import org.dromara.hodor.actuator.bigdata.executor.AbstractProcessJob;
 import org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties;
 import org.dromara.hodor.actuator.bigdata.executor.Constants;
 import org.dromara.hodor.actuator.bigdata.executor.Job;
 import org.dromara.hodor.actuator.common.JobRegister;
 import org.dromara.hodor.actuator.common.JobRunnable;
-import org.dromara.hodor.actuator.common.core.ExecutableJob;
-import org.dromara.hodor.actuator.common.core.JobLogger;
+import org.dromara.hodor.actuator.common.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.common.utils.Props;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.storage.filesystem.FileStorage;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.model.job.JobDesc;
 
-import static org.dromara.hodor.actuator.bigdata.core.JobTypeManager.DEFAULT_JOBTYPEPLUGINDIR;
 
 /**
  * BigdataJobRegister
@@ -58,7 +57,7 @@ public class BigdataJobRegister implements JobRegister {
 
     public BigdataJobRegister(HodorActuatorBigdataProperties properties) {
         this.properties = properties;
-        String jobTypePluginDir = StringUtils.join(properties.getCommonProperties().getDataPath(), File.separator, DEFAULT_JOBTYPEPLUGINDIR);
+        String jobTypePluginDir = StringUtils.join(properties.getCommonProperties().getDataPath(), File.separator, JobTypeManager.DEFAULT_JOBTYPEPLUGINDIR);
         Props globalProps = new Props();
         globalProps.putAll(properties.getBigdata());
         this.jobTypeManager = new JobTypeManager(jobTypePluginDir, globalProps, getClass().getClassLoader());
@@ -81,17 +80,22 @@ public class BigdataJobRegister implements JobRegister {
     }
 
     @Override
-    public JobRunnable getRunnableJob(ExecutableJob executableJob) throws Exception {
-        String jobCommandType = executableJob.getJobCommandType();
-        JobLogger jobLogger = executableJob.getJobLogger();
-        Map<String, String> requestDescribe = BeanUtils.describe(executableJob.getExecuteRequest());
-        Props jobPros = new Props();
-        jobPros.put(CommonJobProperties.JOB_TYPE, jobCommandType);
-        jobPros.put(CommonJobProperties.JOB_CONTEXT, executableJob.getRequestContext());
-        jobPros.put(Constants.JobProperties.JOB_LOG_PATH, jobLogger.getLogPath().toAbsolutePath().toString());
-        jobPros.putAll(requestDescribe);
-        Job job = jobTypeManager.buildJobExecutor(executableJob.getJobKey().toString(), jobPros, jobLogger.getLogger());
-        return new BigdataJobRunnable(job, fileStorage);
+    public JobRunnable getRunnableJob(ExecutableJobContext executableJobContext) throws Exception {
+        Props jobProps = buildJobProps(executableJobContext);
+        Job job = jobTypeManager.buildJobExecutor(executableJobContext.getJobKey().toString(), jobProps, executableJobContext.getJobLogger().getLogger());
+        return new BigdataJobRunnable(job, jobProps, fileStorage);
+    }
+
+    private Props buildJobProps(ExecutableJobContext executableJobContext) throws Exception {
+        Props jobProps = new Props();
+        jobProps.put(CommonJobProperties.JOB_TYPE, executableJobContext.getJobCommandType());
+        jobProps.put(CommonJobProperties.JOB_CONTEXT, executableJobContext.getRequestContext());
+        jobProps.put(Constants.JobProperties.JOB_LOG_PATH, executableJobContext.getAbsoluteLogPath().toString());
+        jobProps.put(AbstractProcessJob.WORKING_DIR, executableJobContext.getExecutionsPath().toString());
+        // get all field map
+        Map<String, String> requestDescribe = BeanUtils.describe(executableJobContext.getExecuteRequest());
+        jobProps.putAll(requestDescribe);
+        return jobProps;
     }
 
 }

@@ -1,9 +1,11 @@
 package org.dromara.hodor.actuator.common.core;
 
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
 import java.io.File;
 import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.common.log.LogUtil;
+import org.dromara.hodor.common.utils.StringUtils;
 
 /**
  * job logger manager
@@ -23,7 +25,8 @@ public class JobLoggerManager {
     }
 
     public String getJobLoggerDir(String rootJobLogPath) {
-        return rootJobLogPath == null ? System.getProperty("user.dir") : rootJobLogPath;
+        Assert.notBlank(rootJobLogPath, "rootJobLogPath must be not null.");
+        return rootJobLogPath;
     }
 
     public String createLoggerName(String groupName, String jobName, Long requestId) {

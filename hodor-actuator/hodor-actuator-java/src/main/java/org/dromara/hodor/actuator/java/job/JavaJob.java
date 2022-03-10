@@ -21,7 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.common.JobExecutionContext;
 import org.dromara.hodor.actuator.common.JobParameter;
 import org.dromara.hodor.actuator.common.JobRunnable;
-import org.dromara.hodor.actuator.common.core.ExecutableJob;
+import org.dromara.hodor.actuator.common.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.common.exceptions.JobExecutionException;
 import org.dromara.hodor.actuator.java.core.ScheduledMethodRunnable;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
@@ -42,9 +42,9 @@ public class JavaJob implements JobRunnable {
     }
 
     @Override
-    public Object execute(ExecutableJob job) throws JobExecutionException {
-        final Logger jobLogger = job.getJobLogger().getLogger();
-        final JobExecuteRequest request = job.getExecuteRequest();
+    public Object execute(ExecutableJobContext jobContext) throws JobExecutionException {
+        final Logger jobLogger = jobContext.getJobLogger().getLogger();
+        final JobExecuteRequest request = jobContext.getExecuteRequest();
         final JobParameter jobParameter = new JobParameter(request.getGroupName(), request.getJobName(), request.getRequestId(),
             request.getJobParameters(), request.getShardId(), request.getShardName());
         final JobExecutionContext context = new JobExecutionContext(jobLogger, jobParameter);
@@ -69,14 +69,14 @@ public class JavaJob implements JobRunnable {
     }
 
     @Override
-    public void stop(ExecutableJob job) {
-        Thread runningThread = job.getCurrentThread();
+    public void stop(ExecutableJobContext jobContext) {
+        Thread runningThread = jobContext.getCurrentThread();
         if (runningThread == null) {
-            job.getJobLogger().getLogger().info("not found running job {}", job.getJobKey());
+            jobContext.getJobLogger().getLogger().info("not found running job {}", jobContext.getJobKey());
             return;
         }
         runningThread.interrupt();
-        job.setExecuteStatus(JobExecuteStatus.KILLED);
+        jobContext.setExecuteStatus(JobExecuteStatus.KILLED);
     }
 
 }

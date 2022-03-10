@@ -19,7 +19,7 @@ package org.dromara.hodor.actuator.common;
 
 import java.io.File;
 import java.io.IOException;
-import org.dromara.hodor.actuator.common.core.ExecutableJob;
+import org.dromara.hodor.actuator.common.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.common.core.JobLoggerManager;
 import org.dromara.hodor.actuator.common.exceptions.JobExecutionException;
 import org.dromara.hodor.common.utils.FileIOUtils;
@@ -37,47 +37,47 @@ public interface JobRunnable {
     /**
      * 执行任务
      *
-     * @param executableJob 待执行任务
+     * @param executableJobContext 待执行任务
      * @return 任务执行结果
      * @throws JobExecutionException 任务执行异常
      */
-    Object execute(ExecutableJob executableJob) throws Exception;
+    Object execute(ExecutableJobContext executableJobContext) throws Exception;
 
     /**
      * 停止任务
      *
-     * @param executableJob 待执行任务
+     * @param executableJobContext 待执行任务
      * @throws JobExecutionException 任务停止异常
      */
-    void stop(ExecutableJob executableJob) throws Exception;
+    void stop(ExecutableJobContext executableJobContext) throws Exception;
 
     /**
      * 获取任务状态
      *
-     * @param executableJob 待执行任务
+     * @param executableJobContext 待执行任务
      * @return JobExecuteStatus 任务状态
      * @throws JobExecutionException 任务状态异常
      */
-    default JobExecuteStatus status(ExecutableJob executableJob) throws Exception {
-        if (executableJob == null) {
+    default JobExecuteStatus status(ExecutableJobContext executableJobContext) throws Exception {
+        if (executableJobContext == null) {
             return JobExecuteStatus.FINISHED;
         }
-        return executableJob.getExecuteStatus();
+        return executableJobContext.getExecuteStatus();
     }
 
     /**
      * 获取任务日志
      *
-     * @param executableJob 待执行任务
+     * @param executableJobContext 待执行任务
      * @param offset 日志起始位置
      * @param length 日志长度
      * @return 日志数据
      * @throws IOException 读取日志文件异常
      */
-    default FileIOUtils.LogData getLog(ExecutableJob executableJob, int offset, int length) throws Exception {
-        JobKey jobKey = executableJob.getJobKey();
+    default FileIOUtils.LogData getLog(ExecutableJobContext executableJobContext, int offset, int length) throws Exception {
+        JobKey jobKey = executableJobContext.getJobKey();
         File jobLoggerFile = JobLoggerManager.getInstance()
-            .buildJobLoggerFile(executableJob.getDataPath(), jobKey.getGroupName(), jobKey.getJobName(), executableJob.getRequestId());
+            .buildJobLoggerFile(executableJobContext.getDataPath(), jobKey.getGroupName(), jobKey.getJobName(), executableJobContext.getRequestId());
         return FileIOUtils.readUtf8File(jobLoggerFile, offset, length);
     }
 

@@ -2,6 +2,7 @@ package org.dromara.hodor.actuator.common.action;
 
 import cn.hutool.core.date.DateUtil;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.Map;
 import org.dromara.hodor.actuator.common.config.HodorProperties;
@@ -10,6 +11,7 @@ import org.dromara.hodor.actuator.common.core.JobLogger;
 import org.dromara.hodor.actuator.common.core.JobLoggerManager;
 import org.dromara.hodor.actuator.common.executor.JobExecutionPersistence;
 import org.dromara.hodor.actuator.common.executor.RequestHandleManager;
+import org.dromara.hodor.actuator.common.utils.JobPathUtils;
 import org.dromara.hodor.common.utils.Stopwatch;
 import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
@@ -61,7 +63,8 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
         requestId = request.getRequestId();
         jobKey = JobKey.of(request.getGroupName(), request.getJobName());
         // create job logger
-        File jobLoggerFile = jobLoggerManager.buildJobLoggerFile(properties.getDataPath(), request.getGroupName(), request.getJobName(), requestId);
+        Path executions = JobPathUtils.getExecutionsPath(properties.getDataPath(), requestId);
+        File jobLoggerFile = jobLoggerManager.buildJobLoggerFile(executions.toString(), request.getGroupName(), request.getJobName(), requestId);
         this.loggerName = jobLoggerManager.createLoggerName(request.getGroupName(), request.getJobName(), requestId);
         this.jobLogger = jobLoggerManager.createJobLogger(this.loggerName, jobLoggerFile);
 
@@ -130,7 +133,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
     @Override
     public void afterProcess() {
         jobLogger.getLogger().info("job execution finished.");
-        getRequestHandleManager().removeExecutableJob(requestId);
+        getRequestHandleManager().removeExecutableJobContext(requestId);
         jobLoggerManager.stopJobLogger(loggerName);
     }
 

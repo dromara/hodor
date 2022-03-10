@@ -15,7 +15,8 @@ import org.dromara.hodor.remoting.api.message.response.HeartbeatResponse;
 @Slf4j
 public class HeartbeatAction extends AbstractAction<HeartbeatRequest, HeartbeatResponse> {
 
-    public HeartbeatAction(final RequestContext context, final RequestHandleManager requestHandleManager) {
+    public HeartbeatAction(final RequestContext context,
+                           final RequestHandleManager requestHandleManager) {
         super(context, requestHandleManager);
     }
 
