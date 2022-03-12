@@ -71,7 +71,7 @@ public class JobExecuteAction extends AbstractExecuteAction {
     }
 
     private JobRunnable buildJobRunnable(ExecutableJobContext executableJobContext) throws Exception {
-        final JobRunnable runnableJob = jobRegister.getRunnableJob(executableJobContext);
+        final JobRunnable runnableJob = jobRegister.provideJobRunnable(executableJobContext);
         if (runnableJob == null) {
             throw new JobExecutionException(StringUtils.format("not found job {}.", executableJobContext.getJobKey()));
         }

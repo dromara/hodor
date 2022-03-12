@@ -17,6 +17,8 @@
 
 package org.dromara.hodor.common.storage.filesystem;
 
+import org.dromara.hodor.common.extension.Join;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +30,7 @@ import java.nio.file.Path;
  * @author tomgs
  * @since 2022/1/26
  */
+@Join
 public class LocalFileStorage implements FileStorage {
 
     @Override

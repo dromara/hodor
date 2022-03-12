@@ -1,9 +1,3 @@
-spring:
-  application:
-    name: hodor-actuator-java-demo
-server:
-  port: 8088
-
 hodor:
   commons:
     appName: hodor-actuator-bigdata

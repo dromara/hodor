@@ -60,7 +60,7 @@ public class DefaultJobRegister implements JobRegister {
     }
 
     @Override
-    public JobRunnable getRunnableJob(ExecutableJobContext executableJobContext) {
+    public JobRunnable provideJobRunnable(ExecutableJobContext executableJobContext) {
         return runnableJobCache.get(executableJobContext.getJobKey());
     }
 

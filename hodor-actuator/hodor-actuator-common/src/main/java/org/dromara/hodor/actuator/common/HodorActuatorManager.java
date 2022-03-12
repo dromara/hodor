@@ -92,16 +92,14 @@ public class HodorActuatorManager {
         // init data
         initHodorClientData();
         // start executor server
-        log.info("HodorClient starting executor server...");
+        log.info("Hodor actuator starting executor server...");
         startExecutorServer();
         // start heartbeat sender server
-        log.info("HodorClient starting heartbeat sender server...");
+        log.info("Hodor actuator starting heartbeat sender server...");
         startHeartbeatSender();
         // start register jobs after executor server start success
-        log.info("HodorClient starting register jobs...");
+        log.info("Hodor actuator starting register jobs...");
         registerJobs();
-        // add close shutdown hook
-        Runtime.getRuntime().addShutdownHook(new Thread(this::close));
     }
 
     public void registerJobs() throws Exception {
@@ -132,8 +130,8 @@ public class HodorActuatorManager {
     }
 
     public void close() {
-        log.info("Shutdown server ...");
         // send offline notify
+        log.info("Hodor actuator server shutdown ...");
         msgSender.getNodeOfflineSender().run();
         executorServer.close();
         heartbeatSenderService.shutdown();

@@ -17,10 +17,6 @@
 
 package org.dromara.hodor.actuator.bigdata.core;
 
-import java.io.File;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import org.apache.commons.io.FileUtils;
 import org.dromara.hodor.actuator.bigdata.executor.Job;
 import org.dromara.hodor.actuator.common.JobRunnable;
@@ -28,6 +24,10 @@ import org.dromara.hodor.actuator.common.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.common.utils.Props;
 import org.dromara.hodor.common.storage.filesystem.FileStorage;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
+
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Paths;
 
 /**
  * BigdataJobRunnable

@@ -62,12 +62,12 @@ public interface JobRegister {
     }
 
     /**
-     * get runnable job by job execute request
+     * provider job runnable by executable job context
      *
-     * @param request job key
-     * @return runnable job
+     * @param context executable job context
+     * @return job runnable
      */
-    JobRunnable getRunnableJob(ExecutableJobContext request) throws Exception;
+    JobRunnable provideJobRunnable(ExecutableJobContext context) throws Exception;
 
     /**
      * clear register jobs cache

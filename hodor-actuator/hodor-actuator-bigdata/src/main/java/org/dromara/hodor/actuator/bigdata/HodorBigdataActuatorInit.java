@@ -5,6 +5,8 @@ import org.dromara.hodor.actuator.common.HodorActuatorManager;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
+import java.util.concurrent.CountDownLatch;
+
 /**
  * HodorBigdataActuatorInit
  *
@@ -13,6 +15,8 @@ import org.springframework.boot.ApplicationRunner;
  */
 @Slf4j
 public class HodorBigdataActuatorInit implements ApplicationRunner {
+
+    private final CountDownLatch aliveLatch = new CountDownLatch(1);
 
     private final HodorActuatorManager actuatorManager;
 
@@ -23,6 +27,12 @@ public class HodorBigdataActuatorInit implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         actuatorManager.start();
+        // add close shutdown hook
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            actuatorManager.close();
+            aliveLatch.countDown();
+        }));
+        aliveLatch.await();
     }
 
 }

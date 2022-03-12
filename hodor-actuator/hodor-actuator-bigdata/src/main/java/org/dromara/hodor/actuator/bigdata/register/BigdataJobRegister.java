@@ -80,7 +80,7 @@ public class BigdataJobRegister implements JobRegister {
     }
 
     @Override
-    public JobRunnable getRunnableJob(ExecutableJobContext executableJobContext) throws Exception {
+    public JobRunnable provideJobRunnable(ExecutableJobContext executableJobContext) throws Exception {
         Props jobProps = buildJobProps(executableJobContext);
         Job job = jobTypeManager.buildJobExecutor(executableJobContext.getJobKey().toString(), jobProps, executableJobContext.getJobLogger().getLogger());
         return new BigdataJobRunnable(job, jobProps, fileStorage);
