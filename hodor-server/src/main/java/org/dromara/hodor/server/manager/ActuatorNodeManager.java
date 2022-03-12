@@ -11,6 +11,7 @@ import org.dromara.hodor.common.loadbalance.LoadBalance;
 import org.dromara.hodor.common.loadbalance.LoadBalanceEnum;
 import org.dromara.hodor.common.loadbalance.LoadBalanceFactory;
 import org.dromara.hodor.model.actuator.ActuatorInfo;
+import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.model.node.NodeInfo;
 
 import java.util.*;
@@ -114,15 +115,16 @@ public class ActuatorNodeManager {
         }
     }
 
-    public List<Host> getAvailableHosts(String groupName) {
-        List<String> allWorkNodes = Lists.newArrayList(getActuatorEndpointsByGroupName(groupName));
+    public List<Host> getAvailableHosts(JobDesc jobDesc) {
+        List<String> allWorkNodes = Lists.newArrayList(getActuatorEndpointsByGroupName(jobDesc.getGroupName()));
         List<Host> hosts = allWorkNodes.stream()
             .filter(endpoint -> !isOffline(endpoint))
             .map(Host::of)
             .collect(Collectors.toList());
 
-        Assert.notEmpty(hosts, "The group [{}] has no available nodes.", groupName);
+        Assert.notEmpty(hosts, "The group [{}] has no available nodes.", jobDesc.getGroupName());
 
+        // TODO: get load balance type from job
         LoadBalance loadBalance = LoadBalanceFactory.getLoadBalance(LoadBalanceEnum.RANDOM.name());
         Host selected = loadBalance.select(hosts);
         hosts.remove(selected);

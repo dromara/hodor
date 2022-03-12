@@ -37,10 +37,12 @@ public class ActuatorNodeChangeListener implements DataChangeListener {
 
         if (ActuatorNode.isGroupPath(actuatorPath)) {
             changeActuatorGroupData(event, actuatorPath);
+            return;
         }
 
         if (ActuatorNode.isClusterPath(actuatorPath)) {
             changeActuatorClusterData(event, actuatorPath);
+            return;
         }
 
         if (ActuatorNode.isBindingPath(actuatorPath)) {

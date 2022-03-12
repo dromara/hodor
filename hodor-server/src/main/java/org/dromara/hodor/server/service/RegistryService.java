@@ -121,6 +121,7 @@ public class RegistryService implements HodorLifecycle {
         registryListener(ActuatorNode.ACTUATOR_NODES_PATH, listener);
         registryListener(ActuatorNode.ACTUATOR_GROUPS_PATH, listener);
         registryListener(ActuatorNode.ACTUATOR_CLUSTERS_PATH, listener);
+        registryListener(ActuatorNode.ACTUATOR_BINDING_PATH, listener);
     }
 
     public void registryListener(String path, DataChangeListener listener) {
