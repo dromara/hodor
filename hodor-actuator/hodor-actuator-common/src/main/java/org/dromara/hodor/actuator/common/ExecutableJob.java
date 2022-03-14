@@ -27,12 +27,12 @@ import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.model.job.JobKey;
 
 /**
- * Job runnable
+ * ExecutableJob
  *
  * @author tomgs
  * @since 2021/11/23
  */
-public interface JobRunnable {
+public interface ExecutableJob {
 
     /**
      * 执行任务

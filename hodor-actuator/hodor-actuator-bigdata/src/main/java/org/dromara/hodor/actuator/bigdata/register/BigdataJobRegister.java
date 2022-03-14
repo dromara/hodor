@@ -25,14 +25,14 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.commons.beanutils.BeanUtils;
 import org.dromara.hodor.actuator.bigdata.config.HodorActuatorBigdataProperties;
-import org.dromara.hodor.actuator.bigdata.core.BigdataJobRunnable;
+import org.dromara.hodor.actuator.bigdata.core.BigdataExecutableJob;
 import org.dromara.hodor.actuator.bigdata.core.JobTypeManager;
 import org.dromara.hodor.actuator.bigdata.executor.AbstractProcessJob;
 import org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties;
 import org.dromara.hodor.actuator.bigdata.executor.Constants;
 import org.dromara.hodor.actuator.bigdata.executor.Job;
 import org.dromara.hodor.actuator.common.JobRegister;
-import org.dromara.hodor.actuator.common.JobRunnable;
+import org.dromara.hodor.actuator.common.ExecutableJob;
 import org.dromara.hodor.actuator.common.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.common.utils.Props;
 import org.dromara.hodor.common.extension.ExtensionLoader;
@@ -80,10 +80,12 @@ public class BigdataJobRegister implements JobRegister {
     }
 
     @Override
-    public JobRunnable provideJobRunnable(ExecutableJobContext executableJobContext) throws Exception {
+    public ExecutableJob provideExecutableJob(ExecutableJobContext executableJobContext) throws Exception {
         Props jobProps = buildJobProps(executableJobContext);
-        Job job = jobTypeManager.buildJobExecutor(executableJobContext.getJobKey().toString(), jobProps, executableJobContext.getJobLogger().getLogger());
-        return new BigdataJobRunnable(job, jobProps, fileStorage);
+        Job job = jobTypeManager.buildJobExecutor(executableJobContext.getJobKey().toString(),
+                jobProps,
+                executableJobContext.getJobLogger().getLog4jLogger());
+        return new BigdataExecutableJob(job, jobProps, fileStorage);
     }
 
     private Props buildJobProps(ExecutableJobContext executableJobContext) throws Exception {

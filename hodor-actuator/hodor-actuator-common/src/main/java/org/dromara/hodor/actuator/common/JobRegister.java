@@ -67,7 +67,7 @@ public interface JobRegister {
      * @param context executable job context
      * @return job runnable
      */
-    JobRunnable provideJobRunnable(ExecutableJobContext context) throws Exception;
+    ExecutableJob provideExecutableJob(ExecutableJobContext context) throws Exception;
 
     /**
      * clear register jobs cache

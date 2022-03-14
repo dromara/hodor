@@ -19,7 +19,7 @@ package org.dromara.hodor.actuator.bigdata.core;
 
 import org.apache.commons.io.FileUtils;
 import org.dromara.hodor.actuator.bigdata.executor.Job;
-import org.dromara.hodor.actuator.common.JobRunnable;
+import org.dromara.hodor.actuator.common.ExecutableJob;
 import org.dromara.hodor.actuator.common.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.common.utils.Props;
 import org.dromara.hodor.common.storage.filesystem.FileStorage;
@@ -30,12 +30,12 @@ import java.io.InputStream;
 import java.nio.file.Paths;
 
 /**
- * BigdataJobRunnable
+ * BigdataExecutableJob
  *
  * @author tomgs
  * @since 2022/1/13
  */
-public class BigdataJobRunnable implements JobRunnable {
+public class BigdataExecutableJob implements ExecutableJob {
 
     private final Job job;
 
@@ -45,7 +45,7 @@ public class BigdataJobRunnable implements JobRunnable {
 
     private static final String JOB_CONFIG_FILE = "job.properties";
 
-    public BigdataJobRunnable(final Job job, final Props jobProps, final FileStorage fileStorage) {
+    public BigdataExecutableJob(final Job job, final Props jobProps, final FileStorage fileStorage) {
         this.job = job;
         this.jobProps = jobProps;
         this.fileStorage = fileStorage;

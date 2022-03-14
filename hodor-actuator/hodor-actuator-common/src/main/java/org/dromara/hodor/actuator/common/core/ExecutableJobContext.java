@@ -20,7 +20,7 @@ package org.dromara.hodor.actuator.common.core;
 import java.nio.file.Path;
 import lombok.Builder;
 import lombok.Data;
-import org.dromara.hodor.actuator.common.JobRunnable;
+import org.dromara.hodor.actuator.common.ExecutableJob;
 import org.dromara.hodor.actuator.common.utils.JobPathUtils;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.model.job.JobKey;
@@ -43,7 +43,7 @@ public class ExecutableJobContext {
 
     private String jobCommandType;
 
-    private JobRunnable jobRunnable;
+    private ExecutableJob jobRunnable;
 
     private JobExecuteRequest executeRequest;
 

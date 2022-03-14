@@ -4,7 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import java.util.Date;
 import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.common.JobRegister;
-import org.dromara.hodor.actuator.common.JobRunnable;
+import org.dromara.hodor.actuator.common.ExecutableJob;
 import org.dromara.hodor.actuator.common.config.HodorProperties;
 import org.dromara.hodor.actuator.common.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.common.exceptions.JobExecutionException;
@@ -40,7 +40,7 @@ public class JobExecuteAction extends AbstractExecuteAction {
     public JobExecuteResponse executeRequest0(final JobExecuteRequest request) throws Exception {
         final JobKey jobKey = JobKey.of(request.getGroupName(), request.getJobName());
         final ExecutableJobContext executableJobContext = buildExecutableJobContext(request, jobKey);
-        final JobRunnable runnableJob = buildJobRunnable(executableJobContext);
+        final ExecutableJob runnableJob = buildJobRunnable(executableJobContext);
         final Logger log = getJobLogger().getLogger();
 
         Object result;
@@ -70,8 +70,8 @@ public class JobExecuteAction extends AbstractExecuteAction {
         return response;
     }
 
-    private JobRunnable buildJobRunnable(ExecutableJobContext executableJobContext) throws Exception {
-        final JobRunnable runnableJob = jobRegister.provideJobRunnable(executableJobContext);
+    private ExecutableJob buildJobRunnable(ExecutableJobContext executableJobContext) throws Exception {
+        final ExecutableJob runnableJob = jobRegister.provideExecutableJob(executableJobContext);
         if (runnableJob == null) {
             throw new JobExecutionException(StringUtils.format("not found job {}.", executableJobContext.getJobKey()));
         }

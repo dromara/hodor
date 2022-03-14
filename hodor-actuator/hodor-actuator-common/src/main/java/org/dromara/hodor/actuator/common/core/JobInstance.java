@@ -3,7 +3,7 @@ package org.dromara.hodor.actuator.common.core;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-import org.dromara.hodor.actuator.common.JobRunnable;
+import org.dromara.hodor.actuator.common.ExecutableJob;
 import org.dromara.hodor.model.job.JobDesc;
 
 /**
@@ -25,6 +25,6 @@ public class JobInstance {
     /**
      * 可执行任务
      */
-    private final JobRunnable jobRunnable;
+    private final ExecutableJob jobRunnable;
 
 }

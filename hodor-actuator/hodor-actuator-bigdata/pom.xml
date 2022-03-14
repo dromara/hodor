@@ -153,6 +153,12 @@
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-metastore</artifactId>
             <version>${hive.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>xercesImpl</artifactId>
+                    <groupId>xerces</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.hive</groupId>
@@ -250,6 +256,8 @@
                 <version>3.6.0</version>
                 <configuration>
                     <compilerId>eclipse</compilerId>
+                    <target>1.8</target>
+                    <source>1.8</source>
                 </configuration>
                 <dependencies>
                     <dependency>

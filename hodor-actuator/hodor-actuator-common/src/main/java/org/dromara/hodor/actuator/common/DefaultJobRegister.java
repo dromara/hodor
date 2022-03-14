@@ -23,7 +23,7 @@ public class DefaultJobRegister implements JobRegister {
 
     private final Map<JobKey, JobDesc> jobCache = new ConcurrentHashMap<>(32);
 
-    private final Map<JobKey, JobRunnable> runnableJobCache = new ConcurrentHashMap<>(32);
+    private final Map<JobKey, ExecutableJob> runnableJobCache = new ConcurrentHashMap<>(32);
 
     private final Set<String> groupNames = new HashSet<>();
 
@@ -49,7 +49,7 @@ public class DefaultJobRegister implements JobRegister {
     @Override
     public void registerJob(JobInstance jobInstance) {
         JobDesc jobDesc = jobInstance.getJobDesc();
-        JobRunnable runnableJob = jobInstance.getJobRunnable();
+        ExecutableJob runnableJob = jobInstance.getJobRunnable();
 
         log.info("add job {}", jobInstance);
 
@@ -60,7 +60,7 @@ public class DefaultJobRegister implements JobRegister {
     }
 
     @Override
-    public JobRunnable provideJobRunnable(ExecutableJobContext executableJobContext) {
+    public ExecutableJob provideExecutableJob(ExecutableJobContext executableJobContext) {
         return runnableJobCache.get(executableJobContext.getJobKey());
     }
 

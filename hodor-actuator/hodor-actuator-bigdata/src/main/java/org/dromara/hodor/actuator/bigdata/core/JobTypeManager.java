@@ -24,7 +24,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.exception.JobExecutionException;
 import org.dromara.hodor.actuator.bigdata.exception.JobTypeManagerException;
 import org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties;
