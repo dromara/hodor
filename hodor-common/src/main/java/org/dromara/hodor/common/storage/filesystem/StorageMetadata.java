@@ -17,6 +17,7 @@
 
 package org.dromara.hodor.common.storage.filesystem;
 
+import java.io.File;
 import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
@@ -24,15 +25,17 @@ import static java.util.Objects.requireNonNull;
 
 public class StorageMetadata {
 
-  private final int projectId;
+  private final File resourcesDirectory;
+  private final String jobId;
   private final int version;
   private final String uploader;
   private final byte[] hash;
   private final String uploaderIPAddr;
 
-  public StorageMetadata(final int projectId, final int version, final String uploader,
+  public StorageMetadata(final File resourcesDirectory, final String jobId, final int version, final String uploader,
                          final byte[] hash, final String uploaderIPAddr) {
-    this.projectId = projectId;
+    this.resourcesDirectory = resourcesDirectory;
+    this.jobId = jobId;
     this.version = version;
     this.uploader = requireNonNull(uploader);
     this.hash = hash;
@@ -41,13 +44,13 @@ public class StorageMetadata {
 
   @Override
   public String toString() {
-    return "StorageMetadata{" + "projectId='" + this.projectId + '\'' + ", version='" + this.version
+    return "StorageMetadata{" + "jobKey='" + this.jobId + '\'' + ", version='" + this.version
         + '\''
         + '}';
   }
 
-  public int getProjectId() {
-    return this.projectId;
+  public String getJobId() {
+    return this.jobId;
   }
 
   public int getVersion() {
@@ -66,6 +69,10 @@ public class StorageMetadata {
     return this.uploaderIPAddr;
   }
 
+  public File getResourcesDirectory() {
+    return resourcesDirectory;
+  }
+
   @Override
   public boolean equals(final Object o) {
     if (this == o) {
@@ -75,13 +82,14 @@ public class StorageMetadata {
       return false;
     }
     final StorageMetadata that = (StorageMetadata) o;
-    return Objects.equals(this.projectId, that.projectId) &&
+    return Objects.equals(this.resourcesDirectory, that.resourcesDirectory) &&
+        Objects.equals(this.jobId, that.jobId) &&
         Objects.equals(this.version, that.version) &&
         Objects.equals(this.uploader, that.uploader);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(this.projectId, this.version, this.uploader);
+    return Objects.hash(this.resourcesDirectory, this.jobId, this.version, this.uploader);
   }
 }
