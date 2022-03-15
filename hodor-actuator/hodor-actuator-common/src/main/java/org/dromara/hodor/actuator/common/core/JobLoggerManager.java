@@ -2,10 +2,12 @@ package org.dromara.hodor.actuator.common.core;
 
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
-import java.io.File;
 import org.apache.logging.log4j.Logger;
+import org.dromara.hodor.actuator.common.utils.JobPathUtils;
 import org.dromara.hodor.common.log.LogUtil;
-import org.dromara.hodor.common.utils.StringUtils;
+
+import java.io.File;
+import java.nio.file.Path;
 
 /**
  * job logger manager
@@ -43,16 +45,17 @@ public class JobLoggerManager {
             requestId);
     }
 
-    public File buildJobLoggerFile(String rootJobLogPath, String logFileName) {
+    private File buildJobLoggerFile(String rootJobLogPath, String logFileName) {
         return new File(getJobLoggerDir(rootJobLogPath), logFileName);
     }
 
     public File buildJobLoggerFile(String rootJobLogPath, String groupName, String jobName, Long requestId) {
-        return buildJobLoggerFile(rootJobLogPath, createLogFileName(groupName, jobName, requestId));
+        Path executions = JobPathUtils.getExecutionsPath(rootJobLogPath, requestId);
+        return buildJobLoggerFile(executions.toString(), createLogFileName(groupName, jobName, requestId));
     }
 
     public JobLogger createJobLogger(String rootJobLogPath, String groupName, String jobName, Long requestId) {
-        File jobLoggerFile = buildJobLoggerFile(rootJobLogPath, createLogFileName(groupName, jobName, requestId));
+        File jobLoggerFile = buildJobLoggerFile(rootJobLogPath, groupName, jobName, requestId);
         return createJobLogger(createLoggerName(groupName, jobName, requestId), jobLoggerFile);
     }
 

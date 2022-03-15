@@ -1,17 +1,12 @@
 package org.dromara.hodor.actuator.common.action;
 
 import cn.hutool.core.date.DateUtil;
-import java.io.File;
-import java.nio.file.Path;
-import java.util.Date;
-import java.util.Map;
 import org.dromara.hodor.actuator.common.config.HodorProperties;
 import org.dromara.hodor.actuator.common.core.HodorJobExecution;
 import org.dromara.hodor.actuator.common.core.JobLogger;
 import org.dromara.hodor.actuator.common.core.JobLoggerManager;
 import org.dromara.hodor.actuator.common.executor.JobExecutionPersistence;
 import org.dromara.hodor.actuator.common.executor.RequestHandleManager;
-import org.dromara.hodor.actuator.common.utils.JobPathUtils;
 import org.dromara.hodor.common.utils.Stopwatch;
 import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
@@ -20,6 +15,10 @@ import org.dromara.hodor.remoting.api.message.RemotingResponse;
 import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
+
+import java.io.File;
+import java.util.Date;
+import java.util.Map;
 
 /**
  * abstract execute action
@@ -63,8 +62,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
         requestId = request.getRequestId();
         jobKey = JobKey.of(request.getGroupName(), request.getJobName());
         // create job logger
-        Path executions = JobPathUtils.getExecutionsPath(properties.getDataPath(), requestId);
-        File jobLoggerFile = jobLoggerManager.buildJobLoggerFile(executions.toString(), request.getGroupName(), request.getJobName(), requestId);
+        File jobLoggerFile = jobLoggerManager.buildJobLoggerFile(properties.getDataPath(), request.getGroupName(), request.getJobName(), requestId);
         this.loggerName = jobLoggerManager.createLoggerName(request.getGroupName(), request.getJobName(), requestId);
         this.jobLogger = jobLoggerManager.createJobLogger(this.loggerName, jobLoggerFile);
 

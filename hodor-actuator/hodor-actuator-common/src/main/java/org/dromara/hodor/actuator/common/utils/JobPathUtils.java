@@ -44,7 +44,7 @@ public class JobPathUtils {
 
     public static Path getJobLogPath(String dataPath, JobKey jobKey, Long requestId) {
         return JobLoggerManager.getInstance()
-            .buildJobLoggerFile(getExecutionsPath(dataPath, requestId).toString(), jobKey.getGroupName(), jobKey.getJobName(), requestId)
+            .buildJobLoggerFile(dataPath, jobKey.getGroupName(), jobKey.getJobName(), requestId)
             .toPath();
     }
 
