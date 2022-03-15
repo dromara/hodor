@@ -17,17 +17,18 @@
 
 package org.dromara.hodor.actuator.bigdata.core;
 
+import cn.hutool.core.util.ZipUtil;
 import org.apache.commons.io.FileUtils;
 import org.dromara.hodor.actuator.bigdata.executor.Job;
 import org.dromara.hodor.actuator.common.ExecutableJob;
 import org.dromara.hodor.actuator.common.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.common.utils.Props;
 import org.dromara.hodor.common.storage.filesystem.FileStorage;
+import org.dromara.hodor.common.utils.FileIOUtils;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 
 import java.io.File;
 import java.io.InputStream;
-import java.nio.file.Paths;
 
 /**
  * BigdataExecutableJob
@@ -60,15 +61,22 @@ public class BigdataExecutableJob implements ExecutableJob {
             FileUtils.forceMkdir(executionsFile);
         }
         // ${data_path}/resources/${job_key}/${version}
-        File resourceFile = executableJobContext.getResourcesPath().toFile();
-        if (!resourceFile.exists()) {
+        File resourceFileDir = executableJobContext.getResourcesPath().toFile();
+        if (!resourceFileDir.exists()) {
             //download job file from storage
-            InputStream fileStream = fileStorage.fetchFile(Paths.get(executeRequest.getJobPath()));
-            FileUtils.copyInputStreamToFile(fileStream, resourceFile);
+            File sourceFile = new File(executeRequest.getJobPath());
+            File zipFile = new File(resourceFileDir, sourceFile.getName());
+            InputStream fileStream = fileStorage.fetchFile(sourceFile.toPath());
+            FileUtils.copyInputStreamToFile(fileStream, zipFile);
             // unzip file
+            ZipUtil.unzip(zipFile, resourceFileDir);
+            // del zip file
+            FileUtils.forceDelete(zipFile);
+            // create link
+            FileIOUtils.createDeepHardlink(resourceFileDir, executionsFile);
         }
         //load job.properties to props
-        final File jobPropsFile = new File(resourceFile, JOB_CONFIG_FILE);
+        final File jobPropsFile = new File(resourceFileDir, JOB_CONFIG_FILE);
         if (jobPropsFile.exists()) {
             jobProps.put(jobPropsFile);
         }

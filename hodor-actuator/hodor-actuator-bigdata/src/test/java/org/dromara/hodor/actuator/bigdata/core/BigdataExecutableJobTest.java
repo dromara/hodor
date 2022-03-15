@@ -7,15 +7,19 @@ import org.dromara.hodor.actuator.bigdata.executor.Job;
 import org.dromara.hodor.actuator.bigdata.executor.NoopJob;
 import org.dromara.hodor.actuator.bigdata.register.BigdataJobRegister;
 import org.dromara.hodor.actuator.common.ExecutableJob;
+import org.dromara.hodor.actuator.common.config.HodorProperties;
 import org.dromara.hodor.actuator.common.core.ExecutableJobContext;
+import org.dromara.hodor.actuator.common.core.JobLogger;
+import org.dromara.hodor.actuator.common.core.JobLoggerManager;
 import org.dromara.hodor.actuator.common.utils.Props;
-import org.dromara.hodor.common.storage.filesystem.FileStorage;
-import org.dromara.hodor.common.storage.filesystem.LocalFileStorage;
+import org.dromara.hodor.model.job.JobKey;
+import org.dromara.hodor.remoting.api.message.RequestContext;
+import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import java.util.HashMap;
 
 /**
  * @author tomgs
@@ -23,22 +27,11 @@ import org.mockito.Mockito;
  */
 public class BigdataExecutableJobTest {
 
-    private JobTypeManager jobtypeManager;
-
-    private FileStorage fileStorage;
-
     private final Logger logger = Logger.getLogger("BigdataExecutableJobTest");
 
-    @Before
-    public void setup() {
-        System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
-                "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl");
-        jobtypeManager = new JobTypeManager(null, null, getClass().getClassLoader());
-        fileStorage = new LocalFileStorage();
-    }
-
     @Test
-    public void testBase() throws Exception {
+    public void testBase() {
+        JobTypeManager jobtypeManager = new JobTypeManager(null, null, getClass().getClassLoader());
         String jobKey = "testJob";
         Props props = new Props();
         props.put(CommonJobProperties.JOB_TYPE, "noop");
@@ -48,13 +41,42 @@ public class BigdataExecutableJobTest {
 
     @Test
     public void testJobExecute() throws Exception {
-        HodorActuatorBigdataProperties properties = Mockito.mock(HodorActuatorBigdataProperties.class);
-        BigdataJobRegister register = new BigdataJobRegister(properties);
+        String dataPath = "E:\\data\\hodor-actuator";
+        Long requestId = 123L;
+        JobKey jobKey = JobKey.of("testGroup", "testJob");
+        JobLogger jobLogger = JobLoggerManager.getInstance().createJobLogger(dataPath,
+                jobKey.getGroupName(),
+                jobKey.getJobName(),
+                requestId);
+        String jobPath = this.getClass().getResource("/sample_flow_01.zip").getPath();
 
-        ExecutableJobContext context = Mockito.mock(ExecutableJobContext.class);
+        HodorProperties hodorProperties = Mockito.mock(HodorProperties.class);
+        HodorActuatorBigdataProperties properties = Mockito.mock(HodorActuatorBigdataProperties.class);
+        Mockito.when(hodorProperties.getDataPath()).thenReturn(dataPath);
+        Mockito.when(hodorProperties.getAppName()).thenReturn("test_bigdata_actuator");
+        Mockito.when(properties.getBigdata()).thenReturn(new HashMap<>());
+        Mockito.when(properties.getCommonProperties()).thenReturn(hodorProperties);
+
+        RequestContext requestContext = Mockito.mock(RequestContext.class);
+        JobExecuteRequest jobExecuteRequest = Mockito.mock(JobExecuteRequest.class);
+        Mockito.when(jobExecuteRequest.getJobPath()).thenReturn(jobPath);
+        Mockito.when(jobExecuteRequest.getVersion()).thenReturn(1);
+        Mockito.when(jobExecuteRequest.getGroupName()).thenReturn(jobKey.getGroupName());
+        Mockito.when(jobExecuteRequest.getJobName()).thenReturn(jobKey.getJobName());
+
+        ExecutableJobContext context = ExecutableJobContext.builder()
+                .requestId(requestId)
+                .jobKey(jobKey)
+                .jobCommandType("noop")
+                .dataPath(dataPath)
+                .requestContext(requestContext)
+                .executeRequest(jobExecuteRequest)
+                .jobLogger(jobLogger)
+                .build();
+
+        BigdataJobRegister register = new BigdataJobRegister(properties);
         ExecutableJob executableJob = register.provideExecutableJob(context);
         executableJob.execute(context);
     }
-
 
 }

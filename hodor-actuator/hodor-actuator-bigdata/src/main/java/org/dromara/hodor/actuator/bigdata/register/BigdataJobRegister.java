@@ -95,8 +95,8 @@ public class BigdataJobRegister implements JobRegister {
         jobProps.put(Constants.JobProperties.JOB_LOG_PATH, executableJobContext.getAbsoluteLogPath().toString());
         jobProps.put(AbstractProcessJob.WORKING_DIR, executableJobContext.getExecutionsPath().toString());
         // get all field map
-        Map<String, String> requestDescribe = BeanUtils.describe(executableJobContext.getExecuteRequest());
-        jobProps.putAll(requestDescribe);
+        //Map<String, String> requestDescribe = BeanUtils.describe(executableJobContext.getExecuteRequest());
+        //jobProps.putAll(requestDescribe);
         return jobProps;
     }
 
