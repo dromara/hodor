@@ -17,18 +17,10 @@
 
 package org.dromara.hodor.actuator.bigdata.core;
 
-import cn.hutool.core.util.ZipUtil;
-import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.executor.Job;
 import org.dromara.hodor.actuator.common.ExecutableJob;
 import org.dromara.hodor.actuator.common.core.ExecutableJobContext;
-import org.dromara.hodor.actuator.common.utils.Props;
-import org.dromara.hodor.common.storage.filesystem.FileStorage;
-import org.dromara.hodor.common.utils.FileIOUtils;
-import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
-
-import java.io.File;
-import java.io.InputStream;
 
 /**
  * BigdataExecutableJob
@@ -39,49 +31,18 @@ import java.io.InputStream;
 public class BigdataExecutableJob implements ExecutableJob {
 
     private final Job job;
+    private final Logger logger;
 
-    private final Props jobProps;
-
-    private final FileStorage fileStorage;
-
-    private static final String JOB_CONFIG_FILE = "job.properties";
-
-    public BigdataExecutableJob(final Job job, final Props jobProps, final FileStorage fileStorage) {
+    public BigdataExecutableJob(final Job job, final Logger logger) {
         this.job = job;
-        this.jobProps = jobProps;
-        this.fileStorage = fileStorage;
+        this.logger = logger;
     }
 
     @Override
     public Object execute(ExecutableJobContext executableJobContext) throws Exception {
-        // ready job resource
-        JobExecuteRequest executeRequest = executableJobContext.getExecuteRequest();
-        File executionsFile = executableJobContext.getExecutionsPath().toFile();
-        if (!executionsFile.exists()) {
-            FileUtils.forceMkdir(executionsFile);
-        }
-        // ${data_path}/resources/${job_key}/${version}
-        File resourceFileDir = executableJobContext.getResourcesPath().toFile();
-        if (!resourceFileDir.exists()) {
-            //download job file from storage
-            File sourceFile = new File(executeRequest.getJobPath());
-            File zipFile = new File(resourceFileDir, sourceFile.getName());
-            InputStream fileStream = fileStorage.fetchFile(sourceFile.toPath());
-            FileUtils.copyInputStreamToFile(fileStream, zipFile);
-            // unzip file
-            ZipUtil.unzip(zipFile, resourceFileDir);
-            // del zip file
-            FileUtils.forceDelete(zipFile);
-            // create link
-            FileIOUtils.createDeepHardlink(resourceFileDir, executionsFile);
-        }
-        //load job.properties to props
-        final File jobPropsFile = new File(resourceFileDir, JOB_CONFIG_FILE);
-        if (jobPropsFile.exists()) {
-            jobProps.put(jobPropsFile);
-        }
-
+        logger.info("job execute start ...");
         job.run();
+        logger.info("job execute complete ...");
         return null;
     }
 
