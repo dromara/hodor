@@ -87,10 +87,9 @@
         <commons-pool.version>1.6</commons-pool.version>
         <commons-jexl.version>2.1.1</commons-jexl.version>
         <commons-cli.version>1.3.1</commons-cli.version>
-
         <httpclient.version>4.2.5</httpclient.version>
         <joda-time.version>2.9.9</joda-time.version>
-
+        <ratis.version>2.2.0</ratis.version>
         <junit.version>4.13.2</junit.version>
         <mockito.version>4.3.1</mockito.version>
     </properties>
@@ -201,7 +200,6 @@
                 <artifactId>mapstruct-processor</artifactId>
                 <version>${mapstruct.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct-jdk8</artifactId>
@@ -395,6 +393,31 @@
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>${h2.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/org.apache.ratis/ratis-server -->
+            <dependency>
+                <groupId>org.apache.ratis</groupId>
+                <artifactId>ratis-server</artifactId>
+                <version>${ratis.version}</version>
+                <!--<scope>provided</scope>-->
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.apache.ratis/ratis-netty -->
+            <dependency>
+                <groupId>org.apache.ratis</groupId>
+                <artifactId>ratis-netty</artifactId>
+                <version>${ratis.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.apache.ratis/ratis-grpc -->
+            <dependency>
+                <groupId>org.apache.ratis</groupId>
+                <artifactId>ratis-grpc</artifactId>
+                <version>${ratis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ratis</groupId>
+                <artifactId>ratis-tools</artifactId>
+                <version>${ratis.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
