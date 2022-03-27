@@ -17,6 +17,7 @@
 
 package com.dromara.hodor.common.storage.cache.impl;
 
+import org.dromara.hodor.common.extension.Join;
 import org.dromara.hodor.common.storage.cache.CacheClient;
 import org.dromara.hodor.common.storage.cache.HodorCacheSource;
 
@@ -26,6 +27,7 @@ import org.dromara.hodor.common.storage.cache.HodorCacheSource;
  * @author tomgs
  * @since 2021/9/23
  */
+@Join
 public class RedisCacheSource implements HodorCacheSource {
 
     @Override
