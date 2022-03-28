@@ -45,6 +45,7 @@ import org.apache.hadoop.yarn.api.records.ApplicationReport;
 import org.apache.hadoop.yarn.client.api.YarnClient;
 import org.apache.hadoop.yarn.conf.YarnConfiguration;
 import org.apache.hadoop.yarn.exceptions.YarnException;
+import org.apache.hadoop.yarn.logaggregation.ContainerLogsRequest;
 import org.apache.hadoop.yarn.logaggregation.LogCLIHelpers;
 import org.apache.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.security.commons.HadoopSecurityManager;
@@ -591,7 +592,11 @@ public class HadoopJobUtils {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         PrintStream printStream = new PrintStream(outputStream);
-        logCLIHelper.dumpAllContainersLogs(aid, appOwner, printStream);
+        //logCLIHelper.dumpAllContainersLogs(aid, appOwner, printStream);
+        ContainerLogsRequest request = new ContainerLogsRequest();
+        request.setAppId(aid);
+        request.setAppOwner(appOwner);
+        logCLIHelper.dumpAllContainersLogs(request);
         return new String(outputStream.toByteArray(), StandardCharsets.UTF_8);
     }
 
