@@ -14,6 +14,7 @@
     <modules>
         <module>hodor-register-api</module>
         <module>hodor-register-zookeeper</module>
+        <module>hodor-register-embedded</module>
     </modules>
 
 
