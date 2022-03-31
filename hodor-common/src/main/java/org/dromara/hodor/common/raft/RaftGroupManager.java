@@ -14,24 +14,24 @@ import org.apache.ratis.util.NetUtils;
 import org.dromara.hodor.common.utils.StringUtils;
 
 /**
- * GroupManager
+ * RaftGroupManager
  *
  * @author tomgs
  * @since 2022/3/24
  */
-public class GroupManager {
+public class RaftGroupManager {
 
-    private static final GroupManager INSTANCE = new GroupManager();
+    private static final RaftGroupManager INSTANCE = new RaftGroupManager();
 
     // 这个会自动转换为UUID，但是需要确保字符串为16位
     public static final RaftGroupId RATIS_KV_GROUP_ID = RaftGroupId.valueOf(ByteString.copyFromUtf8("RatisKVGroup0000"));
 
     private final Map<String, RaftGroup> raftGroupMap = new ConcurrentHashMap<>();
 
-    private GroupManager() {
+    private RaftGroupManager() {
     }
 
-    public static GroupManager getInstance() {
+    public static RaftGroupManager getInstance() {
         return INSTANCE;
     }
 
@@ -62,6 +62,10 @@ public class GroupManager {
             final List<RaftPeer> raftPeers = Collections.unmodifiableList(peers);
             return RaftGroup.valueOf(raftGroupId, raftPeers);
         });
+    }
+
+    public void deleteRaftGroup(String groupId) {
+        raftGroupMap.remove(groupId);
     }
 
     public RaftPeer buildRaftPeer(InetSocketAddress socketAddress, int priority) {

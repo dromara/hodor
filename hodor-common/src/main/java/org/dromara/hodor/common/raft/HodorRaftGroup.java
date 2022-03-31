@@ -17,25 +17,31 @@
 
 package org.dromara.hodor.common.raft;
 
-import java.io.File;
-import java.util.Map;
-import lombok.Data;
+import lombok.Builder;
+import org.apache.ratis.protocol.RaftGroup;
+import org.apache.ratis.protocol.RaftGroupId;
 
 /**
- * RaftOptions
+ * HodorRaftGroupId
  *
  * @author tomgs
- * @since 2022/3/30
+ * @since 2022/3/31
  */
-@Data
-public class RaftOptions {
+@Builder
+public class HodorRaftGroup {
 
-    private File storageDir;
+    private final String raftGroupName;
 
-    private String endpoint;
+    private final String addresses;
 
-    //private String serverAddresses;
+    public RaftGroupId getRaftGroupId() {
+        return getRaftGroup().getGroupId();
+    }
 
-    private Map<HodorRaftGroup, HodorRaftStateMachine> stateMachineMap;
+    public RaftGroup getRaftGroup() {
+        final String[] segmentAddress = addresses.split(",");
+        return RaftGroupManager.getInstance()
+            .createRaftGroup(raftGroupName, segmentAddress);
+    }
 
 }

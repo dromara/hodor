@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import org.apache.ratis.conf.RaftProperties;
 import org.apache.ratis.grpc.GrpcConfigKeys;
 import org.apache.ratis.protocol.RaftGroupId;
@@ -24,21 +24,27 @@ import org.apache.ratis.util.NetUtils;
  */
 public class HodorRaftServer {
 
-    private static final Map<RaftGroupId, StateMachine> registry = new ConcurrentHashMap<>();
+    private final Map<RaftGroupId, StateMachine> registry;
 
     private final RaftOptions raftOptions;
-
-    private RaftServer server;
 
     private final String endpoint;
 
     private final File storageDir;
+
+    private RaftServer server;
 
     public HodorRaftServer(final RaftOptions raftOptions) throws IOException {
         Assert.notNull(raftOptions, "raftOptions must not be null.");
         this.raftOptions = raftOptions;
         this.endpoint = raftOptions.getEndpoint();
         this.storageDir = raftOptions.getStorageDir();
+        this.registry = raftOptions.getStateMachineMap()
+            .entrySet()
+            .stream()
+            .collect(Collectors.toMap(e ->
+                    e.getKey().getRaftGroupId(),
+                Map.Entry::getValue));
         init();
     }
 
@@ -46,9 +52,9 @@ public class HodorRaftServer {
         //create a property object
         RaftProperties properties = new RaftProperties();
 
-        RaftPeer currentPeer = GroupManager.getInstance().buildRaftPeer(NetUtils.createSocketAddr(endpoint), 0);
+        RaftPeer currentPeer = RaftGroupManager.getInstance().buildRaftPeer(NetUtils.createSocketAddr(endpoint), 0);
         //set the storage directory (different for each peer) in RaftProperty object
-        RaftServerConfigKeys.setStorageDir(properties, Collections.singletonList(storageDir));
+        RaftServerConfigKeys.setStorageDir(properties, Collections.singletonList(new File(storageDir, currentPeer.getId().toString())));
         //set the port which server listen to in RaftProperty object
         int port = NetUtils.createSocketAddr(currentPeer.getAddress()).getPort();
         GrpcConfigKeys.Server.setPort(properties, port);
