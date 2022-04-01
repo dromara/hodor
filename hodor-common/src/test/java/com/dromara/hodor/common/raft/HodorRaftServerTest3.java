@@ -35,7 +35,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @author tomgs
  * @since 2022/3/31
  */
-public class HodorRaftServerTest {
+public class HodorRaftServerTest3 {
 
     public static void main(String[] args) throws IOException {
         HodorRaftGroup hodorRaftGroup = HodorRaftGroup.builder()
@@ -53,7 +53,7 @@ public class HodorRaftServerTest {
         stateMachineMap.put(hodorRaftGroup2, new Demo2HodorRaftStateMachine());
 
         RaftOptions raftOptions = new RaftOptions();
-        raftOptions.setEndpoint("127.0.0.1:8081");
+        raftOptions.setEndpoint("127.0.0.1:8083");
         raftOptions.setStorageDir(new File("target/test_raft/"));
         raftOptions.setStateMachineMap(stateMachineMap);
 
