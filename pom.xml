@@ -58,7 +58,7 @@
         <guava.version>30.1.1-jre</guava.version>
         <disruptor.version>3.4.0</disruptor.version>
         <hessian.version>4.0.38</hessian.version>
-        <protostuff.version>1.0.8</protostuff.version>
+        <protostuff.version>1.7.2</protostuff.version>
         <kryo.version>4.0.0</kryo.version>
         <pagehelper.version>5.1.2</pagehelper.version>
         <dubbo.version>2.6.0</dubbo.version>
@@ -90,6 +90,8 @@
         <httpclient.version>4.2.5</httpclient.version>
         <joda-time.version>2.9.9</joda-time.version>
         <ratis.version>2.2.0</ratis.version>
+
+        <!-- test -->
         <junit.version>4.13.2</junit.version>
         <mockito.version>4.3.1</mockito.version>
     </properties>
@@ -418,6 +420,17 @@
                 <groupId>org.apache.ratis</groupId>
                 <artifactId>ratis-tools</artifactId>
                 <version>${ratis.version}</version>
+            </dependency>
+            <!-- protostuff -->
+            <dependency>
+                <groupId>io.protostuff</groupId>
+                <artifactId>protostuff-core</artifactId>
+                <version>${protostuff.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.protostuff</groupId>
+                <artifactId>protostuff-runtime</artifactId>
+                <version>${protostuff.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
