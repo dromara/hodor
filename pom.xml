@@ -90,7 +90,8 @@
         <httpclient.version>4.2.5</httpclient.version>
         <joda-time.version>2.9.9</joda-time.version>
         <ratis.version>2.2.0</ratis.version>
-
+        <rocksdb.version>7.0.3</rocksdb.version>
+        <affinity.version>3.1.7</affinity.version>
         <!-- test -->
         <junit.version>4.13.2</junit.version>
         <mockito.version>4.3.1</mockito.version>
@@ -431,6 +432,24 @@
                 <groupId>io.protostuff</groupId>
                 <artifactId>protostuff-runtime</artifactId>
                 <version>${protostuff.version}</version>
+            </dependency>
+            <!-- rocksdb -->
+            <dependency>
+                <groupId>org.rocksdb</groupId>
+                <artifactId>rocksdbjni</artifactId>
+                <version>${rocksdb.version}</version>
+            </dependency>
+            <!-- java thread affinity -->
+            <dependency>
+                <groupId>net.openhft</groupId>
+                <artifactId>affinity</artifactId>
+                <version>${affinity.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>slf4j-api</artifactId>
+                        <groupId>org.slf4j</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>

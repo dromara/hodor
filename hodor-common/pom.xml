@@ -114,6 +114,14 @@
             <groupId>io.protostuff</groupId>
             <artifactId>protostuff-runtime</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.rocksdb</groupId>
+            <artifactId>rocksdbjni</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.openhft</groupId>
+            <artifactId>affinity</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
