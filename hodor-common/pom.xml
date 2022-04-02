@@ -105,6 +105,15 @@
             <groupId>org.apache.ratis</groupId>
             <artifactId>ratis-tools</artifactId>
         </dependency>
+        <!-- protostuff -->
+        <dependency>
+            <groupId>io.protostuff</groupId>
+            <artifactId>protostuff-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.protostuff</groupId>
+            <artifactId>protostuff-runtime</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
