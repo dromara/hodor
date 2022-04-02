@@ -60,21 +60,21 @@ public class HodorRaftServer {
         //set the port which server listen to in RaftProperty object
         int port = NetUtils.createSocketAddr(currentPeer.getAddress()).getPort();
         GrpcConfigKeys.Server.setPort(properties, port);
+        initRaftGroup(raftOptions.getStateMachineMap());
         //create and start the Raft server
         this.server = ServerImplUtils.newRaftServer(currentPeer.getId(), null, registry::get, properties, null);
-        addGroup(raftOptions.getStateMachineMap());
     }
 
     public void start() throws IOException {
         this.server.start();
-        initGroup(raftOptions.getStateMachineMap());
+        createRaftGroup(raftOptions.getStateMachineMap());
     }
 
     public void stop() throws IOException {
         this.server.close();
     }
 
-    public void addGroup(Map<HodorRaftGroup, HodorRaftStateMachine> stateMachineMap) {
+    public void initRaftGroup(Map<HodorRaftGroup, HodorRaftStateMachine> stateMachineMap) {
         final Map<RaftGroupId, HodorRaftStateMachine> machineMap = stateMachineMap.entrySet()
             .stream()
             .collect(Collectors.toMap(e ->
@@ -83,18 +83,16 @@ public class HodorRaftServer {
         registry.putAll(machineMap);
     }
 
-    public void initGroup(Map<HodorRaftGroup, HodorRaftStateMachine> stateMachineMap) throws IOException {
+    public void createRaftGroup(Map<HodorRaftGroup, HodorRaftStateMachine> stateMachineMap) throws IOException {
         for (Map.Entry<HodorRaftGroup, HodorRaftStateMachine> stateMachineEntry : stateMachineMap.entrySet()) {
             final RaftGroup raftGroup = stateMachineEntry.getKey().getRaftGroup();
             try (final RaftClient raftClient = HodorRaftClient.buildClient(raftGroup)) {
-                for (RaftPeer p : raftGroup.getPeers()) {
-                    try {
-                        raftClient.getGroupManagementApi(p.getId()).add(raftGroup);
-                    } catch (AlreadyExistsException e) {
-                        // do not log
-                    } catch (IOException ioe) {
-                        log.warn("Add group failed for {}", p, ioe);
-                    }
+                try {
+                    raftClient.getGroupManagementApi(currentPeer.getId()).add(raftGroup);
+                } catch (AlreadyExistsException e) {
+                    // do not log
+                } catch (IOException ioe) {
+                    log.warn("Add group failed for {}", currentPeer, ioe);
                 }
             }
         }

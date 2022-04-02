@@ -17,9 +17,11 @@
 
 package com.dromara.hodor.common.raft;
 
+import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import org.dromara.hodor.common.raft.HodorRaftGroup;
@@ -38,6 +40,14 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class HodorRaftServerTest {
 
     public static void main(String[] args) throws IOException {
+        if (args.length < 1) {
+            System.err.println("Usage: java -cp *.jar com.dromara.hodor.common.raft.HodorRaftServerTest {serverIndex}");
+            System.err.println("{serverIndex} could be 1, 2 or 3");
+            System.exit(1);
+        }
+
+        List<String> endpoints = Lists.newArrayList("127.0.0.1:8081", "127.0.0.1:8082", "127.0.0.1:8083");
+
         HodorRaftGroup hodorRaftGroup = HodorRaftGroup.builder()
             .raftGroupName("RatisKVGroup0000")
             .addresses("127.0.0.1:8081:1,127.0.0.1:8082:2,127.0.0.1:8083:3")
@@ -53,7 +63,7 @@ public class HodorRaftServerTest {
         stateMachineMap.put(hodorRaftGroup2, new Demo2HodorRaftStateMachine());
 
         RaftOptions raftOptions = new RaftOptions();
-        raftOptions.setEndpoint("127.0.0.1:8081");
+        raftOptions.setEndpoint(endpoints.get(Integer.parseInt(args[0]) - 1));
         raftOptions.setStorageDir(new File("target/test_raft/"));
         raftOptions.setStateMachineMap(stateMachineMap);
 

@@ -12,7 +12,23 @@ import lombok.Data;
 @Data
 public class CacheSourceConfig {
 
+    private String clusterName;
+
+    private String endpoint;
+
+    private String serverAddresses;
+
+    private String dataPath;
+
+    private String dbPath;
+
     private int maximumSize;
+
+    private int timeout;
+
+    private Class<?> valueSederClass;
+
+    private Class<?> keySederClass;
 
     private Map<String, Object> cacheRawConfig;
 

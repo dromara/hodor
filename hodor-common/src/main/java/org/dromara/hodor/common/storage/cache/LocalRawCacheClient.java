@@ -47,7 +47,7 @@ public class LocalRawCacheClient<K, V> implements CacheClient<K, V> {
             }
             // expired
             if (System.currentTimeMillis() - expireTime > 0) {
-                remove(k);
+                delete(k);
                 return null;
             }
             return pair.getFirst();
@@ -72,7 +72,7 @@ public class LocalRawCacheClient<K, V> implements CacheClient<K, V> {
     }
 
     @Override
-    public void remove(K key) {
+    public void delete(K key) {
         LockUtil.lockMethod(readWriteLock.writeLock(), k -> {
             cache.remove(k);
             return null;
@@ -85,6 +85,11 @@ public class LocalRawCacheClient<K, V> implements CacheClient<K, V> {
             cache.clear();
             return null;
         }, null);
+    }
+
+    @Override
+    public void close() {
+
     }
 
 }

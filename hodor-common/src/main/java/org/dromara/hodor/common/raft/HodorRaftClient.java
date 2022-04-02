@@ -1,5 +1,6 @@
 package org.dromara.hodor.common.raft;
 
+import java.util.concurrent.TimeUnit;
 import org.apache.ratis.client.RaftClient;
 import org.apache.ratis.conf.Parameters;
 import org.apache.ratis.conf.RaftProperties;
@@ -29,7 +30,7 @@ public class HodorRaftClient {
         RaftClient.Builder builder = RaftClient.newBuilder()
             .setProperties(raftProperties)
             .setRaftGroup(raftGroup)
-            .setRetryPolicy(RetryPolicies.retryUpToMaximumCountWithFixedSleep(3, TimeDuration.ONE_SECOND))
+            .setRetryPolicy(RetryPolicies.retryUpToMaximumCountWithFixedSleep(3, TimeDuration.valueOf(3, TimeUnit.SECONDS)))
             .setClientRpc(new GrpcFactory(new Parameters())
                 .newRaftClientRpc(ClientId.randomId(), raftProperties));
         return builder.build();
