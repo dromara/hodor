@@ -1,6 +1,7 @@
 package org.dromara.hodor.server.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.common.HodorLifecycle;
 import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.utils.GsonUtils;
@@ -14,7 +15,6 @@ import org.dromara.hodor.register.api.RegistryCenter;
 import org.dromara.hodor.register.api.RegistryConfig;
 import org.dromara.hodor.register.api.node.ActuatorNode;
 import org.dromara.hodor.register.api.node.SchedulerNode;
-import org.dromara.hodor.server.common.HodorLifecycle;
 import org.dromara.hodor.server.config.HodorServerProperties;
 import org.dromara.hodor.server.listener.JobEventDispatchListener;
 import org.dromara.hodor.server.listener.RegistryConnectionStateListener;

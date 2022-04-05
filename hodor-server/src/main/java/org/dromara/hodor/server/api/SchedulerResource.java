@@ -2,13 +2,8 @@ package org.dromara.hodor.server.api;
 
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.lang.TypeReference;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.cron.CronUtils;
-import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.utils.HashUtils;
 import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.common.utils.StringUtils;
@@ -28,12 +23,16 @@ import org.dromara.hodor.remoting.api.http.HodorRestClient;
 import org.dromara.hodor.scheduler.api.HodorScheduler;
 import org.dromara.hodor.scheduler.api.SchedulerManager;
 import org.dromara.hodor.scheduler.api.exception.CreateJobException;
-import org.dromara.hodor.server.common.EventType;
 import org.dromara.hodor.server.executor.JobExecutorTypeManager;
 import org.dromara.hodor.server.manager.CopySetManager;
 import org.dromara.hodor.server.restservice.HodorRestService;
 import org.dromara.hodor.server.restservice.RestMethod;
 import org.dromara.hodor.server.service.RegistryService;
+
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * scheduler controller
@@ -195,10 +194,6 @@ public class SchedulerResource {
         if (!result.isSuccess()) {
             throw new CreateJobException(result.getData());
         }
-    }
-
-    private void fireBatchJobCreateEvent() {
-        registryService.createJobEvent(Event.create("", EventType.JOB_CREATE_DISTRIBUTE));
     }
 
     private JobInfo convertJobInfo(JobDesc job) {

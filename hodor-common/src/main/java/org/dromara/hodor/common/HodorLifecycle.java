@@ -1,4 +1,4 @@
-package org.dromara.hodor.server.common;
+package org.dromara.hodor.common;
 
 /**
  * HodorLifecycle
@@ -8,8 +8,8 @@ package org.dromara.hodor.server.common;
  */
 public interface HodorLifecycle {
 
-    void start();
+    void start() throws Exception;
 
-    void stop();
+    void stop() throws Exception;
 
 }
