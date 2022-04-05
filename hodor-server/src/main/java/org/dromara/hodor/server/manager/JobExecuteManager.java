@@ -72,7 +72,7 @@ public class JobExecuteManager {
             || jobExecDetail.getExecuteStatus() != JobExecuteStatus.RUNNING) {
             return false;
         }
-        // TODO: 否则去执行端查询状态，并且更新状态
+        // 去执行端查询状态，并且更新状态
         Host host = Host.of(jobExecDetail.getActuatorEndpoint());
         JobExecuteStatusRequest statusRequest = new JobExecuteStatusRequest();
         statusRequest.setRequestId(jobExecDetail.getId());
@@ -84,7 +84,7 @@ public class JobExecuteManager {
         if (JobExecuteStatus.isFinished(statusResponse.getStatus())) {
             removeRunningJob(jobKey);
         }
-        return statusResponse.getStatus() == JobExecuteStatus.RUNNING;
+        return JobExecuteStatus.isRunning(statusResponse.getStatus());
     }
 
     public void removeRunningJob(JobKey jobKey) {
@@ -171,7 +171,7 @@ public class JobExecuteManager {
         byte[] body = serializer.serialize(requestBody);
         Header header = Header.builder()
                 .id(requestBody.getRequestId())
-                .type(messageType.getCode())
+                .type(messageType.getType())
                 .length(body.length)
                 .version(RemotingConst.DEFAULT_VERSION)
                 .build();
@@ -182,11 +182,10 @@ public class JobExecuteManager {
         try {
             RemotingMessage remotingMessage = RemotingClient.getInstance().sendSyncRequest(host, remotingRequest, 1500);
             RemotingResponse<R> remotingResponse = serializer.deserialize(remotingMessage.getBody(), typeReference.getType());
-            if (remotingResponse.isSuccess()) {
-                return remotingResponse.getData();
-            } else {
+            if (!remotingResponse.isSuccess()) {
                 log.error("request failure, code: {}, msg: {}", remotingResponse.getCode(), remotingResponse.getMsg());
             }
+            return remotingResponse.getData();
         } catch (Exception e) {
             log.error("execute request error, messageType: {}, errorMsg: {}", messageType, e.getMessage(), e);
         }

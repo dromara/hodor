@@ -1,9 +1,3 @@
-database:
-  driverClass: com.mysql.cj.jdbc.Driver
-  url: jdbc:mysql://localhost:3306/hodor?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
-  username: root
-  password: tomgs
-
 spring:
   application:
     name: hodor-scheduler
@@ -11,11 +5,25 @@ spring:
     include: core
 
 hodor:
+  clusterName: hodor
+  clusterNodes: 1
   logDir: E:\\data\\hodor-scheudler\\recordset
   netServer:
-    appName: hodor
     host: 0.0.0.0
     port: 8081
   registry:
-    servers: 127.0.0.1:2181
     namespace: "hodor-test"
+    servers: 127.0.0.1:2181
+  database:
+    driverClass: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/hodor?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
+    username: root
+    password: 123456
+
+# mybatis-plus
+mybatis-plus:
+  mapper-locations: classpath*:/mappers/*.xml
+  typeEnumsPackage: org.dromara.hodor.model.enums
+  configuration:
+    map-underscore-to-camel-case: true
+    defaultEnumTypeHandler: org.apache.ibatis.type.EnumOrdinalTypeHandler

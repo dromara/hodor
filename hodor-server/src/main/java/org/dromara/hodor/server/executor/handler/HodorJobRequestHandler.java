@@ -53,18 +53,18 @@ public class HodorJobRequestHandler implements RequestHandler {
     }
 
     public void preHandle(final HodorJobExecutionContext context) {
+        JobExecuteManager.getInstance().addSchedulerStartJob(context);
         // check job is running
         if (JobExecuteManager.getInstance().isRunning(context.getJobKey())) {
             throw new IllegalJobExecuteStateException("job {} is running.", context.getJobKey());
         }
-        JobExecuteManager.getInstance().addSchedulerStartJob(context);
     }
 
     public void handle(final HodorJobExecutionContext context) {
         log.info("hodor job request handler, info {}.", context);
         Exception jobException = null;
         RemotingMessage request = getRequestBody(context);
-        List<Host> hosts = actuatorNodeManager.getAvailableHosts(context.getJobDesc().getGroupName());
+        List<Host> hosts = actuatorNodeManager.getAvailableHosts(context.getJobDesc());
         for (int i = hosts.size() - 1; i >= 0; i--) {
             Host host = hosts.get(i);
             try {
@@ -142,6 +142,7 @@ public class HodorJobRequestHandler implements RequestHandler {
             .extensibleParameters(jobDesc.getExtensibleParameters())
             .timeout(jobDesc.getTimeout())
             .retryCount(jobDesc.getRetryCount())
+            .version(jobDesc.getVersion())
             .build();
     }
 
@@ -154,7 +155,7 @@ public class HodorJobRequestHandler implements RequestHandler {
         return Header.builder()
             .id(context.getRequestId())
             .version(RemotingConst.DEFAULT_VERSION)
-            .type(MessageType.JOB_EXEC_REQUEST.getCode())
+            .type(MessageType.JOB_EXEC_REQUEST.getType())
             .attachment(attachment)
             .length(bodyLength)
             .build();

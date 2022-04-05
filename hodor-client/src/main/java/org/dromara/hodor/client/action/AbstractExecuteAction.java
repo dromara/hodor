@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.client.config.HodorProperties;
 import org.dromara.hodor.client.core.HodorJobExecution;
 import org.dromara.hodor.client.core.JobLoggerManager;
-import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.client.executor.ExecutorManager;
 import org.dromara.hodor.client.executor.JobExecutionPersistence;
 import org.dromara.hodor.common.utils.Stopwatch;
@@ -16,6 +15,7 @@ import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.remoting.api.message.RemotingResponse;
+import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
 

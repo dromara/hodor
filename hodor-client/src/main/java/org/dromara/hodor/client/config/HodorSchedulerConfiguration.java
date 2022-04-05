@@ -46,7 +46,7 @@ public class HodorSchedulerConfiguration {
 
     @Bean
     public JobRegistrar jobRegistrar() {
-        return new JobRegistrar();
+        return new JobRegistrar(hodorApiClient());
     }
 
     @Bean

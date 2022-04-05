@@ -79,9 +79,9 @@ public class LogUtil {
         return FileAppender.newBuilder()
             .setConfiguration(config)
             .withAppend(true)
-            .withName(loggerName)
+            .setName(loggerName)
             .withFileName(logFile.getAbsolutePath())
-            .withLayout(layout)
+            .setLayout(layout)
             .build();
     }
 
@@ -91,10 +91,10 @@ public class LogUtil {
         return RollingFileAppender.newBuilder()
             .setConfiguration(config)
             .withAppend(true)
-            .withName(loggerName)
+            .setName(loggerName)
             .withFileName(fileName)
             .withFilePattern(fileName + "_%d{yyyyMMddHHmmss}")
-            .withLayout(layout)
+            .setLayout(layout)
             .withPolicy(TimeBasedTriggeringPolicy.newBuilder()
                 .withInterval(interval) // unit seconds
                 .withModulate(true)

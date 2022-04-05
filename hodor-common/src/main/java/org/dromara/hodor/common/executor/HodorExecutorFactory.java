@@ -7,8 +7,11 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import org.dromara.hodor.common.concurrent.HodorThreadFactory;
+import org.dromara.hodor.common.queue.AbortEnqueuePolicy;
+import org.dromara.hodor.common.queue.AdjustThreadSizePolicy;
 import org.dromara.hodor.common.queue.CircleQueue;
 import org.dromara.hodor.common.queue.DiscardOldestElementPolicy;
+import org.dromara.hodor.common.queue.ResizeQueuePolicy;
 
 /**
  * hodor executor factory
@@ -18,29 +21,53 @@ import org.dromara.hodor.common.queue.DiscardOldestElementPolicy;
  */
 public class HodorExecutorFactory {
 
-    private final HodorExecutor executor;
+    private static final Map<String, ThreadPoolExecutor> threadPoolExecutorMap = new ConcurrentHashMap<>(8);
 
-    private static final Map<String, ThreadPoolExecutor> threadPoolExecutorMap = new ConcurrentHashMap<>();
-
-    private HodorExecutorFactory(final String executorName, final int threadSize, final boolean coreThreadTimeOut) {
-        CircleQueue<HodorRunnable> hodorQueue = new CircleQueue<>(128);
-        ThreadPoolExecutor threadPoolExecutor = createThreadPoolExecutor(executorName, threadSize, coreThreadTimeOut);
-        this.executor = new HodorExecutor(hodorQueue, threadPoolExecutor);
-        this.executor.setRejectEnqueuePolicy(new DiscardOldestElementPolicy<>());
-    }
-
-    public static ThreadPoolExecutor createThreadPoolExecutor(final String executorName, final int threadSize, final boolean coreThreadTimeOut) {
+    public static ThreadPoolExecutor createThreadPoolExecutor(final String executorName, final int threadSize, final int poolSize, final boolean coreThreadTimeOut) {
         return threadPoolExecutorMap.computeIfAbsent(executorName, k -> {
             ThreadFactory threadFactory = HodorThreadFactory.create(executorName, false);
             ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(threadSize, threadSize, 3L, TimeUnit.MINUTES,
-                new LinkedBlockingQueue<>(5000), threadFactory);
+                new LinkedBlockingQueue<>(poolSize), threadFactory);
             threadPoolExecutor.allowCoreThreadTimeOut(coreThreadTimeOut);
             return threadPoolExecutor;
         });
     }
 
     public static HodorExecutor createDefaultExecutor(final String executorName, final int threadSize, final boolean coreThreadTimeOut) {
-        return new HodorExecutorFactory(executorName, threadSize, coreThreadTimeOut).executor;
+        return createExecutor(executorName, threadSize, 500, coreThreadTimeOut, 0);
+    }
+
+    public static HodorExecutor createExecutor(final String executorName, final int threadSize, final int poolSize,
+                                               final boolean coreThreadTimeOut, final int taskStackingStrategy) {
+        CircleQueue<HodorRunnable> hodorQueue = new CircleQueue<>(128);
+        ThreadPoolExecutor threadPoolExecutor = createThreadPoolExecutor(executorName, threadSize, poolSize, coreThreadTimeOut);
+        HodorExecutor executor = new HodorExecutor(hodorQueue, threadPoolExecutor);
+        setHodorExecutorStackingStrategy(taskStackingStrategy, executor);
+        return executor;
+    }
+
+    private static void setHodorExecutorStackingStrategy(int taskStackingStrategy, HodorExecutor executor) {
+        if (taskStackingStrategy == 0) {
+            executor.setRejectEnqueuePolicy(new DiscardOldestElementPolicy<>());
+            return;
+        }
+
+        if (taskStackingStrategy == 1) {
+            executor.setRejectEnqueuePolicy(new AbortEnqueuePolicy<>());
+            return;
+        }
+
+        if (taskStackingStrategy == 2) {
+            executor.setRejectEnqueuePolicy(new ResizeQueuePolicy<>());
+            return;
+        }
+
+        if (taskStackingStrategy == 3) {
+            executor.setRejectEnqueuePolicy(new AdjustThreadSizePolicy<>(executor.getExecutor()));
+            return;
+        }
+
+        throw new UnsupportedOperationException("Unsupported taskStackingStrategy " + taskStackingStrategy);
     }
 
 }

@@ -2,12 +2,11 @@ package org.dromara.hodor.server.service;
 
 import com.google.common.collect.Lists;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.dromara.hodor.common.HodorLifecycle;
 import org.dromara.hodor.common.exception.HodorException;
 import org.dromara.hodor.common.utils.CopySets;
-import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.core.Constants.CopySetConstants;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.core.service.JobInfoService;
@@ -16,7 +15,6 @@ import org.dromara.hodor.model.scheduler.DataInterval;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
 import org.dromara.hodor.scheduler.api.HodorScheduler;
 import org.dromara.hodor.scheduler.api.SchedulerManager;
-import org.dromara.hodor.server.common.HodorLifecycle;
 import org.dromara.hodor.server.executor.JobExecutorTypeManager;
 import org.dromara.hodor.server.listener.ActuatorNodeChangeListener;
 import org.dromara.hodor.server.listener.LeaderElectChangeListener;
@@ -64,16 +62,10 @@ public class HodorService implements HodorLifecycle {
     @Override
     public void start() {
         // waiting node ready
-        Integer currRunningNodeCount = registryService.getRunningNodeCount();
-        while (currRunningNodeCount < registryService.getLeastNodeCount()) {
-            log.warn("waiting for the node to join the cluster ...");
-            ThreadUtils.sleep(TimeUnit.MILLISECONDS, 1000);
-            currRunningNodeCount = registryService.getRunningNodeCount();
-        }
-
+        registryService.waitServerStarted();
         // init data
-        registryService.registrySchedulerNodeListener(new SchedulerNodeChangeListener(schedulerNodeManager, this, registryService));
-        registryService.registryActuatorNodeListener(new ActuatorNodeChangeListener(actuatorNodeManager, registryService));
+        registryService.registrySchedulerNodeListener(new SchedulerNodeChangeListener(schedulerNodeManager, this));
+        registryService.registryActuatorNodeListener(new ActuatorNodeChangeListener(actuatorNodeManager));
         registryService.registryMetadataListener(new MetadataChangeListener(this));
         registryService.registryElectLeaderListener(new LeaderElectChangeListener(this));
         //registerService.registryJobEventListener(new JobEventDispatchListener(this));
@@ -126,7 +118,8 @@ public class HodorService implements HodorLifecycle {
         List<Long> intervalOffsets = Lists.newArrayListWithCapacity(setsNum);
         for (int i = 0; i < setsNum; i++) {
             Long hashId = jobInfoService.queryJobHashIdByOffset(offset * i);
-            if (hashId < 0 && i > 0) {
+            // hashId == -1 -> end
+            if (hashId <= -1 && i > 0) {
                 Long preMin = intervalOffsets.get(i - 1);
                 hashId = preMin + ((Long.MAX_VALUE - preMin) >> 1);
             }
@@ -169,6 +162,10 @@ public class HodorService implements HodorLifecycle {
         }
         // 节点下线，由主节点通知进行CopySet的主从切换
         return leaderService.isLeader();
+    }
+
+    public void updateMetadata(HodorMetadata metadata) {
+        registryService.createMetadata(metadata);
     }
 
 }

@@ -19,8 +19,11 @@ package org.dromara.hodor.common.utils;
 
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.StrUtil;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.regex.Pattern;
 import org.apache.commons.text.TextStringBuilder;
 
 /**
@@ -43,6 +46,15 @@ public final class StringUtils extends org.apache.commons.lang3.StringUtils {
     public static final String EMPTY_STRING = "";
 
     public static final char EXTENSION_SEPARATOR = '.';
+
+    public static final char SINGLE_QUOTE = '\'';
+
+    public static final char DOUBLE_QUOTE = '\"';
+
+    public static final String LF = "\n";
+
+    private static final Pattern BROWSWER_PATTERN = Pattern
+        .compile(".*Gecko.*|.*AppleWebKit.*|.*Trident.*|.*Chrome.*");
 
     /**
      * 判断字符串是否为空.
@@ -99,6 +111,46 @@ public final class StringUtils extends org.apache.commons.lang3.StringUtils {
             return EMPTY_STRING;
         }
         return toEncodedString(data, StandardCharsets.UTF_8);
+    }
+
+    public static String formatURL(String value, Object... args) {
+        for (int i = 0; i < args.length; i++) {
+            String arg = String.valueOf(args[i]);
+            try {
+                String encodeArg = URLEncoder.encode(arg, "UTF-8");
+                args[i] = encodeArg;
+            } catch (UnsupportedEncodingException e) {
+            }
+        }
+        return String.format(value, args);
+    }
+
+    public static String shellQuote(final String s, final char quoteCh) {
+        final StringBuffer buf = new StringBuffer(s.length() + 2);
+
+        buf.append(quoteCh);
+        for (int i = 0; i < s.length(); i++) {
+            final char ch = s.charAt(i);
+            if (ch == quoteCh) {
+                buf.append('\\');
+            }
+            buf.append(ch);
+        }
+        buf.append(quoteCh);
+
+        return buf.toString();
+    }
+
+    public static boolean isFromBrowser(final String userAgent) {
+        if (userAgent == null) {
+            return false;
+        }
+
+        if (BROWSWER_PATTERN.matcher(userAgent).matches()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

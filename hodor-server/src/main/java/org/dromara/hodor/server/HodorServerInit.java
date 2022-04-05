@@ -1,6 +1,7 @@
 package org.dromara.hodor.server;
 
 import java.util.concurrent.CountDownLatch;
+
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.server.service.HodorService;
 import org.dromara.hodor.server.service.RegistryService;
@@ -14,23 +15,29 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 /**
- *  hodor server init
+ * hodor server init
  *
  * @author tomgs
- * @version 2020/6/29 1.0 
+ * @version 2020/6/29 1.0
  */
 @Slf4j
 @Component
 public class HodorServerInit implements ApplicationRunner, ApplicationContextAware {
 
-    private final CountDownLatch aliveLatch = new CountDownLatch(1);
-    private final RestServerService restServerService;
-    private final RegistryService registryService;
-    private final HodorService hodorService;
-    private final ServiceProvider serviceProvider;
-    private ApplicationContext applicationContext;
+    private final CountDownLatch aliveLatch;
 
-    public HodorServerInit(final RestServerService restServerService, final RegistryService registryService, final HodorService hodorService) {
+    private final RestServerService restServerService;
+
+    private final RegistryService registryService;
+
+    private final HodorService hodorService;
+
+    private final ServiceProvider serviceProvider;
+
+    public HodorServerInit(final RestServerService restServerService,
+                           final RegistryService registryService,
+                           final HodorService hodorService) {
+        this.aliveLatch = new CountDownLatch(1);
         this.restServerService = restServerService;
         this.registryService = registryService;
         this.hodorService = hodorService;
@@ -39,33 +46,35 @@ public class HodorServerInit implements ApplicationRunner, ApplicationContextAwa
 
     @Override
     public void run(ApplicationArguments args) throws InterruptedException {
-        serviceProvider.setApplicationContext(applicationContext);
-        // start hodor server
         // start remoting server
         restServerService.start();
-        registryService.start();
-        hodorService.start();
         // register service
+        registryService.start();
+        // start hodor server
+        hodorService.start();
+
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             // log something in here.
+            log.info("Hodor server shutting down ...");
             // stop service
             try {
                 hodorService.stop();
                 registryService.stop();
                 restServerService.stop();
                 aliveLatch.countDown();
+                log.info("Hodor server shutdown complete ...");
             } catch (Exception e) {
                 log.error("Error where shutting down remote service.", e);
             }
         }));
 
-        log.info("hodor server staring success.");
+        log.info("Hodor server starting success.");
         aliveLatch.await();
     }
 
     @Override
     public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+        serviceProvider.setApplicationContext(applicationContext);
     }
 
 }

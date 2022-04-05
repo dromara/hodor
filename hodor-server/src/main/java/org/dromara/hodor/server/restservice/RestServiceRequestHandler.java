@@ -50,7 +50,7 @@ public class RestServiceRequestHandler implements HodorChannelHandler {
 
             String appName = requestPath.get(0);
             String serviceFullName = requestPath.get(1);
-            if (!properties.getNetServerName().equals(appName)) {
+            if (!properties.getClusterServerName().equals(appName)) {
                 responseError(400, "Request appName invalid -> " + appName, channel);
                 return;
             }

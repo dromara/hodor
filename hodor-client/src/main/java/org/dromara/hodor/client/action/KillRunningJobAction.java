@@ -3,10 +3,10 @@ package org.dromara.hodor.client.action;
 import cn.hutool.core.date.DateUtil;
 import java.util.Date;
 import org.dromara.hodor.client.core.HodorJobExecution;
-import org.dromara.hodor.client.core.RequestContext;
 import org.dromara.hodor.client.executor.ExecutorManager;
 import org.dromara.hodor.client.executor.JobExecutionPersistence;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
+import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.remoting.api.message.request.KillRunningJobRequest;
 import org.dromara.hodor.remoting.api.message.response.KillRunningJobResponse;
 

@@ -12,7 +12,6 @@ import org.dromara.hodor.server.manager.CopySetManager;
 import org.dromara.hodor.server.manager.MetadataManager;
 import org.dromara.hodor.server.manager.SchedulerNodeManager;
 import org.dromara.hodor.server.service.HodorService;
-import org.dromara.hodor.server.service.RegistryService;
 
 /**
  * server node change listener
@@ -27,16 +26,13 @@ public class SchedulerNodeChangeListener implements DataChangeListener {
 
     private final HodorService hodorService;
 
-    private final RegistryService registryService;
-
     private final MetadataManager metadataManager;
 
     private final CopySetManager copySetManager;
 
-    public SchedulerNodeChangeListener(final SchedulerNodeManager schedulerNodeManager, final HodorService hodorService, final RegistryService registryService) {
+    public SchedulerNodeChangeListener(final SchedulerNodeManager schedulerNodeManager, final HodorService hodorService) {
         this.manager = schedulerNodeManager;
         this.hodorService = hodorService;
-        this.registryService = registryService;
         this.metadataManager = MetadataManager.getInstance();
         this.copySetManager = CopySetManager.getInstance();
     }
@@ -94,7 +90,7 @@ public class SchedulerNodeChangeListener implements DataChangeListener {
                 }
             });
             // update metadata
-            registryService.createMetadata(metadata);
+            hodorService.updateMetadata(metadata);
         }
 
     }

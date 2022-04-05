@@ -1,7 +1,7 @@
 package org.dromara.hodor.server.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.server.common.HodorLifecycle;
+import org.dromara.hodor.common.HodorLifecycle;
 import org.dromara.hodor.server.config.HodorServerProperties;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.remoting.api.Attribute;

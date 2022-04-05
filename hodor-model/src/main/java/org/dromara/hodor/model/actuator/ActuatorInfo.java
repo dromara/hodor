@@ -20,6 +20,8 @@ import java.util.Set;
 @AllArgsConstructor
 public class ActuatorInfo {
 
+    private String name;
+
     private NodeInfo nodeInfo;
 
     private String nodeEndpoint;

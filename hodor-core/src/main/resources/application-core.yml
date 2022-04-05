@@ -1,9 +1,9 @@
 spring:
    datasource:
-     driver-class-name: ${database.driverClass}
-     url: ${database.url}
-     username: ${database.username}
-     password: ${database.password}
+     driver-class-name: ${hodor.database.driverClass}
+     url: ${hodor.database.url}
+     username: ${hodor.database.username}
+     password: ${hodor.database.password}
 
 # mybatis-plus
 mybatis-plus:

@@ -38,10 +38,11 @@ CREATE TABLE `hodor_job_info` (
   `end_time` datetime DEFAULT NULL COMMENT '任务结束时间',
   `priority` int(11) NOT NULL DEFAULT 0 COMMENT '任务优先级，0：低，1：中，2：高；默认0',
   `job_data_path` varchar(255) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '任务的jar，sql文件，sh文件信息等',
-  `job_desc` varchar(1024) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '任务描述 ',
+  `job_desc` varchar(1024) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '任务描述',
+  `version` bigint(32) NOT NULL DEFAULT -1 COMMENT '任务版本号',
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_job_group` (`job_name`, `group_name`)
-) ENGINE = InnoDB CHARACTER SET = utf8;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4;
 
 -- ----------------------------
 -- Table structure for hodor_job_exec_detail
@@ -64,7 +65,7 @@ CREATE TABLE `hodor_job_exec_detail` (
     `detailed_log` blob COMMENT '存储详细日志',
     `job_exec_data` blob COMMENT 'job执行信息',
     PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `hodor_flow_job_info` (
   `id` bigint NOT NULL AUTO_INCREMENT,
@@ -76,7 +77,7 @@ CREATE TABLE `hodor_flow_job_info` (
   `flow_data` blob COMMENT '依赖关系数据',
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_job_group` (`job_name`, `group_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `hodor_flow_job_exec_detail` (
   `id` bigint NOT NULL AUTO_INCREMENT,
@@ -92,7 +93,17 @@ CREATE TABLE `hodor_flow_job_exec_detail` (
   `flow_exec_data` blob COMMENT 'flow任务执行明细关系数据',
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_request_id` (`request_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 CREATE INDEX index_job_key_status USING BTREE ON hodor.hodor_flow_job_exec_detail (group_name, job_name, status);
+
+CREATE TABLE `hodor_actuator_binding` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `cluster_name` varchar(100) NOT NULL COMMENT '执行器集群名称',
+  `group_name` varchar(100) NOT NULL COMMENT '绑定任务分组名称',
+  `create_time` timestamp DEFAULT NULL COMMENT '创建时间',
+  `update_time` timestamp DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+ALTER TABLE hodor.hodor_actuator_binding ADD CONSTRAINT hodor_actuator_binding_UN UNIQUE KEY (group_name,cluster_name);
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -1,6 +1,11 @@
 package org.dromara.hodor.remoting.api.message;
 
 import org.dromara.hodor.remoting.api.exception.RemotingException;
+import org.dromara.hodor.remoting.api.message.request.HeartbeatRequest;
+import org.dromara.hodor.remoting.api.message.request.JobExecuteLogRequest;
+import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
+import org.dromara.hodor.remoting.api.message.request.JobExecuteStatusRequest;
+import org.dromara.hodor.remoting.api.message.request.KillRunningJobRequest;
 
 /**
  * message type
@@ -10,24 +15,31 @@ import org.dromara.hodor.remoting.api.exception.RemotingException;
  */
 public enum MessageType {
 
-    HEARTBEAT_REQUEST((byte) 0),
+    HEARTBEAT_REQUEST((byte) 0, HeartbeatRequest.class),
 
-    JOB_EXEC_REQUEST((byte) 1),
+    JOB_EXEC_REQUEST((byte) 1, JobExecuteRequest.class),
 
-    FETCH_JOB_STATUS_REQUEST((byte) 2),
+    FETCH_JOB_STATUS_REQUEST((byte) 2, JobExecuteStatusRequest.class),
 
-    FETCH_JOB_LOG_REQUEST((byte) 3),
+    FETCH_JOB_LOG_REQUEST((byte) 3, JobExecuteLogRequest.class),
 
-    KILL_JOB_REQUEST((byte) 4);
+    KILL_JOB_REQUEST((byte) 4, KillRunningJobRequest.class);
 
     private final byte type;
 
-    MessageType(byte type) {
+    private final Class<? extends RequestBody> messageClass;
+
+    MessageType(final byte type, final Class<? extends RequestBody> messageClass) {
         this.type = type;
+        this.messageClass = messageClass;
     }
 
-    public byte getCode() {
+    public byte getType() {
         return type;
+    }
+
+    public Class<? extends RequestBody> getMessageClass() {
+        return messageClass;
     }
 
     public static MessageType to(byte type) {
