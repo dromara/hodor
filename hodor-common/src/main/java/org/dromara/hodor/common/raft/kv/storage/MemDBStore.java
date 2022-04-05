@@ -21,17 +21,17 @@ public class MemDBStore implements DBStore {
 
     @Override
     public byte[] get(byte[] key) {
-        return new byte[0];
+        throw new UnsupportedOperationException("MemDBStore");
     }
 
     @Override
     public void put(byte[] key, byte[] value) {
-
+        throw new UnsupportedOperationException("MemDBStore");
     }
 
     @Override
     public void delete(byte[] key) {
-
+        throw new UnsupportedOperationException("MemDBStore");
     }
 
     @Override

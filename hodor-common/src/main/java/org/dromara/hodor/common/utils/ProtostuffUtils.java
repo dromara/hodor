@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.common.raft.kv.serialization;
+package org.dromara.hodor.common.utils;
 
 import io.protostuff.LinkedBuffer;
 import io.protostuff.ProtobufIOUtil;
@@ -32,21 +32,24 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2022/4/2
  */
 public class ProtostuffUtils {
-    
+
+    private static final ThreadLocal<LinkedBuffer> bufThreadLocal = ThreadLocal.withInitial(
+            () -> LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE));
+
     private static final Map<Class<?>, Schema<?>> schemaCache = new ConcurrentHashMap<>();
 
     @SuppressWarnings("unchecked")
     public static <T> byte[] serialize(T obj) {
         Class<T> clazz = (Class<T>) obj.getClass();
         Schema<T> schema = getSchema(clazz);
-        final LinkedBuffer buffer = LinkedBuffers.getLinkedBuffer();
+        final LinkedBuffer buffer = getLinkedBuffer();
         //LinkedBuffer buffer = LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE);
         byte[] data;
         try {
             data = ProtobufIOUtil.toByteArray(obj, schema, buffer);
         } finally {
             //buffer.clear();
-            LinkedBuffers.resetBuf(buffer);
+            resetBuf(buffer);
         }
 
         return data;
@@ -73,5 +76,14 @@ public class ProtostuffUtils {
 
         return schema;
     }
+
+    private static LinkedBuffer getLinkedBuffer() {
+        return bufThreadLocal.get();
+    }
+
+    private static void resetBuf(final LinkedBuffer buf) {
+        buf.clear();
+    }
+
 
 }

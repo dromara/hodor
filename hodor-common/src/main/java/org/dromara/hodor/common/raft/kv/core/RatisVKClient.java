@@ -1,7 +1,5 @@
 package org.dromara.hodor.common.raft.kv.core;
 
-import java.io.IOException;
-import java.util.Optional;
 import org.apache.ratis.client.RaftClient;
 import org.apache.ratis.conf.Parameters;
 import org.apache.ratis.conf.RaftProperties;
@@ -11,19 +9,17 @@ import org.apache.ratis.protocol.Message;
 import org.apache.ratis.protocol.RaftClientReply;
 import org.apache.ratis.protocol.RaftGroup;
 import org.apache.ratis.thirdparty.com.google.protobuf.ByteString;
-import org.apache.ratis.thirdparty.io.netty.handler.codec.CodecException;
+import org.dromara.hodor.common.raft.RaftGroupManager;
 import org.dromara.hodor.common.raft.kv.exception.HodorKVClientException;
-import org.dromara.hodor.common.raft.kv.protocol.CmdType;
-import org.dromara.hodor.common.raft.kv.protocol.DeleteRequest;
-import org.dromara.hodor.common.raft.kv.protocol.GetRequest;
-import org.dromara.hodor.common.raft.kv.protocol.HodorKVRequest;
-import org.dromara.hodor.common.raft.kv.protocol.HodorKVResponse;
-import org.dromara.hodor.common.raft.kv.protocol.PutRequest;
-import org.dromara.hodor.common.raft.kv.serialization.ProtostuffUtils;
+import org.dromara.hodor.common.raft.kv.protocol.*;
 import org.dromara.hodor.common.storage.cache.CacheClient;
 import org.dromara.hodor.common.storage.cache.CacheSourceConfig;
+import org.dromara.hodor.common.utils.ProtostuffUtils;
 
-import static org.dromara.hodor.common.raft.RaftGroupManager.RATIS_KV_GROUP_ID;
+import java.io.IOException;
+import java.util.Optional;
+
+import static org.dromara.hodor.common.raft.kv.core.RatisKVServer.RATIS_KV_GROUP_ID;
 
 /**
  * RatisVKClient
@@ -47,7 +43,7 @@ public class RatisVKClient<K, V> implements CacheClient<K, V> {
             throw new IllegalArgumentException("Failed to get " + cacheSourceConfig.getServerAddresses() + " from " + cacheSourceConfig);
         }
 
-        final RaftGroup raftGroup = GroupManager.getInstance().getRaftGroup(RATIS_KV_GROUP_ID, addresses);
+        final RaftGroup raftGroup = RaftGroupManager.getInstance().createRaftGroup(RATIS_KV_GROUP_ID, addresses);
         this.raftClient = buildClient(raftGroup);
     }
 
@@ -62,13 +58,13 @@ public class RatisVKClient<K, V> implements CacheClient<K, V> {
         return builder.build();
     }
 
-    private HodorKVResponse handleRatisKVReadRequest(HodorKVRequest request) throws CodecException, IOException {
+    private HodorKVResponse handleRatisKVReadRequest(HodorKVRequest request) throws IOException {
         final byte[] bytes = ProtostuffUtils.serialize(request);
         final RaftClientReply raftClientReply = raftClient.io().sendReadOnly(Message.valueOf(ByteString.copyFrom(bytes)));
         return ProtostuffUtils.deserialize(raftClientReply.getMessage().getContent().toByteArray(), HodorKVResponse.class);
     }
 
-    private HodorKVResponse handleRatisKVWriteRequest(HodorKVRequest request) throws CodecException, IOException {
+    private HodorKVResponse handleRatisKVWriteRequest(HodorKVRequest request) throws IOException {
         final byte[] bytes = ProtostuffUtils.serialize(request);
         final RaftClientReply raftClientReply = raftClient.io().send(Message.valueOf(ByteString.copyFrom(bytes)));
         return ProtostuffUtils.deserialize(raftClientReply.getMessage().getContent().toByteArray(), HodorKVResponse.class);

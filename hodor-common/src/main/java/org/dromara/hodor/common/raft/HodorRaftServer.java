@@ -86,7 +86,7 @@ public class HodorRaftServer {
     public void createRaftGroup(Map<HodorRaftGroup, HodorRaftStateMachine> stateMachineMap) throws IOException {
         for (Map.Entry<HodorRaftGroup, HodorRaftStateMachine> stateMachineEntry : stateMachineMap.entrySet()) {
             final RaftGroup raftGroup = stateMachineEntry.getKey().getRaftGroup();
-            try (final RaftClient raftClient = HodorRaftClient.buildClient(raftGroup)) {
+            try (final RaftClient raftClient = RaftUtils.createClient(raftGroup)) {
                 try {
                     raftClient.getGroupManagementApi(currentPeer.getId()).add(raftGroup);
                 } catch (AlreadyExistsException e) {

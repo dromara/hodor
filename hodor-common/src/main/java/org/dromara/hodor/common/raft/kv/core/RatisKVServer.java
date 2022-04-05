@@ -1,21 +1,24 @@
 package org.dromara.hodor.common.raft.kv.core;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Optional;
 import org.apache.ratis.conf.RaftProperties;
 import org.apache.ratis.grpc.GrpcConfigKeys;
+import org.apache.ratis.protocol.RaftGroupId;
 import org.apache.ratis.protocol.RaftPeer;
 import org.apache.ratis.server.RaftServer;
 import org.apache.ratis.server.RaftServerConfigKeys;
+import org.apache.ratis.thirdparty.com.google.protobuf.ByteString;
 import org.apache.ratis.util.NetUtils;
+import org.dromara.hodor.common.HodorLifecycle;
+import org.dromara.hodor.common.raft.RaftGroupManager;
 import org.dromara.hodor.common.raft.kv.storage.StorageEngine;
 import org.dromara.hodor.common.raft.kv.storage.StorageOptions;
 import org.dromara.hodor.common.raft.kv.storage.StorageType;
 import org.dromara.hodor.common.storage.cache.CacheSourceConfig;
 
-import static org.dromara.hodor.common.raft.RaftGroupManager.RATIS_KV_GROUP_ID;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Optional;
 
 /**
  * RatisKVServer
@@ -23,7 +26,9 @@ import static org.dromara.hodor.common.raft.RaftGroupManager.RATIS_KV_GROUP_ID;
  * @author tomgs
  * @since 2022/3/22
  */
-public class RatisKVServer implements CacheServer {
+public class RatisKVServer implements HodorLifecycle {
+
+    public static final RaftGroupId RATIS_KV_GROUP_ID = RaftGroupId.valueOf(ByteString.copyFromUtf8("RatisKVGroup0000"));
 
     private final RaftServer server;
 
@@ -48,7 +53,7 @@ public class RatisKVServer implements CacheServer {
 
         // init storeEngine
         StorageOptions storageOptions = StorageOptions.builder()
-                .clusterName(sourceConfig.getClusterName())
+                //.clusterName(sourceConfig.getClusterName())
                 .storageType(StorageType.RocksDB)
                 .storagePath(dbDir)
                 .build();
@@ -66,7 +71,7 @@ public class RatisKVServer implements CacheServer {
         RatisKVServerStateMachine serverStateMachine = new RatisKVServerStateMachine(storageEngine);
         //create and start the Raft server
         this.server = RaftServer.newBuilder()
-                .setGroup(GroupManager.getInstance().getRaftGroup(RATIS_KV_GROUP_ID, addresses))
+                .setGroup(RaftGroupManager.getInstance().createRaftGroup("RatisKVGroup0000", addresses))
                 .setProperties(properties)
                 .setServerId(currentPeer.getId())
                 .setStateMachine(serverStateMachine)
@@ -79,7 +84,7 @@ public class RatisKVServer implements CacheServer {
     }
 
     @Override
-    public void close() throws IOException {
+    public void stop() throws IOException {
         storageEngine.close();
         server.close();
     }

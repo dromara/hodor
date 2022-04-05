@@ -1,27 +1,22 @@
 package org.dromara.hodor.common.raft.kv.core;
 
-import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ratis.protocol.Message;
 import org.apache.ratis.protocol.RaftGroupId;
 import org.apache.ratis.server.RaftServer;
 import org.apache.ratis.server.storage.RaftStorage;
 import org.apache.ratis.statemachine.TransactionContext;
-import org.apache.ratis.statemachine.impl.BaseStateMachine;
 import org.apache.ratis.statemachine.impl.SimpleStateMachineStorage;
 import org.apache.ratis.thirdparty.com.google.protobuf.ByteString;
 import org.apache.ratis.thirdparty.io.netty.handler.codec.CodecException;
-import org.dromara.hodor.common.raft.kv.protocol.CmdType;
-import org.dromara.hodor.common.raft.kv.protocol.DeleteRequest;
-import org.dromara.hodor.common.raft.kv.protocol.GetRequest;
-import org.dromara.hodor.common.raft.kv.protocol.GetResponse;
-import org.dromara.hodor.common.raft.kv.protocol.HodorKVRequest;
-import org.dromara.hodor.common.raft.kv.protocol.HodorKVResponse;
-import org.dromara.hodor.common.raft.kv.protocol.PutRequest;
-import org.dromara.hodor.common.raft.kv.serialization.ProtostuffUtils;
+import org.dromara.hodor.common.raft.HodorRaftStateMachine;
+import org.dromara.hodor.common.raft.kv.protocol.*;
 import org.dromara.hodor.common.raft.kv.storage.DBStore;
 import org.dromara.hodor.common.raft.kv.storage.StorageEngine;
+import org.dromara.hodor.common.utils.ProtostuffUtils;
+
+import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * RatisServerStateMachine
@@ -30,7 +25,7 @@ import org.dromara.hodor.common.raft.kv.storage.StorageEngine;
  * @since 2022/3/22
  */
 @Slf4j
-public class RatisKVServerStateMachine extends BaseStateMachine {
+public class RatisKVServerStateMachine extends HodorRaftStateMachine {
 
     private final SimpleStateMachineStorage storage =
             new SimpleStateMachineStorage();
@@ -91,15 +86,6 @@ public class RatisKVServerStateMachine extends BaseStateMachine {
     }
 
     private Message runCommand(Message request) throws CodecException {
-        /*
-         *   OMResponse response = handler.handleReadRequest(request);
-         *   return OMRatisHelper.convertResponseToMessage(response);
-         *   //
-         *   public static Message convertResponseToMessage(OMResponse response) {
-         *       byte[] requestBytes = response.toByteArray();
-         *       return Message.valueOf(ByteString.copyFrom(requestBytes));
-         *   }
-         */
         HodorKVRequest kvRequest = ProtostuffUtils.deserialize(request.getContent().toByteArray(), HodorKVRequest.class);
         final CmdType cmdType = kvRequest.getCmdType();
         HodorKVResponse.HodorKVResponseBuilder builder = HodorKVResponse.builder()

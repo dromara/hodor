@@ -19,6 +19,8 @@ package org.dromara.hodor.common.raft;
 
 import java.io.File;
 import java.util.Map;
+
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -28,6 +30,7 @@ import lombok.Data;
  * @since 2022/3/30
  */
 @Data
+@Builder
 public class RaftOptions {
 
     private File storageDir;

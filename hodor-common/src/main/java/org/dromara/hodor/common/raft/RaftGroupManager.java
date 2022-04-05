@@ -1,17 +1,18 @@
 package org.dromara.hodor.common.raft;
 
-import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import org.apache.ratis.protocol.RaftGroup;
 import org.apache.ratis.protocol.RaftGroupId;
 import org.apache.ratis.protocol.RaftPeer;
 import org.apache.ratis.thirdparty.com.google.protobuf.ByteString;
 import org.apache.ratis.util.NetUtils;
 import org.dromara.hodor.common.utils.StringUtils;
+
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * RaftGroupManager
@@ -22,9 +23,6 @@ import org.dromara.hodor.common.utils.StringUtils;
 public class RaftGroupManager {
 
     private static final RaftGroupManager INSTANCE = new RaftGroupManager();
-
-    // 这个会自动转换为UUID，但是需要确保字符串为16位
-    public static final RaftGroupId RATIS_KV_GROUP_ID = RaftGroupId.valueOf(ByteString.copyFromUtf8("RatisKVGroup0000"));
 
     private final Map<String, RaftGroup> raftGroupMap = new ConcurrentHashMap<>();
 
@@ -37,6 +35,10 @@ public class RaftGroupManager {
 
     public RaftGroup getRaftGroup(String groupId) {
         return raftGroupMap.get(groupId);
+    }
+
+    public RaftGroup createRaftGroup(RaftGroupId raftGroupId, String[] address) {
+        return createRaftGroup(raftGroupId.toString(), address);
     }
 
     public RaftGroup createRaftGroup(String groupId, String[] addresses) {
@@ -83,7 +85,7 @@ public class RaftGroupManager {
     }
 
     private String getPeerId(InetSocketAddress address) {
-        return address.getHostName() + "_" + address.getPort();
+        return address.getHostString() + "_" + address.getPort();
     }
 
 }

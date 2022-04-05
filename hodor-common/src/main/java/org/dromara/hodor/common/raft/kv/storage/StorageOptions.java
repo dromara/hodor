@@ -14,8 +14,6 @@ import lombok.Data;
 @Builder
 public class StorageOptions {
 
-    private String clusterName;
-
     private StorageType storageType;
 
     private File storagePath;

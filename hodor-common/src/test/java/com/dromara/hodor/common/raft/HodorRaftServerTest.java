@@ -62,11 +62,11 @@ public class HodorRaftServerTest {
         stateMachineMap.put(hodorRaftGroup, new DemoHodorRaftStateMachine());
         stateMachineMap.put(hodorRaftGroup2, new Demo2HodorRaftStateMachine());
 
-        RaftOptions raftOptions = new RaftOptions();
-        raftOptions.setEndpoint(endpoints.get(Integer.parseInt(args[0]) - 1));
-        raftOptions.setStorageDir(new File("target/test_raft/"));
-        raftOptions.setStateMachineMap(stateMachineMap);
-
+        RaftOptions raftOptions = RaftOptions.builder()
+                .endpoint(endpoints.get(Integer.parseInt(args[0]) - 1))
+                .storageDir(new File("target/test_raft/"))
+                .stateMachineMap(stateMachineMap)
+                .build();
         HodorRaftServer hodorRaftServer = new HodorRaftServer(raftOptions);
         hodorRaftServer.start();
 
