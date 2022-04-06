@@ -25,7 +25,7 @@ import java.util.concurrent.CompletableFuture;
  * @since 2022/3/22
  */
 @Slf4j
-public class RatisKVServerStateMachine extends HodorRaftStateMachine {
+public class HodorKVStateMachine extends HodorRaftStateMachine {
 
     private final SimpleStateMachineStorage storage =
             new SimpleStateMachineStorage();
@@ -36,7 +36,7 @@ public class RatisKVServerStateMachine extends HodorRaftStateMachine {
 
     private RaftGroupId raftGroupId;
 
-    public RatisKVServerStateMachine(final StorageEngine storageEngine) {
+    public HodorKVStateMachine(final StorageEngine storageEngine) {
         this.storageEngine = storageEngine;
         this.dbStore = this.storageEngine.getRawDBStore();
     }

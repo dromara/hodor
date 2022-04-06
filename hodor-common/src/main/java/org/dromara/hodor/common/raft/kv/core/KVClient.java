@@ -15,31 +15,21 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.common.raft;
-
-import java.io.File;
-import java.util.List;
-import java.util.Map;
-
-import lombok.Builder;
-import lombok.Data;
+package org.dromara.hodor.common.raft.kv.core;
 
 /**
- * RaftOptions
+ * KVClient
  *
  * @author tomgs
- * @since 2022/3/30
+ * @since 2022/4/6
  */
-@Data
-@Builder
-public class RaftOptions {
+public interface KVClient {
 
-    private File storageDir;
+    byte[] get(byte[] key);
 
-    private String endpoint;
+    void put(byte[] key, byte[] value);
 
-    private String serverAddresses;
+    void delete(byte[] key);
 
-    private Map<HodorRaftGroup, HodorRaftStateMachine> stateMachineMap;
-
+    void close() throws Exception;
 }

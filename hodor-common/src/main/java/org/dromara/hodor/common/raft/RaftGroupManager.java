@@ -37,6 +37,10 @@ public class RaftGroupManager {
         return raftGroupMap.get(groupId);
     }
 
+    public RaftGroup createRaftGroup(RaftGroupId raftGroupId, List<String> address) {
+        return createRaftGroup(raftGroupId.toString(), address.toArray(new String[]{}));
+    }
+
     public RaftGroup createRaftGroup(RaftGroupId raftGroupId, String[] address) {
         return createRaftGroup(raftGroupId.toString(), address);
     }

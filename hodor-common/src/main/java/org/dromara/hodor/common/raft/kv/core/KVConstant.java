@@ -15,31 +15,16 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.common.raft;
-
-import java.io.File;
-import java.util.List;
-import java.util.Map;
-
-import lombok.Builder;
-import lombok.Data;
+package org.dromara.hodor.common.raft.kv.core;
 
 /**
- * RaftOptions
+ * KVConstant
  *
  * @author tomgs
- * @since 2022/3/30
+ * @since 2022/4/6
  */
-@Data
-@Builder
-public class RaftOptions {
+public interface KVConstant {
 
-    private File storageDir;
-
-    private String endpoint;
-
-    private String serverAddresses;
-
-    private Map<HodorRaftGroup, HodorRaftStateMachine> stateMachineMap;
+    String HODOR_KV_GROUP_NAME = "HodorKVGroup0000";
 
 }
