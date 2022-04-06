@@ -17,9 +17,12 @@
 
 package org.dromara.hodor.register.embedded;
 
+import java.io.IOException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.extension.Join;
+import org.dromara.hodor.common.raft.kv.core.HodorKVClient;
+import org.dromara.hodor.common.utils.ProtostuffUtils;
 import org.dromara.hodor.register.api.ConnectionStateChangeListener;
 import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.LeaderExecutionCallback;
@@ -36,14 +39,16 @@ import org.dromara.hodor.register.api.RegistryConfig;
 @Slf4j
 public class EmbeddedRegistryCenter implements RegistryCenter {
 
+    private HodorKVClient kvClient;
+
     @Override
     public void init(RegistryConfig config) {
-
+        this.kvClient = new HodorKVClient(config.getServers());
     }
 
     @Override
-    public void close() {
-
+    public void close() throws IOException {
+        kvClient.close();
     }
 
     @Override
@@ -53,7 +58,8 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
 
     @Override
     public String get(String key) {
-        return null;
+        final byte[] values = kvClient.get(ProtostuffUtils.serialize(key));
+        return ProtostuffUtils.deserialize(values, String.class);
     }
 
     @Override

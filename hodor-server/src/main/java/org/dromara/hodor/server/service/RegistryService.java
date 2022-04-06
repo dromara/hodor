@@ -57,7 +57,7 @@ public class RegistryService implements HodorLifecycle {
     }
 
     @Override
-    public void stop() {
+    public void stop() throws Exception {
         registryCenter.close();
     }
 

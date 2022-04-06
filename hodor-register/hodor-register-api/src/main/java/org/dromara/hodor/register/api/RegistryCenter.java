@@ -14,7 +14,7 @@ public interface RegistryCenter {
 
     void init(RegistryConfig config);
 
-    void close();
+    void close() throws Exception;
 
     boolean checkExists(String key);
 

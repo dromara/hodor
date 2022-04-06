@@ -36,15 +36,14 @@ public class RocksDBStore implements DBStore {
         final Options options = new Options();
         options.setCreateIfMissing(true);
         try {
-            final File dbDir = new File(dbPath, storageOptions.getClusterName());
-            if (!dbDir.exists()) {
+            if (!dbPath.exists()) {
                 try {
-                    FileUtils.forceMkdir(dbDir);
+                    FileUtils.forceMkdir(dbPath);
                 } catch (IOException e) {
                     throw new StorageDBException(e.getMessage(), e);
                 }
             }
-            rocksDB = RocksDB.open(options, dbDir.getPath());
+            rocksDB = RocksDB.open(options, dbPath.getPath());
         } catch (RocksDBException e) {
             throw new StorageDBException("Init DB exception: " + e.getMessage(), e);
         }

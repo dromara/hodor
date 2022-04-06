@@ -23,7 +23,7 @@ public class HodorKVServerTest {
 
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {
-            System.err.println("Usage: java -cp *.jar com.dromara.hodor.common.raft.HodorRaftServerTest {serverIndex}");
+            System.err.println("Usage: java -cp *.jar com.dromara.hodor.common.kv.HodorKVServerTest {serverIndex}");
             System.err.println("{serverIndex} could be 1, 2 or 3");
             System.exit(1);
         }
@@ -33,7 +33,8 @@ public class HodorKVServerTest {
         RaftOptions raftOptions = RaftOptions.builder()
                 .endpoint(endpoints.get(Integer.parseInt(args[0]) - 1))
                 .storageDir(new File("target/test_kv/raft"))
-                //.stateMachineMap(stateMachineMap)
+                .serverAddresses("127.0.0.1:8081,127.0.0.1:8082,127.0.0.1:8083")
+                //.stateMachineMap(stateMachineMap) // for customer
                 .build();
         StorageOptions storageOptions = StorageOptions.builder()
                 .storageType(StorageType.RocksDB)

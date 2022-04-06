@@ -18,6 +18,7 @@
 package org.dromara.hodor.common.raft;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 
 import lombok.Builder;
@@ -37,7 +38,7 @@ public class RaftOptions {
 
     private String endpoint;
 
-    //private String serverAddresses;
+    private String serverAddresses;
 
     private Map<HodorRaftGroup, HodorRaftStateMachine> stateMachineMap;
 

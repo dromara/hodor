@@ -15,46 +15,21 @@
  * limitations under the License.
  */
 
-package com.dromara.hodor.common.storage.cache.impl;
-
-import org.dromara.hodor.common.storage.cache.CacheClient;
+package org.dromara.hodor.common.raft.kv.core;
 
 /**
- * RedisRawCacheSource
+ * KVClient
  *
  * @author tomgs
- * @since 2021/9/23
+ * @since 2022/4/6
  */
-public class RedisRawCacheClient<K, V> implements CacheClient<K, V> {
+public interface KVClient {
 
-    @Override
-    public V get(K key) {
-        return null;
-    }
+    byte[] get(byte[] key);
 
-    @Override
-    public void put(K key, V value) {
+    void put(byte[] key, byte[] value);
 
-    }
+    void delete(byte[] key);
 
-    @Override
-    public void put(K key, V value, int expire) {
-
-    }
-
-    @Override
-    public void delete(K key) {
-
-    }
-
-    @Override
-    public void clear() {
-
-    }
-
-    @Override
-    public void close() {
-
-    }
-
+    void close() throws Exception;
 }
