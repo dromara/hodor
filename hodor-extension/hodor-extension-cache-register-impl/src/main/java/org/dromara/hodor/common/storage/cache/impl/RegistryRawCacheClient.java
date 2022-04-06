@@ -26,12 +26,17 @@ public class RegistryRawCacheClient<K, V> implements CacheClient<K, V> {
     }
 
     @Override
-    public void remove(K key) {
+    public void delete(K key) {
 
     }
 
     @Override
     public void clear() {
+
+    }
+
+    @Override
+    public void close() {
 
     }
 
