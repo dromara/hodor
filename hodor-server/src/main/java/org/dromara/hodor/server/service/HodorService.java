@@ -75,7 +75,7 @@ public class HodorService implements HodorLifecycle {
     }
 
     @Override
-    public void stop() {
+    public void stop() throws Exception {
         registryService.stop();
         copySetManager.clearCopySet();
         schedulerNodeManager.clearNodeServer();
