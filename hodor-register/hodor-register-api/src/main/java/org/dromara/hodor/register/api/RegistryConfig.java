@@ -21,4 +21,9 @@ public class RegistryConfig {
      * 应用在注册中心的命名空间
      */
     private final String namespace;
+
+    private final String endpoint;
+
+    private final String dataPath;
+
 }
