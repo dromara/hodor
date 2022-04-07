@@ -18,6 +18,7 @@
 package org.dromara.hodor.common.raft.kv.core;
 
 import java.io.IOException;
+import java.util.List;
 import org.apache.ratis.client.RaftClient;
 import org.apache.ratis.protocol.Message;
 import org.apache.ratis.protocol.RaftClientReply;
@@ -32,6 +33,7 @@ import org.dromara.hodor.common.raft.kv.protocol.DeleteRequest;
 import org.dromara.hodor.common.raft.kv.protocol.GetRequest;
 import org.dromara.hodor.common.raft.kv.protocol.HodorKVRequest;
 import org.dromara.hodor.common.raft.kv.protocol.HodorKVResponse;
+import org.dromara.hodor.common.raft.kv.protocol.KVEntry;
 import org.dromara.hodor.common.raft.kv.protocol.PutRequest;
 import org.dromara.hodor.common.utils.ProtostuffUtils;
 
@@ -144,6 +146,11 @@ public class HodorKVClient implements KVOperate {
     @Override
     public void close() throws IOException {
         raftClient.close();
+    }
+
+    @Override
+    public List<KVEntry> scan(byte[] startKey, byte[] endKey) {
+        return null;
     }
 
 }

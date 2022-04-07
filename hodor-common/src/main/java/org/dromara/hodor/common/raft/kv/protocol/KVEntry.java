@@ -15,30 +15,26 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.common.raft.kv.core;
+package org.dromara.hodor.common.raft.kv.protocol;
 
-import java.io.IOException;
-import java.util.List;
-import org.dromara.hodor.common.raft.kv.protocol.KVEntry;
+import java.io.Serializable;
+import lombok.Builder;
+import lombok.Data;
 
 /**
- * KVOperate
+ * KVEntry
  *
  * @author tomgs
- * @since 2022/4/6
+ * @since 2022/4/7
  */
-public interface KVOperate {
+@Data
+@Builder
+public class KVEntry implements Serializable {
 
-    byte[] get(byte[] key);
+    private static final long serialVersionUID = -3921009906810344904L;
 
-    void put(byte[] key, byte[] value);
+    private byte[] key;
 
-    void delete(byte[] key);
-
-    Boolean containsKey(byte[] key);
-
-    List<KVEntry> scan(byte[] startKey, byte[] endKey);
-
-    void close() throws IOException;
+    private byte[] value;
 
 }

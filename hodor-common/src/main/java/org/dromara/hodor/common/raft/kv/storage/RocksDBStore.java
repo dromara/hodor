@@ -3,9 +3,11 @@ package org.dromara.hodor.common.raft.kv.storage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.dromara.hodor.common.raft.kv.exception.StorageDBException;
+import org.dromara.hodor.common.raft.kv.protocol.KVEntry;
 import org.rocksdb.Options;
 import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
@@ -88,6 +90,11 @@ public class RocksDBStore implements DBStore {
             }
         }
         return exists;
+    }
+
+    @Override
+    public List<KVEntry> scan(byte[] startKey, byte[] endKey) {
+        return null;
     }
 
     @Override

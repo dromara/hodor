@@ -1,5 +1,8 @@
 package org.dromara.hodor.common.raft.kv.storage;
 
+import java.util.List;
+import org.dromara.hodor.common.raft.kv.protocol.KVEntry;
+
 /**
  * MemDBStore
  *
@@ -36,6 +39,11 @@ public class MemDBStore implements DBStore {
 
     @Override
     public Boolean containsKey(byte[] key) {
+        return null;
+    }
+
+    @Override
+    public List<KVEntry> scan(byte[] startKey, byte[] endKey) {
         return null;
     }
 

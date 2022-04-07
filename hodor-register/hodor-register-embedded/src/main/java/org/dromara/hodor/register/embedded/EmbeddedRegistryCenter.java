@@ -22,6 +22,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.extension.Join;
 import org.dromara.hodor.common.raft.kv.core.HodorKVClient;
+import org.dromara.hodor.common.raft.kv.protocol.KVEntry;
 import org.dromara.hodor.common.utils.ProtostuffUtils;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.register.api.ConnectionStateChangeListener;
@@ -65,6 +66,7 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
 
     @Override
     public List<String> getChildren(String key) {
+        List<KVEntry> result = kvClient.getByPreKey(ProtostuffUtils.serialize(key));
         return null;
     }
 
