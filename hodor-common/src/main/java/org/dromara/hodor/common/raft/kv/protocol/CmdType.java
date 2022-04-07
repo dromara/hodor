@@ -9,5 +9,6 @@ package org.dromara.hodor.common.raft.kv.protocol;
 public enum CmdType {
     GET,
     PUT,
-    DELETE
+    DELETE,
+    CONTAINS_KEY
 }

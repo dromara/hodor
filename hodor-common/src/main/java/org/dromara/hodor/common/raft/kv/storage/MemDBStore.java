@@ -35,6 +35,11 @@ public class MemDBStore implements DBStore {
     }
 
     @Override
+    public Boolean containsKey(byte[] key) {
+        return null;
+    }
+
+    @Override
     public void close() {
 
     }
