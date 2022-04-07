@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.extension.Join;
 import org.dromara.hodor.common.raft.kv.core.HodorKVClient;
 import org.dromara.hodor.common.utils.ProtostuffUtils;
+import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.register.api.ConnectionStateChangeListener;
 import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.LeaderExecutionCallback;
@@ -53,7 +54,7 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
 
     @Override
     public boolean checkExists(String key) {
-        return false;
+        return kvClient.containsKey(ProtostuffUtils.serialize(key));
     }
 
     @Override
@@ -69,27 +70,27 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
 
     @Override
     public void createPersistent(String key, String value) {
-
+        kvClient.put(ProtostuffUtils.serialize(key), ProtostuffUtils.serialize(value));
     }
 
     @Override
-    public void createPersistentSequential(String path, String value) {
-
+    public void createPersistentSequential(String key, String value) {
+        kvClient.put(ProtostuffUtils.serialize(key), ProtostuffUtils.serialize(value));
     }
 
     @Override
     public void createEphemeral(String key, String value) {
-
+        kvClient.put(ProtostuffUtils.serialize(key), ProtostuffUtils.serialize(value));
     }
 
     @Override
     public void createEphemeralSequential(String key, String value) {
-
+        kvClient.put(ProtostuffUtils.serialize(key), ProtostuffUtils.serialize(value));
     }
 
     @Override
     public String makePath(String parent, String firstChild, String... restChildren) {
-        return null;
+        return StringUtils.joinWith("/", parent, firstChild, restChildren);
     }
 
     @Override
@@ -99,12 +100,12 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
 
     @Override
     public void update(String key, String value) {
-
+        kvClient.put(ProtostuffUtils.serialize(key), ProtostuffUtils.serialize(value));
     }
 
     @Override
     public void remove(String key) {
-
+        kvClient.delete(ProtostuffUtils.serialize(key));
     }
 
     @Override
