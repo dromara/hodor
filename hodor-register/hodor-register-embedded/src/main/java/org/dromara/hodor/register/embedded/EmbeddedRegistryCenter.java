@@ -66,7 +66,7 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
 
     @Override
     public List<String> getChildren(String key) {
-        List<KVEntry> result = kvClient.getByPreKey(ProtostuffUtils.serialize(key));
+        List<KVEntry> result = kvClient.scan(ProtostuffUtils.serialize(key), null);
         return null;
     }
 
