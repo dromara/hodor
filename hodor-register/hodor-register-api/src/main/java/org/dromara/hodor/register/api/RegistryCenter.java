@@ -35,17 +35,6 @@ public interface RegistryCenter {
 
     void createEphemeralSequential(String key, String value);
 
-    /**
-     * 传入多个节点路径，组成一个全路径
-     */
-    String makePath(String parent, String firstChild, String... restChildren);
-
-    /**
-     * 创建一个全路径的所有节点
-     * @param path path
-     */
-    void makeDirs(String path);
-
     void update(String key, String value);
 
     void remove(String key);

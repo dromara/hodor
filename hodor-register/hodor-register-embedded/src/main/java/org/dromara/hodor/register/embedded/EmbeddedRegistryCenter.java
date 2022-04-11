@@ -24,7 +24,6 @@ import org.dromara.hodor.common.extension.Join;
 import org.dromara.hodor.common.raft.kv.core.HodorKVClient;
 import org.dromara.hodor.common.raft.kv.protocol.KVEntry;
 import org.dromara.hodor.common.utils.ProtostuffUtils;
-import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.register.api.ConnectionStateChangeListener;
 import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.LeaderExecutionCallback;
@@ -88,16 +87,6 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
     @Override
     public void createEphemeralSequential(String key, String value) {
         kvClient.put(ProtostuffUtils.serialize(key), ProtostuffUtils.serialize(value));
-    }
-
-    @Override
-    public String makePath(String parent, String firstChild, String... restChildren) {
-        return StringUtils.joinWith("/", parent, firstChild, restChildren);
-    }
-
-    @Override
-    public void makeDirs(String path) {
-
     }
 
     @Override

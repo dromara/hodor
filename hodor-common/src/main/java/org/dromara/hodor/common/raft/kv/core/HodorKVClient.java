@@ -144,13 +144,13 @@ public class HodorKVClient implements KVOperate {
     }
 
     @Override
-    public void close() throws IOException {
-        raftClient.close();
+    public List<KVEntry> scan(byte[] startKey, byte[] endKey) {
+        return null;
     }
 
     @Override
-    public List<KVEntry> scan(byte[] startKey, byte[] endKey) {
-        return null;
+    public void close() throws IOException {
+        raftClient.close();
     }
 
 }
