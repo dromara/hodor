@@ -20,33 +20,33 @@ hodor是一款分布式任务调度系统，我们聚焦于任务可编排、高
 
 ```
 hodor-scheduler
-├─docs											          # 文档存放位置
-├─hodor-actuator								      # hodor任务执行器
-│  ├─hodor-actuator-bigdata						# 大数据任务执行器
-│  ├─hodor-actuator-common						# 执行器公共依赖
-│  └─hodor-actuator-java						  # Java任务执行器
-├─hodor-admin									        # hodor管理控制台（TODO）
-├─hodor-client									      # 待废弃
-├─hodor-common									      # hodor公共依赖
-├─hodor-core									        # hodor核心业务
-├─hodor-examples								      # hodor测试用例
-├─hodor-extension								      # hodor扩展
+├─docs                                          # 文档存放位置
+├─hodor-actuator                                # hodor任务执行器
+│  ├─hodor-actuator-bigdata                     # 大数据任务执行器
+│  ├─hodor-actuator-common                      # 执行器公共依赖
+│  └─hodor-actuator-java                        # Java任务执行器
+├─hodor-admin                                   # hodor管理控制台（TODO）
+├─hodor-client                                  # 待废弃
+├─hodor-common                                  # hodor公共依赖
+├─hodor-core                                    # hodor核心业务
+├─hodor-examples                                # hodor测试用例
+├─hodor-extension                               # hodor扩展
 │  ├─hodor-extension-cache-redis-impl
 │  ├─hodor-extension-cache-register-impl
 │  └─hodor-extension-cache-zk-impl
-├─hodor-model									        # hodor公共数据模型
-├─hodor-register								      # hodor注册中心
+├─hodor-model                                   # hodor公共数据模型
+├─hodor-register                                # hodor注册中心
 │  ├─hodor-register-api
-│  ├─hodor-register-embedded					# 待完成（TODO）
-│  └─hodor-register-zookeeper					# 基于zk实现注册中心
-├─hodor-remoting								      # hodor通信框架
+│  ├─hodor-register-embedded                    # 待完成（TODO）
+│  └─hodor-register-zookeeper                   # 基于zk实现注册中心
+├─hodor-remoting                                # hodor通信框架
 │  ├─hodor-remoting-api
 │  └─hodor-remoting-netty
-├─hodor-scheduler								      # hodor调度核心
+├─hodor-scheduler                               # hodor调度核心
 │  ├─hodor-scheduler-api
 │  └─hodor-scheduler-quartz
-├─hodor-server									      # hodor入口
-└─hodor-ui										        # hodor前端模块
+├─hodor-server                                  # hodor入口
+└─hodor-ui                                      # hodor前端模块
 ```
 
 运行方式：
