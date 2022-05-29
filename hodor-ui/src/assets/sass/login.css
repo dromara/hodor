@@ -1,0 +1,38 @@
+.bg {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .bg {
+
+    background-size: cover;
+    /* background: linear-gradient(to bottom right, #2196F3,#049ec4,#1E7FEF); */
+  }
+  
+  .logo {
+    padding: 10px;
+  }
+  
+  .form {
+    /* background-color: #1d7fcc; */
+    padding: 50px;
+    width: 370px;
+    /* border-bottom: 8px solid #8ceece; */
+    border-radius: 30px 30px 50px 50px;
+  }
+  .login-btn {
+    background: rgba(79, 195, 160, 1);
+    border-radius: 2px;
+    color: white;
+    width: 100%;
+  }
+  .word {
+    font-size: 36px;
+    font-family: MicrosoftYaHei;
+    color: white;
+    line-height: 31px;
+    text-align: center
+  }
