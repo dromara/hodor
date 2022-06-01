@@ -43,7 +43,7 @@ const webpackConfig = merge(baseWebpackConfig, {
       uglifyOptions: {
         compress: {
           warnings: false,
-          // 删除所有的console语句   
+          // 删除所有的console语句
           drop_console: true,
           pure_funcs: ['console.log'],
           // 把使用多次的静态值自动定义为变量
@@ -132,7 +132,7 @@ const webpackConfig = merge(baseWebpackConfig, {
 
     // copy custom static assets
     new CopyWebpackPlugin([{
-      from: path.resolve(__dirname, '../temp'),
+      from: path.resolve(__dirname, '../static'),
       to: config.build.assetsSubDirectory,
       ignore: ['.*']
     }])

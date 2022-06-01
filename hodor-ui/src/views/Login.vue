@@ -1,7 +1,8 @@
 <template>
   <div class="content bg">
     <div class='logo'>
-      <div class="word">Hodor Scheduler</div>
+<!--      <div class="word">Hodor Scheduler</div>-->
+      <div></div>
     </div>
     <div @keyup.enter="onSubmit">
       <el-form

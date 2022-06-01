@@ -5,17 +5,20 @@
     align-items: center;
     flex-direction: column;
   }
-  
+
   .bg {
 
     background-size: cover;
     /* background: linear-gradient(to bottom right, #2196F3,#049ec4,#1E7FEF); */
   }
-  
+
   .logo {
-    padding: 10px;
+    padding: 60px;
+    width: 320px;
+    background-image:url('../images/logo.png');
+    background-color: #cccccc;
   }
-  
+
   .form {
     /* background-color: #1d7fcc; */
     padding: 50px;
@@ -30,9 +33,9 @@
     width: 100%;
   }
   .word {
-    font-size: 36px;
+    font-size: 40px;
     font-family: MicrosoftYaHei;
-    color: white;
+    color: #ffffff;
     line-height: 31px;
     text-align: center
   }
