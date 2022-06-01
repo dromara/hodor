@@ -2,7 +2,7 @@ import axios from "axios"
 import * as util from "../assets/util.js";
 import qs from 'qs'
 const instance = axios.create({
-  baseURL: window.location.origin + '/ejob',
+  baseURL: window.location.origin + '/hodor',
   withCredentials: true,
   timeout: 10000,
   timestamp: new Date().getTime(),

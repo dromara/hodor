@@ -11,13 +11,13 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/ejob': {
+      '/hodor': {
         // target: 'http://10.40.6.113:8080',
         // target: 'http://10.40.6.114:8088',
         target: 'http://localhost:8088',
         changeOrigin: true,
         pathRewrite: {
-          '^/ejob': '/ejob' //路径的替换规则
+          '^/hodor': '/hodor' //路径的替换规则
         }
       },
     },
@@ -52,7 +52,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/ejob/',
+    assetsPublicPath: '/hodor/',
 
     /**
      * Source Maps

@@ -5,7 +5,7 @@
 3. 命令行进入hodor-ui目录，执行`npm install`，下载npm相关资源；
 4. 进入hodor-ui/config/index.js，修改dev.proxyTable.target的值为后台服务端地址，host和port为自身进程的ip与端口号；
 5. 在hodor-ui目录下执行命令：`npm run start`；
-6. 启动ejob-console访问：`http://ip:port/hodor`，访问成功则说明集成成功；
+6. 启动hodor-admin访问：`http://ip:port/hodor`，访问成功则说明集成成功；
 
 # release build
 如果需要将hodor-ui集成到已有的web中，详细流程如下：
