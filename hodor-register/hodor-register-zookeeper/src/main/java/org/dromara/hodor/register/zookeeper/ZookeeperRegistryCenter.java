@@ -161,21 +161,6 @@ public class ZookeeperRegistryCenter implements RegistryCenter {
     }
 
     @Override
-    public String makePath(final String parent, final String firstChild, final String... restChildren) {
-        return ZKPaths.makePath(parent, firstChild, restChildren);
-    }
-
-    @Override
-    public void makeDirs(final String path) {
-        try {
-            ZooKeeper zkClient = client.getZookeeperClient().getZooKeeper();
-            ZKPaths.mkdirs(zkClient, path);
-        } catch (Exception e) {
-            RegExceptionHandler.handleException(e);
-        }
-    }
-
-    @Override
     public void update(final String key, final String value) {
         try {
             client.inTransaction().check().forPath(key).and().setData().forPath(key, value.getBytes(Charsets.UTF_8)).and().commit();
@@ -239,6 +224,19 @@ public class ZookeeperRegistryCenter implements RegistryCenter {
             callback.execute();
         } catch (final Exception ex) {
             RegExceptionHandler.handleException(ex);
+        }
+    }
+
+    private String makePath(final String parent, final String firstChild, final String... restChildren) {
+        return ZKPaths.makePath(parent, firstChild, restChildren);
+    }
+
+    private void makeDirs(final String path) {
+        try {
+            ZooKeeper zkClient = client.getZookeeperClient().getZooKeeper();
+            ZKPaths.mkdirs(zkClient, path);
+        } catch (Exception e) {
+            RegExceptionHandler.handleException(e);
         }
     }
 

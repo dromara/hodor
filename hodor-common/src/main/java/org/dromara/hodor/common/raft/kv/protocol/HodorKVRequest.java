@@ -29,4 +29,6 @@ public class HodorKVRequest implements Serializable {
 
     private DeleteRequest deleteRequest;
 
+    private ContainsKeyRequest containsKeyRequest;
+
 }

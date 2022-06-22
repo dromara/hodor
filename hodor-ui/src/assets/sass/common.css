@@ -1,0 +1,148 @@
+/* layout */
+.flex-container {
+  display: flex;
+}
+
+.flex-vertical {
+  flex-direction: column;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+/* from cunstom styles */
+.esearch-control-group {
+  margin-bottom: 1em;
+}
+
+.esearch-control-group label {
+  font-weight: 600;
+  font-size: 14px;
+  display: inline-block;
+}
+
+.form-control {
+  width: 360px;
+}
+
+.form-control-mini {
+  width: 140px;
+}
+
+.form-control-medium {
+  width: 200px;
+}
+
+/*common styles*/
+.esearch-custom-green {
+  background-color: #42b983;
+}
+
+.text-align-center {
+  text-align: center;
+}
+
+.text-align-right {
+  text-align: right;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.content {
+  overflow: auto;
+}
+
+.content .el-card {
+  height: 87vh;
+  overflow: auto;
+}
+
+.content .card-content .card-title {
+  font-weight: 700;
+}
+
+.cursor-p {
+  cursor: pointer;
+}
+
+.floatRight {
+  float: right;
+}
+
+.floatLeft {
+  float: left;
+}
+
+.clearFloat {
+  overflow: hidden;
+}
+
+.selectWidth {
+  width: 100%;
+}
+
+.alignCenter {
+  text-align: center
+}
+
+.showPagination {
+  height: 250px;
+}
+
+.listDetais {
+  margin-top: 8px;
+  box-sizing: border-box;
+  border-radius: 6px;
+  background: #d3dce6;
+}
+
+.listDetais .item {
+  line-height: 30px;
+  font-size: 16px;
+  border-bottom: 1px solid #e8e8e8;
+  padding-left: 24px;
+  padding-right: 24px;
+  font-family: Chinese Quote, -apple-system, BlinkMacSystemFont, Segoe UI,
+    PingFang SC, Hiragino Sans GB, Microsoft YaHei, Helvetica Neue, Helvetica,
+    Arial, sans-serif;
+  color: rgba(0, 0, 0, 0.65);
+  line-height: 30px;
+}
+
+.header {
+  background: #dcdfe6;
+  padding: 7px 6px;
+}
+
+.configDetails {
+  margin-top: 20px;
+}
+
+ul,
+li {
+  list-style: none;
+  padding: 0px;
+  margin: 0px;
+}
+
+.formStyle {
+  background: #d3dce6;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.content pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}

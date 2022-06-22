@@ -125,6 +125,21 @@ public class HodorKVStateMachine extends HodorRaftStateMachine {
                             .message(e.getMessage());
                 }
                 break;
+            case CONTAINS_KEY:
+                log.info("CONTAINS_KEY op.");
+                final ContainsKeyRequest containsKeyRequest = kvRequest.getContainsKeyRequest();
+                try {
+                    final Boolean exists = dbStore.containsKey(containsKeyRequest.getKey());
+                    ContainsKeyResponse containsKeyResponse = ContainsKeyResponse.builder()
+                        .value(exists)
+                        .build();
+                    builder.containsKeyResponse(containsKeyResponse);
+                } catch (Exception e) {
+                    log.error("DELETE exception: {}", e.getMessage(), e);
+                    builder.success(false)
+                        .message(e.getMessage());
+                }
+                break;
             default:
                 throw new RuntimeException("Unsupported request type: " + request.getClass().getName());
         }

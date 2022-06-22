@@ -2,9 +2,12 @@ package org.dromara.hodor.common.raft.kv.storage;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.dromara.hodor.common.raft.kv.exception.StorageDBException;
+import org.dromara.hodor.common.raft.kv.protocol.KVEntry;
 import org.rocksdb.Options;
 import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
@@ -74,6 +77,24 @@ public class RocksDBStore implements DBStore {
         } catch (RocksDBException e) {
             throw new StorageDBException("PUT exception: " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public Boolean containsKey(byte[] key) {
+        boolean exists = false;
+        if (rocksDB.keyMayExist(ByteBuffer.wrap(key))) {
+            try {
+                exists = rocksDB.get(key) != null;
+            } catch (RocksDBException e) {
+                throw new StorageDBException("ContainsKey exception: " + e.getMessage(), e);
+            }
+        }
+        return exists;
+    }
+
+    @Override
+    public List<KVEntry> scan(byte[] startKey, byte[] endKey) {
+        return null;
     }
 
     @Override

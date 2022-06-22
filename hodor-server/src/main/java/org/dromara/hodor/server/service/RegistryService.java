@@ -167,12 +167,4 @@ public class RegistryService implements HodorLifecycle {
         registryCenter.remove(ActuatorNode.createBindingPath(clusterName, groupName));
     }
 
-    public void registryJobEventListener(JobEventDispatchListener jobEventDispatchListener) {
-        registryListener(SchedulerNode.JOB_EVENT, jobEventDispatchListener);
-    }
-
-    public <T> void createJobEvent(Event<T> event) {
-        registryCenter.createPersistentSequential(String.valueOf(event.getEventType()), gsonUtils.toJson(event.getValue()));
-    }
-
 }

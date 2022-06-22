@@ -15,21 +15,23 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.common.raft.kv.core;
+package org.dromara.hodor.common.raft.kv.protocol;
+
+import java.io.Serializable;
+import lombok.Builder;
+import lombok.Data;
 
 /**
- * KVClient
+ * ContainsKeyResponse
  *
  * @author tomgs
- * @since 2022/4/6
+ * @since 2022/4/7
  */
-public interface KVClient {
+@Data
+@Builder
+public class ContainsKeyResponse implements Serializable {
 
-    byte[] get(byte[] key);
+    private static final long serialVersionUID = -8911786940228216991L;
 
-    void put(byte[] key, byte[] value);
-
-    void delete(byte[] key);
-
-    void close() throws Exception;
+    private Boolean value;
 }

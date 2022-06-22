@@ -1,5 +1,7 @@
 package org.dromara.hodor.common.raft.kv.storage;
 
+import java.io.IOException;
+
 /**
  * StorageEngine
  *
@@ -31,7 +33,7 @@ public class StorageEngine {
         dbStore.init();
     }
 
-    public void close() {
+    public void close() throws IOException {
         dbStore.close();
     }
 
