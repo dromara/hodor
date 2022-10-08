@@ -14,4 +14,8 @@
 3. 命令行进入hodor-ui目录，执行`npm install`，下载npm相关资源；
 4. 要想集成进原先web，则需要打包编译成js文件，编译命令：`npm run build`；
 5. 将dist文件夹中生成的static文件夹及index.html文件移动（复制）到原web工程的webapp目录下；
+```shell
+  # copy to hodor-admmin
+  cp -rf dist/* hodor-admmin/src/main/resources/static/
+```
 6. 启动hodor-admin访问：`http://ip:port/hodor`，访问成功则说明集成成功；
