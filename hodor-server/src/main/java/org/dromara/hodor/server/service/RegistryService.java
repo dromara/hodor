@@ -49,8 +49,11 @@ public class RegistryService implements HodorLifecycle {
     }
 
     @Override
-    public void start() {
-        RegistryConfig config = RegistryConfig.builder().servers(properties.getRegistryServers()).namespace(properties.getRegistryNamespace()).build();
+    public void start() throws Exception {
+        RegistryConfig config = RegistryConfig.builder()
+            .servers(properties.getRegistryServers())
+            .namespace(properties.getRegistryNamespace())
+            .build();
         registryCenter.init(config);
         this.registryConnectionStateListener(new RegistryConnectionStateListener(this));
         initNode();
