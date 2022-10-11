@@ -31,4 +31,6 @@ public class HodorKVRequest implements Serializable {
 
     private ContainsKeyRequest containsKeyRequest;
 
+    private ScanRequest scanRequest;
+
 }

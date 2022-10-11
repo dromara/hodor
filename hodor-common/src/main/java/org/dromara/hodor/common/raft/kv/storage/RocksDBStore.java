@@ -1,16 +1,23 @@
 package org.dromara.hodor.common.raft.kv.storage;
 
+import com.codahale.metrics.Timer;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.ratis.thirdparty.com.google.common.collect.Lists;
 import org.dromara.hodor.common.raft.kv.exception.StorageDBException;
 import org.dromara.hodor.common.raft.kv.protocol.KVEntry;
+import org.dromara.hodor.common.utils.BytesUtil;
 import org.rocksdb.Options;
 import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
+import org.rocksdb.RocksIterator;
 
 /**
  * RocksDBStore
@@ -20,6 +27,8 @@ import org.rocksdb.RocksDBException;
  */
 @Slf4j
 public class RocksDBStore implements DBStore {
+
+    private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
     static {
         RocksDB.loadLibrary();
@@ -93,8 +102,31 @@ public class RocksDBStore implements DBStore {
     }
 
     @Override
-    public List<KVEntry> scan(byte[] startKey, byte[] endKey) {
-        return null;
+    public List<KVEntry> scan(byte[] startKey, byte[] endKey, boolean returnValue) {
+        final Timer.Context timeCtx = DBStore.getTimeContext("SCAN");
+        final List<KVEntry> entries = Lists.newArrayList();
+        final Lock readLock = this.readWriteLock.readLock();
+        readLock.lock();
+        try (final RocksIterator it = this.rocksDB.newIterator()) {
+            if (startKey == null) {
+                it.seekToFirst();
+            } else {
+                it.seek(startKey);
+            }
+            for (; it.isValid(); it.next()) {
+                final byte[] key = it.key();
+                if (endKey != null && BytesUtil.compare(key, endKey) >= 0) {
+                    break;
+                }
+                entries.add(new KVEntry(key, returnValue ? it.value() : null));
+            }
+        } catch (final Exception e) {
+            throw new StorageDBException("Scan exception: " + e.getMessage(), e);
+        } finally {
+            readLock.unlock();
+            timeCtx.stop();
+        }
+        return entries;
     }
 
     @Override

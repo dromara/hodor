@@ -43,7 +43,7 @@ public class MemDBStore implements DBStore {
     }
 
     @Override
-    public List<KVEntry> scan(byte[] startKey, byte[] endKey) {
+    public List<KVEntry> scan(byte[] startKey, byte[] endKey, boolean returnValue) {
         return null;
     }
 

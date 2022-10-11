@@ -35,6 +35,7 @@ import org.dromara.hodor.common.raft.kv.protocol.HodorKVRequest;
 import org.dromara.hodor.common.raft.kv.protocol.HodorKVResponse;
 import org.dromara.hodor.common.raft.kv.protocol.KVEntry;
 import org.dromara.hodor.common.raft.kv.protocol.PutRequest;
+import org.dromara.hodor.common.raft.kv.protocol.ScanRequest;
 import org.dromara.hodor.common.utils.ProtostuffUtils;
 
 /**
@@ -144,8 +145,20 @@ public class HodorKVClient implements KVOperate {
     }
 
     @Override
-    public List<KVEntry> scan(byte[] startKey, byte[] endKey) {
-        return null;
+    public List<KVEntry> scan(byte[] startKey, byte[] endKey, boolean returnValue) {
+        ScanRequest scanRequest = ScanRequest.builder()
+            .startKey(startKey)
+            .endKey(endKey)
+            .build();
+        HodorKVRequest request = HodorKVRequest.builder()
+            .cmdType(CmdType.SCAN)
+            .scanRequest(scanRequest)
+            .build();
+        HodorKVResponse response = handleReadRequest(request);
+        if (!response.getSuccess()) {
+            throw new HodorKVClientException(response.getMessage());
+        }
+        return response.getScanResponse().getValue();
     }
 
     @Override

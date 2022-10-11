@@ -10,5 +10,6 @@ public enum CmdType {
     GET,
     PUT,
     DELETE,
-    CONTAINS_KEY
+    CONTAINS_KEY,
+    SCAN
 }

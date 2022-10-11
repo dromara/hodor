@@ -15,30 +15,24 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.common.raft.kv.core;
+package org.dromara.hodor.common.raft.kv.protocol;
 
-import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
-import org.dromara.hodor.common.raft.kv.protocol.KVEntry;
+import lombok.Builder;
+import lombok.Data;
 
 /**
- * KVOperate
+ * ContainsKeyResponse
  *
  * @author tomgs
- * @since 2022/4/6
+ * @since 2022/4/7
  */
-public interface KVOperate {
+@Data
+@Builder
+public class ScanResponse implements Serializable {
 
-    byte[] get(byte[] key);
+    private static final long serialVersionUID = 3464023115605125703L;
 
-    void put(byte[] key, byte[] value);
-
-    void delete(byte[] key);
-
-    Boolean containsKey(byte[] key);
-
-    List<KVEntry> scan(byte[] startKey, byte[] endKey, boolean returnValue);
-
-    void close() throws IOException;
-
+    private List<KVEntry> value;
 }

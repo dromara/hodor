@@ -8,6 +8,8 @@ package org.dromara.hodor.common;
  */
 public interface HodorLifecycle {
 
+    default void init() throws Exception {}
+
     void start() throws Exception;
 
     void stop() throws Exception;

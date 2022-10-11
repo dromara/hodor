@@ -1,6 +1,8 @@
 package org.dromara.hodor.common.raft.kv.core;
 
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.ratis.protocol.Message;
 import org.apache.ratis.protocol.RaftGroupId;
 import org.apache.ratis.server.RaftServer;
@@ -13,6 +15,7 @@ import org.dromara.hodor.common.raft.HodorRaftStateMachine;
 import org.dromara.hodor.common.raft.kv.protocol.*;
 import org.dromara.hodor.common.raft.kv.storage.DBStore;
 import org.dromara.hodor.common.raft.kv.storage.StorageEngine;
+import org.dromara.hodor.common.utils.BytesUtil;
 import org.dromara.hodor.common.utils.ProtostuffUtils;
 
 import java.io.IOException;
@@ -136,6 +139,24 @@ public class HodorKVStateMachine extends HodorRaftStateMachine {
                     builder.containsKeyResponse(containsKeyResponse);
                 } catch (Exception e) {
                     log.error("DELETE exception: {}", e.getMessage(), e);
+                    builder.success(false)
+                        .message(e.getMessage());
+                }
+                break;
+            case SCAN:
+                log.info("SCAN op.");
+                final ScanRequest scanRequest = kvRequest.getScanRequest();
+                final byte[] startKey = scanRequest.getStartKey();
+                final byte[] endKey = scanRequest.getEndKey();
+                try {
+                    final List<KVEntry> kvEntries = dbStore.scan(startKey, endKey, scanRequest.isReturnValue());
+                    ScanResponse scanResponse = ScanResponse.builder()
+                        .value(kvEntries)
+                        .build();
+                    builder.scanResponse(scanResponse);
+                } catch (Exception e) {
+                    log.error("Fail to [SCAN], range: ['[{}, {})'], {}.", BytesUtil.toHex(startKey), BytesUtil.toHex(endKey),
+                        ExceptionUtils.getStackTrace(e));
                     builder.success(false)
                         .message(e.getMessage());
                 }

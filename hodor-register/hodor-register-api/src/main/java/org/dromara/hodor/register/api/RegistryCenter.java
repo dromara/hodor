@@ -12,7 +12,7 @@ import org.dromara.hodor.common.extension.SPI;
 @SPI("register")
 public interface RegistryCenter {
 
-    void init(RegistryConfig config);
+    void init(RegistryConfig config) throws Exception;
 
     void close() throws Exception;
 

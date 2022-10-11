@@ -18,6 +18,7 @@
 package org.dromara.hodor.common.raft.kv.protocol;
 
 import java.io.Serializable;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -28,7 +29,7 @@ import lombok.Data;
  * @since 2022/4/7
  */
 @Data
-@Builder
+@AllArgsConstructor
 public class KVEntry implements Serializable {
 
     private static final long serialVersionUID = -3921009906810344904L;

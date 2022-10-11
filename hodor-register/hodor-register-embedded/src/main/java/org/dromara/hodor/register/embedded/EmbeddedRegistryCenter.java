@@ -17,8 +17,12 @@
 
 package org.dromara.hodor.register.embedded;
 
+import cn.hutool.core.util.StrUtil;
+import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.extension.Join;
 import org.dromara.hodor.common.raft.kv.core.HodorKVClient;
@@ -43,7 +47,10 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
     private HodorKVClient kvClient;
 
     @Override
-    public void init(RegistryConfig config) {
+    public void init(RegistryConfig config) throws Exception {
+        final EmbeddedRegistryServer embeddedRegistryServer = new EmbeddedRegistryServer(config);
+        embeddedRegistryServer.init();
+        embeddedRegistryServer.start();
         this.kvClient = new HodorKVClient(config.getServers());
     }
 
@@ -65,8 +72,15 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
 
     @Override
     public List<String> getChildren(String key) {
-        List<KVEntry> result = kvClient.scan(ProtostuffUtils.serialize(key), null);
-        return null;
+        List<KVEntry> result = kvClient.scan(ProtostuffUtils.serialize(key), null, false);
+        return Optional.ofNullable(result)
+            .orElse(Lists.newArrayList())
+            .stream()
+            .map(e -> {
+                final String fullKey = ProtostuffUtils.deserialize(e.getKey(), String.class);
+                return StrUtil.removePrefix(fullKey, key);
+            })
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -76,7 +90,7 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
 
     @Override
     public void createPersistentSequential(String key, String value) {
-        kvClient.put(ProtostuffUtils.serialize(key), ProtostuffUtils.serialize(value));
+        throw new UnsupportedOperationException("Unsupported operation createPersistentSequential");
     }
 
     @Override
@@ -86,7 +100,7 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
 
     @Override
     public void createEphemeralSequential(String key, String value) {
-        kvClient.put(ProtostuffUtils.serialize(key), ProtostuffUtils.serialize(value));
+        throw new UnsupportedOperationException("Unsupported operation createEphemeralSequential");
     }
 
     @Override
