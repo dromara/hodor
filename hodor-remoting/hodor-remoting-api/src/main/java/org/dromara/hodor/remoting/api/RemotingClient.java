@@ -40,7 +40,7 @@ public class RemotingClient {
         return INSTANCE;
     }
 
-    public void sendDuplexRequest(final Host host, final RemotingMessage request, final FutureCallback<RemotingMessage> responseCallback) throws RemotingException {
+    public void sendBidiRequest(final Host host, final RemotingMessage request, final FutureCallback<RemotingMessage> responseCallback) throws RemotingException {
         HodorChannel channel = computeIfInActiveChannel(host, e -> createChannel(e, new KeepAliveChannelResponseHandler(responseCallback)));
         HodorChannelFuture hodorChannelFuture = channel.send(request);
         hodorChannelFuture.operationComplete(future -> {

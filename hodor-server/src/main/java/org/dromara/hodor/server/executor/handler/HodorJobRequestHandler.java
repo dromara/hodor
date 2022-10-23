@@ -68,7 +68,7 @@ public class HodorJobRequestHandler implements RequestHandler {
         for (int i = hosts.size() - 1; i >= 0; i--) {
             Host host = hosts.get(i);
             try {
-                clientService.sendDuplexRequest(host, request, new FutureCallback<RemotingMessage>() {
+                clientService.sendBidiRequest(host, request, new FutureCallback<RemotingMessage>() {
                     @Override
                     public void onSuccess(RemotingMessage response) {
                         Header header = response.getHeader();
