@@ -18,7 +18,9 @@
 package org.dromara.hodor.register.embedded;
 
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.register.api.RegistryConfig;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,6 +30,7 @@ import org.junit.Test;
  * @author tomgs
  * @since 2022/10/8
  */
+@Slf4j
 public class EmbeddedRegistryCenterTest {
 
     private EmbeddedRegistryCenter embeddedRegistryCenter;
@@ -55,13 +58,14 @@ public class EmbeddedRegistryCenterTest {
         embeddedRegistryCenter.createPersistent("/test1/124", "test_data");
         embeddedRegistryCenter.createPersistent("/test1/125", "test_data");
         final List<String> childrenData = embeddedRegistryCenter.getChildren("/test1/");
-        System.out.println(childrenData);
+        log.info("children data: {}", childrenData);
+        Assert.assertArrayEquals(new String[] {"123", "124", "125"}, childrenData.toArray(new String[0]));
     }
 
     @Test
     public void testGetChildren() {
         final List<String> childrenData = embeddedRegistryCenter.getChildren("/test1/");
-        System.out.println(childrenData);
+        log.info("children data: {}", childrenData);
     }
 
 }
