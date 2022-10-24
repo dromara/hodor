@@ -86,6 +86,7 @@ public class HodorService implements HodorLifecycle {
     public void electLeader() {
         leaderService.electLeader(() -> {
             actuatorNodeManager.startOfflineActuatorClean();
+            // TODO: check exist metadata
             this.createNewHodorMetadata();
         });
     }
