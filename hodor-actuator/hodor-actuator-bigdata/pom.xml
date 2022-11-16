@@ -16,7 +16,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <m2e.apt.activation>jdt_apt</m2e.apt.activation>
         <!--jackson 2.7.0-->
-        <fasterxml.jackson.version>2.7.0</fasterxml.jackson.version>
+        <fasterxml.jackson.version>2.12.7.1</fasterxml.jackson.version>
         <codehaus.jackson.version>1.9.13</codehaus.jackson.version>
         <glassfish.servlet.version>3.0.1</glassfish.servlet.version>
         <hadoop.version>2.8.5</hadoop.version>
