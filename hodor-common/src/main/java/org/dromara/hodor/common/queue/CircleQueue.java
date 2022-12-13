@@ -115,8 +115,8 @@ public class CircleQueue<T> extends AbstractQueue<T> {
     }
 
     private static int hugeCapacity(int minCapacity) {
-        if (minCapacity < 0) // overflow
-        {
+        // overflow
+        if (minCapacity < 0) {
             throw new OutOfMemoryError();
         }
         return (minCapacity > MAX_ARRAY_SIZE) ? Integer.MAX_VALUE : MAX_ARRAY_SIZE;
@@ -200,7 +200,7 @@ public class CircleQueue<T> extends AbstractQueue<T> {
                     sb.append(elementData[i % size].toString()).append(",");
                 }
             }
-            return sb.toString().substring(0, sb.length() - 1) + "]";
+            return sb.substring(0, sb.length() - 1) + "]";
         }
 
     }
