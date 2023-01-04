@@ -96,18 +96,8 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
     }
 
     @Override
-    public void createPersistentSequential(String key, String value) {
-        throw new UnsupportedOperationException("Unsupported operation createPersistentSequential");
-    }
-
-    @Override
     public void createEphemeral(String key, String value) {
         this.watchClient.getKvClient().put(ProtostuffUtils.serialize(key), ProtostuffUtils.serialize(value));
-    }
-
-    @Override
-    public void createEphemeralSequential(String key, String value) {
-        throw new UnsupportedOperationException("Unsupported operation createEphemeralSequential");
     }
 
     @Override
