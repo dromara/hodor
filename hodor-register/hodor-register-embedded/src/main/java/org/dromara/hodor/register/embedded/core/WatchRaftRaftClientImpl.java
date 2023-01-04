@@ -1,4 +1,4 @@
-package org.dromara.hodor.common.raft.watch.core;
+package org.dromara.hodor.register.embedded.core;
 
 import java.io.IOException;
 import org.apache.ratis.client.RaftClient;
@@ -6,7 +6,7 @@ import org.apache.ratis.conf.Parameters;
 import org.apache.ratis.conf.RaftProperties;
 import org.apache.ratis.protocol.RaftGroup;
 import org.apache.ratis.retry.RetryPolicy;
-import org.dromara.hodor.common.raft.watch.client.WatchClientRpc;
+import org.dromara.hodor.register.embedded.client.WatchClientRpc;
 
 /**
  * WatchRaftClient

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.hodor.common.raft.watch;
+package org.dromara.hodor.register.embedded.watch;
 
 import java.util.function.Consumer;
 import org.apache.ratis.client.ClientFactory;
@@ -32,11 +32,11 @@ import org.apache.ratis.server.leader.LeaderState;
 import org.apache.ratis.server.leader.LogAppender;
 import org.apache.ratis.thirdparty.io.netty.buffer.PooledByteBufAllocator;
 import org.apache.ratis.util.JavaUtils;
-import org.dromara.hodor.common.raft.watch.client.GrpcWatchClientRpc;
-import org.dromara.hodor.common.raft.watch.client.WatchClientFactory;
-import org.dromara.hodor.common.raft.watch.client.WatchClientRpc;
-import org.dromara.hodor.common.raft.watch.server.WatchGrpcLogAppender;
-import org.dromara.hodor.common.raft.watch.server.WatchGrpcService;
+import org.dromara.hodor.register.embedded.client.GrpcWatchClientRpc;
+import org.dromara.hodor.register.embedded.client.WatchClientFactory;
+import org.dromara.hodor.register.embedded.client.WatchClientRpc;
+import org.dromara.hodor.register.embedded.service.WatchGrpcLogAppender;
+import org.dromara.hodor.register.embedded.service.WatchGrpcService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package org.dromara.hodor.common.raft.watch.client;
+package org.dromara.hodor.register.embedded.client;
 
 import org.apache.ratis.client.ClientFactory;
 import org.apache.ratis.conf.RaftProperties;

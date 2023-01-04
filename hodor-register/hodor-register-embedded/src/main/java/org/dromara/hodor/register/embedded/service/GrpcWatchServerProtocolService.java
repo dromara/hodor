@@ -1,4 +1,4 @@
-package org.dromara.hodor.common.raft.watch.server;
+package org.dromara.hodor.register.embedded.service;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -8,9 +8,9 @@ import org.dromara.hodor.common.proto.WatchCreateRequest;
 import org.dromara.hodor.common.proto.WatchRequest;
 import org.dromara.hodor.common.proto.WatchResponse;
 import org.dromara.hodor.common.proto.WatchServiceGrpc;
-import org.dromara.hodor.common.raft.watch.core.AbstractConnection;
-import org.dromara.hodor.common.raft.watch.core.WatchManager;
-import org.dromara.hodor.common.raft.watch.core.WatchedStatus;
+import org.dromara.hodor.register.embedded.core.AbstractConnection;
+import org.dromara.hodor.register.embedded.core.WatchManager;
+import org.dromara.hodor.register.embedded.core.WatchedStatus;
 
 /**
  * GrpcWatchServerProtocolService
@@ -21,7 +21,7 @@ import org.dromara.hodor.common.raft.watch.core.WatchedStatus;
 @Slf4j
 public class GrpcWatchServerProtocolService extends WatchServiceGrpc.WatchServiceImplBase {
 
-    private final WatchManager watchManager = WatchManager.INSTANCE;
+    private final WatchManager watchManager = WatchManager.getInstance();
 
     @Override
     public StreamObserver<WatchRequest> watch(StreamObserver<WatchResponse> responseObserver) {

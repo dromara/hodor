@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.common.raft.watch.core;
+package org.dromara.hodor.register.embedded.core;
 
 /**
  * @author special.fy

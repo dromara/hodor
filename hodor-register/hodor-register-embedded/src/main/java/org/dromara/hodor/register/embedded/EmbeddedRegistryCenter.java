@@ -25,7 +25,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.extension.Join;
-import org.dromara.hodor.common.raft.kv.core.HodorKVClient;
+import org.dromara.hodor.common.raft.HodorRaftGroup;
+import org.dromara.hodor.common.raft.kv.core.KVConstant;
 import org.dromara.hodor.common.raft.kv.protocol.KVEntry;
 import org.dromara.hodor.common.utils.ProtostuffUtils;
 import org.dromara.hodor.register.api.ConnectionStateChangeListener;
@@ -33,6 +34,7 @@ import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.LeaderExecutionCallback;
 import org.dromara.hodor.register.api.RegistryCenter;
 import org.dromara.hodor.register.api.RegistryConfig;
+import org.dromara.hodor.register.embedded.watch.HodorWatchClient;
 
 /**
  * EmbeddedRegistryCenter
@@ -44,35 +46,40 @@ import org.dromara.hodor.register.api.RegistryConfig;
 @Slf4j
 public class EmbeddedRegistryCenter implements RegistryCenter {
 
-    private HodorKVClient kvClient;
+    private HodorWatchClient watchClient;
 
     @Override
     public void init(RegistryConfig config) throws Exception {
         final EmbeddedRegistryServer embeddedRegistryServer = new EmbeddedRegistryServer(config);
         embeddedRegistryServer.init();
         embeddedRegistryServer.start();
-        this.kvClient = new HodorKVClient(config.getServers());
+        // init client
+        HodorRaftGroup hodorRaftGroup = HodorRaftGroup.builder()
+            .raftGroupName(KVConstant.HODOR_KV_GROUP_NAME)
+            .addresses(config.getServers())
+            .build();
+        this.watchClient = new HodorWatchClient(hodorRaftGroup);
     }
 
     @Override
     public void close() throws IOException {
-        kvClient.close();
+        this.watchClient.close();
     }
 
     @Override
     public boolean checkExists(String key) {
-        return kvClient.containsKey(ProtostuffUtils.serialize(key));
+        return this.watchClient.getKvClient().containsKey(ProtostuffUtils.serialize(key));
     }
 
     @Override
     public String get(String key) {
-        final byte[] values = kvClient.get(ProtostuffUtils.serialize(key));
+        final byte[] values = this.watchClient.getKvClient().get(ProtostuffUtils.serialize(key));
         return ProtostuffUtils.deserialize(values, String.class);
     }
 
     @Override
     public List<String> getChildren(String key) {
-        List<KVEntry> result = kvClient.scan(ProtostuffUtils.serialize(key), null, false);
+        List<KVEntry> result = this.watchClient.getKvClient().scan(ProtostuffUtils.serialize(key), null, false);
         return Optional.ofNullable(result)
             .orElse(Lists.newArrayList())
             .stream()
@@ -85,7 +92,7 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
 
     @Override
     public void createPersistent(String key, String value) {
-        kvClient.put(ProtostuffUtils.serialize(key), ProtostuffUtils.serialize(value));
+        this.watchClient.getKvClient().put(ProtostuffUtils.serialize(key), ProtostuffUtils.serialize(value));
     }
 
     @Override
@@ -95,7 +102,7 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
 
     @Override
     public void createEphemeral(String key, String value) {
-        kvClient.put(ProtostuffUtils.serialize(key), ProtostuffUtils.serialize(value));
+        this.watchClient.getKvClient().put(ProtostuffUtils.serialize(key), ProtostuffUtils.serialize(value));
     }
 
     @Override
@@ -105,17 +112,17 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
 
     @Override
     public void update(String key, String value) {
-        kvClient.put(ProtostuffUtils.serialize(key), ProtostuffUtils.serialize(value));
+        this.watchClient.getKvClient().put(ProtostuffUtils.serialize(key), ProtostuffUtils.serialize(value));
     }
 
     @Override
     public void remove(String key) {
-        kvClient.delete(ProtostuffUtils.serialize(key));
+        this.watchClient.getKvClient().delete(ProtostuffUtils.serialize(key));
     }
 
     @Override
     public void addDataCacheListener(String path, DataChangeListener listener) {
-
+        this.watchClient.watch(ProtostuffUtils.serialize(path), listener);
     }
 
     @Override

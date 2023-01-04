@@ -1,4 +1,4 @@
-package org.dromara.hodor.common.raft.watch.core;
+package org.dromara.hodor.register.embedded.core;
 
 import java.io.Closeable;
 import java.util.Collection;
@@ -17,7 +17,7 @@ import org.apache.ratis.protocol.RaftPeerId;
 import org.apache.ratis.retry.RetryPolicies;
 import org.apache.ratis.retry.RetryPolicy;
 import org.apache.ratis.rpc.RpcType;
-import org.dromara.hodor.common.raft.watch.client.WatchClientRpc;
+import org.dromara.hodor.register.embedded.client.WatchClientRpc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

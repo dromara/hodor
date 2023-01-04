@@ -1,7 +1,8 @@
-package org.dromara.hodor.common.raft.watch.core;
+package org.dromara.hodor.register.embedded.core;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.dromara.hodor.register.api.DataChangeListener;
 
 /**
  * WatchClientManager

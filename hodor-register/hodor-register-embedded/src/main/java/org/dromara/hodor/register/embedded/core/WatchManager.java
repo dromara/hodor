@@ -1,4 +1,4 @@
-package org.dromara.hodor.common.raft.watch.core;
+package org.dromara.hodor.register.embedded.core;
 
 import cn.hutool.core.thread.ThreadUtil;
 import java.util.Collection;
@@ -27,7 +27,7 @@ import org.dromara.hodor.common.utils.BytesUtil;
 @Slf4j
 public class WatchManager {
 
-    public static final WatchManager INSTANCE = new WatchManager();
+    private static final WatchManager INSTANCE = new WatchManager();
 
     private static final int MAX_WAIT_EVENT_TIME = 100;
     private final BlockingQueue<DataChangeEvent> events;
@@ -42,6 +42,10 @@ public class WatchManager {
 
     private WatchManager() {
         this.events = new ArrayBlockingQueue<>(16);
+    }
+
+    public static WatchManager getInstance() {
+        return INSTANCE;
     }
 
     public void notify(DataChangeEvent event) {

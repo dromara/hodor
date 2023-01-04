@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.hodor.common.raft.watch.server;
+package org.dromara.hodor.register.embedded.service;
 
 import com.codahale.metrics.Timer;
 import java.io.IOException;
@@ -58,6 +58,7 @@ import org.apache.ratis.util.CodeInjectionForTesting;
 import org.apache.ratis.util.JavaUtils;
 import org.apache.ratis.util.Preconditions;
 import org.apache.ratis.util.TimeDuration;
+import org.apache.ratis.util.TimeoutExecutor;
 import org.apache.ratis.util.Timestamp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

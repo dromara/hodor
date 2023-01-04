@@ -38,6 +38,8 @@ public class HodorRaftServer {
 
     private final File storageDir;
 
+    private final RaftProperties raftProperties;
+
     private RaftServer server;
 
     private RaftPeer currentPeer;
@@ -47,26 +49,27 @@ public class HodorRaftServer {
         this.raftOptions = raftOptions;
         this.endpoint = raftOptions.getEndpoint();
         this.storageDir = raftOptions.getStorageDir();
+        this.raftProperties = raftOptions.getRaftProperties();
         init();
     }
 
     private void init() throws IOException {
         //create a property object
-        RaftProperties properties = new RaftProperties();
-
         this.currentPeer = RaftGroupManager.getInstance().buildRaftPeer(NetUtils.createSocketAddr(endpoint), 0);
         //set the storage directory (different for each peer) in RaftProperty object
-        RaftServerConfigKeys.setStorageDir(properties, Collections.singletonList(new File(storageDir, currentPeer.getId().toString())));
+        RaftServerConfigKeys.setStorageDir(raftProperties, Collections.singletonList(new File(storageDir, currentPeer.getId().toString())));
         //set the port which server listen to in RaftProperty object
         int port = NetUtils.createSocketAddr(currentPeer.getAddress()).getPort();
-        GrpcConfigKeys.Server.setPort(properties, port);
+        GrpcConfigKeys.Server.setPort(raftProperties, port);
         initRaftGroup(raftOptions.getStateMachineMap());
         //create and start the Raft server
-        this.server = ServerImplUtils.newRaftServer(currentPeer.getId(), null, registry::get, properties, null);
+        this.server = ServerImplUtils.newRaftServer(currentPeer.getId(), null, registry::get,
+            null, raftProperties, null);
     }
 
     public void start() throws IOException {
         this.server.start();
+        //WatchManager.getInstance().startWatchEvent("watch-event");
         createRaftGroup(raftOptions.getStateMachineMap());
     }
 

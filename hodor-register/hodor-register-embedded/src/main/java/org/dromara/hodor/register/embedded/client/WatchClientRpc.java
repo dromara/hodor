@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.hodor.common.raft.watch.client;
+package org.dromara.hodor.register.embedded.client;
 
 import java.io.Closeable;
 import org.apache.ratis.protocol.RaftPeer;

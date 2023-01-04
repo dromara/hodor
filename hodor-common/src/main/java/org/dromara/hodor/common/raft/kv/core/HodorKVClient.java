@@ -19,6 +19,7 @@ package org.dromara.hodor.common.raft.kv.core;
 
 import java.io.IOException;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ratis.client.RaftClient;
 import org.apache.ratis.protocol.Message;
 import org.apache.ratis.protocol.RaftClientReply;
@@ -44,11 +45,13 @@ import org.dromara.hodor.common.utils.ProtostuffUtils;
  * @author tomgs
  * @since 2022/4/6
  */
+@Slf4j
 public class HodorKVClient implements KVOperate {
 
     private final RaftClient raftClient;
 
     public HodorKVClient(String address) {
+        RaftUtils.assertRaftGroupAddress(address);
         HodorRaftGroup hodorRaftGroup = HodorRaftGroup.builder()
             .raftGroupName(KVConstant.HODOR_KV_GROUP_NAME)
             .addresses(address)

@@ -1,4 +1,4 @@
-package org.dromara.hodor.common.raft.watch.client;
+package org.dromara.hodor.register.embedded.client;
 
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;

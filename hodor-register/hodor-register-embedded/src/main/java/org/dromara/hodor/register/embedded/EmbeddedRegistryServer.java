@@ -19,13 +19,17 @@ package org.dromara.hodor.register.embedded;
 
 import java.io.File;
 import java.io.IOException;
+import org.apache.ratis.RaftConfigKeys;
+import org.apache.ratis.conf.RaftProperties;
 import org.dromara.hodor.common.HodorLifecycle;
 import org.dromara.hodor.common.raft.RaftOptions;
 import org.dromara.hodor.common.raft.kv.core.HodorKVOptions;
-import org.dromara.hodor.common.raft.kv.core.HodorKVServer;
 import org.dromara.hodor.common.raft.kv.storage.StorageOptions;
 import org.dromara.hodor.common.raft.kv.storage.StorageType;
 import org.dromara.hodor.register.api.RegistryConfig;
+import org.dromara.hodor.register.embedded.core.WatchManager;
+import org.dromara.hodor.register.embedded.watch.HodorWatchServer;
+import org.dromara.hodor.register.embedded.watch.WatchGrpcRpcType;
 
 /**
  * EmbeddedRegistryServer
@@ -35,13 +39,16 @@ import org.dromara.hodor.register.api.RegistryConfig;
  */
 public class EmbeddedRegistryServer implements HodorLifecycle {
 
-    private final HodorKVServer hodorKVServer;
+    private final HodorWatchServer hodorWatchServer;
 
     public EmbeddedRegistryServer(final RegistryConfig registryConfig) throws IOException {
+        RaftProperties raftProperties = new RaftProperties();
+        RaftConfigKeys.Rpc.setType(raftProperties, WatchGrpcRpcType.INSTANCE);
         RaftOptions raftOptions = RaftOptions.builder()
             .endpoint(registryConfig.getEndpoint())
             .storageDir(new File(registryConfig.getDataPath()))
             .serverAddresses(registryConfig.getServers())
+            .raftProperties(raftProperties)
             //.stateMachineMap(stateMachineMap) // for customer
             .build();
         StorageOptions storageOptions = StorageOptions.builder()
@@ -53,17 +60,18 @@ public class EmbeddedRegistryServer implements HodorLifecycle {
             .raftOptions(raftOptions)
             .storageOptions(storageOptions)
             .build();
-        this.hodorKVServer = new HodorKVServer(kvOptions);
+        this.hodorWatchServer = new HodorWatchServer(kvOptions);
     }
 
     @Override
     public void start() throws Exception {
-        hodorKVServer.start();
+        hodorWatchServer.start();
+        WatchManager.getInstance().startWatchEvent("hodor-watch-event");
     }
 
     @Override
     public void stop() throws Exception {
-        hodorKVServer.stop();
+        hodorWatchServer.stop();
     }
 
 }

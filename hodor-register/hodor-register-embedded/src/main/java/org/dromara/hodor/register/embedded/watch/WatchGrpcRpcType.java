@@ -1,4 +1,4 @@
-package org.dromara.hodor.common.raft.watch;
+package org.dromara.hodor.register.embedded.watch;
 
 import org.apache.ratis.conf.Parameters;
 import org.apache.ratis.rpc.RpcFactory;
