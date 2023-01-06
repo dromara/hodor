@@ -72,7 +72,7 @@ public class LogJobExecuteRecorder implements JobExecuteRecorder {
 
     @Override
     public void removeJobExecDetail(JobKey jobKey) {
-        cacheClient.remove(jobKey);
+        cacheClient.delete(jobKey);
     }
 
     @Override
