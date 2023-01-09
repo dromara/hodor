@@ -25,10 +25,10 @@ import org.dromara.hodor.common.raft.kv.core.HodorKVClient;
  * @author tomgs
  * @since 2022/4/6
  */
-public class HodorKVClientTest {
+public class SingleHodorKVClientTest {
 
     public static void main(String[] args) {
-        HodorKVClient kvClient = new HodorKVClient("127.0.0.1:8081,127.0.0.1:8082,127.0.0.1:8083");
+        HodorKVClient kvClient = new HodorKVClient("127.0.0.1:8081");
         kvClient.put("a".getBytes(), "1".getBytes());
 
         byte[] bytes = kvClient.get("a".getBytes());
@@ -42,6 +42,7 @@ public class HodorKVClientTest {
         final Boolean aBoolean = kvClient.containsKey("a".getBytes());
         System.out.println(aBoolean);
 
+        kvClient.put("b".getBytes(), "2".getBytes());
         final Boolean bBoolean = kvClient.containsKey("b".getBytes());
         System.out.println(bBoolean);
     }

@@ -91,7 +91,10 @@ public class RocksDBStore implements DBStore {
     @Override
     public Boolean containsKey(byte[] key) {
         boolean exists = false;
-        if (rocksDB.keyMayExist(ByteBuffer.wrap(key))) {
+        final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(key.length);
+        byteBuffer.put(key);
+        byteBuffer.flip();
+        if (rocksDB.keyMayExist(byteBuffer)) {
             try {
                 exists = rocksDB.get(key) != null;
             } catch (RocksDBException e) {

@@ -140,7 +140,7 @@ public class HodorKVClient implements KVOperate {
             .cmdType(CmdType.CONTAINS_KEY)
             .containsKeyRequest(containsKeyRequest)
             .build();
-        HodorKVResponse response = handleWriteRequest(request);
+        HodorKVResponse response = handleReadRequest(request);
         if (!response.getSuccess()) {
             throw new HodorKVClientException(response.getMessage());
         }

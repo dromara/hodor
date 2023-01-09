@@ -97,7 +97,7 @@ public class HodorKVRequestHandler implements RequestHandler {
                         .build();
                     builder.containsKeyResponse(containsKeyResponse);
                 } catch (Exception e) {
-                    log.error("DELETE exception: {}", e.getMessage(), e);
+                    log.error("CONTAINS_KEY exception: {}", e.getMessage(), e);
                     builder.success(false)
                         .message(e.getMessage());
                 }
