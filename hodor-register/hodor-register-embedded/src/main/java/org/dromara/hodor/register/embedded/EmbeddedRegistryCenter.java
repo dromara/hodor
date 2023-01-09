@@ -30,13 +30,10 @@ import org.dromara.hodor.common.raft.kv.core.KVConstant;
 import org.dromara.hodor.common.raft.kv.protocol.KVEntry;
 import org.dromara.hodor.common.utils.ProtostuffUtils;
 import org.dromara.hodor.register.api.ConnectionStateChangeListener;
-import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.LeaderExecutionCallback;
 import org.dromara.hodor.register.api.RegistryCenter;
 import org.dromara.hodor.register.api.RegistryConfig;
-import org.dromara.hodor.register.api.exception.RegistryException;
-import org.dromara.hodor.register.embedded.core.WatchManager;
 import org.dromara.hodor.register.embedded.watch.HodorWatchClient;
 
 /**
@@ -77,6 +74,9 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
     @Override
     public String get(String key) {
         final byte[] values = this.watchClient.getKvClient().get(ProtostuffUtils.serialize(key));
+        if (values == null) {
+            return null;
+        }
         return ProtostuffUtils.deserialize(values, String.class);
     }
 
@@ -88,7 +88,7 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
             .stream()
             .map(e -> {
                 final String fullKey = ProtostuffUtils.deserialize(e.getKey(), String.class);
-                return StrUtil.removePrefix(fullKey, key);
+                return StrUtil.removePrefix(StrUtil.removePrefix(fullKey, key), "/");
             })
             .collect(Collectors.toList());
     }

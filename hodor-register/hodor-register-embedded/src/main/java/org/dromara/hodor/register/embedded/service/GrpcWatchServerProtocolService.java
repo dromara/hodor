@@ -2,6 +2,7 @@ package org.dromara.hodor.register.embedded.service;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ratis.thirdparty.io.grpc.Status;
 import org.apache.ratis.thirdparty.io.grpc.stub.StreamObserver;
 import org.dromara.hodor.common.proto.WatchCancelRequest;
 import org.dromara.hodor.common.proto.WatchCreateRequest;
@@ -53,6 +54,10 @@ public class GrpcWatchServerProtocolService extends WatchServiceGrpc.WatchServic
             @Override
             public void onError(Throwable t) {
                 log.error("error: {}", t.getMessage(), t);
+                Status status = Status.fromThrowable(t);
+                if (status != null && status.getCode() != Status.Code.CANCELLED) {
+                    responseObserver.onCompleted();
+                }
                 clear();
             }
 

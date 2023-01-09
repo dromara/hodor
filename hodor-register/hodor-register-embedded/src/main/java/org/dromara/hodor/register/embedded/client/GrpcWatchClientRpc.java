@@ -48,7 +48,9 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
     private final int maxInboundMessageSize = 4096;
 
     private ThreadPoolExecutor grpcExecutor;
+
     private final ClientId clientId;
+
     private RaftProperties properties;
 
     private final Map<RaftPeerId, RaftPeer> peers = new ConcurrentHashMap<>();
@@ -78,7 +80,7 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
 
     @Override
     public void addRaftPeers(Collection<RaftPeer> raftPeers) {
-        for(RaftPeer p : raftPeers) {
+        for (RaftPeer p : raftPeers) {
             //peers.computeIfAbsent(p);
             peers.put(p.getId(), p);
         }
@@ -155,10 +157,12 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
     private ManagedChannel createNewManagedChannel(String serverIp, int serverPort) {
         grpcExecutor = ThreadUtil.newExecutor(4, 4);
         ManagedChannelBuilder<?> managedChannelBuilder = ManagedChannelBuilder.forAddress(serverIp, serverPort)
-                .executor(grpcExecutor).compressorRegistry(CompressorRegistry.getDefaultInstance())
-                .decompressorRegistry(DecompressorRegistry.getDefaultInstance())
-                .maxInboundMessageSize(maxInboundMessageSize)
-                .keepAliveTime(channelKeepAlive, TimeUnit.MILLISECONDS).usePlaintext();
+            .executor(grpcExecutor).compressorRegistry(CompressorRegistry.getDefaultInstance())
+            .decompressorRegistry(DecompressorRegistry.getDefaultInstance())
+            .maxInboundMessageSize(maxInboundMessageSize)
+            //.keepAliveTime(channelKeepAlive, TimeUnit.MILLISECONDS)
+            .keepAliveTimeout(channelKeepAlive, TimeUnit.MILLISECONDS)
+            .usePlaintext();
         return managedChannelBuilder.build();
     }
 
