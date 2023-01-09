@@ -7,7 +7,7 @@ spring:
 hodor:
   clusterName: hodor
   clusterNodes: 1
-  logDir: E:\\data\\hodor-scheudler\\recordset
+  logDir: E:\\data\\hodor-scheduler\\recordset
   netServer:
     host: 0.0.0.0
     port: 8081
@@ -15,7 +15,7 @@ hodor:
     namespace: "hodor-test"
     servers: 127.0.0.1:2181
     endpoint: 127.0.0.1:2181
-    dataPath: E:\\data\\hodor-scheudler\\register-db
+    dataPath: E:\\data\\hodor-scheduler\\register-db
   database:
     driverClass: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/hodor?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
