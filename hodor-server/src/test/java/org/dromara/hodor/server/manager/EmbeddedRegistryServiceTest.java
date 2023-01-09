@@ -52,6 +52,8 @@ public class EmbeddedRegistryServiceTest {
     @Test
     public void testPut() {
         embeddedRegistryCenter.createEphemeral(SchedulerNode.MASTER_ACTIVE_PATH, "127.0.0.1:8081");
+        embeddedRegistryCenter.createEphemeral(SchedulerNode.getServerNodePath("127.0.0.1:8081"), "127.0.0.1:8081");
+        embeddedRegistryCenter.createEphemeral(SchedulerNode.getServerNodePath("127.0.0.1:8082"), "127.0.0.1:8082");
     }
 
     @Test

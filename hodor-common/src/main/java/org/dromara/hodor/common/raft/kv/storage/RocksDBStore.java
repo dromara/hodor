@@ -118,7 +118,7 @@ public class RocksDBStore implements DBStore {
             }
             for (; it.isValid(); it.next()) {
                 final byte[] key = it.key();
-                if (endKey != null && BytesUtil.compare(key, endKey) >= 0) {
+                if (endKey != null && BytesUtil.compare(key, endKey) > 0) {
                     break;
                 }
                 entries.add(new KVEntry(key, returnValue ? it.value() : null));

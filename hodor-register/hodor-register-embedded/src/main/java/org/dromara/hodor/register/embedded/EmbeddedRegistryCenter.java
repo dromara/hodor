@@ -82,7 +82,8 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
 
     @Override
     public List<String> getChildren(String key) {
-        List<KVEntry> result = this.watchClient.getKvClient().scan(ProtostuffUtils.serialize(key), null, false);
+        final byte[] keyBytes = ProtostuffUtils.serialize(key);
+        List<KVEntry> result = this.watchClient.getKvClient().scan(keyBytes, keyBytes, false);
         return Optional.ofNullable(result)
             .orElse(Lists.newArrayList())
             .stream()
