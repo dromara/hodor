@@ -33,6 +33,14 @@ public class HodorServerProperties {
         return registry.getNamespace();
     }
 
+    public String getRegistryEndpoint() {
+        return registry.getEndpoint();
+    }
+
+    public String getRegistryDataPath() {
+        return registry.getDataPath();
+    }
+
     public String getNetServerHost() {
         return netServer.getHost();
     }
@@ -55,6 +63,8 @@ public class HodorServerProperties {
     static class RegistryProperties {
         private String servers;
         private String namespace;
+        private String endpoint;
+        private String dataPath;
     }
 
 }
