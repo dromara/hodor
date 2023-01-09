@@ -69,7 +69,6 @@ public class HodorRaftServer {
 
     public void start() throws IOException {
         this.server.start();
-        //WatchManager.getInstance().startWatchEvent("watch-event");
         createRaftGroup(raftOptions.getStateMachineMap());
     }
 
