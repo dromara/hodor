@@ -26,9 +26,14 @@
             <groupId>org.dromara</groupId>
             <artifactId>hodor-remoting-netty</artifactId>
         </dependency>
-        <dependency>
+
+        <!--<dependency>
             <groupId>org.dromara</groupId>
             <artifactId>hodor-register-zookeeper</artifactId>
+        </dependency>-->
+        <dependency>
+            <groupId>org.dromara</groupId>
+            <artifactId>hodor-register-embedded</artifactId>
         </dependency>
         <dependency>
             <groupId>org.dromara</groupId>

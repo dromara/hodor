@@ -2,6 +2,7 @@ package org.dromara.hodor.register.embedded.core;
 
 import cn.hutool.core.thread.ThreadUtil;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -10,8 +11,10 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ratis.thirdparty.com.google.protobuf.ByteString;
+import org.dromara.hodor.common.event.AbstractAsyncEventPublisher;
 import org.dromara.hodor.common.proto.DataChangeEvent;
 import org.dromara.hodor.common.proto.WatchCancelRequest;
 import org.dromara.hodor.common.proto.WatchCreateRequest;
@@ -25,7 +28,7 @@ import org.dromara.hodor.common.utils.BytesUtil;
  * @since 1.0
  */
 @Slf4j
-public class WatchManager {
+public class WatchManager extends AbstractAsyncEventPublisher<DataChangeEvent> {
 
     private static final WatchManager INSTANCE = new WatchManager();
 
@@ -39,6 +42,8 @@ public class WatchManager {
     private final static Map<byte[], byte[]> watchKeyMap = new TreeMap<>(BytesUtil.getDefaultByteArrayComparator());
 
     private static final Map<String, AbstractConnection<WatchResponse>> connections = new ConcurrentHashMap<>(16);
+
+    private final AtomicBoolean isLeader = new AtomicBoolean(false);
 
     private WatchManager() {
         this.events = new ArrayBlockingQueue<>(16);
@@ -101,6 +106,14 @@ public class WatchManager {
         final Consumer consumer = new Consumer(eventName);
         consumer.setDaemon(true);
         consumer.start();
+    }
+
+    public boolean isLeader() {
+        return this.isLeader.get();
+    }
+
+    public void setLeader(boolean isLeader) {
+        this.isLeader.set(isLeader);
     }
 
     private class Consumer extends Thread {

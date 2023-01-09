@@ -17,15 +17,19 @@
 
 package org.dromara.hodor.register.embedded.watch;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.concurrent.atomic.AtomicBoolean;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ratis.protocol.RaftGroupMemberId;
 import org.apache.ratis.protocol.RaftPeerId;
 import org.apache.ratis.statemachine.TransactionContext;
 import org.apache.ratis.thirdparty.com.google.protobuf.ByteString;
+import org.dromara.hodor.common.event.Event;
+import org.dromara.hodor.common.proto.DataChangeEvent;
 import org.dromara.hodor.common.raft.kv.core.HodorKVStateMachine;
 import org.dromara.hodor.common.raft.kv.core.RequestHandler;
+import org.dromara.hodor.register.api.node.SchedulerNode;
+import org.dromara.hodor.register.embedded.core.WatchManager;
 
 /**
  * HodorWatchStateMachine
@@ -36,8 +40,6 @@ import org.dromara.hodor.common.raft.kv.core.RequestHandler;
 @Slf4j
 public class HodorWatchStateMachine extends HodorKVStateMachine {
 
-    private final AtomicBoolean isLeader = new AtomicBoolean(false);
-
     public HodorWatchStateMachine(final RequestHandler requestHandler) {
         super(requestHandler);
     }
@@ -46,13 +48,19 @@ public class HodorWatchStateMachine extends HodorKVStateMachine {
     public void notifyLeaderChanged(RaftGroupMemberId groupMemberId, RaftPeerId newLeaderId) {
         log.debug("notifyLeaderChanged groupMemberId: {}, newLeaderId: {}.", groupMemberId, newLeaderId);
         RaftPeerId currentPeerId = groupMemberId.getPeerId();
+        final DataChangeEvent.Builder dataChangeEventBuilder = DataChangeEvent.newBuilder()
+            .setKey(ByteString.copyFrom(SchedulerNode.LATCH_PATH.getBytes(StandardCharsets.UTF_8)))
+            .setData(currentPeerId.toByteString());
         if (currentPeerId.equals(newLeaderId)) {
-            isLeader.set(true);
             log.info("Current peer {} is LEADER", currentPeerId);
+            dataChangeEventBuilder.setType(DataChangeEvent.Type.NODE_ADDED);
+            WatchManager.getInstance().setLeader(true);
         } else {
-            isLeader.set(false);
             log.info("Current peer {} is FOLLOWER", currentPeerId);
+            dataChangeEventBuilder.setType(DataChangeEvent.Type.NODE_REMOVED);
+            WatchManager.getInstance().setLeader(false);
         }
+        WatchManager.getInstance().publish(Event.create(dataChangeEventBuilder.build(), DataChangeEvent.Type.INITIALIZED));
     }
 
     @Override
@@ -60,7 +68,6 @@ public class HodorWatchStateMachine extends HodorKVStateMachine {
         // 不是主节点时回调
         final ByteString id = this.getId().getRaftPeerIdProto().getId();
         log.debug("{} notifyNotLeader pendingEntries: {}", id, pendingEntries);
-        isLeader.set(false);
     }
 
 }

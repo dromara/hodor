@@ -30,10 +30,13 @@ import org.dromara.hodor.common.raft.kv.core.KVConstant;
 import org.dromara.hodor.common.raft.kv.protocol.KVEntry;
 import org.dromara.hodor.common.utils.ProtostuffUtils;
 import org.dromara.hodor.register.api.ConnectionStateChangeListener;
+import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.LeaderExecutionCallback;
 import org.dromara.hodor.register.api.RegistryCenter;
 import org.dromara.hodor.register.api.RegistryConfig;
+import org.dromara.hodor.register.api.exception.RegistryException;
+import org.dromara.hodor.register.embedded.core.WatchManager;
 import org.dromara.hodor.register.embedded.watch.HodorWatchClient;
 
 /**
@@ -122,7 +125,7 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
 
     @Override
     public void executeInLeader(String latchPath, LeaderExecutionCallback callback) {
-
+        watchClient.leaderLatch(latchPath, callback);
     }
 
 }
