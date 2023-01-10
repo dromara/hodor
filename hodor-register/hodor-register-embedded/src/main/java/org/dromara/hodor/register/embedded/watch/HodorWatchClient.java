@@ -36,12 +36,9 @@ import org.dromara.hodor.common.proto.WatchCreateRequest;
 import org.dromara.hodor.common.proto.WatchRequest;
 import org.dromara.hodor.common.raft.HodorRaftGroup;
 import org.dromara.hodor.common.raft.kv.core.HodorKVClient;
-import org.dromara.hodor.common.utils.ProtostuffUtils;
+import org.dromara.hodor.common.utils.BytesUtil;
 import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;
-import org.dromara.hodor.register.api.LeaderExecutionCallback;
-import org.dromara.hodor.register.api.exception.RegistryException;
-import org.dromara.hodor.register.embedded.core.WatchManager;
 import org.dromara.hodor.register.embedded.core.WatchRaftClient;
 
 /**
@@ -97,8 +94,8 @@ public class HodorWatchClient implements Closeable {
 
         watchRaftClient.watchClientRpc().watch(watchRequest, changeEvent -> {
             try {
-                final String dataKey = ProtostuffUtils.deserialize(changeEvent.getKey().toByteArray(), String.class);
-                final String dataValue = ProtostuffUtils.deserialize(changeEvent.getData().toByteArray(), String.class);
+                final String dataKey = BytesUtil.readUtf8(changeEvent.getKey().toByteArray());
+                final String dataValue = BytesUtil.readUtf8(changeEvent.getData().toByteArray());
                 final org.dromara.hodor.common.proto.DataChangeEvent.Type type = changeEvent.getType();
                 DataChangeEvent dataChangeEvent = new DataChangeEvent(type.name(), dataKey, dataValue.getBytes(StandardCharsets.UTF_8));
                 dataChangeListener.dataChanged(dataChangeEvent);
@@ -118,34 +115,6 @@ public class HodorWatchClient implements Closeable {
             .setCancelRequest(createRequest)
             .build();
         watchRaftClient.watchClientRpc().unwatch(watchRequest);
-    }
-
-    public void leaderLatch(String latchPath, LeaderExecutionCallback callback) {
-        if (WatchManager.getInstance().isLeader()) {
-            try {
-                leaderCallback(latchPath, callback);
-            } catch (Exception e) {
-                throw new RegistryException(e);
-            }
-        }
-        WatchManager.getInstance().addListener(event -> {
-            try {
-                final org.dromara.hodor.common.proto.DataChangeEvent dataChangeEvent = event.getValue();
-                if (dataChangeEvent.getType() == org.dromara.hodor.common.proto.DataChangeEvent.Type.NODE_ADDED) {
-                    leaderCallback(latchPath, callback);
-                } else if (dataChangeEvent.getType() == org.dromara.hodor.common.proto.DataChangeEvent.Type.NODE_REMOVED) {
-                    this.kvClient.delete(ProtostuffUtils.serialize(latchPath));
-                }
-            } catch (Exception e) {
-                throw new RegistryException(e);
-            }
-        }, org.dromara.hodor.common.proto.DataChangeEvent.Type.INITIALIZED);
-    }
-
-    private void leaderCallback(String latchPath, LeaderExecutionCallback callback) throws Exception {
-        this.kvClient.delete(ProtostuffUtils.serialize(latchPath));
-        callback.execute();
-        this.kvClient.put(ProtostuffUtils.serialize(latchPath), ProtostuffUtils.serialize(System.currentTimeMillis()));
     }
 
     @Override

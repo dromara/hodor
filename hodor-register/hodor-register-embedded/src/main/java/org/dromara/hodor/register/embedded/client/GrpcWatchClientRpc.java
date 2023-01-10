@@ -2,10 +2,13 @@ package org.dromara.hodor.register.embedded.client;
 
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
+import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -14,7 +17,6 @@ import org.apache.ratis.conf.RaftProperties;
 import org.apache.ratis.protocol.ClientId;
 import org.apache.ratis.protocol.RaftPeer;
 import org.apache.ratis.protocol.RaftPeerId;
-import org.apache.ratis.thirdparty.com.google.protobuf.ByteString;
 import org.apache.ratis.thirdparty.io.grpc.CallOptions;
 import org.apache.ratis.thirdparty.io.grpc.ClientCall;
 import org.apache.ratis.thirdparty.io.grpc.CompressorRegistry;
@@ -29,6 +31,7 @@ import org.dromara.hodor.common.proto.DataChangeEvent;
 import org.dromara.hodor.common.proto.WatchRequest;
 import org.dromara.hodor.common.proto.WatchResponse;
 import org.dromara.hodor.common.proto.WatchServiceGrpc;
+import org.dromara.hodor.common.utils.BytesUtil;
 
 /**
  * GrpcWatchClientRpc
@@ -41,7 +44,8 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
 
     private StreamObserver<WatchRequest> watchRequestStreamObserver;
 
-    private static final Map<ByteString, WatchCallback> callBackMap = new ConcurrentHashMap<>();
+    private static final BytesUtil.ByteArrayComparator byteArrayComparator = BytesUtil.getDefaultByteArrayComparator();
+    private static final Map<byte[], WatchCallback> watchClientCallBackMap = Maps.newTreeMap(byteArrayComparator);
 
     private final long channelKeepAlive = 60 * 1000;
 
@@ -63,19 +67,19 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
     @Override
     public void watch(WatchRequest watchRequest, WatchCallback watchCallback) {
         watchRequestStreamObserver.onNext(watchRequest);
-        callBackMap.put(watchRequest.getCreateRequest().getKey(), watchCallback);
+        watchClientCallBackMap.put(watchRequest.getCreateRequest().getKey().toByteArray(), watchCallback);
     }
 
     @Override
     public void unwatch(WatchRequest watchRequest) {
         watchRequestStreamObserver.onNext(watchRequest);
-        callBackMap.remove(watchRequest.getCancelRequest().getKey());
+        watchClientCallBackMap.remove(watchRequest.getCancelRequest().getKey().toByteArray());
     }
 
     @Override
     public void close() throws IOException {
-        watchRequestStreamObserver.onCompleted();
-        callBackMap.clear();
+        //watchRequestStreamObserver.onCompleted();
+        watchClientCallBackMap.clear();
     }
 
     @Override
@@ -117,12 +121,15 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
                     public void onNext(WatchResponse response) {
                         try {
                             final DataChangeEvent event = response.getEvent();
-                            final WatchCallback watchCallback = callBackMap.getOrDefault(event.getKey(), changeEvent -> log.debug("not found event key, {}.", changeEvent.getKey()));
-                            watchCallback.callback(event);
+                            final Optional<byte[]> watchKeyOptional = getWatchKey(event.getKey().toByteArray());
+                            watchKeyOptional.ifPresent(watchKey -> {
+                                final WatchCallback watchCallback = watchClientCallBackMap.getOrDefault(watchKey,
+                                    changeEvent -> log.warn("not found event key, {}.", changeEvent.getKey()));
+                                watchCallback.callback(event);
+                            });
                         } catch (Exception e) {
                             log.error("[{}] Error to process server push response: {}", clientId, response.getEvent().toString());
                         }
-
                     }
 
                     @Override
@@ -147,6 +154,13 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
         }
     }
 
+    public Optional<byte[]> getWatchKey(byte[] key) {
+        final Set<byte[]> keySet = watchClientCallBackMap.keySet();
+        return keySet.stream().filter(k -> byteArrayComparator
+                .compare(k, 0, k.length, key, 0, k.length) >= 0)
+            .findFirst();
+    }
+
     /**
      * create a new channel with specific server address.
      *
@@ -156,6 +170,7 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
      */
     private ManagedChannel createNewManagedChannel(String serverIp, int serverPort) {
         grpcExecutor = ThreadUtil.newExecutor(4, 4);
+        grpcExecutor.setThreadFactory(ThreadUtil.newNamedThreadFactory("hodor-watch-", true));
         ManagedChannelBuilder<?> managedChannelBuilder = ManagedChannelBuilder.forAddress(serverIp, serverPort)
             .executor(grpcExecutor).compressorRegistry(CompressorRegistry.getDefaultInstance())
             .decompressorRegistry(DecompressorRegistry.getDefaultInstance())

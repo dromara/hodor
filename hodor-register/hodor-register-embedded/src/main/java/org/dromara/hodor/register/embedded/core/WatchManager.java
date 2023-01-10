@@ -2,8 +2,9 @@ package org.dromara.hodor.register.embedded.core;
 
 import cn.hutool.core.thread.ThreadUtil;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -33,13 +34,16 @@ public class WatchManager extends AbstractAsyncEventPublisher<DataChangeEvent> {
     private static final WatchManager INSTANCE = new WatchManager();
 
     private static final int MAX_WAIT_EVENT_TIME = 100;
+
     private final BlockingQueue<DataChangeEvent> events;
 
     //private final Set<ByteString> watchKeySet = new HashSet<>();
 
     private final static byte[] EMPTY_BYTE = new byte[0];
 
-    private final static Map<byte[], byte[]> watchKeyMap = new TreeMap<>(BytesUtil.getDefaultByteArrayComparator());
+    private static final BytesUtil.ByteArrayComparator byteArrayComparator = BytesUtil.getDefaultByteArrayComparator();
+
+    private final static Map<byte[], byte[]> watchKeyMap = new TreeMap<>(byteArrayComparator);
 
     private static final Map<String, AbstractConnection<WatchResponse>> connections = new ConcurrentHashMap<>(16);
 
@@ -69,11 +73,21 @@ public class WatchManager extends AbstractAsyncEventPublisher<DataChangeEvent> {
 
     public boolean containsWatchKey(String key) {
         final ByteString watchKey = ByteString.copyFromUtf8(key);
-        return watchKeyMap.containsKey(watchKey.toByteArray());
+        return containsWatchKey(watchKey.toByteArray());
     }
 
     public boolean containsWatchKey(byte[] key) {
-        return watchKeyMap.containsKey(key);
+        final Set<byte[]> keySet = watchKeyMap.keySet();
+        final long count = keySet.stream().filter(k -> byteArrayComparator
+            .compare(k, 0, k.length, key, 0, k.length) >= 0).count();
+        return count > 0;
+    }
+
+    public Optional<byte[]> getWatchKey(byte[] key) {
+        final Set<byte[]> keySet = watchKeyMap.keySet();
+        return keySet.stream().filter(k -> byteArrayComparator
+                .compare(k, 0, k.length, key, 0, k.length) >= 0)
+            .findFirst();
     }
 
     public void addWatchRequest(WatchCreateRequest createRequest) {
