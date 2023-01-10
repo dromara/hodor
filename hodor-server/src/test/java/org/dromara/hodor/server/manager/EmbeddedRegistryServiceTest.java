@@ -39,10 +39,10 @@ public class EmbeddedRegistryServiceTest {
     @Before
     public void init() throws Exception {
         RegistryConfig registryConfig = RegistryConfig.builder()
-            .servers("127.0.0.1:2181")
+            .servers("127.0.0.1:5624")
             .namespace("hodor-test")
             .dataPath("E:\\data\\hodor-scheduler\\register-db")
-            .endpoint("127.0.0.1:2181")
+            .endpoint("127.0.0.1:5624")
             .build();
 
         embeddedRegistryCenter = new EmbeddedRegistryCenter();
@@ -59,9 +59,9 @@ public class EmbeddedRegistryServiceTest {
     @Test
     public void testGet() {
         final String masterActivePathResult = embeddedRegistryCenter.get(SchedulerNode.MASTER_ACTIVE_PATH);
-        System.out.println(masterActivePathResult);
+        log.info("masterActivePathResult: {}", masterActivePathResult);
         final String nodePathResult = embeddedRegistryCenter.get(SchedulerNode.NODES_PATH);
-        System.out.println(nodePathResult);
+        log.info("nodePathResult: {}", nodePathResult);
     }
 
     @Test
@@ -72,8 +72,9 @@ public class EmbeddedRegistryServiceTest {
 
     @Test
     public void testRemoveKey() {
-        embeddedRegistryCenter.remove(SchedulerNode.METADATA_PATH);
-        embeddedRegistryCenter.remove(SchedulerNode.MASTER_ACTIVE_PATH);
+        //embeddedRegistryCenter.remove(SchedulerNode.METADATA_PATH);
+        //embeddedRegistryCenter.remove(SchedulerNode.MASTER_ACTIVE_PATH);
+        embeddedRegistryCenter.remove(SchedulerNode.NODES_PATH);
     }
 
 }
