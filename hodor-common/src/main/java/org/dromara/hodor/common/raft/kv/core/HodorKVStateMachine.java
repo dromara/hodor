@@ -7,6 +7,7 @@ import org.apache.ratis.protocol.Message;
 import org.apache.ratis.protocol.RaftGroupId;
 import org.apache.ratis.server.RaftServer;
 import org.apache.ratis.server.storage.RaftStorage;
+import org.apache.ratis.statemachine.StateMachineStorage;
 import org.apache.ratis.statemachine.TransactionContext;
 import org.apache.ratis.statemachine.impl.SimpleStateMachineStorage;
 import org.apache.ratis.thirdparty.com.google.protobuf.ByteString;
@@ -57,6 +58,11 @@ public class HodorKVStateMachine extends HodorRaftStateMachine {
     @Override
     public long takeSnapshot() throws IOException {
         return super.takeSnapshot();
+    }
+
+    @Override
+    public StateMachineStorage getStateMachineStorage() {
+        return storage;
     }
 
     @Override
