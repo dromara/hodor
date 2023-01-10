@@ -25,7 +25,7 @@ public class NettyClientInitializer extends ChannelInitializer<SocketChannel> {
 
     @Override
     protected void initChannel(SocketChannel channel) {
-        channel.pipeline().addLast(new LoggingHandler(LogLevel.INFO));
+        channel.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
         if (channelHandler.isHttpProtocol()) {
             channel.pipeline().addLast("http", new HttpClientCodec());
             /*channel.pipeline().addLast("websocket", WebSocketClientCompressionHandler.INSTANCE);*/
