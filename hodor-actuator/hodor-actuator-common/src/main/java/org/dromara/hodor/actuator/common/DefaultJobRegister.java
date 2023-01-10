@@ -1,5 +1,6 @@
 package org.dromara.hodor.actuator.common;
 
+import cn.hutool.core.lang.Assert;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,13 +22,20 @@ import org.dromara.hodor.model.job.JobKey;
 @Slf4j
 public class DefaultJobRegister implements JobRegister {
 
-    private final Map<JobKey, JobDesc> jobCache = new ConcurrentHashMap<>(32);
+    private final String clusterName;
 
-    private final Map<JobKey, ExecutableJob> runnableJobCache = new ConcurrentHashMap<>(32);
+    private final Map<JobKey, JobDesc> jobCache;
 
-    private final Set<String> groupNames = new HashSet<>();
+    private final Map<JobKey, ExecutableJob> runnableJobCache;
 
-    public DefaultJobRegister() {
+    private final Set<String> groupNames;
+
+    public DefaultJobRegister(final String clusterName) {
+        Assert.notNull(clusterName, "clusterName must be not null");
+        this.clusterName = clusterName;
+        this.jobCache = new ConcurrentHashMap<>(32);
+        this.runnableJobCache = new ConcurrentHashMap<>(32);
+        this.groupNames = new HashSet<>();
     }
 
     @Override
@@ -37,7 +45,7 @@ public class DefaultJobRegister implements JobRegister {
 
     @Override
     public String bindingCluster() {
-        return null;
+        return clusterName;
     }
 
     @Override
