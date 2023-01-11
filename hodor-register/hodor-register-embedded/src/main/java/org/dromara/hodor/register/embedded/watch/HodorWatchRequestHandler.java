@@ -62,7 +62,6 @@ public class HodorWatchRequestHandler extends HodorKVRequestHandler {
             case PUT:
                 final PutRequest putRequest = kvRequest.getPutRequest();
                 if (watchManager.containsWatchKey(putRequest.getKey())) {
-                    log.info("Watch NODE_UPDATED.");
                     final DataChangeEvent dataChangeEvent = DataChangeEvent.newBuilder()
                         .setKey(ByteString.copyFrom(putRequest.getKey()))
                         .setType(DataChangeEvent.Type.NODE_UPDATED)
@@ -74,7 +73,6 @@ public class HodorWatchRequestHandler extends HodorKVRequestHandler {
             case DELETE:
                 final DeleteRequest deleteRequest = kvRequest.getDeleteRequest();
                 if (watchManager.containsWatchKey(deleteRequest.getKey())) {
-                    log.info("Watch NODE_REMOVED.");
                     final DataChangeEvent dataChangeEvent = DataChangeEvent.newBuilder()
                         .setKey(ByteString.copyFrom(deleteRequest.getKey()))
                         .setType(DataChangeEvent.Type.NODE_REMOVED)

@@ -79,7 +79,6 @@ public class HodorKVRequestHandler implements RequestHandler {
         HodorKVResponse.HodorKVResponseBuilder builder = createHodorKVResponseBuilder(kvRequest, cmdType);
         switch (cmdType) {
             case GET:
-                log.info("GET op.");
                 final GetRequest getRequest = kvRequest.getGetRequest();
                 byte[] result = dbStore.get(getRequest.getKey());
                 GetResponse getResponse = GetResponse.builder()
@@ -88,7 +87,6 @@ public class HodorKVRequestHandler implements RequestHandler {
                 builder.getResponse(getResponse);
                 break;
             case CONTAINS_KEY:
-                log.info("CONTAINS_KEY op.");
                 final ContainsKeyRequest containsKeyRequest = kvRequest.getContainsKeyRequest();
                 try {
                     final Boolean exists = dbStore.containsKey(containsKeyRequest.getKey());
@@ -103,7 +101,6 @@ public class HodorKVRequestHandler implements RequestHandler {
                 }
                 break;
             case SCAN:
-                log.info("SCAN op.");
                 final ScanRequest scanRequest = kvRequest.getScanRequest();
                 final byte[] startKey = scanRequest.getStartKey();
                 final byte[] endKey = scanRequest.getEndKey();
@@ -132,7 +129,6 @@ public class HodorKVRequestHandler implements RequestHandler {
         HodorKVResponse.HodorKVResponseBuilder builder = createHodorKVResponseBuilder(kvRequest, cmdType);
         switch (cmdType) {
             case PUT:
-                log.info("PUT op.");
                 final PutRequest putRequest = kvRequest.getPutRequest();
                 try {
                     dbStore.put(putRequest.getKey(), putRequest.getValue());
@@ -143,7 +139,6 @@ public class HodorKVRequestHandler implements RequestHandler {
                 }
                 break;
             case DELETE:
-                log.info("DELETE op.");
                 final DeleteRequest deleteRequest = kvRequest.getDeleteRequest();
                 try {
                     dbStore.delete(deleteRequest.getKey());

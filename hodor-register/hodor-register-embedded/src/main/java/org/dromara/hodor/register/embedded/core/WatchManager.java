@@ -189,7 +189,7 @@ public class WatchManager extends AbstractAsyncEventPublisher<DataChangeEvent> {
             return;
         }
 
-        log.info("watch: event {} trigger push.", event.getType());
+        log.debug("watch: event {} trigger push.", event.getType());
 
         for (AbstractConnection<WatchResponse> connection : getWatchConnections()) {
             // WatchedStatus watchedStatus = connection.getWatchedStatusByType(SERVICE_ENTRY_COLLECTION);
