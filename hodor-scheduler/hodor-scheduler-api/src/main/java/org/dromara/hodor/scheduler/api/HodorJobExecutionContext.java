@@ -70,4 +70,14 @@ public class HodorJobExecutionContext {
         return schedulerName;
     }
 
+    @Override
+    public String toString() {
+        return "HodorJobExecutionContext{" +
+            "requestId=" + requestId +
+            ", schedulerName='" + schedulerName + '\'' +
+            ", rootJobKey=" + rootJobKey +
+            ", jobKey=" + jobKey +
+            ", fireTime=" + fireTime +
+            '}';
+    }
 }
