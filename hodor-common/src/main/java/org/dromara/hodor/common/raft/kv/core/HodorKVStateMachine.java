@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ratis.protocol.Message;
 import org.apache.ratis.protocol.RaftGroupId;
 import org.apache.ratis.server.RaftServer;
+import org.apache.ratis.server.protocol.TermIndex;
 import org.apache.ratis.server.storage.RaftStorage;
 import org.apache.ratis.statemachine.StateMachineStorage;
 import org.apache.ratis.statemachine.TransactionContext;
@@ -21,7 +22,7 @@ import org.dromara.hodor.common.utils.ProtostuffUtils;
  * RatisServerStateMachine
  *
  * @author tomgs
- * @since 2022/3/22
+ * @since 1.0
  */
 @Slf4j
 public class HodorKVStateMachine extends HodorRaftStateMachine {
@@ -57,7 +58,9 @@ public class HodorKVStateMachine extends HodorRaftStateMachine {
 
     @Override
     public long takeSnapshot() throws IOException {
-        return super.takeSnapshot();
+        final TermIndex lastAppliedTermIndex = getLastAppliedTermIndex();
+        return lastAppliedTermIndex.getIndex();
+        //return super.takeSnapshot();
     }
 
     @Override
@@ -70,9 +73,9 @@ public class HodorKVStateMachine extends HodorRaftStateMachine {
         try {
             final ByteString logData = trx.getStateMachineLogEntry().getLogData();
             final Message message = Message.valueOf(logData);
-            final long trxLogIndex = trx.getLogEntry().getIndex();
+            final TermIndex termIndex = TermIndex.valueOf(trx.getLogEntry());
             HodorKVRequest kvRequest = ProtostuffUtils.deserialize(message.getContent().toByteArray(), HodorKVRequest.class);
-            return CompletableFuture.completedFuture(runCommand(kvRequest, trxLogIndex));
+            return CompletableFuture.completedFuture(runCommand(kvRequest, termIndex));
         } catch (Exception e) {
             return completeExceptionally(e);
         }
@@ -94,8 +97,11 @@ public class HodorKVStateMachine extends HodorRaftStateMachine {
         return Message.valueOf(ByteString.copyFrom(ProtostuffUtils.serialize(hodorKVResponse)));
     }
 
-    private Message runCommand(HodorKVRequest kvRequest, long trxLogIndex) throws CodecException, IOException {
+    private Message runCommand(HodorKVRequest kvRequest, TermIndex termIndex) throws CodecException, IOException {
+        final long term = termIndex.getTerm();
+        final long trxLogIndex = termIndex.getIndex();
         final HodorKVResponse hodorKVResponse = requestHandler.handleWriteRequest(kvRequest, trxLogIndex);
+        updateLastAppliedTermIndex(termIndex);
         return Message.valueOf(ByteString.copyFrom(ProtostuffUtils.serialize(hodorKVResponse)));
     }
 
