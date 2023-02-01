@@ -26,7 +26,7 @@ import org.dromara.hodor.model.job.JobKey;
  * LogJobExecuteRecord
  *
  * @author tomgs
- * @since 2021/8/11
+ * @version 1.0
  */
 @Slf4j
 public class LogJobExecuteRecorder implements JobExecuteRecorder {
