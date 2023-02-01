@@ -71,4 +71,6 @@ public interface DagService {
 
   FlowData getFlowData(JobKey jobKey);
 
+  void deleteFlowData(JobKey jobKey);
+
 }

@@ -153,6 +153,11 @@ public class DagServiceImpl implements DagService {
         }, jobKey);
     }
 
+    @Override
+    public void deleteFlowData(JobKey jobKey) {
+        flowNodeBeanCacheClient.delete(jobKey);
+    }
+
     private void persistDagInstance(Dag dag) {
         LockUtil.lockMethod(dagInstanceLock, d -> {
             dagCacheClient.put(JobKey.of(d.getName()), d);
