@@ -14,17 +14,14 @@ import org.dromara.hodor.common.storage.cache.HodorCacheSource;
  * @author tomgs
  * @version 1.0
  */
-@Join
+@Join(order = 1)
 public class EmbeddedCacheSource implements HodorCacheSource {
-
-    private final CacheSourceConfig cacheSourceConfig;
 
     private final HodorRaftGroup hodorRaftGroup;
 
     public EmbeddedCacheSource(final CacheSourceConfig cacheSourceConfig) {
         Assert.notNull(cacheSourceConfig, "cacheSourceConfig must be not null.");
         Assert.notNull(cacheSourceConfig.getServerAddresses(), "cacheSourceConfig.serverAddresses must be not null");
-        this.cacheSourceConfig = cacheSourceConfig;
         this.hodorRaftGroup = HodorRaftGroup.builder()
             .raftGroupName(KVConstant.HODOR_KV_GROUP_NAME)
             .addresses(cacheSourceConfig.getServerAddresses())
@@ -45,7 +42,7 @@ public class EmbeddedCacheSource implements HodorCacheSource {
 
     @Override
     public <K, V> CacheClient<K, V> getCacheClient() {
-        return null;
+        return getCacheClient("default");
     }
 
 }

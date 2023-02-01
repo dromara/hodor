@@ -28,7 +28,7 @@ import org.dromara.hodor.common.storage.cache.HodorCacheSource;
  * @author tomgs
  * @version 1.0
  */
-@Join
+@Join(order = 1)
 public class RedisCacheSource implements HodorCacheSource {
 
     private final CacheSourceConfig cacheSourceConfig;

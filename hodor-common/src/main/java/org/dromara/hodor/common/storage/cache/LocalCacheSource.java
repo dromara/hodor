@@ -8,7 +8,7 @@ import org.dromara.hodor.common.extension.Join;
  * LocalCacheSource
  *
  * @author tomgs
- * @since 2021/8/16
+ * @since 1.0
  */
 @Join
 public class LocalCacheSource implements HodorCacheSource {
