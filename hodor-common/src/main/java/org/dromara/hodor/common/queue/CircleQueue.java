@@ -22,7 +22,7 @@ public class CircleQueue<T> extends AbstractQueue<T> {
      */
     private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
 
-    private static final int DEFAULT_CAPACITY = 10;
+    private static final int DEFAULT_CAPACITY = 16;
 
     private Object[] elementData;
 
