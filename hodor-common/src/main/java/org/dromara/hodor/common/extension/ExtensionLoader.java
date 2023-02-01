@@ -275,7 +275,10 @@ public class ExtensionLoader<T> {
         if (oldClass == null) {
             classes.put(name, subClass);
         } else if (oldClass != subClass) {
-            throw new IllegalStateException("load extension resources error,Duplicate class " + clazz.getName() + "name " + name + " on " + oldClass.getName() + " or" + subClass.getName());
+            final Join oldJoinAnnotation = oldClass.getAnnotation(Join.class);
+            if (annotation.order() > oldJoinAnnotation.order()) {
+                classes.put(name, subClass);
+            }
         }
     }
 

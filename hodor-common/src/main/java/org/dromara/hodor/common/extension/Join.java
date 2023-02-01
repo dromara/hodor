@@ -34,4 +34,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface Join {
+
+    /**
+     * extension order
+     *
+     * @return order value
+     */
+    int order() default 0;
+
 }
