@@ -1,6 +1,7 @@
 package org.dromara.hodor.server.config;
 
 import lombok.Data;
+import org.dromara.hodor.common.storage.cache.CacheSourceConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,6 +25,8 @@ public class HodorServerProperties {
     private NetServerProperties netServer;
 
     private RegistryProperties registry;
+
+    private CacheSourceConfig cacheSource;
 
     public String getRegistryServers() {
         return registry.getServers();

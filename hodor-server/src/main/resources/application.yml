@@ -21,6 +21,10 @@ hodor:
     url: jdbc:mysql://127.0.0.1:3306/hodor?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
     username: root
     password: 123456
+  cacheSource:
+    type: embedded
+    serverAddresses: 127.0.0.1:2181
+    timeout: 1000
 
 # mybatis-plus
 mybatis-plus:

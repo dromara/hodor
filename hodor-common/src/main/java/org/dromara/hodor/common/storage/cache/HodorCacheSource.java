@@ -6,7 +6,7 @@ import org.dromara.hodor.common.extension.SPI;
  * hodor cache source
  *
  * @author tomgs
- * @since 2021/8/11
+ * @version 1.0
  */
 @SPI("cachesource")
 public interface HodorCacheSource {
