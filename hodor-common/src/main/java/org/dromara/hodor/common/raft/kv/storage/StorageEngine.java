@@ -1,7 +1,5 @@
 package org.dromara.hodor.common.raft.kv.storage;
 
-import java.io.IOException;
-
 /**
  * StorageEngine
  *
@@ -22,7 +20,7 @@ public class StorageEngine {
         return dbStore;
     }
 
-    public void init() {
+    public void init() throws Exception {
         final StorageType storageType = storageOptions.getStorageType();
         if (storageType == StorageType.Memory) {
             dbStore = new MemDBStore(storageOptions);
@@ -33,7 +31,7 @@ public class StorageEngine {
         dbStore.init();
     }
 
-    public void close() throws IOException {
+    public void close() throws Exception {
         dbStore.close();
     }
 

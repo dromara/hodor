@@ -34,7 +34,7 @@ public interface RequestHandler {
      * @param request client request to OM
      * @throws HodorKVException thrown if required parameters are set to null.
      */
-    void validateRequest(HodorKVRequest request) throws HodorKVException;
+    void validateRequest(final HodorKVRequest request) throws HodorKVException;
 
     /**
      * Handle the read requests, and returns HodorKVResponse.
@@ -42,7 +42,7 @@ public interface RequestHandler {
      * @param request read request
      * @return HodorKVResponse
      */
-    HodorKVResponse handleReadRequest(HodorKVRequest request);
+    HodorKVResponse handleReadRequest(final HodorKVRequest request) throws IOException;
 
     /**
      * Handle write requests. In HA this will be called from
@@ -54,7 +54,7 @@ public interface RequestHandler {
      * @param transactionLogIndex - ratis transaction log index
      * @return OMClientResponse
      */
-    HodorKVResponse handleWriteRequest(HodorKVRequest request, long transactionLogIndex) throws IOException;
+    HodorKVResponse handleWriteRequest(final HodorKVRequest request, final long transactionLogIndex) throws IOException;
 
     /**
      * Update the OzoneManagerDoubleBuffer. This will be called when

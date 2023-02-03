@@ -17,6 +17,7 @@
 
 package org.dromara.hodor.common.raft.kv.core;
 
+import java.io.IOException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -35,6 +36,7 @@ import org.dromara.hodor.common.raft.kv.protocol.ScanRequest;
 import org.dromara.hodor.common.raft.kv.protocol.ScanResponse;
 import org.dromara.hodor.common.raft.kv.storage.DBStore;
 import org.dromara.hodor.common.raft.kv.storage.StorageEngine;
+import org.dromara.hodor.common.raft.kv.storage.Table;
 import org.dromara.hodor.common.utils.BytesUtil;
 
 /**
@@ -53,7 +55,7 @@ public class HodorKVRequestHandler implements RequestHandler {
     }
 
     @Override
-    public void validateRequest(HodorKVRequest request) throws HodorKVException {
+    public void validateRequest(final HodorKVRequest request) throws HodorKVException {
         CmdType cmdType = request.getCmdType();
         if (cmdType == null) {
             throw new HodorKVException("CmdType is null",
@@ -74,22 +76,30 @@ public class HodorKVRequestHandler implements RequestHandler {
     }
 
     @Override
-    public HodorKVResponse handleReadRequest(HodorKVRequest kvRequest) {
+    public HodorKVResponse handleReadRequest(final HodorKVRequest kvRequest) throws IOException {
         final CmdType cmdType = kvRequest.getCmdType();
-        HodorKVResponse.HodorKVResponseBuilder builder = createHodorKVResponseBuilder(kvRequest, cmdType);
+        final Table<byte[], byte[]> table = dbStore.getTable(kvRequest.getTable());
+        final HodorKVResponse.HodorKVResponseBuilder builder = createHodorKVResponseBuilder(kvRequest, cmdType);
         switch (cmdType) {
             case GET:
-                final GetRequest getRequest = kvRequest.getGetRequest();
-                byte[] result = dbStore.get(getRequest.getKey());
-                GetResponse getResponse = GetResponse.builder()
-                    .value(result)
-                    .build();
-                builder.getResponse(getResponse);
+                try {
+                    final GetRequest getRequest = kvRequest.getGetRequest();
+                    byte[] result = table.get(getRequest.getKey());
+                    GetResponse getResponse = GetResponse.builder()
+                        .value(result)
+                        .build();
+                    builder.getResponse(getResponse);
+                } catch (Exception e) {
+                    log.error("GET exception: {}", e.getMessage(), e);
+                    builder.success(false)
+                        .message(e.getMessage());
+                }
+
                 break;
             case CONTAINS_KEY:
                 final ContainsKeyRequest containsKeyRequest = kvRequest.getContainsKeyRequest();
                 try {
-                    final Boolean exists = dbStore.containsKey(containsKeyRequest.getKey());
+                    final Boolean exists = table.containsKey(containsKeyRequest.getKey());
                     ContainsKeyResponse containsKeyResponse = ContainsKeyResponse.builder()
                         .value(exists)
                         .build();
@@ -105,7 +115,7 @@ public class HodorKVRequestHandler implements RequestHandler {
                 final byte[] startKey = scanRequest.getStartKey();
                 final byte[] endKey = scanRequest.getEndKey();
                 try {
-                    final List<KVEntry> kvEntries = dbStore.scan(startKey, endKey, scanRequest.isReturnValue());
+                    final List<KVEntry> kvEntries = table.scan(startKey, endKey, scanRequest.isReturnValue());
                     ScanResponse scanResponse = ScanResponse.builder()
                         .value(kvEntries)
                         .build();
@@ -124,14 +134,15 @@ public class HodorKVRequestHandler implements RequestHandler {
     }
 
     @Override
-    public HodorKVResponse handleWriteRequest(HodorKVRequest kvRequest, long transactionLogIndex) {
+    public HodorKVResponse handleWriteRequest(final HodorKVRequest kvRequest, final long transactionLogIndex) throws IOException {
         final CmdType cmdType = kvRequest.getCmdType();
+        final Table<byte[], byte[]> table = dbStore.getTable(kvRequest.getTable());
         HodorKVResponse.HodorKVResponseBuilder builder = createHodorKVResponseBuilder(kvRequest, cmdType);
         switch (cmdType) {
             case PUT:
                 final PutRequest putRequest = kvRequest.getPutRequest();
                 try {
-                    dbStore.put(putRequest.getKey(), putRequest.getValue());
+                    table.put(putRequest.getKey(), putRequest.getValue());
                 } catch (Exception e) {
                     log.error("PUT exception: {}", e.getMessage(), e);
                     builder.success(false)
@@ -141,7 +152,7 @@ public class HodorKVRequestHandler implements RequestHandler {
             case DELETE:
                 final DeleteRequest deleteRequest = kvRequest.getDeleteRequest();
                 try {
-                    dbStore.delete(deleteRequest.getKey());
+                    table.delete(deleteRequest.getKey());
                 } catch (Exception e) {
                     log.error("DELETE exception: {}", e.getMessage(), e);
                     builder.success(false)
@@ -154,7 +165,7 @@ public class HodorKVRequestHandler implements RequestHandler {
         return builder.build();
     }
 
-    public static HodorKVResponse.HodorKVResponseBuilder createHodorKVResponseBuilder(HodorKVRequest kvRequest, CmdType cmdType) {
+    public static HodorKVResponse.HodorKVResponseBuilder createHodorKVResponseBuilder(final HodorKVRequest kvRequest, final CmdType cmdType) {
         return HodorKVResponse.builder()
             .requestId(kvRequest.getRequestId())
             .traceId(kvRequest.getTraceId())

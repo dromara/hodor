@@ -19,6 +19,8 @@ public class HodorKVRequest implements Serializable {
 
     private CmdType cmdType;
 
+    private String table;
+
     private Long requestId;
 
     private Long traceId;

@@ -8,6 +8,8 @@ package org.dromara.hodor.common.raft.kv.exception;
  */
 public class StorageDBException extends RuntimeException {
 
+    private static final long serialVersionUID = 778869658680719207L;
+
     public StorageDBException(String message) {
         super(message);
     }

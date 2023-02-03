@@ -2,7 +2,6 @@ package org.dromara.hodor.common.raft.kv.core;
 
 import cn.hutool.core.lang.Assert;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +34,7 @@ public class HodorKVServer implements HodorLifecycle {
 
     private final HodorKVOptions hodorKVOptions;
 
-    public HodorKVServer(final HodorKVOptions hodorKVOptions) throws IOException {
+    public HodorKVServer(final HodorKVOptions hodorKVOptions) throws Exception {
         Assert.notNull(hodorKVOptions, "hodorRaftServer must be not null.");
         this.hodorKVOptions = hodorKVOptions;
         final StorageOptions storageOptions = hodorKVOptions.getStorageOptions();

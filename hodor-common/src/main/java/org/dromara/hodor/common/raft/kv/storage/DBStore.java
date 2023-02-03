@@ -1,10 +1,7 @@
 package org.dromara.hodor.common.raft.kv.storage;
 
-import com.codahale.metrics.Timer;
-import org.dromara.hodor.common.metrics.KVMetrics;
-import org.dromara.hodor.common.raft.kv.core.KVOperate;
-
-import static org.dromara.hodor.common.metrics.KVMetricNames.DB_TIMER;
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * DBStore
@@ -12,12 +9,45 @@ import static org.dromara.hodor.common.metrics.KVMetricNames.DB_TIMER;
  * @author tomgs
  * @since 2022/3/24
  */
-public interface DBStore extends KVOperate {
+public interface DBStore extends AutoCloseable {
 
-    static Timer.Context getTimeContext(final String opName) {
-        return KVMetrics.timer(DB_TIMER, opName).time();
-    }
+    void init() throws Exception;
 
-    void init();
+    /**
+     * Gets an existing TableStore.
+     *
+     * @param name - Name of the TableStore to get
+     * @return - TableStore.
+     * @throws IOException on Failure
+     */
+    Table<byte[], byte[]> getTable(String name) throws IOException;
+
+    /**
+     * Lists the Known list of Tables in a DB.
+     *
+     * @return List of Tables, in case of Rocks DB and LevelDB we will return at
+     * least one entry called DEFAULT.
+     * @throws IOException on Failure
+     */
+    ArrayList<Table<byte[], byte[]>> listTables() throws IOException;
+
+    /**
+     * Flush the DB buffer onto persistent storage.
+     * @throws IOException on Failure
+     */
+    void flushDB() throws IOException;
+
+    /**
+     * Flush the outstanding I/O operations of the DB.
+     * @param sync if true will sync the outstanding I/Os to the disk.
+     */
+    void flushLog(boolean sync) throws IOException;
+
+    /**
+     * Compact the entire database.
+     *
+     * @throws IOException on Failure
+     */
+    void compactDB() throws IOException;
 
 }

@@ -92,7 +92,7 @@ public class HodorKVStateMachine extends HodorRaftStateMachine {
         }
     }
 
-    private Message runQueryCommand(HodorKVRequest kvRequest) {
+    private Message runQueryCommand(HodorKVRequest kvRequest) throws IOException {
         final HodorKVResponse hodorKVResponse = requestHandler.handleReadRequest(kvRequest);
         return Message.valueOf(ByteString.copyFrom(ProtostuffUtils.serialize(hodorKVResponse)));
     }

@@ -15,27 +15,33 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.common.raft.kv.core;
+package org.dromara.hodor.common.raft.kv.exception;
 
-import java.util.List;
-import org.dromara.hodor.common.raft.kv.protocol.KVEntry;
+import java.io.IOException;
+import org.rocksdb.RocksDBException;
 
 /**
- * KVOperate
+ * ExceptionHelper
  *
  * @author tomgs
- * @since 2022/4/6
+ * @since 1.0
  */
-public interface KVOperate extends AutoCloseable {
+public class ExceptionHelper {
 
-    byte[] get(byte[] key);
-
-    void put(byte[] key, byte[] value);
-
-    void delete(byte[] key);
-
-    Boolean containsKey(byte[] key);
-
-    List<KVEntry> scan(byte[] startKey, byte[] endKey, boolean returnValue);
+    /**
+     * Converts RocksDB exception to IOE.
+     * @param msg  - Message to add to exception.
+     * @param e - Original Exception.
+     * @return  IOE.
+     */
+    public static IOException toIOException(String msg, RocksDBException e) {
+        String statusCode = e.getStatus() == null ? "N/A" :
+            e.getStatus().getCodeString();
+        String errMessage = e.getMessage() == null ? "Unknown error" :
+            e.getMessage();
+        String output = msg + "; status : " + statusCode
+            + "; message : " + errMessage;
+        return new IOException(output, e);
+    }
 
 }

@@ -27,6 +27,8 @@ public class HodorKVException extends IOException {
 
     public static final String STATUS_CODE = "STATUS_CODE=";
 
+    private static final long serialVersionUID = 6701408585005659707L;
+
     private final HodorKVException.ResultCodes result;
 
     /**
