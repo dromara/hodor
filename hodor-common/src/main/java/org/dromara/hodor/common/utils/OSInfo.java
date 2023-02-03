@@ -24,7 +24,7 @@ public class OSInfo {
     }
 
     public static boolean isWindows() {
-        return OS.contains("windows");
+        return OS.contains("win");
     }
 
 }
