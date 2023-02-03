@@ -41,7 +41,7 @@ public class EmbeddedRegistryServer implements HodorLifecycle {
 
     private final HodorWatchServer hodorWatchServer;
 
-    public EmbeddedRegistryServer(final RegistryConfig registryConfig) throws IOException {
+    public EmbeddedRegistryServer(final RegistryConfig registryConfig) throws Exception {
         RaftProperties raftProperties = new RaftProperties();
         RaftConfigKeys.Rpc.setType(raftProperties, WatchGrpcRpcType.INSTANCE);
         RaftOptions raftOptions = RaftOptions.builder()

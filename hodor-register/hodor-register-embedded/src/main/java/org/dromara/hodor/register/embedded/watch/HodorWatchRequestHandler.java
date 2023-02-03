@@ -17,6 +17,7 @@
 
 package org.dromara.hodor.register.embedded.watch;
 
+import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ratis.thirdparty.com.google.protobuf.ByteString;
 import org.dromara.hodor.common.proto.DataChangeEvent;
@@ -46,12 +47,12 @@ public class HodorWatchRequestHandler extends HodorKVRequestHandler {
     }
 
     @Override
-    public HodorKVResponse handleReadRequest(HodorKVRequest kvRequest) {
+    public HodorKVResponse handleReadRequest(HodorKVRequest kvRequest) throws IOException {
         return super.handleReadRequest(kvRequest);
     }
 
     @Override
-    public HodorKVResponse handleWriteRequest(HodorKVRequest kvRequest, long transactionLogIndex) {
+    public HodorKVResponse handleWriteRequest(HodorKVRequest kvRequest, long transactionLogIndex) throws IOException {
         final HodorKVResponse hodorKVResponse = super.handleWriteRequest(kvRequest, transactionLogIndex);
         if (!hodorKVResponse.getSuccess()) {
             return hodorKVResponse;

@@ -1,6 +1,5 @@
 package org.dromara.hodor.register.embedded.watch;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +20,7 @@ import org.dromara.hodor.common.raft.kv.core.RequestHandler;
 @Slf4j
 public class HodorWatchServer extends HodorKVServer {
 
-    public HodorWatchServer(final HodorKVOptions hodorKVOptions) throws IOException {
+    public HodorWatchServer(final HodorKVOptions hodorKVOptions) throws Exception {
         super(hodorKVOptions);
         final RaftOptions raftOptions = hodorKVOptions.getRaftOptions();
         Map<HodorRaftGroup, HodorRaftStateMachine> stateMachineMap = new HashMap<>();
