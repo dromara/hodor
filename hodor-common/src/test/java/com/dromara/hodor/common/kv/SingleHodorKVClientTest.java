@@ -29,21 +29,21 @@ public class SingleHodorKVClientTest {
 
     public static void main(String[] args) {
         HodorKVClient kvClient = new HodorKVClient("127.0.0.1:8081");
-        kvClient.put("a".getBytes(), "1".getBytes());
+        kvClient.defaultKvOperator().put("a".getBytes(), "1".getBytes());
 
-        byte[] bytes = kvClient.get("a".getBytes());
+        byte[] bytes = kvClient.defaultKvOperator().get("a".getBytes());
         System.out.println(new String(bytes));
 
-        kvClient.delete("a".getBytes());
+        kvClient.defaultKvOperator().delete("a".getBytes());
 
-        bytes = kvClient.get("a".getBytes());
+        bytes = kvClient.defaultKvOperator().get("a".getBytes());
         System.out.println(bytes);
 
-        final Boolean aBoolean = kvClient.containsKey("a".getBytes());
+        final Boolean aBoolean = kvClient.defaultKvOperator().containsKey("a".getBytes());
         System.out.println(aBoolean);
 
-        kvClient.put("b".getBytes(), "2".getBytes());
-        final Boolean bBoolean = kvClient.containsKey("b".getBytes());
+        kvClient.defaultKvOperator().put("b".getBytes(), "2".getBytes());
+        final Boolean bBoolean = kvClient.defaultKvOperator().containsKey("b".getBytes());
         System.out.println(bBoolean);
     }
 
