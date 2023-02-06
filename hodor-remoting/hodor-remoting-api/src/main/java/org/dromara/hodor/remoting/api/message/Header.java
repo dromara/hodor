@@ -22,6 +22,7 @@ public class Header {
     /**
      * 先导码
      */
+    @Builder.Default
     private short magic = RemotingConst.MAGIC;
 
     /**
