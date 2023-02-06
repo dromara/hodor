@@ -35,17 +35,7 @@ public class MemDBTable implements Table<byte[], byte[]> {
     }
 
     @Override
-    public void putWithBatch(BatchOperation batch, byte[] bytes, byte[] bytes2) throws IOException {
-
-    }
-
-    @Override
     public boolean isEmpty() throws IOException {
-        return false;
-    }
-
-    @Override
-    public boolean isExist(byte[] bytes) throws IOException {
         return false;
     }
 
@@ -55,17 +45,7 @@ public class MemDBTable implements Table<byte[], byte[]> {
     }
 
     @Override
-    public byte[] getIfExist(byte[] bytes) throws IOException {
-        return new byte[0];
-    }
-
-    @Override
     public void delete(byte[] bytes) throws IOException {
-
-    }
-
-    @Override
-    public void deleteWithBatch(BatchOperation batch, byte[] bytes) throws IOException {
 
     }
 
@@ -92,11 +72,6 @@ public class MemDBTable implements Table<byte[], byte[]> {
     @Override
     public Boolean containsKey(byte[] key) {
         return null;
-    }
-
-    @Override
-    public void close() throws Exception {
-
     }
 
 }

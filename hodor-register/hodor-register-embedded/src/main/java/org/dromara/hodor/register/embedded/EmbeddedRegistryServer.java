@@ -18,12 +18,12 @@
 package org.dromara.hodor.register.embedded;
 
 import java.io.File;
-import java.io.IOException;
 import org.apache.ratis.RaftConfigKeys;
 import org.apache.ratis.conf.RaftProperties;
 import org.dromara.hodor.common.HodorLifecycle;
 import org.dromara.hodor.common.raft.RaftOptions;
 import org.dromara.hodor.common.raft.kv.core.HodorKVOptions;
+import org.dromara.hodor.common.raft.kv.storage.DBProfile;
 import org.dromara.hodor.common.raft.kv.storage.StorageOptions;
 import org.dromara.hodor.common.raft.kv.storage.StorageType;
 import org.dromara.hodor.register.api.RegistryConfig;
@@ -53,6 +53,7 @@ public class EmbeddedRegistryServer implements HodorLifecycle {
             .build();
         StorageOptions storageOptions = StorageOptions.builder()
             .storageType(StorageType.RocksDB)
+            .storageProfile(DBProfile.DISK)
             .storagePath(new File(registryConfig.getDataPath()))
             .build();
         HodorKVOptions kvOptions = HodorKVOptions.builder()

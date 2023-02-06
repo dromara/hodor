@@ -1,10 +1,10 @@
 package org.dromara.hodor.common.storage.cache.impl;
 
-import java.io.IOException;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.dromara.hodor.common.concurrent.LockUtil;
 import org.dromara.hodor.common.raft.kv.core.HodorKVClient;
+import org.dromara.hodor.common.raft.kv.storage.DBColumnFamily;
 import org.dromara.hodor.common.storage.cache.CacheClient;
 import org.dromara.hodor.common.utils.Pair;
 import org.dromara.hodor.common.utils.ProtostuffUtils;
@@ -23,10 +23,13 @@ public class EmbeddedRawCacheClient<K, V> implements CacheClient<K, V> {
 
     private final String cacheGroup;
 
+    private final String tableName;
+
     public EmbeddedRawCacheClient(final String serverAddresses, final String cacheGroup) {
         this.hodorKVClient = new HodorKVClient(serverAddresses);
         this.readWriteLock = new ReentrantReadWriteLock();
         this.cacheGroup = cacheGroup;
+        this.tableName = DBColumnFamily.Default.getName();
     }
 
     @Override
@@ -34,7 +37,8 @@ public class EmbeddedRawCacheClient<K, V> implements CacheClient<K, V> {
     public V get(K key) {
         return LockUtil.lockMethod(readWriteLock.readLock(), k -> {
             final Pair<String, K> keyPair = new Pair<>(cacheGroup, key);
-            final byte[] valueBytes = hodorKVClient.get(ProtostuffUtils.serialize(keyPair));
+            final byte[] valueBytes = hodorKVClient.kvOperator(tableName)
+                .get(ProtostuffUtils.serialize(keyPair));
             final Pair<V, Long> valuePair = ProtostuffUtils.deserialize(valueBytes, Pair.class);
             if (valuePair == null) {
                 return null;
@@ -52,7 +56,8 @@ public class EmbeddedRawCacheClient<K, V> implements CacheClient<K, V> {
         LockUtil.lockMethod(readWriteLock.writeLock(), (k ,v) -> {
             final Pair<String, K> keyPair = new Pair<>(cacheGroup, key);
             final Pair<V, Long> valuePair = new Pair<>(value, -1L);
-            hodorKVClient.put(ProtostuffUtils.serialize(keyPair), ProtostuffUtils.serialize(valuePair));
+            hodorKVClient.kvOperator(tableName)
+                .put(ProtostuffUtils.serialize(keyPair), ProtostuffUtils.serialize(valuePair));
             return null;
         }, key, value);
     }
@@ -62,7 +67,8 @@ public class EmbeddedRawCacheClient<K, V> implements CacheClient<K, V> {
         LockUtil.lockMethod(readWriteLock.writeLock(), (k ,v) -> {
             final Pair<String, K> keyPair = new Pair<>(cacheGroup, key);
             final Pair<V, Long> valuePair = new Pair<>(value, System.currentTimeMillis() + expire);
-            hodorKVClient.put(ProtostuffUtils.serialize(keyPair), ProtostuffUtils.serialize(valuePair));
+            hodorKVClient.kvOperator(tableName)
+                .put(ProtostuffUtils.serialize(keyPair), ProtostuffUtils.serialize(valuePair));
             return null;
         }, key, value);
     }
@@ -71,7 +77,8 @@ public class EmbeddedRawCacheClient<K, V> implements CacheClient<K, V> {
     public void delete(K key) {
         LockUtil.lockMethod(readWriteLock.writeLock(), k -> {
             final Pair<String, K> keyPair = new Pair<>(cacheGroup, key);
-            hodorKVClient.delete(ProtostuffUtils.serialize(keyPair));
+            hodorKVClient.kvOperator(tableName)
+                .delete(ProtostuffUtils.serialize(keyPair));
             return null;
         }, key);
     }
@@ -82,7 +89,7 @@ public class EmbeddedRawCacheClient<K, V> implements CacheClient<K, V> {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() throws Exception {
         hodorKVClient.close();
     }
 

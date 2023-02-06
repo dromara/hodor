@@ -21,12 +21,12 @@ import java.util.List;
 import org.dromara.hodor.common.raft.kv.protocol.KVEntry;
 
 /**
- * KVOperate
+ * KVOperator
  *
  * @author tomgs
- * @since 2022/4/6
+ * @since 1.0
  */
-public interface KVOperate extends AutoCloseable {
+public interface KVOperator extends AutoCloseable {
 
     byte[] get(byte[] key);
 

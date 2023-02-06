@@ -33,7 +33,7 @@ import static org.dromara.hodor.common.metrics.KVMetricNames.DB_TIMER;
  * Table Stores a certain kind of keys and values. This allows a DB to have
  * different kind of tables.
  */
-public interface Table<KEY, VALUE> extends AutoCloseable {
+public interface Table<KEY, VALUE> {
 
   static Timer.Context getTimeContext(final String opName) {
     return KVMetrics.timer(DB_TIMER, opName).time();
@@ -48,30 +48,10 @@ public interface Table<KEY, VALUE> extends AutoCloseable {
   void put(KEY key, VALUE value) throws IOException;
 
   /**
-   * Puts a key-value pair into the store as part of a bath operation.
-   *
-   * @param batch the batch operation
-   * @param key metadata key
-   * @param value metadata value
-   */
-  void putWithBatch(BatchOperation batch, KEY key, VALUE value)
-      throws IOException;
-
-  /**
    * @return true if the metadata store is empty.
    * @throws IOException on Failure
    */
   boolean isEmpty() throws IOException;
-
-  /**
-   * Check if a given key exists in Metadata store.
-   * (Optimization to save on data deserialization)
-   * A lock on the key / bucket needs to be acquired before invoking this API.
-   * @param key metadata key
-   * @return true if the metadata store contains a key.
-   * @throws IOException on Failure
-   */
-  boolean isExist(KEY key) throws IOException;
 
   /**
    * Returns the value mapped to the given key in byte array or returns null
@@ -84,38 +64,12 @@ public interface Table<KEY, VALUE> extends AutoCloseable {
   VALUE get(KEY key) throws IOException;
 
   /**
-   * Returns the value mapped to the given key in byte array or returns null
-   * if the key is not found.
-   *
-   * This method first checks using keyMayExist, if it returns false, we are
-   * 100% sure that key does not exist in DB, so it returns null with out
-   * calling db.get. If keyMayExist return true, then we use db.get and then
-   * return the value. This method will be useful in the cases where the
-   * caller is more sure that this key does not exist in DB and keyMayExist
-   * will help here.
-   *
-   * @param key metadata key
-   * @return value in byte array or null if the key is not found.
-   * @throws IOException on Failure
-   */
-  VALUE getIfExist(KEY key) throws IOException;
-
-  /**
    * Deletes a key from the metadata store.
    *
    * @param key metadata key
    * @throws IOException on Failure
    */
   void delete(KEY key) throws IOException;
-
-  /**
-   * Deletes a key from the metadata store as part of a batch operation.
-   *
-   * @param batch the batch operation
-   * @param key metadata key
-   * @throws IOException on Failure
-   */
-  void deleteWithBatch(BatchOperation batch, KEY key) throws IOException;
 
   /**
    * Returns the iterator for this metadata store.

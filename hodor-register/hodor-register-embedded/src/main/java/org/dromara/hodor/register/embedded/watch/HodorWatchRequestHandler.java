@@ -27,6 +27,7 @@ import org.dromara.hodor.common.raft.kv.protocol.DeleteRequest;
 import org.dromara.hodor.common.raft.kv.protocol.HodorKVRequest;
 import org.dromara.hodor.common.raft.kv.protocol.HodorKVResponse;
 import org.dromara.hodor.common.raft.kv.protocol.PutRequest;
+import org.dromara.hodor.common.raft.kv.storage.DBColumnFamily;
 import org.dromara.hodor.common.raft.kv.storage.StorageEngine;
 import org.dromara.hodor.register.embedded.core.WatchManager;
 
@@ -54,7 +55,8 @@ public class HodorWatchRequestHandler extends HodorKVRequestHandler {
     @Override
     public HodorKVResponse handleWriteRequest(HodorKVRequest kvRequest, long transactionLogIndex) throws IOException {
         final HodorKVResponse hodorKVResponse = super.handleWriteRequest(kvRequest, transactionLogIndex);
-        if (!hodorKVResponse.getSuccess()) {
+        if (!hodorKVResponse.getSuccess()
+            || !DBColumnFamily.HodorWatch.getName().equals(kvRequest.getTable())) {
             return hodorKVResponse;
         }
 

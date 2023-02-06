@@ -61,7 +61,7 @@ public class RocksDBStore implements DBStore {
     }
 
     private ColumnFamilyOptions createColumnFamilyOptions(StorageOptions storageOptions) {
-        return storageOptions.getDbProfile().getColumnFamilyOptions();
+        return storageOptions.getStorageProfile().getColumnFamilyOptions();
     }
 
     private static WriteOptions createWriteOptions(StorageOptions opts) {
@@ -75,7 +75,7 @@ public class RocksDBStore implements DBStore {
     // Creates the rocksDB options, the user must take care
     // to close it after closing db.
     private static DBOptions createDBOptions(StorageOptions opts) {
-        return opts.getDbProfile().getDBOptions();
+        return opts.getStorageProfile().getDBOptions();
     }
 
     @Override
@@ -83,12 +83,12 @@ public class RocksDBStore implements DBStore {
         try {
             createDbPath(this.dbPath);
             // default column family
-            this.cfDescriptors.add(RocksDBColumnFamily.Default.getColumnFamilyDescriptor(cfOptions));
-            this.cfDescriptors.add(RocksDBColumnFamily.HodorRaft.getColumnFamilyDescriptor(cfOptions));
-            this.cfDescriptors.add(RocksDBColumnFamily.HodorWatch.getColumnFamilyDescriptor(cfOptions));
-            this.cfDescriptors.add(RocksDBColumnFamily.HodorWrite.getColumnFamilyDescriptor(cfOptions));
-            this.cfDescriptors.add(RocksDBColumnFamily.HodorLock.getColumnFamilyDescriptor(cfOptions));
-            this.cfDescriptors.add(RocksDBColumnFamily.HodorSeq.getColumnFamilyDescriptor(cfOptions));
+            this.cfDescriptors.add(DBColumnFamily.Default.getColumnFamilyDescriptor(cfOptions));
+            this.cfDescriptors.add(DBColumnFamily.HodorRaft.getColumnFamilyDescriptor(cfOptions));
+            this.cfDescriptors.add(DBColumnFamily.HodorWatch.getColumnFamilyDescriptor(cfOptions));
+            this.cfDescriptors.add(DBColumnFamily.HodorWrite.getColumnFamilyDescriptor(cfOptions));
+            this.cfDescriptors.add(DBColumnFamily.HodorLock.getColumnFamilyDescriptor(cfOptions));
+            this.cfDescriptors.add(DBColumnFamily.HodorSeq.getColumnFamilyDescriptor(cfOptions));
             // open db
             this.rocksDB = RocksDB.open(this.dbOptions, dbPath.getPath(), this.cfDescriptors, this.columnFamilyHandles);
 

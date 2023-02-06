@@ -17,8 +17,6 @@
 
 package org.dromara.hodor.register.embedded.watch;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +46,7 @@ import org.dromara.hodor.register.embedded.core.WatchRaftClient;
  * @since 1.0
  */
 @Slf4j
-public class HodorWatchClient implements Closeable {
+public class HodorWatchClient implements AutoCloseable {
 
     private final HodorKVClient kvClient;
 
@@ -118,7 +116,7 @@ public class HodorWatchClient implements Closeable {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() throws Exception {
         this.kvClient.close();
         this.watchRaftClient.close();
     }

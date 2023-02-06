@@ -6,18 +6,18 @@ import org.rocksdb.ColumnFamilyOptions;
 import org.rocksdb.RocksDB;
 
 /**
- * default RocksDBColumnFamily
+ * default RocksDB ColumnFamily
  *
  * @author tomgs
  * @since 1.0
  */
-public enum RocksDBColumnFamily {
+public enum DBColumnFamily {
 
     Default {
         final String name = "default";
 
         @Override
-        public String toString() {
+        public String getName() {
             return name;
         }
 
@@ -31,7 +31,7 @@ public enum RocksDBColumnFamily {
         final String name = "hodor_raft";
 
         @Override
-        public String toString() {
+        public String getName() {
             return name;
         }
 
@@ -45,7 +45,7 @@ public enum RocksDBColumnFamily {
         final String name = "hodor_watch";
 
         @Override
-        public String toString() {
+        public String getName() {
             return name;
         }
 
@@ -59,7 +59,7 @@ public enum RocksDBColumnFamily {
         final String name = "hodor_lock";
 
         @Override
-        public String toString() {
+        public String getName() {
             return name;
         }
 
@@ -73,7 +73,7 @@ public enum RocksDBColumnFamily {
         final String name = "hodor_seq";
 
         @Override
-        public String toString() {
+        public String getName() {
             return name;
         }
 
@@ -87,7 +87,7 @@ public enum RocksDBColumnFamily {
         final String name = "hodor_write";
 
         @Override
-        public String toString() {
+        public String getName() {
             return name;
         }
 
@@ -96,6 +96,8 @@ public enum RocksDBColumnFamily {
             return new ColumnFamilyDescriptor(BytesUtil.writeUtf8(name), cfOptions);
         }
     };
+
+    public abstract String getName();
 
     public abstract ColumnFamilyDescriptor getColumnFamilyDescriptor(ColumnFamilyOptions cfOptions);
 
