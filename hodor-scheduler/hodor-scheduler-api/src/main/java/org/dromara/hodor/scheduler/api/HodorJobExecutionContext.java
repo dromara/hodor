@@ -1,6 +1,9 @@
 package org.dromara.hodor.scheduler.api;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.IdGenerator;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.model.job.JobKey;
@@ -24,6 +27,8 @@ public class HodorJobExecutionContext {
     private final JobDesc jobDesc;
 
     private final Date fireTime;
+
+    private final List<Host> hosts = new ArrayList<>();
 
     public HodorJobExecutionContext(final JobKey rootJobKey, final JobDesc jobDesc,
                                     final String schedulerName, final Date fireTime) {
@@ -70,14 +75,27 @@ public class HodorJobExecutionContext {
         return schedulerName;
     }
 
+    public void resetHosts(List<Host> hosts) {
+        if (!this.hosts.isEmpty()) {
+            this.hosts.clear();
+        }
+        this.hosts.addAll(hosts);
+    }
+
+    public List<Host> getHosts() {
+        return this.hosts;
+    }
+
     @Override
     public String toString() {
-        return "HodorJobExecutionContext{" +
+        return "HodorJobExecutionContext {" +
             "requestId=" + requestId +
             ", schedulerName='" + schedulerName + '\'' +
             ", rootJobKey=" + rootJobKey +
             ", jobKey=" + jobKey +
             ", fireTime=" + fireTime +
+            ", hosts=" + hosts +
             '}';
     }
+
 }

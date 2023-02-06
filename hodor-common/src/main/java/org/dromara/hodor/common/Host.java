@@ -77,7 +77,7 @@ public class Host {
         }
 
         public String toString() {
-            return "Host.HostBuilder(endpoint=" + this.endpoint + ", ip=" + this.ip + ", port=" + this.port + ")";
+            return "Host {ip=" + this.ip + ", port=" + this.port + "}";
         }
     }
 

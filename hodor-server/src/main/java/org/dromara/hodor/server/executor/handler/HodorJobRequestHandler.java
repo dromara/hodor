@@ -10,10 +10,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.concurrent.FutureCallback;
 import org.dromara.hodor.common.extension.ExtensionLoader;
+import org.dromara.hodor.common.loadbalance.LoadBalance;
+import org.dromara.hodor.common.loadbalance.LoadBalanceEnum;
+import org.dromara.hodor.common.loadbalance.LoadBalanceFactory;
 import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.core.Constants.FlowNodeConstants;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.model.job.JobDesc;
+import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.remoting.api.RemotingClient;
 import org.dromara.hodor.remoting.api.RemotingConst;
 import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
@@ -25,6 +29,7 @@ import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.server.executor.exception.IllegalJobExecuteStateException;
+import org.dromara.hodor.server.executor.exception.JobScheduleException;
 import org.dromara.hodor.server.manager.ActuatorNodeManager;
 import org.dromara.hodor.server.manager.JobExecuteManager;
 
@@ -55,16 +60,30 @@ public class HodorJobRequestHandler implements RequestHandler {
     public void preHandle(final HodorJobExecutionContext context) {
         JobExecuteManager.getInstance().addSchedulerStartJob(context);
         // check job is running
-        if (JobExecuteManager.getInstance().isRunning(context.getJobKey())) {
-            throw new IllegalJobExecuteStateException("job {} is running.", context.getJobKey());
+        final JobKey jobKey = context.getJobKey();
+        if (JobExecuteManager.getInstance().isRunning(jobKey)) {
+            throw new IllegalJobExecuteStateException("The job {} is running", jobKey);
         }
+        // check available hosts
+        final List<Host> hosts = actuatorNodeManager.getAvailableHosts(jobKey);
+        if (hosts.isEmpty()) {
+            throw new JobScheduleException("The job [{}] has no available actuator nodes", jobKey);
+        }
+
+        // TODO: get load balance type from job
+        LoadBalance loadBalance = LoadBalanceFactory.getLoadBalance(LoadBalanceEnum.RANDOM.name());
+        Host selected = loadBalance.select(hosts);
+        hosts.remove(selected);
+        hosts.add(selected);
+
+        context.resetHosts(hosts);
     }
 
     public void handle(final HodorJobExecutionContext context) {
         log.info("hodor job request handler, info {}.", context);
         Exception jobException = null;
-        RemotingMessage request = getRequestBody(context);
-        List<Host> hosts = actuatorNodeManager.getAvailableHosts(context.getJobDesc());
+        final RemotingMessage request = getRequestBody(context);
+        final List<Host> hosts = context.getHosts();
         for (int i = hosts.size() - 1; i >= 0; i--) {
             Host host = hosts.get(i);
             try {
