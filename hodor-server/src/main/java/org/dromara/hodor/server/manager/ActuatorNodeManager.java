@@ -1,24 +1,23 @@
 package org.dromara.hodor.server.manager;
 
-import cn.hutool.core.lang.Assert;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.common.Host;
-import org.dromara.hodor.common.concurrent.HodorThreadFactory;
-import org.dromara.hodor.common.loadbalance.LoadBalance;
-import org.dromara.hodor.common.loadbalance.LoadBalanceEnum;
-import org.dromara.hodor.common.loadbalance.LoadBalanceFactory;
-import org.dromara.hodor.model.actuator.ActuatorInfo;
-import org.dromara.hodor.model.job.JobDesc;
-import org.dromara.hodor.model.node.NodeInfo;
-
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.common.Host;
+import org.dromara.hodor.common.concurrent.HodorThreadFactory;
+import org.dromara.hodor.model.actuator.ActuatorInfo;
+import org.dromara.hodor.model.job.JobKey;
+import org.dromara.hodor.model.node.NodeInfo;
 
 /**
  *  actuator node manager
@@ -115,21 +114,12 @@ public class ActuatorNodeManager {
         }
     }
 
-    public List<Host> getAvailableHosts(JobDesc jobDesc) {
-        List<String> allWorkNodes = Lists.newArrayList(getActuatorEndpointsByGroupName(jobDesc.getGroupName()));
-        List<Host> hosts = allWorkNodes.stream()
+    public List<Host> getAvailableHosts(JobKey jobKey) {
+        List<String> allWorkNodes = Lists.newArrayList(getActuatorEndpointsByGroupName(jobKey.getGroupName()));
+        return allWorkNodes.stream()
             .filter(endpoint -> !isOffline(endpoint))
             .map(Host::of)
             .collect(Collectors.toList());
-
-        Assert.notEmpty(hosts, "The group [{}] has no available nodes.", jobDesc.getGroupName());
-
-        // TODO: get load balance type from job
-        LoadBalance loadBalance = LoadBalanceFactory.getLoadBalance(LoadBalanceEnum.RANDOM.name());
-        Host selected = loadBalance.select(hosts);
-        hosts.remove(selected);
-        hosts.add(selected);
-        return hosts;
     }
 
     public void addActuatorNode(String nodeEndpoint, NodeInfo nodeInfo) {

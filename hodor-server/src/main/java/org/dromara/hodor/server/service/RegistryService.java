@@ -1,8 +1,9 @@
 package org.dromara.hodor.server.service;
 
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.HodorLifecycle;
-import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.utils.GsonUtils;
 import org.dromara.hodor.common.utils.HostUtils;
@@ -16,12 +17,8 @@ import org.dromara.hodor.register.api.RegistryConfig;
 import org.dromara.hodor.register.api.node.ActuatorNode;
 import org.dromara.hodor.register.api.node.SchedulerNode;
 import org.dromara.hodor.server.config.HodorServerProperties;
-import org.dromara.hodor.server.listener.JobEventDispatchListener;
 import org.dromara.hodor.server.listener.RegistryConnectionStateListener;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * register service
@@ -49,8 +46,13 @@ public class RegistryService implements HodorLifecycle {
     }
 
     @Override
-    public void start() {
-        RegistryConfig config = RegistryConfig.builder().servers(properties.getRegistryServers()).namespace(properties.getRegistryNamespace()).build();
+    public void start() throws Exception {
+        RegistryConfig config = RegistryConfig.builder()
+            .servers(properties.getRegistryServers())
+            .namespace(properties.getRegistryNamespace())
+            .endpoint(properties.getRegistryEndpoint())
+            .dataPath(properties.getRegistryDataPath())
+            .build();
         registryCenter.init(config);
         this.registryConnectionStateListener(new RegistryConnectionStateListener(this));
         initNode();

@@ -1,6 +1,7 @@
 package com.dromara.hodor.common.kv;
 
 import com.google.common.collect.Lists;
+import org.apache.ratis.conf.RaftProperties;
 import org.dromara.hodor.common.raft.RaftOptions;
 import org.dromara.hodor.common.raft.kv.core.HodorKVOptions;
 import org.dromara.hodor.common.raft.kv.core.HodorKVServer;
@@ -35,6 +36,7 @@ public class HodorKVServerTest {
                 .storageDir(new File("target/test_kv/raft"))
                 .serverAddresses("127.0.0.1:8081,127.0.0.1:8082,127.0.0.1:8083")
                 //.stateMachineMap(stateMachineMap) // for customer
+                .raftProperties(new RaftProperties())
                 .build();
         StorageOptions storageOptions = StorageOptions.builder()
                 .storageType(StorageType.RocksDB)

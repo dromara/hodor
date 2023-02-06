@@ -10,8 +10,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.actuator.common.JobExecutionContext;
 import org.dromara.hodor.actuator.common.JobRegister;
-import org.dromara.hodor.actuator.java.core.ScheduledMethodRunnable;
 import org.dromara.hodor.actuator.common.core.JobInstance;
+import org.dromara.hodor.actuator.java.core.ScheduledMethodRunnable;
 import org.dromara.hodor.actuator.java.job.JavaJob;
 import org.dromara.hodor.model.job.JobDesc;
 import org.springframework.aop.framework.AopInfrastructureBean;
@@ -26,7 +26,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.scheduling.support.CronSequenceGenerator;
+import org.springframework.scheduling.support.CronExpression;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
@@ -140,7 +140,7 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
                 //zone = this.embeddedValueResolver.resolveStringValue(zone);
             }
             if (StringUtils.hasLength(cron) && !Scheduled.CRON_DISABLED.equals(cron)) {
-                Assert.isTrue(CronSequenceGenerator.isValidExpression(cron), String.format("cron [%s] xpression is invalid.", cron));
+                Assert.isTrue(CronExpression.isValidExpression(cron), String.format("cron [%s] xpression is invalid.", cron));
             }
         }
 

@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.dromara.hodor.common.proto";
+option java_outer_classname = "WatchServiceProto";
+option java_generate_equals_and_hash = true;
+
+package hodor.common;
+
+// The watch service definition.
+service WatchService {
+
+  // Watch watches for events happening or that have happened. Both input and output
+  // are streams; the input stream is for creating and canceling watchers and the output
+  // stream sends events. One watch RPC can watch on multiple key ranges, streaming events
+  // for several watches at once. The entire event history can be watched starting from the
+  // last compaction revision.
+  rpc Watch (stream WatchRequest) returns (stream WatchResponse) {
+  }
+
+}
+
+message WatchRequest {
+  // client node id
+  string node_id = 1;
+  // request_union is a request to either create a new watcher or cancel an existing watcher.
+  oneof request_union {
+    WatchCreateRequest create_request = 2;
+    WatchCancelRequest cancel_request = 3;
+    //WatchProgressRequest progress_request = 3;
+  }
+}
+
+message WatchCreateRequest {
+  // key is the key to register for watching.
+  bytes key = 1;
+  // watch_id is the watcher id to cancel so that no more events are transmitted.
+  int64 watch_id = 2;
+}
+
+// The request message containing the user's name.
+message WatchCancelRequest {
+  // key is the key to register for watching.
+  bytes key = 1;
+  // watch_id is the watcher id to cancel so that no more events are transmitted.
+  int64 watch_id = 2;
+}
+
+// The response message containing the greetings
+message WatchResponse {
+  DataChangeEvent event = 1;
+}
+
+message DataChangeEvent {
+  enum Type {
+      NODE_ADDED = 0;
+      NODE_UPDATED = 1;
+      NODE_REMOVED = 2;
+      CONNECTION_SUSPENDED = 3;
+      CONNECTION_RECONNECTED = 4;
+      CONNECTION_LOST = 5;
+      INITIALIZED = 6;
+  }
+
+  Type type = 1;
+
+  bytes key = 2;
+
+  bytes data = 3;
+}
+
+message KeyValue {
+  // key is the key in bytes. An empty key is not allowed.
+  bytes key = 1;
+  // create_revision is the revision of last creation on this key.
+  int64 create_revision = 2;
+  // mod_revision is the revision of last modification on this key.
+  int64 mod_revision = 3;
+  // version is the version of the key. A deletion resets
+  // the version to zero and any modification of the key
+  // increases its version.
+  int64 version = 4;
+  // value is the value held by the key, in bytes.
+  bytes value = 5;
+  // lease is the ID of the lease that attached to key.
+  // When the attached lease expires, the key will be deleted.
+  // If lease is 0, then no lease is attached to the key.
+  int64 lease = 6;
+}
+
+message Event {
+  enum EventType {
+    PUT = 0;
+    DELETE = 1;
+  }
+  // type is the kind of event. If type is a PUT, it indicates
+  // new data has been stored to the key. If type is a DELETE,
+  // it indicates the key was deleted.
+  EventType type = 1;
+  // kv holds the KeyValue for the event.
+  // A PUT event contains current kv pair.
+  // A PUT event with kv.Version=1 indicates the creation of a key.
+  // A DELETE/EXPIRE event contains the deleted key with
+  // its modification revision set to the revision of deletion.
+  KeyValue kv = 2;
+}

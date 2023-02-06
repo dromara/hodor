@@ -13,7 +13,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>hodor-extension-cache-register-impl</module>
+        <module>hodor-extension-cache-embedded-impl</module>
         <module>hodor-extension-cache-redis-impl</module>
     </modules>
 

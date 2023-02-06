@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 import lombok.extern.slf4j.Slf4j;
@@ -144,7 +145,7 @@ public class FileIOUtils {
       final File sourceLink = new File(sourceDir, path);
       path = destDir + path;
 
-      final File[] targetFiles = sourceLink.listFiles();
+      final File[] targetFiles = Objects.requireNonNull(sourceLink.listFiles());
       for (final File targetFile : targetFiles) {
         if (targetFile.isFile()) {
           final File linkFile = new File(path, targetFile.getName());
@@ -158,14 +159,16 @@ public class FileIOUtils {
 
   private static void createDirsFindFiles(final File baseDir, final File sourceDir,
                                           final File destDir, final Set<String> paths) {
-    final File[] srcList = sourceDir.listFiles();
+    final File[] srcList = Objects.requireNonNull(sourceDir.listFiles());
     final String path = getRelativePath(baseDir, sourceDir);
     paths.add(path);
 
     for (final File file : srcList) {
-      if (file.isDirectory()) {
-        final File newDestDir = new File(destDir, file.getName());
-        newDestDir.mkdirs();
+      if (!file.isDirectory()) {
+        continue;
+      }
+      final File newDestDir = new File(destDir, file.getName());
+      if (newDestDir.mkdirs()) {
         createDirsFindFiles(baseDir, file, newDestDir, paths);
       }
     }
@@ -187,12 +190,8 @@ public class FileIOUtils {
       return Pair.of(0, 0);
     }
 
-    BufferedInputStream inputStream = null;
-    try {
-      inputStream = new BufferedInputStream(fileStream);
+    try (BufferedInputStream inputStream = new BufferedInputStream(fileStream)) {
       inputStream.read(buffer);
-    } finally {
-      IOUtils.closeQuietly(inputStream);
     }
 
     final Pair<Integer, Integer> utf8Range = getUtf8Range(buffer, 0, length);

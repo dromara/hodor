@@ -19,17 +19,23 @@ package com.dromara.hodor.common.storage.cache.impl;
 
 import org.dromara.hodor.common.extension.Join;
 import org.dromara.hodor.common.storage.cache.CacheClient;
+import org.dromara.hodor.common.storage.cache.CacheSourceConfig;
 import org.dromara.hodor.common.storage.cache.HodorCacheSource;
 
 /**
  * RedisCacheSource
  *
  * @author tomgs
- * @since 2021/9/23
+ * @version 1.0
  */
-@Join
+@Join(order = 1)
 public class RedisCacheSource implements HodorCacheSource {
 
+    private final CacheSourceConfig cacheSourceConfig;
+
+    public RedisCacheSource(final CacheSourceConfig cacheSourceConfig) {
+        this.cacheSourceConfig = cacheSourceConfig;
+    }
     @Override
     public String getCacheType() {
         return "redis";

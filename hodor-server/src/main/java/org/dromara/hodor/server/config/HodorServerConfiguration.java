@@ -1,5 +1,7 @@
 package org.dromara.hodor.server.config;
 
+import cn.hutool.core.lang.Assert;
+import java.util.Optional;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.storage.cache.CacheSourceConfig;
 import org.dromara.hodor.common.storage.cache.HodorCacheSource;
@@ -29,8 +31,12 @@ public class HodorServerConfiguration {
 
     @Bean
     public HodorCacheSource hodorCacheSource() {
-        CacheSourceConfig sourceConfig = new CacheSourceConfig();
-        return ExtensionLoader.getExtensionLoader(HodorCacheSource.class, CacheSourceConfig.class).getProtoJoin("cachesource", sourceConfig);
+        CacheSourceConfig sourceConfig = Optional.ofNullable(properties.getCacheSource())
+            .orElse(new CacheSourceConfig());
+        final HodorCacheSource cacheSource = ExtensionLoader.getExtensionLoader(HodorCacheSource.class, CacheSourceConfig.class)
+            .getProtoJoin("cachesource", sourceConfig);
+        Assert.equals(cacheSource.getCacheType(), sourceConfig.getType(), "cache source type config error.");
+        return cacheSource;
     }
 
     @Bean(destroyMethod = "stopReporterJobExecDetail")

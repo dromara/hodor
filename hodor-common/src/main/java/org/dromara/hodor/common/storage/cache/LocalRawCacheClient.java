@@ -11,7 +11,7 @@ import org.dromara.hodor.common.concurrent.LockUtil;
  * LocalRawCacheClient
  *
  * @author tomgs
- * @since 2021/8/16
+ * @since 1.0
  */
 public class LocalRawCacheClient<K, V> implements CacheClient<K, V> {
 
@@ -41,12 +41,7 @@ public class LocalRawCacheClient<K, V> implements CacheClient<K, V> {
             if (pair == null) {
                 return null;
             }
-            Long expireTime = pair.getSecond();
-            if (expireTime <= 0) {
-                return pair.getFirst();
-            }
-            // expired
-            if (System.currentTimeMillis() - expireTime > 0) {
+            if (checkExpired(pair)) {
                 delete(k);
                 return null;
             }

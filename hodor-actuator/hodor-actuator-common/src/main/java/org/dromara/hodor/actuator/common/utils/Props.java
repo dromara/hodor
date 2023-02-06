@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,7 +38,6 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.CharSequenceReader;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
@@ -93,13 +93,8 @@ public class Props {
         this(parent);
         setSource(file.getPath());
 
-        final InputStream input = new BufferedInputStream(new FileInputStream(file));
-        try {
+        try (InputStream input = new BufferedInputStream(Files.newInputStream(file.toPath()))) {
             loadFrom(input);
-        } catch (final IOException e) {
-            throw e;
-        } finally {
-            input.close();
         }
     }
 
@@ -175,8 +170,10 @@ public class Props {
     }
 
     /**
-     * @param source
-     * @return
+     * copy next props
+     *
+     * @param source props source
+     * @return new props
      */
     private static Props copyNext(final Props source) {
         Props priorNodeCopy = null;
@@ -301,15 +298,11 @@ public class Props {
             return;
         }
         Properties properties = new Properties();
-        FileInputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream(propertiesFile);
+        try (FileInputStream inputStream = new FileInputStream(propertiesFile);) {
             properties.load(inputStream);
             this.put(properties);
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
-        } finally {
-            IOUtils.closeQuietly(inputStream);
         }
     }
 

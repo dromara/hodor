@@ -42,7 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ExtensionLoader<T> {
     private Logger logger = LoggerFactory.getLogger(ExtensionLoader.class);
 
-    private static final String SOUL_DIRECTORY = "META-INF/hodor/";
+    private static final String EXTENSION_DIRECTORY = "META-INF/hodor/";
 
     private static final Map<Class<?>, ExtensionLoader<?>> LOADERS = new ConcurrentHashMap<>();
 
@@ -225,7 +225,7 @@ public class ExtensionLoader<T> {
      * Load files under HODOR_DIRECTORY.
      */
     private void loadDirectory(Map<String, Class<?>> classes) {
-        String fileName = SOUL_DIRECTORY + clazz.getName();
+        String fileName = EXTENSION_DIRECTORY + clazz.getName();
         try {
             ClassLoader classLoader = ExtensionLoader.class.getClassLoader();
             Enumeration<URL> urls = classLoader != null ? classLoader.getResources(fileName)
@@ -275,7 +275,10 @@ public class ExtensionLoader<T> {
         if (oldClass == null) {
             classes.put(name, subClass);
         } else if (oldClass != subClass) {
-            throw new IllegalStateException("load extension resources error,Duplicate class " + clazz.getName() + "name " + name + " on " + oldClass.getName() + " or" + subClass.getName());
+            final Join oldJoinAnnotation = oldClass.getAnnotation(Join.class);
+            if (annotation.order() > oldJoinAnnotation.order()) {
+                classes.put(name, subClass);
+            }
         }
     }
 

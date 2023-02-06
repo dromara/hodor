@@ -30,10 +30,12 @@ public class LeaderService {
      */
     public void electLeader(final LeaderExecutionCallback callback) {
         registryCenter.executeInLeader(SchedulerNode.LATCH_PATH, () -> {
-            if (!hasLeader()) {
+            createLeaderNode();
+            callback.execute();
+            /*if (!hasLeader()) {
                 createLeaderNode();
                 callback.execute();
-            }
+            }*/
         });
     }
 

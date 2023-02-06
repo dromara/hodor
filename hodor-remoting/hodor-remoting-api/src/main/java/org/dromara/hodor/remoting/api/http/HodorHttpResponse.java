@@ -20,10 +20,13 @@ public class HodorHttpResponse  implements Serializable {
 
     private static final long serialVersionUID = 8813650489151635556L;
 
+    @Builder.Default
     private String protocolVersion = "HTTP/1.1";
 
+    @Builder.Default
     private int statusCode = 200;
 
+    @Builder.Default
     private HodorHttpHeaders headers = new HodorHttpHeaders();
 
     private byte[] body;

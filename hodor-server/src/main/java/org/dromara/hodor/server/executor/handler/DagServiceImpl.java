@@ -153,6 +153,11 @@ public class DagServiceImpl implements DagService {
         }, jobKey);
     }
 
+    @Override
+    public void deleteFlowData(JobKey jobKey) {
+        flowNodeBeanCacheClient.delete(jobKey);
+    }
+
     private void persistDagInstance(Dag dag) {
         LockUtil.lockMethod(dagInstanceLock, d -> {
             dagCacheClient.put(JobKey.of(d.getName()), d);
@@ -160,7 +165,7 @@ public class DagServiceImpl implements DagService {
             if (dag.getStatus().isTerminal()) {
                 flowJobExecDetail.setExecuteEnd(new Date());
                 // dag is finished, remove dag instance from cache
-                dagCacheClient.remove(JobKey.of(d.getName()));
+                dagCacheClient.delete(JobKey.of(d.getName()));
             }
             flowJobExecDetailService.updateFlowJobExecDetail(flowJobExecDetail);
             return null;

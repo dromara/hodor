@@ -1,44 +1,40 @@
 package org.dromara.hodor.common.raft.kv.core;
 
+import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ratis.protocol.Message;
 import org.apache.ratis.protocol.RaftGroupId;
 import org.apache.ratis.server.RaftServer;
+import org.apache.ratis.server.protocol.TermIndex;
 import org.apache.ratis.server.storage.RaftStorage;
+import org.apache.ratis.statemachine.StateMachineStorage;
 import org.apache.ratis.statemachine.TransactionContext;
 import org.apache.ratis.statemachine.impl.SimpleStateMachineStorage;
 import org.apache.ratis.thirdparty.com.google.protobuf.ByteString;
 import org.apache.ratis.thirdparty.io.netty.handler.codec.CodecException;
 import org.dromara.hodor.common.raft.HodorRaftStateMachine;
-import org.dromara.hodor.common.raft.kv.protocol.*;
-import org.dromara.hodor.common.raft.kv.storage.DBStore;
-import org.dromara.hodor.common.raft.kv.storage.StorageEngine;
+import org.dromara.hodor.common.raft.kv.protocol.HodorKVRequest;
+import org.dromara.hodor.common.raft.kv.protocol.HodorKVResponse;
 import org.dromara.hodor.common.utils.ProtostuffUtils;
-
-import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * RatisServerStateMachine
  *
  * @author tomgs
- * @since 2022/3/22
+ * @since 1.0
  */
 @Slf4j
 public class HodorKVStateMachine extends HodorRaftStateMachine {
 
-    private final SimpleStateMachineStorage storage =
-            new SimpleStateMachineStorage();
-
-    private final StorageEngine storageEngine;
-
-    private final DBStore dbStore;
+    private final SimpleStateMachineStorage storage = new SimpleStateMachineStorage();
 
     private RaftGroupId raftGroupId;
 
-    public HodorKVStateMachine(final StorageEngine storageEngine) {
-        this.storageEngine = storageEngine;
-        this.dbStore = this.storageEngine.getRawDBStore();
+    private final RequestHandler requestHandler;
+
+    public HodorKVStateMachine(final RequestHandler requestHandler) {
+        this.requestHandler = requestHandler;
     }
 
     @Override
@@ -62,15 +58,25 @@ public class HodorKVStateMachine extends HodorRaftStateMachine {
 
     @Override
     public long takeSnapshot() throws IOException {
-        return super.takeSnapshot();
+        final TermIndex lastAppliedTermIndex = getLastAppliedTermIndex();
+        return lastAppliedTermIndex.getIndex();
+        //return super.takeSnapshot();
+    }
+
+    @Override
+    public StateMachineStorage getStateMachineStorage() {
+        return storage;
     }
 
     @Override
     public CompletableFuture<Message> applyTransaction(TransactionContext trx) {
-        final ByteString logData = trx.getStateMachineLogEntry().getLogData();
         try {
-            return CompletableFuture.completedFuture(runCommand(Message.valueOf(logData)));
-        } catch (CodecException e) {
+            final ByteString logData = trx.getStateMachineLogEntry().getLogData();
+            final Message message = Message.valueOf(logData);
+            final TermIndex termIndex = TermIndex.valueOf(trx.getLogEntry());
+            HodorKVRequest kvRequest = ProtostuffUtils.deserialize(message.getContent().toByteArray(), HodorKVRequest.class);
+            return CompletableFuture.completedFuture(runCommand(kvRequest, termIndex));
+        } catch (Exception e) {
             return completeExceptionally(e);
         }
     }
@@ -79,77 +85,29 @@ public class HodorKVStateMachine extends HodorRaftStateMachine {
     public CompletableFuture<Message> query(Message request) {
         try {
             // do something
-            return CompletableFuture.completedFuture(runCommand(request));
+            HodorKVRequest kvRequest = ProtostuffUtils.deserialize(request.getContent().toByteArray(), HodorKVRequest.class);
+            return CompletableFuture.completedFuture(runQueryCommand(kvRequest));
         } catch (Exception e) {
             return completeExceptionally(e);
         }
     }
 
-    private Message runCommand(Message request) throws CodecException {
-        HodorKVRequest kvRequest = ProtostuffUtils.deserialize(request.getContent().toByteArray(), HodorKVRequest.class);
-        final CmdType cmdType = kvRequest.getCmdType();
-        HodorKVResponse.HodorKVResponseBuilder builder = HodorKVResponse.builder()
-                .requestId(kvRequest.getRequestId())
-                .traceId(kvRequest.getTraceId())
-                .cmdType(cmdType)
-                .success(true);
-        switch (cmdType) {
-            case GET:
-                log.info("GET op.");
-                final GetRequest getRequest = kvRequest.getGetRequest();
-                byte[] result = dbStore.get(getRequest.getKey());
-                GetResponse getResponse = GetResponse.builder()
-                        .value(result)
-                        .build();
-                builder.getResponse(getResponse);
-                break;
-            case PUT:
-                log.info("PUT op.");
-                final PutRequest putRequest = kvRequest.getPutRequest();
-                try {
-                    dbStore.put(putRequest.getKey(), putRequest.getValue());
-                } catch (Exception e) {
-                    log.error("PUT exception: {}", e.getMessage(), e);
-                    builder.success(false)
-                            .message(e.getMessage());
-                }
-                break;
-            case DELETE:
-                log.info("DELETE op.");
-                final DeleteRequest deleteRequest = kvRequest.getDeleteRequest();
-                try {
-                    dbStore.delete(deleteRequest.getKey());
-                } catch (Exception e) {
-                    log.error("DELETE exception: {}", e.getMessage(), e);
-                    builder.success(false)
-                            .message(e.getMessage());
-                }
-                break;
-            case CONTAINS_KEY:
-                log.info("CONTAINS_KEY op.");
-                final ContainsKeyRequest containsKeyRequest = kvRequest.getContainsKeyRequest();
-                try {
-                    final Boolean exists = dbStore.containsKey(containsKeyRequest.getKey());
-                    ContainsKeyResponse containsKeyResponse = ContainsKeyResponse.builder()
-                        .value(exists)
-                        .build();
-                    builder.containsKeyResponse(containsKeyResponse);
-                } catch (Exception e) {
-                    log.error("DELETE exception: {}", e.getMessage(), e);
-                    builder.success(false)
-                        .message(e.getMessage());
-                }
-                break;
-            default:
-                throw new RuntimeException("Unsupported request type: " + request.getClass().getName());
-        }
-        return Message.valueOf(ByteString.copyFrom(ProtostuffUtils.serialize(builder.build())));
+    private Message runQueryCommand(HodorKVRequest kvRequest) throws IOException {
+        final HodorKVResponse hodorKVResponse = requestHandler.handleReadRequest(kvRequest);
+        return Message.valueOf(ByteString.copyFrom(ProtostuffUtils.serialize(hodorKVResponse)));
+    }
+
+    private Message runCommand(HodorKVRequest kvRequest, TermIndex termIndex) throws CodecException, IOException {
+        final long term = termIndex.getTerm();
+        final long trxLogIndex = termIndex.getIndex();
+        final HodorKVResponse hodorKVResponse = requestHandler.handleWriteRequest(kvRequest, trxLogIndex);
+        updateLastAppliedTermIndex(termIndex);
+        return Message.valueOf(ByteString.copyFrom(ProtostuffUtils.serialize(hodorKVResponse)));
     }
 
     @Override
     public void close() throws IOException {
         super.close();
-        storageEngine.close();
     }
 
     private static <T> CompletableFuture<T> completeExceptionally(Exception e) {

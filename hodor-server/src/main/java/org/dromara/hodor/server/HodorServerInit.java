@@ -45,7 +45,7 @@ public class HodorServerInit implements ApplicationRunner, ApplicationContextAwa
     }
 
     @Override
-    public void run(ApplicationArguments args) throws InterruptedException {
+    public void run(ApplicationArguments args) throws Exception {
         // start remoting server
         restServerService.start();
         // register service

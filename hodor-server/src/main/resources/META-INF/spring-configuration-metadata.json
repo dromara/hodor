@@ -60,6 +60,18 @@
       "description": "hodor registry server servers config"
     },
     {
+      "name": "hodor.registry.endpoint",
+      "type": "java.lang.String",
+      "sourceType": "org.dromara.hodor.server.config.HodorServerProperties$RegistryProperties",
+      "description": "hodor registry server endpoint"
+    },
+    {
+      "name": "hodor.registry.dataPath",
+      "type": "java.lang.String",
+      "sourceType": "org.dromara.hodor.server.config.HodorServerProperties$RegistryProperties",
+      "description": "hodor registry server data path"
+    },
+    {
       "name": "hodor.database.url",
       "type": "java.lang.String",
       "description": "database.url."

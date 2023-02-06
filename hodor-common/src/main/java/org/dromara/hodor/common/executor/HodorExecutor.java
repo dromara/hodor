@@ -156,7 +156,7 @@ public class HodorExecutor {
             return;
         }
 
-        Optional.of(circleQueue.poll()).ifPresent(runnable -> executor.execute(() -> {
+        Optional.ofNullable(circleQueue.poll()).ifPresent(runnable -> executor.execute(() -> {
             try {
                 runnable.run();
             } catch (Throwable unexpected) {
@@ -174,7 +174,7 @@ public class HodorExecutor {
                 reset();
                 return;
             }
-            Optional.of(circleQueue.poll()).ifPresent(runnable -> executor.execute(runnable));
+            Optional.ofNullable(circleQueue.poll()).ifPresent(runnable -> executor.execute(runnable));
         }
         // 这里为了严谨起见递归调用改用循环方式避免栈溢出
         // notifyTaskExecute();

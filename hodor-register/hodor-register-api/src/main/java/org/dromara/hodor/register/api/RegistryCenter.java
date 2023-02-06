@@ -12,7 +12,7 @@ import org.dromara.hodor.common.extension.SPI;
 @SPI("register")
 public interface RegistryCenter {
 
-    void init(RegistryConfig config);
+    void init(RegistryConfig config) throws Exception;
 
     void close() throws Exception;
 
@@ -24,16 +24,7 @@ public interface RegistryCenter {
 
     void createPersistent(String key, String value);
 
-    /**
-     * 创建持久化有序节点
-     * @param path 路径
-     * @param value 值
-     */
-    void createPersistentSequential(String path, String value);
-
     void createEphemeral(String key, String value);
-
-    void createEphemeralSequential(String key, String value);
 
     void update(String key, String value);
 

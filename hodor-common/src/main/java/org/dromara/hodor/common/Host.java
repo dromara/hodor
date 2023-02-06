@@ -11,7 +11,7 @@ import org.dromara.hodor.common.utils.StringUtils;
  * host info
  *
  * @author tomgs
- * @since 2020/9/24
+ * @since 1.0
  */
 @Data
 @NoArgsConstructor
@@ -36,7 +36,6 @@ public class Host {
         }
         if (hostSplit.size() != 2) {
             throw new IllegalArgumentException("endpoint format is illegal.");
-
         }
         return Host.builder().endpoint(endpoint).ip(hostSplit.get(0)).port(Integer.parseInt(hostSplit.get(1))).build();
     }
@@ -78,7 +77,7 @@ public class Host {
         }
 
         public String toString() {
-            return "Host.HostBuilder(endpoint=" + this.endpoint + ", ip=" + this.ip + ", port=" + this.port + ")";
+            return "Host {ip=" + this.ip + ", port=" + this.port + "}";
         }
     }
 

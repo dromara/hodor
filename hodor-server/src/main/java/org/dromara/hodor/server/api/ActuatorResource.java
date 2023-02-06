@@ -61,6 +61,7 @@ public class ActuatorResource {
     }
 
     private void checkActuatorInfo(ActuatorInfo actuatorInfo) {
+        Preconditions.checkNotNull(actuatorInfo.getName(), "actuator name must be not null.");
         Preconditions.checkNotNull(actuatorInfo.getNodeInfo(), "actuator node info must be not null.");
         Preconditions.checkNotNull(actuatorInfo.getGroupNames(), "actuator group names must be not null.");
     }

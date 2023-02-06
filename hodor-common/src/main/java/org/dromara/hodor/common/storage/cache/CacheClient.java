@@ -1,12 +1,23 @@
 package org.dromara.hodor.common.storage.cache;
 
+import org.dromara.hodor.common.utils.Pair;
+
 /**
  * cache client
  *
  * @author tomgs
- * @since 2021/8/11
+ * @since 1.0
  */
-public interface CacheClient<K, V> {
+public interface CacheClient<K, V> extends AutoCloseable {
+
+    default boolean checkExpired(Pair<V, Long> pair) {
+        Long expireTime = pair.getSecond();
+        if (expireTime <= 0) {
+            return false;
+        }
+        // expired
+        return System.currentTimeMillis() - expireTime > 0;
+    }
 
     V get(K key);
 
@@ -17,7 +28,5 @@ public interface CacheClient<K, V> {
     void delete(K key);
 
     void clear();
-
-    void close();
 
 }

@@ -35,4 +35,6 @@ public class HodorKVResponse implements Serializable {
 
     private ContainsKeyResponse containsKeyResponse;
 
+    private ScanResponse scanResponse;
+
 }

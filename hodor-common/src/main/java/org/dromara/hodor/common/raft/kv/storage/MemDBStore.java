@@ -1,7 +1,7 @@
 package org.dromara.hodor.common.raft.kv.storage;
 
-import java.util.List;
-import org.dromara.hodor.common.raft.kv.protocol.KVEntry;
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * MemDBStore
@@ -23,28 +23,28 @@ public class MemDBStore implements DBStore {
     }
 
     @Override
-    public byte[] get(byte[] key) {
-        throw new UnsupportedOperationException("MemDBStore");
-    }
-
-    @Override
-    public void put(byte[] key, byte[] value) {
-        throw new UnsupportedOperationException("MemDBStore");
-    }
-
-    @Override
-    public void delete(byte[] key) {
-        throw new UnsupportedOperationException("MemDBStore");
-    }
-
-    @Override
-    public Boolean containsKey(byte[] key) {
+    public Table<byte[], byte[]> getTable(String name) throws IOException {
         return null;
     }
 
     @Override
-    public List<KVEntry> scan(byte[] startKey, byte[] endKey) {
+    public ArrayList<Table<byte[], byte[]>> listTables() throws IOException {
         return null;
+    }
+
+    @Override
+    public void flushDB() throws IOException {
+
+    }
+
+    @Override
+    public void flushLog(boolean sync) throws IOException {
+
+    }
+
+    @Override
+    public void compactDB() throws IOException {
+
     }
 
     @Override

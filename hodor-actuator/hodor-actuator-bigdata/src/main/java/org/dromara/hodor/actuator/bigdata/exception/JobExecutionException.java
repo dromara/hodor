@@ -1,10 +1,14 @@
 package org.dromara.hodor.actuator.bigdata.exception;
 
 /**
- * @author tangzhongyuan
- * @create 2018-11-26 21:50
+ * JobExecutionException
+ *
+ * @author tomgs
+ * @since 1.0
  **/
 public class JobExecutionException extends RuntimeException {
+
+    private static final long serialVersionUID = -4816318363684461696L;
 
     public JobExecutionException(final String errorMessage, final Exception e, final Object... args) {
         super(String.format(errorMessage, args), e);

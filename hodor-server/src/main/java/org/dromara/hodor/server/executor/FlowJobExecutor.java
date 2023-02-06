@@ -73,7 +73,7 @@ public class FlowJobExecutor extends CommonJobExecutor {
     }
 
     private void submitDagInstance(Dag dag) {
-        FlowJobExecutorManager.getInstance().startDag(dag);
+        flowJobExecutorManager.startDag(dag);
     }
 
 }
