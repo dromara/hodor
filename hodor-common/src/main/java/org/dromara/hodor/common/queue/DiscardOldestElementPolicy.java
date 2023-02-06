@@ -16,7 +16,7 @@ public class DiscardOldestElementPolicy<T> implements RejectedEnqueueHandler<T> 
   @Override
   public void rejectedExecution(T e, Queue<T> queue) {
     Object old = queue.poll();
-    log.warn("discard the oldest element：[{}]", old);
+    log.warn("discard the oldest element: [{}], stack: {}", old, Thread.currentThread().getStackTrace());
   }
 
 }
