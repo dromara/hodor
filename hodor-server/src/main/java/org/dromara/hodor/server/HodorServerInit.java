@@ -66,7 +66,7 @@ public class HodorServerInit implements ApplicationRunner, ApplicationContextAwa
             } catch (Exception e) {
                 log.error("Error where shutting down remote service.", e);
             }
-        }));
+        }, "HodorServerShutdownHook"));
 
         log.info("Hodor server starting success.");
         aliveLatch.await();
