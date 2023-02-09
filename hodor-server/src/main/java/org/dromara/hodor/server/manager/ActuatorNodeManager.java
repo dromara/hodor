@@ -15,12 +15,13 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.concurrent.HodorThreadFactory;
+import org.dromara.hodor.common.utils.TimeUtil;
 import org.dromara.hodor.model.actuator.ActuatorInfo;
 import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.model.node.NodeInfo;
 
 /**
- *  actuator node manager
+ * actuator node manager
  *
  * @author tomgs
  * @version 2021/8/1 1.0
@@ -60,7 +61,7 @@ public class ActuatorNodeManager {
 
     public void startOfflineActuatorClean() {
         this.cleanSchedule = Executors.newSingleThreadScheduledExecutor(HodorThreadFactory.create("offline-actuator-cleaner", false));
-        this.cleanSchedule.scheduleWithFixedDelay(this::offlineActuatorClean, 30,60, TimeUnit.SECONDS);
+        this.cleanSchedule.scheduleWithFixedDelay(this::offlineActuatorClean, 30, 60, TimeUnit.SECONDS);
     }
 
     public void offlineActuatorClean() {
@@ -95,12 +96,14 @@ public class ActuatorNodeManager {
     }
 
     public boolean isOffline(String endpoint) {
-        Long lastHeartbeat = actuatorNodeInfos.get(endpoint).getLastHeartbeat();
+        final long lastHeartbeat = Optional.ofNullable(actuatorNodeInfos.get(endpoint))
+            .orElse(ActuatorInfo.builder().lastHeartbeat(0).build())
+            .getLastHeartbeat();
         return heartbeatThresholdExceedCheck(lastHeartbeat);
     }
 
     private boolean heartbeatThresholdExceedCheck(Long lastHeartbeat) {
-        return System.currentTimeMillis() - lastHeartbeat > HEARTBEAT_THRESHOLD;
+        return TimeUtil.currentTimeMillis() - lastHeartbeat > HEARTBEAT_THRESHOLD;
     }
 
     public void clearActuatorNodes() {
