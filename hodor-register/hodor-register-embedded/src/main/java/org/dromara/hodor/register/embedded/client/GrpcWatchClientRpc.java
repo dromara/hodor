@@ -170,7 +170,7 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
      */
     private ManagedChannel createNewManagedChannel(String serverIp, int serverPort) {
         grpcExecutor = ThreadUtil.newExecutor(4, 4);
-        grpcExecutor.setThreadFactory(ThreadUtil.newNamedThreadFactory("hodor-watch-", true));
+        grpcExecutor.setThreadFactory(ThreadUtil.newNamedThreadFactory("hodor-watch-client-", true));
         ManagedChannelBuilder<?> managedChannelBuilder = ManagedChannelBuilder.forAddress(serverIp, serverPort)
             .executor(grpcExecutor).compressorRegistry(CompressorRegistry.getDefaultInstance())
             .decompressorRegistry(DecompressorRegistry.getDefaultInstance())

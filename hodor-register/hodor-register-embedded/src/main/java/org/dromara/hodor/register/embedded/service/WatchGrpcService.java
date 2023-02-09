@@ -171,7 +171,7 @@ public final class WatchGrpcService extends RaftServerRpcWithProxy<GrpcServerPro
     this.executor = ConcurrentUtils.newThreadPoolWithMax(
         GrpcConfigKeys.Server.asyncRequestThreadPoolCached(properties),
         GrpcConfigKeys.Server.asyncRequestThreadPoolSize(properties),
-        getId() + "-request-");
+        "hodor-watch-server-request");
     this.clientProtocolService = new GrpcClientProtocolService(idSupplier, raftServer, executor);
 
     this.serverInterceptor = new MetricServerInterceptor(
