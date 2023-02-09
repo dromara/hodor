@@ -18,9 +18,7 @@
 package org.dromara.hodor.common.raft;
 
 import java.io.File;
-import java.util.List;
 import java.util.Map;
-
 import lombok.Builder;
 import lombok.Data;
 import org.apache.ratis.conf.RaftProperties;
