@@ -64,6 +64,7 @@ public class HodorServerProperties {
 
     @Data
     static class RegistryProperties {
+        private String type;
         private String servers;
         private String namespace;
         private String endpoint;

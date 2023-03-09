@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.HodorLifecycle;
-import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.utils.GsonUtils;
 import org.dromara.hodor.common.utils.HostUtils;
 import org.dromara.hodor.common.utils.ThreadUtils;
@@ -38,9 +37,9 @@ public class RegistryService implements HodorLifecycle {
 
     private final String serverEndpoint;
 
-    public RegistryService(final HodorServerProperties properties) {
+    public RegistryService(final HodorServerProperties properties, final RegistryCenter registryCenter) {
         this.properties = properties;
-        this.registryCenter = ExtensionLoader.getExtensionLoader(RegistryCenter.class).getDefaultJoin();
+        this.registryCenter = registryCenter;
         this.gsonUtils = GsonUtils.getInstance();
         this.serverEndpoint = HostUtils.getLocalIp() + ":" + properties.getNetServerPort();
     }

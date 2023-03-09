@@ -48,6 +48,12 @@
       "description": "hodor net server port config"
     },
     {
+      "name": "hodor.registry.type",
+      "type": "java.lang.String",
+      "sourceType": "org.dromara.hodor.server.config.HodorServerProperties$RegistryProperties",
+      "description": "hodor registry server type config"
+    },
+    {
       "name": "hodor.registry.namespace",
       "type": "java.lang.String",
       "sourceType": "org.dromara.hodor.server.config.HodorServerProperties$RegistryProperties",
@@ -87,6 +93,18 @@
       "name": "hodor.database.driverClass",
       "type": "java.lang.String",
       "description": "database.driverClass."
+    }, {
+      "name": "hodor.cacheSource.type",
+      "type": "java.lang.String",
+      "description": "cacheSource type config."
+    }, {
+      "name": "hodor.cacheSource.serverAddresses",
+      "type": "java.lang.String",
+      "description": "cacheSource serverAddresses config."
+    }, {
+      "name": "hodor.cacheSource.timeout",
+      "type": "java.lang.Integer",
+      "description": "cacheSource timeout config."
     }
   ],
   "hints": []

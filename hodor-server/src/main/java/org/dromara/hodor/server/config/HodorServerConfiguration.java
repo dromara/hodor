@@ -1,6 +1,5 @@
 package org.dromara.hodor.server.config;
 
-import cn.hutool.core.lang.Assert;
 import java.util.Optional;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.storage.cache.CacheSourceConfig;
@@ -8,6 +7,7 @@ import org.dromara.hodor.common.storage.cache.HodorCacheSource;
 import org.dromara.hodor.core.recoder.JobExecuteRecorder;
 import org.dromara.hodor.core.recoder.LogJobExecuteRecorder;
 import org.dromara.hodor.core.service.JobExecDetailService;
+import org.dromara.hodor.register.api.RegistryCenter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * HodorServerConfiguration
  *
  * @author tomgs
- * @since 2021/8/16
+ * @since 1.0
  */
 @Configuration
 public class HodorServerConfiguration {
@@ -32,11 +32,16 @@ public class HodorServerConfiguration {
     @Bean
     public HodorCacheSource hodorCacheSource() {
         CacheSourceConfig sourceConfig = Optional.ofNullable(properties.getCacheSource())
-            .orElse(new CacheSourceConfig());
-        final HodorCacheSource cacheSource = ExtensionLoader.getExtensionLoader(HodorCacheSource.class, CacheSourceConfig.class)
-            .getProtoJoin("cachesource", sourceConfig);
-        Assert.equals(cacheSource.getCacheType(), sourceConfig.getType(), "cache source type config error.");
-        return cacheSource;
+            .orElseThrow(() -> new IllegalArgumentException("cache source config must be not null."));;
+        return ExtensionLoader.getExtensionLoader(HodorCacheSource.class, CacheSourceConfig.class)
+            .getProtoJoin(sourceConfig.getType(), sourceConfig);
+    }
+
+    @Bean
+    public RegistryCenter registryCenter() {
+        final HodorServerProperties.RegistryProperties registryProperties = Optional.ofNullable(properties.getRegistry())
+            .orElseThrow(() -> new IllegalArgumentException("registry config must be not null."));
+        return ExtensionLoader.getExtensionLoader(RegistryCenter.class).getJoin(registryProperties.getType());
     }
 
     @Bean(destroyMethod = "stopReporterJobExecDetail")

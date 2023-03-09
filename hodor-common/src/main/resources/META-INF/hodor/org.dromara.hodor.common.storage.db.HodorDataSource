@@ -1,1 +1,1 @@
-datasource=org.dromara.hodor.common.storage.db.H2FileDataSource
+h2=org.dromara.hodor.common.storage.db.H2FileDataSource

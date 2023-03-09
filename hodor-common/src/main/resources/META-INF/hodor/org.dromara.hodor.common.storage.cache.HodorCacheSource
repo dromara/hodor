@@ -1,1 +1,1 @@
-cachesource=org.dromara.hodor.common.storage.cache.LocalCacheSource
+local=org.dromara.hodor.common.storage.cache.LocalCacheSource
