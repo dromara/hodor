@@ -30,9 +30,7 @@ public class WatchRaftRaftClientImpl implements WatchRaftClient {
         this.retryPolicy = retryPolicy;
         this.properties = properties;
         this.parameters = parameters;
-
         watchClientRpc.addRaftPeers(group.getPeers());
-        watchClientRpc.startHandleWatchStreamResponse();
     }
 
     @Override
