@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>org.dromara</groupId>
-            <artifactId>hodor-actuator-common</artifactId>
+            <artifactId>hodor-actuator-api</artifactId>
         </dependency>
 
         <dependency>

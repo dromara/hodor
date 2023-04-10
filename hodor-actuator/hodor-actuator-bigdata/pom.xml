@@ -30,7 +30,7 @@
     <dependencies>
         <dependency>
             <groupId>org.dromara</groupId>
-            <artifactId>hodor-actuator-common</artifactId>
+            <artifactId>hodor-actuator-api</artifactId>
             <exclusions>
                 <exclusion>
                     <artifactId>log4j-slf4j-impl</artifactId>
