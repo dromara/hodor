@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hodor-actuator-common</artifactId>
+    <artifactId>hodor-actuator-api</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

@@ -48,6 +48,6 @@ public interface WatchClientRpc extends RaftPeer.Add, Closeable {
     return IOUtils.shouldReconnect(t);
   }
 
-    void startHandleWatchStreamResponse();
+  void startHandleWatchStream();
 
 }

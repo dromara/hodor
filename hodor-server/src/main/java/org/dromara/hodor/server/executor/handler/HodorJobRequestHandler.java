@@ -80,7 +80,8 @@ public class HodorJobRequestHandler implements RequestHandler {
     }
 
     public void handle(final HodorJobExecutionContext context) {
-        log.info("hodor job request handler, info {}.", context);
+        log.info("Job [key:{}, id:{}] dispatch begins, details: {}", context.getJobKey(), context.getRequestId(), context);
+
         Exception jobException = null;
         final RemotingMessage request = getRequestBody(context);
         final List<Host> hosts = context.getHosts();
@@ -114,7 +115,7 @@ public class HodorJobRequestHandler implements RequestHandler {
 
     @Override
     public void postHandle(final HodorJobExecutionContext context) {
-        log.info("job {} submit success.", context.getJobKey());
+        log.info("Job [key:{}, id:{}] dispatch success.", context.getJobKey(), context.getRequestId());
     }
 
     @Override
@@ -124,7 +125,7 @@ public class HodorJobRequestHandler implements RequestHandler {
 
     @Override
     public void exceptionCaught(final HodorJobExecutionContext context, final Throwable t) {
-        log.error("job {} request [id:{}] execute exception, msg: {}.", context.getRequestId(), context.getJobKey(), t.getMessage(), t);
+        log.error("Job [key:{}, id:{}] dispatch exception, msg: {}.", context.getJobKey(), context.getRequestId(), t.getMessage(), t);
         RemotingResponse<JobExecuteResponse> errorResponse = getErrorResponse(context, t);
         HodorJobResponseHandler.INSTANCE.fireJobResponseHandler(errorResponse);
     }
@@ -136,7 +137,7 @@ public class HodorJobRequestHandler implements RequestHandler {
         jobExecuteResponse.setCompleteTime(DateUtil.formatDateTime(new Date()));
         jobExecuteResponse.setStatus(JobExecuteStatus.ERROR);
         jobExecuteResponse.setComments(ThreadUtils.getStackTraceInfo(t));
-        return RemotingResponse.failed("inner error", jobExecuteResponse);
+        return RemotingResponse.failed("InnerError", jobExecuteResponse);
     }
 
     private RemotingMessage getRequestBody(final HodorJobExecutionContext context) {

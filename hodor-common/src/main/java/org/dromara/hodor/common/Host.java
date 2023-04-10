@@ -76,9 +76,10 @@ public class Host {
             return new Host(this.endpoint, this.ip, this.port);
         }
 
-        public String toString() {
-            return "Host {ip=" + this.ip + ", port=" + this.port + "}";
-        }
+    }
+
+    public String toString() {
+        return "Host {ip=" + this.ip + ", port=" + this.port + "}";
     }
 
 }

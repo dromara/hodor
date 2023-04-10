@@ -1,1 +1,1 @@
-register=org.dromara.hodor.register.zookeeper.ZookeeperRegistryCenter
+zookeeper=org.dromara.hodor.register.zookeeper.ZookeeperRegistryCenter

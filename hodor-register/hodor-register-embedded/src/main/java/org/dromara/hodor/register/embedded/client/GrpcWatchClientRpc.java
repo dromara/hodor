@@ -3,6 +3,11 @@ package org.dromara.hodor.register.embedded.client;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
 import com.google.common.collect.Maps;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningScheduledExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -10,8 +15,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ratis.conf.RaftProperties;
 import org.apache.ratis.protocol.ClientId;
@@ -42,30 +50,39 @@ import org.dromara.hodor.common.utils.BytesUtil;
 @Slf4j
 public class GrpcWatchClientRpc implements WatchClientRpc {
 
-    private StreamObserver<WatchRequest> watchRequestStreamObserver;
-
     private static final BytesUtil.ByteArrayComparator byteArrayComparator = BytesUtil.getDefaultByteArrayComparator();
+
     private static final Map<byte[], WatchCallback> watchClientCallBackMap = Maps.newTreeMap(byteArrayComparator);
-
-    private final long channelKeepAlive = 60 * 1000;
-
-    private final int maxInboundMessageSize = 4096;
-
-    private ThreadPoolExecutor grpcExecutor;
-
-    private final ClientId clientId;
-
-    private RaftProperties properties;
 
     private final Map<RaftPeerId, RaftPeer> peers = new ConcurrentHashMap<>();
 
+    private StreamObserver<WatchRequest> watchRequestStreamObserver;
+
+    private final ListeningScheduledExecutorService executor;
+
+    private final long channelKeepAlive;
+
+    private final int maxInboundMessageSize;
+
+    private final ThreadPoolExecutor grpcExecutor;
+
+    private final ClientId clientId;
+
+    private final AtomicBoolean started;
+
     public GrpcWatchClientRpc(ClientId clientId, RaftProperties properties) {
         this.clientId = clientId;
-        this.properties = properties;
+        this.grpcExecutor = ThreadUtil.newExecutor(4, 4);
+        this.grpcExecutor.setThreadFactory(ThreadUtil.newNamedThreadFactory("hodor-watch-client-", true));
+        this.executor = MoreExecutors.listeningDecorator(Executors.newScheduledThreadPool(1));
+        this.channelKeepAlive = properties.getLong("hodor.watch.keepalive", 60 * 1000);
+        this.maxInboundMessageSize = properties.getInt("hodor.watch.max.messageSize", 4096);
+        this.started = new AtomicBoolean();
     }
 
     @Override
     public void watch(WatchRequest watchRequest, WatchCallback watchCallback) {
+        startHandleWatchStream();
         watchRequestStreamObserver.onNext(watchRequest);
         watchClientCallBackMap.put(watchRequest.getCreateRequest().getKey().toByteArray(), watchCallback);
     }
@@ -78,8 +95,13 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
 
     @Override
     public void close() throws IOException {
-        //watchRequestStreamObserver.onCompleted();
-        watchClientCallBackMap.clear();
+        if (started.compareAndSet(true, false)) {
+            if (watchRequestStreamObserver != null) {
+                watchRequestStreamObserver.onCompleted();
+                watchRequestStreamObserver = null;
+            }
+            watchClientCallBackMap.clear();
+        }
     }
 
     @Override
@@ -101,9 +123,12 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
         return IOUtils.shouldReconnect(e);
     }
 
-    public void startHandleWatchStreamResponse() {
+    public void startHandleWatchStream() {
+        if (this.started.get() && !this.started.compareAndSet(false, true)) {
+            return;
+        }
         if (peers.size() == 0) {
-            throw new RuntimeException("perrs is empty");
+            throw new RuntimeException("peers is empty");
         }
         for (RaftPeer peer : peers.values()) {
             try {
@@ -134,17 +159,19 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
 
                     @Override
                     public void onError(Throwable t) {
-                        log.error("error: ", t);
-                        // 判断是否需要重连
+                        log.error("Watch error, {}", t.getMessage(), t);
                         if (shouldReconnect(t)) {
-
+                            addOnFailureLoggingCallback(
+                                grpcExecutor,
+                                executor.schedule(() -> startHandleWatchStream(), 500, TimeUnit.MILLISECONDS),
+                                "Scheduled startHandleWatchStream failed"
+                            );
                         }
                     }
 
                     @Override
                     public void onCompleted() {
                         log.info("stream completed");
-                        // 判断是否需要重连
                     }
                 });
                 break;
@@ -169,8 +196,6 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
      * @return if server check success,return a non-null channel.
      */
     private ManagedChannel createNewManagedChannel(String serverIp, int serverPort) {
-        grpcExecutor = ThreadUtil.newExecutor(4, 4);
-        grpcExecutor.setThreadFactory(ThreadUtil.newNamedThreadFactory("hodor-watch-", true));
         ManagedChannelBuilder<?> managedChannelBuilder = ManagedChannelBuilder.forAddress(serverIp, serverPort)
             .executor(grpcExecutor).compressorRegistry(CompressorRegistry.getDefaultInstance())
             .decompressorRegistry(DecompressorRegistry.getDefaultInstance())
@@ -181,4 +206,23 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
         return managedChannelBuilder.build();
     }
 
+    void addOnFailureLoggingCallback(
+        Executor executor,
+        ListenableFuture<?> listenableFuture,
+        String message) {
+        Futures.addCallback(
+            listenableFuture,
+            new FutureCallback<Object>() {
+                @Override
+                public void onFailure(Throwable throwable) {
+                    log.error(message, throwable);
+                }
+
+                @Override
+                public void onSuccess(Object result) {
+                }
+            },
+            executor
+        );
+    }
 }

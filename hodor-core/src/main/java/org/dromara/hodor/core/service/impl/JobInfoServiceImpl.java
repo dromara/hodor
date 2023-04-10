@@ -40,6 +40,7 @@ public class JobInfoServiceImpl implements JobInfoService {
         }
     }
 
+    @Override
     public boolean isExists(JobInfo jobInfo) {
         return jobInfoMapper.selectCount(Wrappers.<JobInfo>lambdaQuery()
             .eq(JobInfo::getGroupName, jobInfo.getGroupName())
