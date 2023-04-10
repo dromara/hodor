@@ -26,9 +26,9 @@ Hodor是一个专注于任务编排和高可用性的分布式任务调度系统
 hodor-scheduler
 ├─docs                                          # 文档存放位置
 ├─hodor-actuator                                # hodor任务执行器
-│  ├─hodor-actuator-bigdata                     # 大数据任务执行器
-│  ├─hodor-actuator-common                      # 执行器公共依赖
-│  └─hodor-actuator-java                        # Java任务执行器
+│  ├─hodor-actuator-api                         # 执行器扩展接口
+│  ├─hodor-actuator-java                        # Java任务执行器
+│  └─hodor-actuator-bigdata                     # 大数据任务执行器   
 ├─hodor-admin                                   # hodor管理控制台（TODO）
 ├─hodor-client                                  # 待废弃
 ├─hodor-common                                  # hodor公共依赖
