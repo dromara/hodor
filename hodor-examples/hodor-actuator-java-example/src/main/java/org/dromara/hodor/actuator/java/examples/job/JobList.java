@@ -1,7 +1,7 @@
 package org.dromara.hodor.actuator.java.examples.job;
 
 import org.apache.logging.log4j.Logger;
-import org.dromara.hodor.actuator.common.JobExecutionContext;
+import org.dromara.hodor.actuator.api.JobExecutionContext;
 import org.dromara.hodor.actuator.java.annotation.Job;
 import org.springframework.stereotype.Component;
 

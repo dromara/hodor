@@ -8,7 +8,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.*;
 import org.apache.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.jobtype.javautils.AbstractHadoopJob;
-import org.dromara.hodor.actuator.common.utils.Props;
+import org.dromara.hodor.actuator.api.utils.Props;
 
 /**
  * Compatible with hadoop1.x

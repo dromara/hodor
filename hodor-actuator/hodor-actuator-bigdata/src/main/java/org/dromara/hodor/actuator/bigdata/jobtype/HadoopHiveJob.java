@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties;
 import org.dromara.hodor.actuator.bigdata.executor.JavaProcessJob;
 import org.dromara.hodor.actuator.bigdata.security.commons.HadoopSecurityManager;
-import org.dromara.hodor.actuator.common.utils.Props;
+import org.dromara.hodor.actuator.api.utils.Props;
 import org.dromara.hodor.common.utils.StringUtils;
 
 import static org.apache.hadoop.security.UserGroupInformation.HADOOP_TOKEN_FILE_LOCATION;

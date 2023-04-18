@@ -29,7 +29,7 @@ import org.apache.pig.tools.pigstats.*;
 import org.dromara.hodor.actuator.bigdata.jobtype.pig.PigJobDagNode;
 import org.dromara.hodor.actuator.bigdata.jobtype.pig.PigJobStats;
 import org.dromara.hodor.actuator.bigdata.utils.JSONUtils;
-import org.dromara.hodor.actuator.common.utils.Props;
+import org.dromara.hodor.actuator.api.utils.Props;
 
 import java.io.File;
 import java.io.IOException;

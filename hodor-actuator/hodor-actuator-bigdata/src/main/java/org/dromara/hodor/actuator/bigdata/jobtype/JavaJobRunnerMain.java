@@ -40,7 +40,7 @@ import org.apache.log4j.PatternLayout;
 import org.dromara.hodor.actuator.bigdata.executor.ProcessJob;
 import org.dromara.hodor.actuator.bigdata.security.commons.SecurityUtils;
 import org.dromara.hodor.actuator.bigdata.utils.JSONUtils;
-import org.dromara.hodor.actuator.common.utils.Props;
+import org.dromara.hodor.actuator.api.utils.Props;
 
 public class JavaJobRunnerMain {
 

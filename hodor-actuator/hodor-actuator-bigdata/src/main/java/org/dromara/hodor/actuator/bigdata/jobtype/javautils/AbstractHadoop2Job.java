@@ -6,7 +6,7 @@ import org.apache.log4j.*;
 import org.dromara.hodor.actuator.bigdata.jobtype.MapReduceJob2State;
 import org.dromara.hodor.actuator.bigdata.jobtype.StatsUtils;
 import org.dromara.hodor.actuator.bigdata.utils.JSONUtils;
-import org.dromara.hodor.actuator.common.utils.Props;
+import org.dromara.hodor.actuator.api.utils.Props;
 
 import java.io.File;
 import java.io.IOException;

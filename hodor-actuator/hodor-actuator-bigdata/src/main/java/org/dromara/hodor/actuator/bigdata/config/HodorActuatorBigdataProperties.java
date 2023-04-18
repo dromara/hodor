@@ -19,7 +19,7 @@ package org.dromara.hodor.actuator.bigdata.config;
 
 import java.util.Map;
 import lombok.Data;
-import org.dromara.hodor.actuator.common.config.HodorProperties;
+import org.dromara.hodor.actuator.api.config.HodorProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**

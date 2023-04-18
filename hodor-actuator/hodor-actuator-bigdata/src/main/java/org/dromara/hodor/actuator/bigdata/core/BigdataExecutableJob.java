@@ -19,8 +19,8 @@ package org.dromara.hodor.actuator.bigdata.core;
 
 import org.apache.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.executor.Job;
-import org.dromara.hodor.actuator.common.ExecutableJob;
-import org.dromara.hodor.actuator.common.core.ExecutableJobContext;
+import org.dromara.hodor.actuator.api.ExecutableJob;
+import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
 
 /**
  * BigdataExecutableJob

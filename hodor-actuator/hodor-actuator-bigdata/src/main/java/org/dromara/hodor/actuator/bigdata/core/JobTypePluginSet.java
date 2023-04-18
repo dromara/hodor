@@ -18,7 +18,7 @@ package org.dromara.hodor.actuator.bigdata.core;
 import java.util.HashMap;
 import java.util.Map;
 import org.dromara.hodor.actuator.bigdata.executor.Job;
-import org.dromara.hodor.actuator.common.utils.Props;
+import org.dromara.hodor.actuator.api.utils.Props;
 
 /**
  * Container for job type plugins

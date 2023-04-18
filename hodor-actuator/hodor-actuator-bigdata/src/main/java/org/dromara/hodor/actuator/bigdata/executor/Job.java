@@ -16,7 +16,7 @@
 
 package org.dromara.hodor.actuator.bigdata.executor;
 
-import org.dromara.hodor.actuator.common.utils.Props;
+import org.dromara.hodor.actuator.api.utils.Props;
 
 /**
  * Raw job interface.

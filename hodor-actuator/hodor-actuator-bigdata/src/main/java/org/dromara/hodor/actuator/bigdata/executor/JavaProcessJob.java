@@ -22,7 +22,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.utils.Pair;
 import org.dromara.hodor.actuator.bigdata.utils.Utils;
-import org.dromara.hodor.actuator.common.utils.Props;
+import org.dromara.hodor.actuator.api.utils.Props;
 
 public class JavaProcessJob extends ProcessJob {
 

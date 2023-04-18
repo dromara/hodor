@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import org.apache.commons.lang.StringUtils;
 import org.dromara.hodor.actuator.bigdata.exception.UndefinedPropertyException;
-import org.dromara.hodor.actuator.common.utils.Props;
+import org.dromara.hodor.actuator.api.utils.Props;
 
 public class ValidationUtils {
 
