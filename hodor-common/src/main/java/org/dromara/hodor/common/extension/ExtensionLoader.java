@@ -151,7 +151,7 @@ public class ExtensionLoader<T> {
     public T getProtoJoin(String name, Object...args) {
         Class<?> aClass = getExtensionClasses().get(name);
         if (aClass == null) {
-            throw new IllegalArgumentException("name is error");
+            throw new IllegalArgumentException("not found extension " + name);
         }
         try {
             if (argClass != null && getConstructor(aClass, argClass) != null) {
