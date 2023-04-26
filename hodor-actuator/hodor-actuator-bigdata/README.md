@@ -1,12 +1,16 @@
 # 大数据执行端数据目录设计
+大数据执行端基于Azkaban二次开发扩展实现而来。
+
 ```text
 ${dataPath}/plugins/jobtypes/
 - hadoop/
 - spark/
 - java/
+
 ${dataPath}/resources/${jobKey}/${version}/
 - xxx.jar
 - xxx.properties
+
 ${dataPath}/executions/${requestId}/
 - _job.${jobKey}.${requestId}.log
 - createFlattenedPropsFile -> ${requestId}_props_._tmp
