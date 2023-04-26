@@ -50,7 +50,7 @@ import org.apache.hadoop.yarn.logaggregation.LogCLIHelpers;
 import org.apache.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.security.commons.HadoopSecurityManager;
 import org.dromara.hodor.actuator.bigdata.security.commons.HadoopSecurityManagerException;
-import org.dromara.hodor.actuator.common.utils.Props;
+import org.dromara.hodor.actuator.api.utils.Props;
 
 /**
  * <pre>

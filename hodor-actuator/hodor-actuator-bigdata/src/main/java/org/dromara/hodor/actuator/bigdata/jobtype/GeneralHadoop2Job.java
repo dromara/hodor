@@ -12,7 +12,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.jobtype.javautils.AbstractHadoop2Job;
-import org.dromara.hodor.actuator.common.utils.Props;
+import org.dromara.hodor.actuator.api.utils.Props;
 
 /**
  * Compatible with hadoop2.x

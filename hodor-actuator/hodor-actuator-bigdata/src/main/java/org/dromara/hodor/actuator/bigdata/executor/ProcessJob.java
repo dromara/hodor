@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.executor.process.ExecutorProcess;
 import org.dromara.hodor.actuator.bigdata.executor.process.ExecutorProcessBuilder;
 import org.dromara.hodor.actuator.bigdata.utils.Pair;
-import org.dromara.hodor.actuator.common.utils.Props;
+import org.dromara.hodor.actuator.api.utils.Props;
 import org.joda.time.Duration;
 
 /**

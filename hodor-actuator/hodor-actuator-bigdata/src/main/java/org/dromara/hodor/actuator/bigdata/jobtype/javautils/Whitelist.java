@@ -24,7 +24,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties;
-import org.dromara.hodor.actuator.common.utils.Props;
+import org.dromara.hodor.actuator.api.utils.Props;
 
 /**
  * Whitelist util. It uses file (new line separated) to construct whitelist and validates if id is whitelisted.

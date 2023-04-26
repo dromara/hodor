@@ -2,8 +2,8 @@ package org.dromara.hodor.actuator.bigdata.config;
 
 import org.dromara.hodor.actuator.bigdata.HodorBigdataActuatorInit;
 import org.dromara.hodor.actuator.bigdata.register.BigdataJobRegister;
-import org.dromara.hodor.actuator.common.HodorActuatorManager;
-import org.dromara.hodor.actuator.common.JobRegister;
+import org.dromara.hodor.actuator.api.HodorActuatorManager;
+import org.dromara.hodor.actuator.api.JobRegister;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

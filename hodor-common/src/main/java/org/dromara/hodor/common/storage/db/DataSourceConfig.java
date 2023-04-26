@@ -8,6 +8,8 @@ import java.util.Properties;
  */
 public class DataSourceConfig {
 
+    private String type;
+
     private Properties dataSourceProperties;
 
     private String url;
@@ -20,6 +22,14 @@ public class DataSourceConfig {
 
     public DataSourceConfig() {
         this.dataSourceProperties = new Properties();;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getUrl() {

@@ -13,7 +13,7 @@ import org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties;
 import org.dromara.hodor.actuator.bigdata.jobtype.HadoopJobUtils;
 import org.dromara.hodor.actuator.bigdata.queue.AbstractTask;
 import org.dromara.hodor.actuator.bigdata.queue.ITask;
-import org.dromara.hodor.actuator.common.utils.Props;
+import org.dromara.hodor.actuator.api.utils.Props;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.remoting.api.message.Header;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;

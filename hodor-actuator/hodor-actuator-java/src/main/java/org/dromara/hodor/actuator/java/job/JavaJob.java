@@ -18,11 +18,11 @@
 package org.dromara.hodor.actuator.java.job;
 
 import org.apache.logging.log4j.Logger;
-import org.dromara.hodor.actuator.common.JobExecutionContext;
-import org.dromara.hodor.actuator.common.JobParameter;
-import org.dromara.hodor.actuator.common.ExecutableJob;
-import org.dromara.hodor.actuator.common.core.ExecutableJobContext;
-import org.dromara.hodor.actuator.common.exceptions.JobExecutionException;
+import org.dromara.hodor.actuator.api.JobExecutionContext;
+import org.dromara.hodor.actuator.api.JobParameter;
+import org.dromara.hodor.actuator.api.ExecutableJob;
+import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
+import org.dromara.hodor.actuator.api.exceptions.JobExecutionException;
 import org.dromara.hodor.actuator.java.core.ScheduledMethodRunnable;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;

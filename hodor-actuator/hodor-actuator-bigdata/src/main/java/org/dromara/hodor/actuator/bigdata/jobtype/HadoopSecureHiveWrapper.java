@@ -32,7 +32,7 @@ import org.apache.hadoop.hive.ql.session.SessionState;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.jobtype.hiveutils.HiveQueryExecutionException;
-import org.dromara.hodor.actuator.common.utils.Props;
+import org.dromara.hodor.actuator.api.utils.Props;
 
 import static org.apache.hadoop.hive.conf.HiveConf.ConfVars.HIVEAUXJARS;
 import static org.apache.hadoop.hive.conf.HiveConf.ConfVars.METASTORECONNECTURLKEY;

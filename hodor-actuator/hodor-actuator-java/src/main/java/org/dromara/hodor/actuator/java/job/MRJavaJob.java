@@ -17,8 +17,8 @@
 
 package org.dromara.hodor.actuator.java.job;
 
-import org.dromara.hodor.actuator.common.ExecutableJob;
-import org.dromara.hodor.actuator.common.core.ExecutableJobContext;
+import org.dromara.hodor.actuator.api.ExecutableJob;
+import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
 
 /**
  * MRJavaJob

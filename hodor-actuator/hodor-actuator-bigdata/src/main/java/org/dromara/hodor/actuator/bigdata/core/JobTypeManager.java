@@ -33,8 +33,8 @@ import org.dromara.hodor.actuator.bigdata.executor.Job;
 import org.dromara.hodor.actuator.bigdata.executor.NoopJob;
 import org.dromara.hodor.actuator.bigdata.executor.ProcessJob;
 import org.dromara.hodor.actuator.bigdata.utils.Utils;
-import org.dromara.hodor.actuator.common.utils.Props;
-import org.dromara.hodor.actuator.common.utils.PropsUtils;
+import org.dromara.hodor.actuator.api.utils.Props;
+import org.dromara.hodor.actuator.api.utils.PropsUtils;
 
 @Slf4j
 public class JobTypeManager {

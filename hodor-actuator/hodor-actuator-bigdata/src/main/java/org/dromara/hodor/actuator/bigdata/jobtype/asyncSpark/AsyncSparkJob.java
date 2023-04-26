@@ -12,8 +12,8 @@ import org.dromara.hodor.actuator.bigdata.core.JobExecutorStateChecker;
 import org.dromara.hodor.actuator.bigdata.executor.JavaProcessJob;
 import org.dromara.hodor.actuator.bigdata.jobtype.HadoopJobUtils;
 import org.dromara.hodor.actuator.bigdata.jobtype.javautils.AsyncJobStateTask;
-import org.dromara.hodor.actuator.common.exceptions.JobExecutionException;
-import org.dromara.hodor.actuator.common.utils.Props;
+import org.dromara.hodor.actuator.api.exceptions.JobExecutionException;
+import org.dromara.hodor.actuator.api.utils.Props;
 
 /**
  * 异步提交spark任务入口

@@ -33,7 +33,7 @@ import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hadoop.security.token.Token;
 import org.apache.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.executor.Constants;
-import org.dromara.hodor.actuator.common.utils.Props;
+import org.dromara.hodor.actuator.api.utils.Props;
 
 public class SecurityUtils {
 

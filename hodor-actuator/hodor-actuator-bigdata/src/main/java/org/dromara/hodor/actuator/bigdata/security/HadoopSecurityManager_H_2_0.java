@@ -68,7 +68,7 @@ import org.dromara.hodor.actuator.bigdata.executor.Constants;
 import org.dromara.hodor.actuator.bigdata.security.commons.HadoopSecurityManager;
 import org.dromara.hodor.actuator.bigdata.security.commons.HadoopSecurityManagerException;
 import org.dromara.hodor.actuator.bigdata.utils.ExecuteAsUser;
-import org.dromara.hodor.actuator.common.utils.Props;
+import org.dromara.hodor.actuator.api.utils.Props;
 import org.dromara.hodor.common.exception.UndefinedPropertyException;
 
 import static org.apache.hadoop.hive.metastore.api.hive_metastoreConstants.META_TABLE_STORAGE;

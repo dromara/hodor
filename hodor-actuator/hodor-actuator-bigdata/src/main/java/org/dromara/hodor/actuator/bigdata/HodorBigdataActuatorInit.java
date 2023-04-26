@@ -1,7 +1,7 @@
 package org.dromara.hodor.actuator.bigdata;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.actuator.common.HodorActuatorManager;
+import org.dromara.hodor.actuator.api.HodorActuatorManager;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 

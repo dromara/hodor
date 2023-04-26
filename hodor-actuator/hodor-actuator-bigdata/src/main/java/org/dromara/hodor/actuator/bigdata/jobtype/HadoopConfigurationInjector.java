@@ -22,7 +22,7 @@ import java.util.Map;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties;
-import org.dromara.hodor.actuator.common.utils.Props;
+import org.dromara.hodor.actuator.api.utils.Props;
 
 
 /**
