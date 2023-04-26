@@ -84,7 +84,7 @@ public class HodorActuatorManager {
     private DBOperator dbOperator() {
         DataSourceConfig dataSourceConfig = properties.getDataSourceConfig();
         HodorDataSource datasource = ExtensionLoader.getExtensionLoader(HodorDataSource.class, DataSourceConfig.class)
-            .getProtoJoin("datasource", dataSourceConfig);
+            .getProtoJoin(dataSourceConfig.getType(), dataSourceConfig);
         return new DBOperator(datasource.getDataSource());
     }
 

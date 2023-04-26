@@ -108,6 +108,13 @@
     {
       "sourceType": "org.dromara.hodor.actuator.java.config.HodorActuatorJavaProperties",
       "defaultValue": null,
+      "name": "hodor.commons.dataSourceConfig.type",
+      "description": "数据库类型",
+      "type": "java.util.String"
+    },
+    {
+      "sourceType": "org.dromara.hodor.actuator.java.config.HodorActuatorJavaProperties",
+      "defaultValue": null,
       "name": "hodor.commons.dataSourceConfig.url",
       "description": "数据库url配置",
       "type": "java.util.String"
