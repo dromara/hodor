@@ -5,7 +5,7 @@
     <property name="severity" value="warning"/>
     <property name="fileExtensions" value="java, properties, xml"/>
     <module name="Header">
-        <property name="headerFile" value="copyright.txt"/>
+        <property name="headerFile" value="checkstyle_header.txt"/>
         <property name="fileExtensions" value="java"/>
     </module>
     <module name="FileTabCharacter">
