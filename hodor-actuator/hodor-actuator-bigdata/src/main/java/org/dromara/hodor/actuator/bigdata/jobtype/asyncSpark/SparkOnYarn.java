@@ -63,8 +63,7 @@ public class SparkOnYarn {
         SparkConf sparkConf = JobUtils.getSparkConf(conditions);
         // 初始化 yarn的配置
         Configuration conf = JobUtils.getHadoopConfiguration(conditions);
-
-        ClientArguments cArgs = new ClientArguments(args.toArray(new String[0]), sparkConf);
+        ClientArguments cArgs = new ClientArguments(args.toArray(new String[0]));
         Client client = new Client(cArgs, conf, sparkConf);
         logger.info("提交任务，HadoopJavaJobRunnerMain任务名称：" + conditions.getJobName());
 

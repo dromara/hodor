@@ -17,25 +17,16 @@
         <!--jackson 2.7.0-->
         <fasterxml.jackson.version>2.7.0</fasterxml.jackson.version>
         <codehaus.jackson.version>1.9.13</codehaus.jackson.version>
-        <glassfish.servlet.version>3.0.1</glassfish.servlet.version>
         <hadoop.version>2.10.0</hadoop.version>
         <hive.version>1.1.0</hive.version>
         <hive-shims.version>0.12.0</hive-shims.version>
-        <pig.version>0.11.0</pig.version>
-        <spark-core_2.10.version>1.4.0</spark-core_2.10.version>
-        <!--<spark-core_2.10.version>2.2.3</spark-core_2.10.version>-->
+        <spark-core_2.10.version>2.2.3</spark-core_2.10.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.dromara</groupId>
             <artifactId>hodor-actuator-api</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>log4j-slf4j-impl</artifactId>
-                    <groupId>org.apache.logging.log4j</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -78,10 +69,6 @@
             <artifactId>jackson-core-asl</artifactId>
             <version>${codehaus.jackson.version}</version>
         </dependency>
-        <!--<dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-1.2-api</artifactId>
-        </dependency>-->
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-annotations</artifactId>
@@ -232,11 +219,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.apache.pig</groupId>
-            <artifactId>pig</artifactId>
-            <version>${pig.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-core_2.10</artifactId>
             <version>${spark-core_2.10.version}</version>
@@ -261,6 +243,7 @@
                     <groupId>org.slf4j</groupId>
                 </exclusion>
             </exclusions>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
