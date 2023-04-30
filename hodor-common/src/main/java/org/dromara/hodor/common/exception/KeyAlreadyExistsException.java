@@ -21,7 +21,7 @@ package org.dromara.hodor.common.exception;
  * KeyAlreadyExistsException
  *
  * @author tomgs
- * @since 2021/12/20
+ * @since 1.0
  */
 public class KeyAlreadyExistsException extends IllegalArgumentException {
 

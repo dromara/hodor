@@ -6,7 +6,7 @@ import org.dromara.hodor.common.utils.StringUtils;
  * scheduler node
  *
  * @author tomgs
- * @since 2020/7/6
+ * @since 1.0
  */
 public class SchedulerNode {
 

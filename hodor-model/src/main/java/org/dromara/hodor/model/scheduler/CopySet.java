@@ -7,7 +7,7 @@ import lombok.Data;
  * copy set
  *
  * @author tomgs
- * @since 2020/7/8
+ * @since 1.0
  */
 @Data
 public class CopySet {

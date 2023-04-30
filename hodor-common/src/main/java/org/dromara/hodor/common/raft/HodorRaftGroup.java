@@ -25,7 +25,7 @@ import org.apache.ratis.protocol.RaftGroupId;
  * HodorRaftGroupId
  *
  * @author tomgs
- * @since 2022/3/31
+ * @since 1.0
  */
 @Builder
 public class HodorRaftGroup {

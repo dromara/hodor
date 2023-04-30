@@ -24,7 +24,7 @@ import lombok.Getter;
  * JobInstance
  *
  * @author tomgs
- * @since 2021/12/28
+ * @since 1.0
  */
 @Getter
 @Builder

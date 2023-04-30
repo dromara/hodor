@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNull;
  * mysql datasource
  *
  * @author tomgs
- * @since 2021/3/12
+ * @since 1.0
  */
 @Join
 public class MySQLDataSource extends AbstractHodorDataSource {

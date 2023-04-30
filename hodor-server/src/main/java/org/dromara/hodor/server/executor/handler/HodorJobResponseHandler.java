@@ -12,7 +12,7 @@ import org.dromara.hodor.server.manager.JobExecuteManager;
  * response handler
  *
  * @author tomgs
- * @since 2021/4/7
+ * @since 1.0
  */
 @Slf4j
 public class HodorJobResponseHandler extends AbstractEventPublisher<JobExecuteResponse> implements ResponseHandler<RemotingResponse<JobExecuteResponse>> {

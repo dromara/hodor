@@ -23,7 +23,7 @@ import org.dromara.hodor.common.raft.kv.storage.StorageOptions;
  * HodorKVServer
  *
  * @author tomgs
- * @since 2022/3/22
+ * @since 1.0
  */
 @Slf4j
 public class HodorKVServer implements HodorLifecycle {

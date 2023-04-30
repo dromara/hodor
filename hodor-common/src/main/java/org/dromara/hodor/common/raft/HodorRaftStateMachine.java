@@ -23,7 +23,7 @@ import org.apache.ratis.statemachine.impl.BaseStateMachine;
  * HodorRaftStateMachine
  *
  * @author tomgs
- * @since 2022/3/30
+ * @since 1.0
  */
 public class HodorRaftStateMachine extends BaseStateMachine {
 

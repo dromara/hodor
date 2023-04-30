@@ -8,7 +8,7 @@ import java.util.function.Function;
  * lock util
  *
  * @author tomgs
- * @since 2021/8/6
+ * @since 1.0
  */
 public class LockUtil {
 

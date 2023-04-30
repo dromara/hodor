@@ -16,7 +16,7 @@ import java.util.Map;
  * codec utils
  *
  * @author tomgs
- * @since 2020/9/17
+ * @since 1.0
  */
 @Slf4j
 public class CodecUtils {

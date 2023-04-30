@@ -6,7 +6,7 @@ import org.dromara.hodor.core.entity.JobExecDetail;
  * job execute detail service
  *
  * @author tomgs
- * @since 2020/8/27
+ * @since 1.0
  */
 public interface JobExecDetailService {
 

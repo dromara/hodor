@@ -9,7 +9,7 @@ import org.junit.Test;
 
 /**
  * @author tomgs
- * @since 2021/1/21
+ * @since 1.0
  */
 public class CircleQueueTest {
 

@@ -4,7 +4,7 @@ package org.dromara.hodor.register.api.exception;
  * 注册中心异常
  *
  * @author tomgs
- * @since 2020/6/28
+ * @since 1.0
  */
 public class RegistryException extends RuntimeException {
 

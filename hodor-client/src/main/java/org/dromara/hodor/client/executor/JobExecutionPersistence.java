@@ -12,7 +12,7 @@ import org.dromara.hodor.model.enums.JobExecuteStatus;
  * Job persistence
  *
  * @author tomgs
- * @since 2021/3/18
+ * @since 1.0
  */
 @Slf4j
 public class JobExecutionPersistence extends AbstractAsyncEventPublisher<HodorJobExecution> {

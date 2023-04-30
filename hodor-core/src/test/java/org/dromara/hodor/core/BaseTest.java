@@ -10,7 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * spring base test
  *
  * @author tomgs
- * @since 2020/8/28
+ * @since 1.0
  */
 
 @Slf4j

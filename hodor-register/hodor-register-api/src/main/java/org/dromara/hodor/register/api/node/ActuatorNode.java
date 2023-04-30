@@ -6,7 +6,7 @@ import org.dromara.hodor.common.utils.StringUtils;
  * actuator node
  *
  * @author tomgs
- * @since 2021/8/3
+ * @since 1.0
  */
 public class ActuatorNode {
 

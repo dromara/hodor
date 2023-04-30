@@ -11,7 +11,7 @@ import org.dromara.hodor.common.executor.HodorRunnable;
  * 异步串行执行：事件发布不会阻塞主任务执行，但是同一事件发布器发布的事件为有序执行
  *
  * @author tomgs
- * @since 2021/3/18
+ * @since 1.0
  */
 public abstract class AbstractAsyncEventPublisher<V> extends AbstractEventPublisher<V> {
 

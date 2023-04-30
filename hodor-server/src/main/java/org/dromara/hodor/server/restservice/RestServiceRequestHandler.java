@@ -19,7 +19,7 @@ import org.dromara.hodor.server.config.HodorServerProperties;
  * rest service handler
  *
  * @author tomgs
- * @since 2021/1/27
+ * @since 1.0
  */
 @Slf4j
 public class RestServiceRequestHandler implements HodorChannelHandler {

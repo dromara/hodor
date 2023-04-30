@@ -7,7 +7,7 @@ import java.util.Set;
  * node server manager
  *
  * @author tomgs
- * @since 2020/7/28
+ * @since 1.0
  */
 public enum SchedulerNodeManager {
 

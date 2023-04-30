@@ -6,7 +6,7 @@ import java.io.Serializable;
  * response body
  *
  * @author tomgs
- * @since 2020/9/15
+ * @since 1.0
  */
 public interface ResponseBody extends Serializable {
 

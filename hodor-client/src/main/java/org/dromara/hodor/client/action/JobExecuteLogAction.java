@@ -12,7 +12,7 @@ import org.dromara.hodor.remoting.api.message.response.JobExecuteLogResponse;
  * 查询任务执行日志
  *
  * @author tomgs
- * @since 2021/3/4
+ * @since 1.0
  */
 public class JobExecuteLogAction extends AbstractAction<JobExecuteLogRequest, JobExecuteLogResponse> {
 

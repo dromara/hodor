@@ -10,7 +10,7 @@ import org.dromara.hodor.common.cron.CronUtils;
  * 调度任务描述
  *
  * @author tomgs
- * @since 2020/12/30
+ * @since 1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

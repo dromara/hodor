@@ -9,7 +9,7 @@ import org.dromara.hodor.common.dag.Status;
  * flow job execute detail
  *
  * @author tomgs
- * @since 2021/9/13
+ * @since 1.0
  */
 @Data
 @TableName("hodor_flow_job_exec_detail")

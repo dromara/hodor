@@ -27,7 +27,7 @@ import org.dromara.hodor.server.manager.JobExecuteManager;
  * FlowJobExecutorManager
  *
  * @author tomgs
- * @since 2021/9/2
+ * @since 1.0
  */
 @Slf4j
 public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {

@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @SuppressWarnings("all")
 public class ExtensionLoader<T> {
-    private Logger logger = LoggerFactory.getLogger(ExtensionLoader.class);
+    private final Logger logger = LoggerFactory.getLogger(ExtensionLoader.class);
 
     private static final String EXTENSION_DIRECTORY = "META-INF/hodor/";
 

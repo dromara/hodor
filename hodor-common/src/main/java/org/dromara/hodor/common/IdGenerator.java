@@ -6,7 +6,7 @@ import org.dromara.hodor.common.utils.SnowflakeIdWorker;
  * id generator
  *
  * @author tomgs
- * @since 2020/9/2
+ * @since 1.0
  */
 public enum IdGenerator {
     INSTANCE;

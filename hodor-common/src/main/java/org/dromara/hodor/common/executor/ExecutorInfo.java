@@ -8,7 +8,7 @@ import lombok.Data;
  * executor info
  *
  * @author tomgs
- * @since 2021/1/25
+ * @since 1.0
  */
 @Data
 @Builder

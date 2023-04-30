@@ -41,7 +41,7 @@ import org.junit.Test;
  * FlowJobExecutorTest
  *
  * @author tomgs
- * @since 2021/9/6
+ * @since 1.0
  */
 @Slf4j
 public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {

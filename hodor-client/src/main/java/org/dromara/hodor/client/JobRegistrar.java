@@ -13,7 +13,7 @@ import org.dromara.hodor.client.core.ScheduledMethodRunnable;
  * job registrar
  *
  * @author tomgs
- * @since 2021/1/4
+ * @since 1.0
  */
 @Slf4j
 public class JobRegistrar {

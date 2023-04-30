@@ -19,7 +19,7 @@ import org.dromara.hodor.model.scheduler.HodorMetadata;
  * copy set manager
  *
  * @author tomgs
- * @since 2020/7/28
+ * @since 1.0
  */
 public enum CopySetManager {
 

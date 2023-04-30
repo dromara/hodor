@@ -21,7 +21,7 @@ package org.dromara.hodor.common.raft.kv.exception;
  * HodorKVConnectException
  *
  * @author tomgs
- * @since 2022/4/7
+ * @since 1.0
  */
 public class HodorKVConnectException extends RuntimeException {
 

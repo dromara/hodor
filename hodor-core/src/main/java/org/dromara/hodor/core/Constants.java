@@ -21,7 +21,7 @@ package org.dromara.hodor.core;
  * Constants
  *
  * @author tomgs
- * @since 2021/9/17
+ * @since 1.0
  */
 public interface Constants {
 

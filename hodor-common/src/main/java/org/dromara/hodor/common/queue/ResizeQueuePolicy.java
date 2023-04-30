@@ -6,7 +6,7 @@ import java.util.Queue;
  * 扩容队列策略，同ArrayList扩容
  *
  * @author tomgs
- * @since 2021/1/21
+ * @since 1.0
  */
 public class ResizeQueuePolicy<T> implements RejectedEnqueueHandler<T> {
 

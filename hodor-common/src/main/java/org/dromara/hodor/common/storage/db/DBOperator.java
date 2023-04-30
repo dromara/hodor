@@ -20,7 +20,7 @@ import static java.util.Objects.requireNonNull;
  * db operator
  *
  * @author tomgs
- * @since 2021/3/9
+ * @since 1.0
  */
 @Slf4j
 public class DBOperator {

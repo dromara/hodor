@@ -6,7 +6,7 @@ import org.dromara.hodor.remoting.api.message.RequestBody;
  * abstract request body
  *
  * @author tomgs
- * @since 2021/3/16
+ * @since 1.0
  */
 public abstract class AbstractRequestBody implements RequestBody {
 

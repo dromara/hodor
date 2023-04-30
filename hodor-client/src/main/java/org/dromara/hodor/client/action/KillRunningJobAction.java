@@ -14,7 +14,7 @@ import org.dromara.hodor.remoting.api.message.response.KillRunningJobResponse;
  * 停止正在运行的任务
  *
  * @author tomgs
- * @since 2021/3/4
+ * @since 1.0
  */
 public class KillRunningJobAction extends AbstractAction<KillRunningJobRequest, KillRunningJobResponse> {
 

@@ -19,7 +19,7 @@ import org.dromara.hodor.server.executor.handler.RequestHandler;
  * 任务分发器
  *
  * @author tomgs
- * @since 2021/1/26
+ * @since 1.0
  */
 public class JobDispatcher {
 

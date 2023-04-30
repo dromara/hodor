@@ -12,7 +12,7 @@ import org.dromara.hodor.remoting.api.message.response.JobExecuteStatusResponse;
  * 查询任务执行状态
  *
  * @author tomgs
- * @since 2021/3/4
+ * @since 1.0
  */
 public class JobExecuteStatusAction extends AbstractAction<JobExecuteStatusRequest, JobExecuteStatusResponse> {
 

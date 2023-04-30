@@ -4,7 +4,7 @@ package org.dromara.hodor.remoting.api.exception;
  * Remoting Exception
  *
  * @author tomgs
- * @since 2020/9/15
+ * @since 1.0
  */
 public class RemotingException extends RuntimeException {
 

@@ -24,7 +24,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * AdjustThreadSizePolicy
  *
  * @author tomgs
- * @since 2022/3/9
+ * @since 1.0
  */
 public class AdjustThreadSizePolicy<T> implements RejectedEnqueueHandler<T> {
 

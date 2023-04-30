@@ -8,7 +8,7 @@ import org.dromara.hodor.common.disruptor.QueueProviderManager;
  * hodor executor
  *
  * @author tomgs
- * @since 2021/1/7
+ * @since 1.0
  */
 @Deprecated
 public class HodorExecutor<T> {

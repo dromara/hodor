@@ -25,7 +25,7 @@ import org.dromara.hodor.common.utils.SerializeUtils;
  * ByteCompressData
  *
  * @author tomgs
- * @since 2021/9/14
+ * @since 1.0
  */
 public class PlainCompress implements Compress {
 

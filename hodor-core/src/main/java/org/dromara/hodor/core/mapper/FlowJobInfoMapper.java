@@ -7,7 +7,7 @@ import org.dromara.hodor.core.entity.FlowJobInfo;
  * FlowJobInfoMapper
  *
  * @author tomgs
- * @since 2021/9/10
+ * @since 1.0
  */
 public interface FlowJobInfoMapper extends BaseMapper<FlowJobInfo> {
 

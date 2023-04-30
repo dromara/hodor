@@ -8,7 +8,7 @@ import org.apache.commons.dbutils.GenerousBeanProcessor;
  * ColumnConvertBeanProcessor
  *
  * @author tomgs
- * @since 2021/8/4
+ * @since 1.0
  */
 public class ColumnConvertBeanProcessor extends GenerousBeanProcessor {
 

@@ -4,7 +4,7 @@ package org.dromara.hodor.model.enums;
  * job executing status
  *
  * @author tomgs
- * @since 2020/8/26
+ * @since 1.0
  */
 public enum JobExecuteStatus {
 

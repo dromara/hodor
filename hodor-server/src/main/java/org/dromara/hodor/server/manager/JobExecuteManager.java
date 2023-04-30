@@ -34,7 +34,7 @@ import java.util.Date;
  * job status manager
  *
  * @author tomgs
- * @since 2021/8/10
+ * @since 1.0
  */
 @Slf4j
 public class JobExecuteManager {

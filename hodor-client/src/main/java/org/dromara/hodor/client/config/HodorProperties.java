@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * hodor client config
  *
  * @author tomgs
- * @since 2021/1/5
+ * @since 1.0
  */
 @Data
 @ConfigurationProperties(prefix = "hodor")

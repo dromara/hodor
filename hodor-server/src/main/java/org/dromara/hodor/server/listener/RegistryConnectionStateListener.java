@@ -9,7 +9,7 @@ import org.dromara.hodor.server.service.RegistryService;
 /**
  * RegisterConnectionStateListener
  * @author tomgs
- * @since 2021/8/18
+ * @since 1.0
  */
 @Slf4j
 public class RegistryConnectionStateListener implements ConnectionStateChangeListener {

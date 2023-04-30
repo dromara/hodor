@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
  * stopwatch
  *
  * @author tomgs
- * @since 2021/8/31
+ * @since 1.0
  */
 public class Stopwatch {
 

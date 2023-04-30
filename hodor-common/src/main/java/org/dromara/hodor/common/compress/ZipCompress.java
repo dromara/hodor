@@ -23,7 +23,7 @@ import java.lang.reflect.Type;
  * ZipCompress
  *
  * @author tomgs
- * @since 2021/9/14
+ * @since 1.0
  */
 public class ZipCompress implements Compress {
 

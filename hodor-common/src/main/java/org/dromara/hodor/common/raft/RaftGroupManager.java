@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * RaftGroupManager
  *
  * @author tomgs
- * @since 2022/3/24
+ * @since 1.0
  */
 public class RaftGroupManager {
 

@@ -10,7 +10,7 @@ import java.util.List;
  * hodor scheduler basic interface
  *
  * @author tomgs
- * @since 2020/6/24 1.0
+ * @since 1.0
  */
 @SPI("scheduler")
 public interface HodorScheduler {

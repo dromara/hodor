@@ -7,7 +7,7 @@ import java.nio.ByteOrder;
  * hash utils
  *
  * @author tomgs
- * @since 2020/8/28
+ * @since 1.0
  */
 public class HashUtils {
 

@@ -29,7 +29,7 @@ import org.dromara.hodor.common.raft.kv.storage.DBColumnFamily;
  * HodorKVClient
  *
  * @author tomgs
- * @since 2022/4/6
+ * @since 1.0
  */
 @Slf4j
 public class HodorKVClient implements AutoCloseable {

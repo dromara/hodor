@@ -24,7 +24,7 @@ import org.dromara.hodor.core.entity.ActuatorBinding;
  * ActuatorBindingService
  *
  * @author tomgs
- * @since 2022/1/24
+ * @since 1.0
  */
 public interface ActuatorBindingService {
 

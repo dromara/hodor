@@ -9,7 +9,7 @@ import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
  * RequestHandler
  *
  * @author tomgs
- * @since 2021/9/6
+ * @since 1.0
  */
 public interface RequestHandler {
 

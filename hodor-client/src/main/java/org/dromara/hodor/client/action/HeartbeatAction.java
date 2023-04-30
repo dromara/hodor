@@ -9,7 +9,7 @@ import org.dromara.hodor.remoting.api.message.response.HeartbeatResponse;
  * heartbeat action
  *
  * @author tomgs
- * @since 2021/2/26
+ * @since 1.0
  */
 @Slf4j
 public class HeartbeatAction extends AbstractAction<HeartbeatRequest, HeartbeatResponse> {

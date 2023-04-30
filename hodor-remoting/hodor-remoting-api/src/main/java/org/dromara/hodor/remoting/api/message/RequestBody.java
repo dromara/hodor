@@ -6,7 +6,7 @@ import java.io.Serializable;
  * request body
  *
  * @author tomgs
- * @since 2020/9/15
+ * @since 1.0
  */
 public interface RequestBody extends Serializable {
 

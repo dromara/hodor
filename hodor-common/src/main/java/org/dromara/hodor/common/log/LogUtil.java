@@ -21,7 +21,7 @@ import org.apache.logging.log4j.core.layout.PatternLayout;
  * 日志工具
  *
  * @author tomgs
- * @since 2021/2/19
+ * @since 1.0
  */
 public class LogUtil {
 

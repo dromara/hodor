@@ -12,7 +12,7 @@ import org.dromara.hodor.remoting.api.message.RemotingMessage;
  * default response future
  *
  * @author tomgs
- * @since 2021/4/7
+ * @since 1.0
  */
 @Slf4j
 public class DefaultResponseFuture implements ResponseFuture {

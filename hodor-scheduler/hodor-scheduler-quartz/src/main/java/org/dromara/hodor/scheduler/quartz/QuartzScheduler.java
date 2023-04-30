@@ -27,7 +27,7 @@ import org.quartz.impl.StdSchedulerFactory;
  *  implements scheduler by quartz
  *
  * @author tomgs
- * @since 2020/6/24 1.0
+ * @since 1.0
  */
 @Join
 public class QuartzScheduler implements HodorScheduler {

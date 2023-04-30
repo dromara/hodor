@@ -12,7 +12,7 @@ import org.dromara.hodor.server.service.RegistryService;
  * actuator service
  *
  * @author tomgs
- * @since 2021/2/5
+ * @since 1.0
  */
 @HodorRestService(value = "actuator", desc = "actuator rest service")
 @SuppressWarnings("unused")

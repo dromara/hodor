@@ -8,7 +8,7 @@ import org.dromara.hodor.common.Host;
  * connect string parser
  *
  * @author tomgs
- * @since 2021/8/24
+ * @since 1.0
  */
 public class ConnectStringParser {
 

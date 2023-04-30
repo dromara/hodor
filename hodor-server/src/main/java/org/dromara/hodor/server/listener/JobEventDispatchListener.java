@@ -14,7 +14,7 @@ import org.dromara.hodor.server.service.HodorService;
  * JobEventDispatchListener
  *
  * @author tomgs
- * @since 2021/8/9
+ * @since 1.0
  */
 public class JobEventDispatchListener extends AbstractAsyncEventPublisher<String> implements DataChangeListener {
 

@@ -7,7 +7,7 @@ import lombok.Data;
  * cache source config
  *
  * @author tomgs
- * @since 2021/8/16
+ * @since 1.0
  */
 @Data
 public class CacheSourceConfig {

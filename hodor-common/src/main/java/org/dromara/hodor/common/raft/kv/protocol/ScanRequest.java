@@ -25,7 +25,7 @@ import lombok.Data;
  * ScanRequest
  *
  * @author tomgs
- * @since 2022/10/8
+ * @since 1.0
  */
 @Data
 @Builder

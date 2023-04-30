@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
  * 左闭右开区间
  *
  * @author tomgs
- * @since 2021/8/3
+ * @since 1.0
  */
 @Data
 @Builder
