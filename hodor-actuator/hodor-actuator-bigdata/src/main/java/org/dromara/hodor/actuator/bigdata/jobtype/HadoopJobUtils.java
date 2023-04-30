@@ -47,7 +47,7 @@ import org.apache.hadoop.yarn.conf.YarnConfiguration;
 import org.apache.hadoop.yarn.exceptions.YarnException;
 import org.apache.hadoop.yarn.logaggregation.ContainerLogsRequest;
 import org.apache.hadoop.yarn.logaggregation.LogCLIHelpers;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.security.commons.HadoopSecurityManager;
 import org.dromara.hodor.actuator.bigdata.security.commons.HadoopSecurityManagerException;
 import org.dromara.hodor.actuator.api.utils.Props;

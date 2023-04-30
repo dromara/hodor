@@ -6,8 +6,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * task 执行器
  *
- * @author tangzhongyuan
- * @create 2019-03-14 9:50
+ * @author tomgs
+ * @since 1.0
  **/
 public class TaskExecutor extends Thread {
 

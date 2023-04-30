@@ -7,8 +7,8 @@ import org.dromara.hodor.actuator.bigdata.queue.PriorityTaskQueue;
  *
  *  任务执行状态检查
  *
- * @author tangzhongyuan
- * @create 2019-03-15 12:08
+ * @author tomgs
+ * @since 1.0
  **/
 public class JobExecutorStateChecker {
 

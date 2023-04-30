@@ -23,7 +23,7 @@ import org.junit.Test;
  * PropsUtilTest
  *
  * @author tomgs
- * @since 2022/1/21
+ * @since 1.0
  */
 public class PropsUtilTest {
 

@@ -2,7 +2,7 @@ package org.dromara.hodor.actuator.bigdata.jobtype.sqoop;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.executor.ProcessJob;
 import org.dromara.hodor.actuator.api.utils.Props;
 
@@ -11,8 +11,8 @@ import org.dromara.hodor.actuator.api.utils.Props;
  *
  * 直接开启sqoop子进程进行调用
  *
- * @author tangzhongyuan
- * @create 2019-03-18 20:11
+ * @author tomgs
+ * @since 1.0
  **/
 public class HadoopSqoopJob extends ProcessJob {
 

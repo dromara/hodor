@@ -1,13 +1,13 @@
 package org.dromara.hodor.actuator.bigdata.jobtype.asyncHadoop;
 
 import java.util.Set;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.dromara.hodor.actuator.api.exceptions.JobExecutionException;
+import org.dromara.hodor.actuator.api.utils.Props;
 import org.dromara.hodor.actuator.bigdata.core.JobExecutorStateChecker;
 import org.dromara.hodor.actuator.bigdata.jobtype.HadoopJavaJob;
 import org.dromara.hodor.actuator.bigdata.jobtype.HadoopJobUtils;
 import org.dromara.hodor.actuator.bigdata.jobtype.javautils.AsyncJobStateTask;
-import org.dromara.hodor.actuator.api.exceptions.JobExecutionException;
-import org.dromara.hodor.actuator.api.utils.Props;
 
 import static org.dromara.hodor.actuator.bigdata.executor.Constants.JobProperties.JOB_LOG_PATH;
 
@@ -15,7 +15,7 @@ import static org.dromara.hodor.actuator.bigdata.executor.Constants.JobPropertie
 /**
  * 异步提交hadoop任务
  *
- * @author tangzhongyuan
+ * @author tomgs
  * @date 2019-03-07 18:34
  **/
 public class AsyncHadoopJavaJob extends HadoopJavaJob {
@@ -47,11 +47,10 @@ public class AsyncHadoopJavaJob extends HadoopJavaJob {
         String applicationId = applicationIds.iterator().next();
         Long requestId = jobProps.getLong("requestId");
 
-        AsyncJobStateTask task = AsyncJobStateTask.builder()
-            .appId(applicationId)
-            .requestId(requestId)
-            .props(props)
-            .build();
+        AsyncJobStateTask task = new AsyncJobStateTask();
+        task.setAppId(applicationId);
+        task.setRequestId(requestId);
+        task.setProps(props);
         JobExecutorStateChecker stateCheckHandler = JobExecutorStateChecker.getInstance();
         int queueSize = stateCheckHandler.addTask(task);
 

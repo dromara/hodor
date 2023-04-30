@@ -22,7 +22,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Helper code for building a process
@@ -32,7 +33,7 @@ public class ExecutorProcessBuilder {
   private final List<String> cmd = new ArrayList<>();
   private Map<String, String> env = new HashMap<>();
   private String workingDir = System.getProperty("user.dir");
-  private Logger logger = Logger.getLogger(ExecutorProcess.class);
+  private Logger logger = LogManager.getLogger(ExecutorProcess.class);
   private boolean isExecuteAsUser = false;
   private String executeAsUserBinaryPath = null;
   private String effectiveUser = null;

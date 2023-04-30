@@ -1,16 +1,17 @@
 package org.dromara.hodor.actuator.bigdata.jobtype.asyncHadoop;
 
 import org.apache.hadoop.conf.Configuration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
- * @author tangzhongyuan
- * @create 2019-03-11 18:24
+ * @author tomgs
+ * @since 1.0
  **/
 public class HadoopOnYarn {
 
-    private static final Logger logger = LoggerFactory.getLogger(HadoopOnYarn.class);
+    private static final Logger logger = LogManager.getLogger(HadoopOnYarn.class);
+
     private static final String SPLIT_COMMA = ",";
 
     private static volatile HadoopOnYarn hadoopOnYarn = null;

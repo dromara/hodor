@@ -20,7 +20,8 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.Map;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties;
 import org.dromara.hodor.actuator.api.utils.Props;
 
@@ -37,7 +38,7 @@ import org.dromara.hodor.actuator.api.utils.Props;
  * constructed.
  */
 public class HadoopConfigurationInjector {
-  private static Logger _logger = Logger.getLogger(HadoopConfigurationInjector.class);
+  private static Logger _logger = LogManager.getLogger(HadoopConfigurationInjector.class);
 
   // File to which the Hadoop configuration to inject will be written.
   private static final String INJECT_FILE = "hadoop-inject.xml";

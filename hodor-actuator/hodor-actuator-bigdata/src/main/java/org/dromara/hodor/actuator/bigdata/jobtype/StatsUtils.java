@@ -35,12 +35,13 @@ import org.apache.hadoop.mapred.Counters.Counter;
 import org.apache.hadoop.mapred.Counters.Group;
 import org.apache.hadoop.mapred.RunningJob;
 import org.apache.hadoop.mapreduce.CounterGroup;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.pig.impl.util.ObjectSerializer;
 
 public class StatsUtils {
 
-  private static Logger logger = Logger.getLogger(StatsUtils.class);
+  private static Logger logger = LogManager.getLogger(StatsUtils.class);
 
   private static final Set<String> JOB_CONF_KEYS = new HashSet<String>(
       Arrays.asList(new String[] {

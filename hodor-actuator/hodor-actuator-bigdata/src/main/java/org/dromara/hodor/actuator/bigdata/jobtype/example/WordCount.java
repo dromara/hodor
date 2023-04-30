@@ -16,8 +16,8 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 
 /**
- * @author tangzhongyuan
- * @create 2018-09-15 14:11
+ * @author tomgs
+ * @since 1.0
  **/
 public class WordCount {
 

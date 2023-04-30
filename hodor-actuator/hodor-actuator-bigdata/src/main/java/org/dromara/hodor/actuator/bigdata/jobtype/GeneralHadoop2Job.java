@@ -10,19 +10,21 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.*;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.jobtype.javautils.AbstractHadoop2Job;
 import org.dromara.hodor.actuator.api.utils.Props;
+
+import static org.apache.logging.log4j.LogManager.getLogger;
 
 /**
  * Compatible with hadoop2.x
  *
- * @author tangzhongyuan
- * @create 2018-12-08 15:25
+ * @author tomgs
+ * @since 1.0
  **/
 public class GeneralHadoop2Job extends AbstractHadoop2Job {
 
-    private static final Logger logger = getLogger();
+    private static final Logger logger = getLogger(GeneralHadoop2Job.class);
 
     private final static Set<String> MARKED_KEY = new HashSet<>();
 

@@ -28,7 +28,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.DirectoryScanner;
 import org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties;
 import org.dromara.hodor.actuator.bigdata.executor.JavaProcessJob;

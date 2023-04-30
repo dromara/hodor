@@ -26,9 +26,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * HodorActuatorJavaProperties
  *
  * @author tomgs
- * @since 2021/11/23
+ * @since 1.0
  */
-@Data
 @ConfigurationProperties(prefix = "hodor")
 public class HodorActuatorBigdataProperties {
 
@@ -42,6 +41,22 @@ public class HodorActuatorBigdataProperties {
 
     public HodorProperties getCommonProperties() {
         return this.commons;
+    }
+
+    public HodorProperties getCommons() {
+        return commons;
+    }
+
+    public void setCommons(HodorProperties commons) {
+        this.commons = commons;
+    }
+
+    public Map<String, Object> getBigdata() {
+        return bigdata;
+    }
+
+    public void setBigdata(Map<String, Object> bigdata) {
+        this.bigdata = bigdata;
     }
 
 }

@@ -5,8 +5,8 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * @author tangzhongyuan
- * @create 2019-03-06 16:15
+ * @author tomgs
+ * @since 1.0
  **/
 public class RegexUtil {
 

@@ -21,7 +21,7 @@ package org.dromara.hodor.actuator.api.exceptions;
  * JobExecutionException
  *
  * @author tomgs
- * @since 2021/12/13
+ * @since 1.0
  */
 public class JobExecutionException extends Exception {
 

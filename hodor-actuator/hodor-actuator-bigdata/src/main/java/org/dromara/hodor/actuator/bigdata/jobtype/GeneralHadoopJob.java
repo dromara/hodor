@@ -6,21 +6,22 @@ import java.util.Set;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.*;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.jobtype.javautils.AbstractHadoopJob;
 import org.dromara.hodor.actuator.api.utils.Props;
 
 /**
  * Compatible with hadoop1.x
  *
- * @author tangzhongyuan
- * @create 2018-12-08 15:25
+ * @author tomgs
+ * @since 1.0
  **/
 public class GeneralHadoopJob extends AbstractHadoopJob {
 
     private final static Set<String> MARKED_KEY = new HashSet<>();
 
-    private static final Logger logger = getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     private static final String JOB_CLASS = "job.class";
 

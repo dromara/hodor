@@ -7,13 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import org.apache.hadoop.yarn.api.records.ApplicationReport;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.dromara.hodor.actuator.api.exceptions.JobExecutionException;
+import org.dromara.hodor.actuator.api.utils.Props;
 import org.dromara.hodor.actuator.bigdata.core.JobExecutorStateChecker;
 import org.dromara.hodor.actuator.bigdata.executor.JavaProcessJob;
 import org.dromara.hodor.actuator.bigdata.jobtype.HadoopJobUtils;
 import org.dromara.hodor.actuator.bigdata.jobtype.javautils.AsyncJobStateTask;
-import org.dromara.hodor.actuator.api.exceptions.JobExecutionException;
-import org.dromara.hodor.actuator.api.utils.Props;
 
 /**
  * 异步提交spark任务入口
@@ -28,8 +28,8 @@ import org.dromara.hodor.actuator.api.utils.Props;
  *
  * </p>
  *
- * @author tangzhongyuan
- * @create 2019-03-07 19:02
+ * @author tomgs
+ * @since 1.0
  **/
 public class AsyncSparkJob extends JavaProcessJob {
 
@@ -56,7 +56,7 @@ public class AsyncSparkJob extends JavaProcessJob {
         }
 
         SparkOnYarn instance = SparkOnYarn.getInstance();
-        YarnSubmitConditions conditions = YarnSubmitConditions.builder().build();
+        YarnSubmitConditions conditions = new YarnSubmitConditions();
 
         //set application config
         conditions.setJobName(jobProps.getString("job.name", jobid));
@@ -120,11 +120,10 @@ public class AsyncSparkJob extends JavaProcessJob {
         logger.info("详细情况请查看tracking url :" + trackingUrl);
 
         Long requestId = jobProps.getLong("requestId");
-        AsyncJobStateTask task = AsyncJobStateTask.builder()
-            .appId(applicationId)
-            .requestId(requestId)
-            .props(jobProps)
-            .build();
+        AsyncJobStateTask task = new AsyncJobStateTask();
+        task.setAppId(applicationId);
+        task.setRequestId(requestId);
+        task.setProps(jobProps);
         JobExecutorStateChecker stateCheckHandler = JobExecutorStateChecker.getInstance();
         int queueSize = stateCheckHandler.addTask(task);
 

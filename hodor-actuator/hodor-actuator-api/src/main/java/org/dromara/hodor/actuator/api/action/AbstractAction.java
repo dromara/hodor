@@ -15,7 +15,7 @@ import org.dromara.hodor.remoting.api.message.ResponseBody;
  * abstract action
  *
  * @author tomgs
- * @since 2021/3/4
+ * @since 1.0
  */
 @Slf4j
 public abstract class AbstractAction<I extends RequestBody, O extends ResponseBody> extends HodorRunnable {

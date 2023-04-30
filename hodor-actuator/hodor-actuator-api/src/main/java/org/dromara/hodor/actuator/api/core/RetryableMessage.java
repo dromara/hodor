@@ -12,7 +12,7 @@ import org.dromara.hodor.remoting.api.message.RemotingMessage;
  * retryable message
  *
  * @author tomgs
- * @since 2021/7/30
+ * @since 1.0
  */
 @Data
 @Builder

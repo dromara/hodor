@@ -33,19 +33,16 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hadoop.security.token.Token;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Layout;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.dromara.hodor.actuator.api.utils.Props;
 import org.dromara.hodor.actuator.bigdata.executor.ProcessJob;
+import org.dromara.hodor.actuator.bigdata.jobtype.javautils.JobUtils;
 import org.dromara.hodor.actuator.bigdata.security.commons.HadoopSecurityManager;
 import org.dromara.hodor.actuator.bigdata.utils.JSONUtils;
-import org.dromara.hodor.actuator.api.utils.Props;
 
 import static org.apache.hadoop.security.UserGroupInformation.HADOOP_TOKEN_FILE_LOCATION;
 import static org.dromara.hodor.actuator.bigdata.security.commons.SecurityUtils.MAPREDUCE_JOB_CREDENTIALS_BINARY;
@@ -65,7 +62,7 @@ public class HadoopJavaJobRunnerMain {
     public static final String RUN_METHOD_PARAM = "method.run";
     public static final String[] PROPS_CLASSES = new String[]{"org.dromara.hodor.actuator.common.utils.Props"};
 
-    private static final Layout DEFAULT_LAYOUT = new PatternLayout("%p %m\n");
+    private static final PatternLayout DEFAULT_LAYOUT = PatternLayout.createDefaultLayout();
 
     public final Logger _logger;
 
@@ -93,13 +90,7 @@ public class HadoopJavaJobRunnerMain {
             _jobName = System.getenv(ProcessJob.JOB_NAME_ENV);
             String propsFile = System.getenv(ProcessJob.JOB_PROP_ENV);
 
-            _logger = Logger.getRootLogger();
-            _logger.removeAllAppenders();
-            ConsoleAppender appender = new ConsoleAppender();
-            appender.setLayout(DEFAULT_LAYOUT);
-            appender.activateOptions();
-            _logger.addAppender(appender);
-            _logger.setLevel(Level.INFO); //Explicitly setting level to INFO
+            _logger = JobUtils.initJobLogger();
 
             Properties props = new Properties();
 //      props.load(new BufferedReader(new FileReader(propsFile)));

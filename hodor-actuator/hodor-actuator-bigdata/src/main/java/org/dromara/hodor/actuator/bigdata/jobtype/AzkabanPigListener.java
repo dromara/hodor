@@ -21,7 +21,8 @@ import org.apache.hadoop.mapred.JobClient;
 import org.apache.hadoop.mapred.JobID;
 import org.apache.hadoop.mapred.RunningJob;
 import org.apache.hadoop.mapred.TaskReport;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceOper;
 import org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.plans.MROperPlan;
 import org.apache.pig.impl.plan.OperatorKey;
@@ -38,7 +39,7 @@ import java.util.*;
 import static org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties.JOB_ATTACHMENT_FILE;
 
 public class AzkabanPigListener implements PigProgressNotificationListener {
-  private static Logger logger = Logger.getLogger(AzkabanPigListener.class);
+  private static Logger logger = LogManager.getLogger(AzkabanPigListener.class);
   private String statsFile;
 
   private Map<String, PigJobDagNode> dagNodeNameMap =

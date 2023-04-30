@@ -17,7 +17,7 @@
 
 package org.dromara.hodor.actuator.bigdata.core;
 
-import org.apache.log4j.Logger;
+import org.dromara.hodor.actuator.api.core.JobLogger;
 import org.dromara.hodor.actuator.bigdata.executor.Job;
 import org.dromara.hodor.actuator.api.ExecutableJob;
 import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
@@ -26,14 +26,14 @@ import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
  * BigdataExecutableJob
  *
  * @author tomgs
- * @since 2022/1/13
+ * @since 1.0
  */
 public class BigdataExecutableJob implements ExecutableJob {
 
     private final Job job;
-    private final Logger logger;
+    private final JobLogger logger;
 
-    public BigdataExecutableJob(final Job job, final Logger logger) {
+    public BigdataExecutableJob(final Job job, final JobLogger logger) {
         this.job = job;
         this.logger = logger;
     }

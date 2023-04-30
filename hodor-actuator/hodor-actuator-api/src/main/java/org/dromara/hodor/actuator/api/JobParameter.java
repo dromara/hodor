@@ -7,7 +7,7 @@ import lombok.ToString;
  * job parameter
  *
  * @author tomgs
- * @since 2021/1/4
+ * @since 1.0
  */
 @Getter
 @ToString

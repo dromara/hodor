@@ -9,11 +9,12 @@ import java.util.List;
 import org.apache.commons.io.filefilter.AndFileFilter;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 public class FileUtils {
-  private static Logger logger = Logger.getLogger(FileUtils.class);
+  private static Logger logger = LogManager.getLogger(FileUtils.class);
 
   /**
    * Delete file or directory.

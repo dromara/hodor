@@ -9,7 +9,7 @@ import org.dromara.hodor.common.executor.HodorRunnable;
  * executor manager
  *
  * @author tomgs
- * @since 2021/2/26
+ * @since 1.0
  */
 public class ExecutorManager {
 

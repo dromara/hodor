@@ -26,7 +26,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * HodorActuatorJavaProperties
  *
  * @author tomgs
- * @since 2021/11/23
+ * @since 1.0
  */
 @Data
 @ConfigurationProperties(prefix = "hodor")

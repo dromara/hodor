@@ -2,18 +2,18 @@ package org.dromara.hodor.actuator.bigdata.jobtype.javautils;
 
 import cn.hutool.core.date.DateUtil;
 import java.io.IOException;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Objects;
 import org.apache.hadoop.yarn.api.records.ApplicationReport;
 import org.apache.hadoop.yarn.api.records.YarnApplicationState;
 import org.apache.hadoop.yarn.exceptions.YarnException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.dromara.hodor.actuator.api.utils.Props;
 import org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties;
 import org.dromara.hodor.actuator.bigdata.jobtype.HadoopJobUtils;
 import org.dromara.hodor.actuator.bigdata.queue.AbstractTask;
 import org.dromara.hodor.actuator.bigdata.queue.ITask;
-import org.dromara.hodor.actuator.api.utils.Props;
+import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.remoting.api.message.Header;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
@@ -29,13 +29,11 @@ import static org.apache.hadoop.yarn.api.records.YarnApplicationState.KILLED;
  * AsyncJobStateTask
  *
  * @author tomgs
- * @since 2021.11.23
+ * @since 1.0
  **/
-@Data
-@Slf4j
-@Builder
-@EqualsAndHashCode(callSuper = true)
 public class AsyncJobStateTask extends AbstractTask {
+
+    private final Logger logger = LogManager.getLogger(AsyncJobStateTask.class);
 
     private String appId;
 
@@ -49,9 +47,9 @@ public class AsyncJobStateTask extends AbstractTask {
         try {
             report = HadoopJobUtils.fetchJobStateOnCluster(getAppId());
         } catch (YarnException | IOException e) {
-            log.error("AsyncJobStateTask ## get report error, errorMsg: {}.", e.getMessage(), e);
+            logger.error(StringUtils.format("AsyncJobStateTask ## get report error, errorMsg: {}.", e.getMessage()), e);
         }
-        log.info("AsyncJobStateTask ## report: {}", report);
+        logger.info(StringUtils.format("AsyncJobStateTask ## report: {}", report));
 
         if (report != null && isFinished(report)) {
             RequestContext context = (RequestContext) props.get(CommonJobProperties.JOB_CONTEXT);
@@ -97,6 +95,47 @@ public class AsyncJobStateTask extends AbstractTask {
                 break;
         }
         return status;
+    }
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
+
+    public Long getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(Long requestId) {
+        this.requestId = requestId;
+    }
+
+    public Props getProps() {
+        return props;
+    }
+
+    public void setProps(Props props) {
+        this.props = props;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        AsyncJobStateTask that = (AsyncJobStateTask) o;
+        return appId.equals(that.appId) && requestId.equals(that.requestId) && props.equals(that.props);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(appId, requestId, props);
     }
 }
 

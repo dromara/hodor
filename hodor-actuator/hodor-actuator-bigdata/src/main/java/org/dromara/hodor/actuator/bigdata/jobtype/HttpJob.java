@@ -2,13 +2,13 @@ package org.dromara.hodor.actuator.bigdata.jobtype;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.executor.ProcessJob;
 import org.dromara.hodor.actuator.api.utils.Props;
 
 /**
- * @author tangzhongyuan
- * @create 2018-12-26 10:50
+ * @author tomgs
+ * @since 1.0
  **/
 public class HttpJob extends ProcessJob {
 

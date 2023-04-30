@@ -1,7 +1,8 @@
 package org.dromara.hodor.actuator.bigdata.jobtype.asyncSpark;
 
 import com.google.common.collect.Lists;
-import org.apache.commons.lang3.StringUtils;
+import java.util.List;
+import java.util.Objects;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
 import org.apache.hadoop.yarn.api.records.ApplicationReport;
@@ -9,26 +10,25 @@ import org.apache.hadoop.yarn.api.records.FinalApplicationStatus;
 import org.apache.hadoop.yarn.api.records.YarnApplicationState;
 import org.apache.hadoop.yarn.client.api.YarnClient;
 import org.apache.hadoop.yarn.util.ConverterUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.deploy.yarn.Client;
 import org.apache.spark.deploy.yarn.ClientArguments;
 import org.dromara.hodor.actuator.bigdata.exception.JobExecutionException;
 import org.dromara.hodor.actuator.bigdata.jobtype.javautils.JobUtils;
 import org.dromara.hodor.actuator.bigdata.utils.JSONUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.List;
+import org.dromara.hodor.common.utils.StringUtils;
 
 /**
  * 用于spark 提交到yarn
  *
- * @author tangzhongyuan
- * @create 2019-03-06 15:49
+ * @author tomgs
+ * @since 1.0
  **/
 public class SparkOnYarn {
 
-    private static final Logger logger = LoggerFactory.getLogger(SparkOnYarn.class);
+    private static final Logger logger = LogManager.getLogger(SparkOnYarn.class);
 
     private static volatile SparkOnYarn sparkOnYarn = null;
 
@@ -44,16 +44,16 @@ public class SparkOnYarn {
     }
 
     public String submitSpark(YarnSubmitConditions conditions) {
-        logger.info("请求参数:{}.", conditions);
+        logger.info(StringUtils.format("请求参数:{}.", conditions));
 
         // 初始化yarn客户端
         logger.info("初始化spark on yarn客户端");
         List<String> args = Lists.newArrayList("--jar", conditions.getApplicationJar(), "--class",
-                conditions.getMainClass());
+            conditions.getMainClass());
         if (conditions.getOtherArgs() != null && conditions.getOtherArgs().size() > 0) {
             for (String arg : conditions.getOtherArgs()) {
                 args.add("--arg");
-                args.add(StringUtils.join(new String[] { arg }, ","));
+                args.add(StringUtils.join(new String[] {arg}, ","));
             }
         }
 
@@ -64,7 +64,7 @@ public class SparkOnYarn {
         // 初始化 yarn的配置
         Configuration conf = JobUtils.getHadoopConfiguration(conditions);
 
-        ClientArguments cArgs = new ClientArguments(args.toArray(new String[0]));
+        ClientArguments cArgs = new ClientArguments(args.toArray(new String[0]), sparkConf);
         Client client = new Client(cArgs, conf, sparkConf);
         logger.info("提交任务，HadoopJavaJobRunnerMain任务名称：" + conditions.getJobName());
 
@@ -82,13 +82,11 @@ public class SparkOnYarn {
     /**
      * 停止spark任务
      *
-     * @param yarnResourcemanagerAddress
-     *            yarn资源管理器地址， 例如：master:8032，查看yarn集群获取具体地址
-     * @param appIdStr
-     *            需要取消的任务id
+     * @param yarnResourcemanagerAddress yarn资源管理器地址， 例如：master:8032，查看yarn集群获取具体地址
+     * @param appIdStr                   需要取消的任务id
      */
     public void killJob(String yarnResourcemanagerAddress, String appIdStr) {
-        logger.info("取消spark任务,任务id：{}", appIdStr);
+        logger.info(StringUtils.format("取消spark任务,任务id：{}", appIdStr));
         // 初始化 yarn的配置
         Configuration cf = new Configuration();
         String os = System.getProperty("os.name");
@@ -128,21 +126,15 @@ public class SparkOnYarn {
     /**
      * 获取spark任务状态
      *
-     *
-     * @param yarnResourcemanagerAddress
-     *            yarn资源管理器地址， 例如：master:8032，查看yarn集群获取具体地址
-     * @param appIdStr
-     *            需要取消的任务id
+     * @param yarnResourcemanagerAddress yarn资源管理器地址， 例如：master:8032，查看yarn集群获取具体地址
+     * @param appIdStr                   需要取消的任务id
      */
     public SparkTaskState getStatus(String yarnResourcemanagerAddress, String appIdStr) {
-        logger.info("获取任务状态启动，任务id：{}", appIdStr);
+        logger.info(StringUtils.format("获取任务状态启动，任务id：{}", appIdStr));
         // 初始化 yarn的配置
         Configuration cf = new Configuration();
         String os = System.getProperty("os.name");
-        boolean cross_platform = false;
-        if (os.contains("Windows")) {
-            cross_platform = true;
-        }
+        boolean cross_platform = os.contains("Windows");
         cf.setBoolean("mapreduce.app-submission.cross-platform", cross_platform);// 配置使用跨平台提交任务
         // 设置yarn资源，不然会使用localhost:8032
         // 启用yarn的高可用，默认关闭
@@ -150,14 +142,14 @@ public class SparkOnYarn {
         cf.set("yarn.resourcemanager.ha.rm-ids", "rm1,rm2");
         // 设置yarn资源，不然会使用localhost:8032
         String[] hostPort = RegexUtil.getResourceHostPort(yarnResourcemanagerAddress);
-        cf.set("yarn.resourcemanager.address.rm1", hostPort[0]);
+        cf.set("yarn.resourcemanager.address.rm1", Objects.requireNonNull(hostPort)[0]);
         // 设置yarn资源，不然会使用localhost:8032
         if (hostPort.length >= 2) {
             cf.set("yarn.resourcemanager.address.rm2", hostPort[1]);
         }
-        logger.info("获取任务状态，任务id: {}", appIdStr);
+        logger.info(StringUtils.format("获取任务状态，任务id: {}", appIdStr));
 
-        SparkTaskState taskState = SparkTaskState.builder().build();
+        SparkTaskState taskState = new SparkTaskState();
         // 设置任务id
         taskState.setAppId(appIdStr);
         YarnClient yarnClient = YarnClient.createYarnClient();
@@ -189,15 +181,14 @@ public class SparkOnYarn {
 
         // 关闭yarn客户端
         yarnClient.stop();
-        logger.info("获取任务状态结束，任务状态： {}", JSONUtils.toJSON(taskState));
+        logger.info(StringUtils.format("获取任务状态结束，任务状态： {}", JSONUtils.toJSON(taskState)));
         return taskState;
     }
 
     /**
      * 根据spark的任务id字符串获取对象
      *
-     * @param appIdStr
-     *            String类型的id
+     * @param appIdStr String类型的id
      * @return 应用id的对象
      */
     public ApplicationId getAppId(String appIdStr) {

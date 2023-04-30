@@ -25,7 +25,7 @@ import java.util.Properties;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hadoop.security.token.Token;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.executor.ProcessJob;
 import org.dromara.hodor.actuator.bigdata.security.commons.HadoopSecurityManager;
 

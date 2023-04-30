@@ -26,7 +26,8 @@ import java.util.Properties;
 import java.util.Set;
 import org.apache.hadoop.mapred.Counters;
 import org.apache.hadoop.security.UserGroupInformation;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.pig.PigRunner;
 import org.apache.pig.tools.pigstats.JobStats;
 import org.apache.pig.tools.pigstats.PigStats;
@@ -46,7 +47,7 @@ public class HadoopSecurePigWrapper {
   private static final Logger logger;
 
   static {
-    logger = Logger.getRootLogger();
+    logger = LogManager.getRootLogger();
   }
 
   public static void main(final String[] args) throws Exception {

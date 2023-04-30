@@ -1,16 +1,25 @@
 package org.dromara.hodor.actuator.bigdata.jobtype.javautils;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.mapreduce.*;
-import org.apache.log4j.*;
+import org.apache.hadoop.mapreduce.Counter;
+import org.apache.hadoop.mapreduce.CounterGroup;
+import org.apache.hadoop.mapreduce.Counters;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.TaskReport;
+import org.apache.hadoop.mapreduce.TaskType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.dromara.hodor.actuator.api.utils.Props;
 import org.dromara.hodor.actuator.bigdata.jobtype.MapReduceJob2State;
 import org.dromara.hodor.actuator.bigdata.jobtype.StatsUtils;
 import org.dromara.hodor.actuator.bigdata.utils.JSONUtils;
-import org.dromara.hodor.actuator.api.utils.Props;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
 
 import static org.apache.hadoop.security.UserGroupInformation.HADOOP_TOKEN_FILE_LOCATION;
 import static org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties.JOB_ATTACHMENT_FILE;
@@ -19,22 +28,25 @@ import static org.dromara.hodor.actuator.bigdata.security.commons.HadoopSecurity
 /**
  * Compatible with hadoop2.x
  *
- * @author tangzhongyuan
- * @create 2018-12-11 14:11
+ * @author tomgs
+ * @since 1.0
  **/
 public abstract class AbstractHadoop2Job {
 
-    private static final Layout DEFAULT_LAYOUT = new PatternLayout("%p %m\n");
-    private static final Logger logger = getLogger();
+    private static final Logger logger = LogManager.getLogger(AbstractHadoop2Job.class);
 
     private final Props props;
+
     private final String jobName;
 
     private Job job;
+
     private Configuration conf;
 
     private boolean visualizer;
+
     private MapReduceJob2State mapReduceJobState;
+
     private String jobStatsFileName;
 
     protected AbstractHadoop2Job(String name, Props props) throws IOException {
@@ -68,7 +80,7 @@ public abstract class AbstractHadoop2Job {
         this.conf = new Configuration();
         if (System.getenv(HADOOP_TOKEN_FILE_LOCATION) != null) {
             conf.set(MAPREDUCE_JOB_CREDENTIALS_BINARY,
-                    System.getenv(HADOOP_TOKEN_FILE_LOCATION));
+                System.getenv(HADOOP_TOKEN_FILE_LOCATION));
         }
         conf.setBoolean("mapred.mapper.new-api", true);
         conf.setBoolean("mapred.reducer.new-api", true);
@@ -146,7 +158,7 @@ public abstract class AbstractHadoop2Job {
             TaskReport[] reduceTaskReport = runningJob.getTaskReports(TaskType.REDUCE);
 
             mapReduceJobState =
-                    new MapReduceJob2State(runningJob, mapTaskReport, reduceTaskReport);
+                new MapReduceJob2State(runningJob, mapTaskReport, reduceTaskReport);
             writeMapReduceJobState(conf);
         } catch (IOException | InterruptedException e) {
             logger.error("Cannot update MapReduceJobState");
@@ -171,17 +183,6 @@ public abstract class AbstractHadoop2Job {
         } catch (Exception e) {
             logger.error("Cannot write JSON file.");
         }
-    }
-
-    protected static Logger getLogger() {
-        Logger logger = Logger.getRootLogger();
-        logger.removeAllAppenders();
-        ConsoleAppender appender = new ConsoleAppender();
-        appender.setLayout(DEFAULT_LAYOUT);
-        appender.activateOptions();
-        logger.addAppender(appender);
-        logger.setLevel(Level.INFO); //Explicitly setting level to INFO
-        return logger;
     }
 
 }

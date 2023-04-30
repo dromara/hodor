@@ -18,5 +18,8 @@ hodor:
         maximumPoolSize: 16
   bigdata:
     supportType: [java]
-
-
+logging:
+  level:
+    root: info
+    web: info
+    sql: info

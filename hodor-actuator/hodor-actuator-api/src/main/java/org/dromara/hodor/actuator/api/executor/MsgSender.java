@@ -12,7 +12,7 @@ import org.dromara.hodor.model.node.NodeInfo;
  * 心跳/下线消息发送服务
  *
  * @author tomgs
- * @since 2021/1/7
+ * @since 1.0
  */
 @Slf4j
 public class MsgSender {

@@ -7,8 +7,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * PriorityTaskQueue
  *
- * @author tangzhongyuan
- * @create 2019-03-14 9:45
+ * @author tomgs
+ * @since 1.0
  **/
 public class PriorityTaskQueue {
 

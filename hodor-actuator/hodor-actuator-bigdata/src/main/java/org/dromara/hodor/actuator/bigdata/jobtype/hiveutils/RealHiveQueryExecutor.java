@@ -25,13 +25,14 @@ import org.apache.hadoop.hive.cli.OptionsProcessor;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.ql.exec.Utilities;
 import org.apache.hadoop.hive.shims.ShimLoader;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static org.apache.hadoop.hive.conf.HiveConf.ConfVars.HIVEAUXJARS;
 import static org.apache.hadoop.hive.conf.HiveConf.ConfVars.METASTORECONNECTURLKEY;
 
 class RealHiveQueryExecutor implements HiveQueryExecutor {
-  private final static Logger LOG = Logger
+  private final static Logger LOG = LogManager
       .getLogger("com.linkedin.hive.HiveQueryExecutor");
   private final CliDriver cli;
   private final CliSessionState ss;

@@ -16,19 +16,6 @@
 
 package org.dromara.hodor.actuator.bigdata.utils;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
-import org.joda.time.Days;
-import org.joda.time.DurationFieldType;
-import org.joda.time.Hours;
-import org.joda.time.Minutes;
-import org.joda.time.Months;
-import org.joda.time.ReadablePeriod;
-import org.joda.time.Seconds;
-import org.joda.time.Weeks;
-import org.joda.time.Years;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -40,12 +27,27 @@ import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
+import org.apache.commons.io.IOUtils;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.DurationFieldType;
+import org.joda.time.Hours;
+import org.joda.time.Minutes;
+import org.joda.time.Months;
+import org.joda.time.ReadablePeriod;
+import org.joda.time.Seconds;
+import org.joda.time.Weeks;
+import org.joda.time.Years;
 
 /**
  * A util helper class full of static methods that are commonly used.
@@ -53,8 +55,6 @@ import java.util.zip.ZipOutputStream;
 public class Utils {
 
     public static final Random RANDOM = new Random();
-    private static final Logger logger = Logger
-            .getLogger(Utils.class);
 
     /**
      * Private constructor.
@@ -130,8 +130,8 @@ public class Utils {
 
     public static File createTempDir(final File parent) {
         final File temp =
-                new File(parent,
-                        Integer.toString(Math.abs(RANDOM.nextInt()) % 100000000));
+            new File(parent,
+                Integer.toString(Math.abs(RANDOM.nextInt()) % 100000000));
         temp.delete();
         temp.mkdir();
         temp.deleteOnExit();
@@ -149,7 +149,7 @@ public class Utils {
     }
 
     public static void zipFolderContent(final File folder, final File output)
-            throws IOException {
+        throws IOException {
         final FileOutputStream out = new FileOutputStream(output);
         final ZipOutputStream zOut = new ZipOutputStream(out);
         try {
@@ -165,23 +165,23 @@ public class Utils {
     }
 
     private static void zipFile(final String path, final File input, final ZipOutputStream zOut)
-            throws IOException {
+        throws IOException {
         if (input.isDirectory()) {
             final File[] files = input.listFiles();
             if (files != null) {
                 for (final File f : files) {
                     final String childPath =
-                            path + input.getName() + (f.isDirectory() ? "/" : "");
+                        path + input.getName() + (f.isDirectory() ? "/" : "");
                     zipFile(childPath, f, zOut);
                 }
             }
         } else {
             final String childPath =
-                    path + (path.length() > 0 ? "/" : "") + input.getName();
+                path + (path.length() > 0 ? "/" : "") + input.getName();
             final ZipEntry entry = new ZipEntry(childPath);
             zOut.putNextEntry(entry);
             final InputStream fileInputStream =
-                    new BufferedInputStream(new FileInputStream(input));
+                new BufferedInputStream(new FileInputStream(input));
             try {
                 IOUtils.copy(fileInputStream, zOut);
             } finally {
@@ -197,8 +197,8 @@ public class Utils {
             final File newFile = new File(dest, entry.getName());
             if (!newFile.getCanonicalPath().startsWith(dest.getCanonicalPath())) {
                 throw new IOException(
-                        "Extracting zip entry would have resulted in a file outside the specified destination"
-                                + " directory.");
+                    "Extracting zip entry would have resulted in a file outside the specified destination"
+                        + " directory.");
             }
 
             if (entry.isDirectory()) {
@@ -208,7 +208,7 @@ public class Utils {
                 final InputStream src = source.getInputStream(entry);
                 try {
                     final OutputStream output =
-                            new BufferedOutputStream(new FileOutputStream(newFile));
+                        new BufferedOutputStream(new FileOutputStream(newFile));
                     try {
                         IOUtils.copy(src, output);
                     } finally {
@@ -335,8 +335,8 @@ public class Utils {
 
     public static Object invokeStaticMethod(final ClassLoader loader, final String className,
                                             final String methodName, final Object... args) throws ClassNotFoundException,
-            SecurityException, NoSuchMethodException, IllegalArgumentException,
-            IllegalAccessException, InvocationTargetException {
+        SecurityException, NoSuchMethodException, IllegalArgumentException,
+        IllegalAccessException, InvocationTargetException {
         final Class<?> clazz = loader.loadClass(className);
 
         final Class<?>[] argTypes = new Class[args.length];
@@ -350,7 +350,7 @@ public class Utils {
     }
 
     public static void copyStream(final InputStream input, final OutputStream output)
-            throws IOException {
+        throws IOException {
         final byte[] buffer = new byte[1024];
         int bytesRead;
         while ((bytesRead = input.read(buffer)) != -1) {
@@ -366,7 +366,7 @@ public class Utils {
         }
 
         final int periodInt =
-                Integer.parseInt(periodStr.substring(0, periodStr.length() - 1));
+            Integer.parseInt(periodStr.substring(0, periodStr.length() - 1));
         switch (periodUnit) {
             case 'y':
                 period = Years.years(periodInt);
@@ -391,7 +391,7 @@ public class Utils {
                 break;
             default:
                 throw new IllegalArgumentException("Invalid schedule period unit '"
-                        + periodUnit);
+                    + periodUnit);
         }
 
         return period;
@@ -441,8 +441,8 @@ public class Utils {
 
         long size = 0L;
         if (strMemSize.endsWith("g") || strMemSize.endsWith("G")
-                || strMemSize.endsWith("m") || strMemSize.endsWith("M")
-                || strMemSize.endsWith("k") || strMemSize.endsWith("K")) {
+            || strMemSize.endsWith("m") || strMemSize.endsWith("M")
+            || strMemSize.endsWith("k") || strMemSize.endsWith("K")) {
             final String strSize = strMemSize.substring(0, strMemSize.length() - 1);
             size = Long.parseLong(strSize);
         } else {
@@ -465,9 +465,9 @@ public class Utils {
 
     /**
      * parse vm arguments to map
+     *
      * @param options vm args. eg: -Dxms=32G -Dxmx=32G
      * @return string map. eg:[xms=32G, xmx=32G]
-     * @see Props.putAll(String props)
      */
     public static Map<String, String> parseVmsString(String options) {
         Map<String, String> map = new HashMap<>();

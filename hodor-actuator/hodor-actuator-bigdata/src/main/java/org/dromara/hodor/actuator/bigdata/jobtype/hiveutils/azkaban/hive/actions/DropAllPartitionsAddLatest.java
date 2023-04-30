@@ -22,7 +22,8 @@ import java.util.Collections;
 import java.util.Properties;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.jobtype.hiveutils.HiveQueryExecutionException;
 import org.dromara.hodor.actuator.bigdata.jobtype.hiveutils.HiveQueryExecutor;
 import org.dromara.hodor.actuator.bigdata.jobtype.hiveutils.azkaban.HiveAction;
@@ -38,7 +39,7 @@ import static org.dromara.hodor.actuator.bigdata.jobtype.hiveutils.azkaban.hive.
  * latest/greatest/highest directory in the specified subdirectory and add that
  * as the only partition in the table. This action is suitable for tables with
  * full replacement policies where we only want one partition.</p>
- *
+ * <p>
  * For example, if we have a table foo with derived_date partitions that
  * correspond to directories:</p> /foo/2012-01-01</p> /2012-01-02</p>
  * /2012-01-03</p> And currently only have derived_date="2012-01-02" registered,
@@ -58,101 +59,107 @@ import static org.dromara.hodor.actuator.bigdata.jobtype.hiveutils.azkaban.hive.
  */
 @AzkHiveAction(DROP_ALL_PARTITIONS_AND_ADD_LATEST)
 public class DropAllPartitionsAddLatest implements HiveAction {
-  private final static Logger LOG =
-      Logger
-          .getLogger("com.linkedin.hive.azkaban.hive.actions.DropAllPartitionsAddLatest");
+    private final static Logger LOG =
+        LogManager.getLogger("com.linkedin.hive.azkaban.hive.actions.DropAllPartitionsAddLatest");
 
-  public static final String DROP_AND_ADD = DROP_ALL_PARTITIONS_AND_ADD_LATEST;
+    public static final String DROP_AND_ADD = DROP_ALL_PARTITIONS_AND_ADD_LATEST;
 
-  @AzkabanJobPropertyDescription("Comma-separated list of tables to drop/add partitions to.  All tables must be within the same database")
-  public static final String HIVE_TABLE = "hive.tables";
-  @AzkabanJobPropertyDescription("Database to drop/add partitions within")
-  public static final String HIVE_DATABASE = "hive.database";
-  @AzkabanJobPropertyDescription("Name of partition of drop/add from table, eg. datepartition")
-  public static final String HIVE_PARTITION = "hive.partition";
-  @AzkabanJobPropertyDescription("Directory on hdfs where external table resides, eg /data/derived/. Tables should be in this directory.")
-  public static final String HIVE_TABLES_LOCATION = "hive.tables.location";
+    @AzkabanJobPropertyDescription("Comma-separated list of tables to drop/add partitions to.  All tables must be within the same database")
+    public static final String HIVE_TABLE = "hive.tables";
 
-  private final String database;
-  private final String[] tables;
-  private final String partition;
-  private HiveQueryExecutor hqe;
-  private String tableLocations;
+    @AzkabanJobPropertyDescription("Database to drop/add partitions within")
+    public static final String HIVE_DATABASE = "hive.database";
 
-  public DropAllPartitionsAddLatest(Properties p, HiveQueryExecutor hqe)
-      throws HiveViaAzkabanException {
-    // The goal here is to get to a fluent API ala
-    // LinkedInHive.get("magic")
-    //     .forDatabase("u_jhoman")
-    //     .forTable("zoiks")
-    //     .dropPartition("date-stamp","2012-01-01")
-    //     .addPartition("date-stamp","2012-01-02", "/some/path").go();
-    this.database = verifyProperty(p, HIVE_DATABASE);
-    this.tables = verifyProperty(p, HIVE_TABLE).split(",");
-    this.partition = verifyProperty(p, HIVE_PARTITION);
-    this.tableLocations = verifyProperty(p, HIVE_TABLES_LOCATION);
-    this.hqe = hqe;
-  }
+    @AzkabanJobPropertyDescription("Name of partition of drop/add from table, eg. datepartition")
+    public static final String HIVE_PARTITION = "hive.partition";
 
-  @Override
-  public void execute() throws HiveViaAzkabanException {
-    ArrayList<HQL> hql = new ArrayList<HQL>();
-    hql.add(new UseDatabaseHQL(database));
+    @AzkabanJobPropertyDescription("Directory on hdfs where external table resides, eg /data/derived/. Tables should be in this directory.")
+    public static final String HIVE_TABLES_LOCATION = "hive.tables.location";
 
-    Configuration conf = new Configuration();
-    try {
-      FileSystem fs = FileSystem.get(conf);
+    private final String database;
 
-      for (String table : tables) {
-        LOG.info("Determining HQL commands for table " + table);
-        hql.addAll(addAndDrop(fs, tableLocations, table));
-      }
-      fs.close();
-    } catch (IOException e) {
-      throw new HiveViaAzkabanException(
-          "Exception fetching the directories/partitions from HDFS", e);
+    private final String[] tables;
+
+    private final String partition;
+
+    private HiveQueryExecutor hqe;
+
+    private String tableLocations;
+
+    public DropAllPartitionsAddLatest(Properties p, HiveQueryExecutor hqe)
+        throws HiveViaAzkabanException {
+        // The goal here is to get to a fluent API ala
+        // LinkedInHive.get("magic")
+        //     .forDatabase("u_jhoman")
+        //     .forTable("zoiks")
+        //     .dropPartition("date-stamp","2012-01-01")
+        //     .addPartition("date-stamp","2012-01-02", "/some/path").go();
+        this.database = verifyProperty(p, HIVE_DATABASE);
+        this.tables = verifyProperty(p, HIVE_TABLE).split(",");
+        this.partition = verifyProperty(p, HIVE_PARTITION);
+        this.tableLocations = verifyProperty(p, HIVE_TABLES_LOCATION);
+        this.hqe = hqe;
     }
 
-    StringBuffer query = new StringBuffer();
-    for (HQL q : hql) {
-      query.append(q.toHQL()).append("\n");
+    @Override
+    public void execute() throws HiveViaAzkabanException {
+        ArrayList<HQL> hql = new ArrayList<HQL>();
+        hql.add(new UseDatabaseHQL(database));
+
+        Configuration conf = new Configuration();
+        try {
+            FileSystem fs = FileSystem.get(conf);
+
+            for (String table : tables) {
+                LOG.info("Determining HQL commands for table " + table);
+                hql.addAll(addAndDrop(fs, tableLocations, table));
+            }
+            fs.close();
+        } catch (IOException e) {
+            throw new HiveViaAzkabanException(
+                "Exception fetching the directories/partitions from HDFS", e);
+        }
+
+        StringBuffer query = new StringBuffer();
+        for (HQL q : hql) {
+            query.append(q.toHQL()).append("\n");
+        }
+
+        System.out.println("Query to execute:\n" + query.toString());
+        try {
+            hqe.executeQuery(query.toString());
+        } catch (HiveQueryExecutionException e) {
+            throw new HiveViaAzkabanException("Problem executing query ["
+                + query.toString() + "] on Hive", e);
+        }
+
     }
 
-    System.out.println("Query to execute:\n" + query.toString());
-    try {
-      hqe.executeQuery(query.toString());
-    } catch (HiveQueryExecutionException e) {
-      throw new HiveViaAzkabanException("Problem executing query ["
-          + query.toString() + "] on Hive", e);
+    private ArrayList<HQL> addAndDrop(FileSystem fs, String basepath, String table)
+        throws IOException, HiveViaAzkabanException {
+        ArrayList<HQL> toDropAndAdd = new ArrayList<HQL>();
+        ArrayList<String> directories = null;
+
+        directories = Utils.fetchDirectories(fs, basepath + "/" + table, false);
+
+        if (directories.size() == 0) {
+            throw new HiveViaAzkabanException(
+                "No directories to remove or add found in " + tableLocations);
+        }
+
+        Collections.sort(directories);
+
+        String toAdd = directories.remove(directories.size() - 1);
+
+        LOG.info("For table " + table + ", going to add " + toAdd
+            + " and attempt to drop " + directories.size() + " others");
+        for (String directory : directories) {
+            toDropAndAdd.add(new DropPartitionHQL(table, partition, directory, true));
+        }
+
+        toDropAndAdd.add(new AddExternalPartitionHQL(table, partition, toAdd,
+            toAdd, true));
+        return toDropAndAdd;
     }
-
-  }
-
-  private ArrayList<HQL> addAndDrop(FileSystem fs, String basepath, String table)
-      throws IOException, HiveViaAzkabanException {
-    ArrayList<HQL> toDropAndAdd = new ArrayList<HQL>();
-    ArrayList<String> directories = null;
-
-    directories = Utils.fetchDirectories(fs, basepath + "/" + table, false);
-
-    if (directories.size() == 0) {
-      throw new HiveViaAzkabanException(
-          "No directories to remove or add found in " + tableLocations);
-    }
-
-    Collections.sort(directories);
-
-    String toAdd = directories.remove(directories.size() - 1);
-
-    LOG.info("For table " + table + ", going to add " + toAdd
-        + " and attempt to drop " + directories.size() + " others");
-    for (String directory : directories) {
-      toDropAndAdd.add(new DropPartitionHQL(table, partition, directory, true));
-    }
-
-    toDropAndAdd.add(new AddExternalPartitionHQL(table, partition, toAdd,
-        toAdd, true));
-    return toDropAndAdd;
-  }
 
 }

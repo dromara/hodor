@@ -22,7 +22,8 @@ import java.util.Collections;
 import java.util.Properties;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.jobtype.hiveutils.HiveQueryExecutionException;
 import org.dromara.hodor.actuator.bigdata.jobtype.hiveutils.HiveQueryExecutor;
 import org.dromara.hodor.actuator.bigdata.jobtype.hiveutils.azkaban.HiveAction;
@@ -46,7 +47,7 @@ import static org.dromara.hodor.actuator.bigdata.jobtype.hiveutils.azkaban.Utils
  */
 @AzkHiveAction(Constants.UPDATE_TABLE_LOCATION_TO_LATEST)
 public class UpdateTableLocationToLatest implements HiveAction {
-  private final static Logger LOG = Logger
+  private final static Logger LOG = LogManager
       .getLogger(UpdateTableLocationToLatest.class);
 
   public static final String UPDATE_TABLE_LOCATION_TO_LATEST =

@@ -8,9 +8,17 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.ConsoleAppender;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.builder.api.AppenderComponentBuilder;
+import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilder;
+import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFactory;
+import org.apache.logging.log4j.core.config.builder.api.LayoutComponentBuilder;
+import org.apache.logging.log4j.core.config.builder.api.RootLoggerComponentBuilder;
+import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
 import org.apache.spark.SparkConf;
 import org.dromara.hodor.actuator.bigdata.exception.ConfigException;
 import org.dromara.hodor.actuator.bigdata.jobtype.asyncSpark.RegexUtil;
@@ -21,13 +29,26 @@ public class JobUtils {
     private static final String SPLIT_COMMA = ",";
 
     public static Logger initJobLogger() {
-        Logger rootLogger = Logger.getRootLogger();
-        rootLogger.removeAllAppenders();
-        ConsoleAppender appender = new ConsoleAppender();
-        appender.setLayout(new PatternLayout("%p %m\n"));
-        appender.activateOptions();
-        rootLogger.addAppender(appender);
-        return rootLogger;
+        // Create configuration builder
+        ConfigurationBuilder<BuiltConfiguration> builder = ConfigurationBuilderFactory.newConfigurationBuilder();
+        // Create layout builder
+        LayoutComponentBuilder layoutBuilder = builder.newLayout("PatternLayout")
+            .addAttribute("pattern", "%d{yyyy-MM-dd HH:mm:ss} %p %C{1.} [%t] %m%n");
+        // Create console appender builder
+        AppenderComponentBuilder consoleAppenderBuilder = builder.newAppender("console", "Console")
+            .addAttribute("target", ConsoleAppender.Target.SYSTEM_OUT)
+            .add(layoutBuilder);
+        // Add console appender to root logger
+        RootLoggerComponentBuilder rootLoggerBuilder = builder.newRootLogger(Level.INFO)
+            .add(builder.newAppenderRef("console"));
+        // Add appenders and loggers to configuration
+        builder.add(consoleAppenderBuilder);
+        builder.add(rootLoggerBuilder);
+        // Build configuration and start logger context
+        BuiltConfiguration config = builder.build();
+        LoggerContext context = Configurator.initialize(config);
+        // Get logger and log messages
+        return context.getRootLogger();
     }
 
     public static SparkConf getSparkConf(YarnSubmitConditions conditions) {
@@ -127,7 +148,7 @@ public class JobUtils {
         }
 
         conf.set("dfs.client.failover.proxy.provider." + nameservices,
-                "org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider");
+            "org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider");
 
         //设置实现类，因为会出现类覆盖的问题
         conf.set("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());

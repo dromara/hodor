@@ -18,7 +18,7 @@ package org.dromara.hodor.actuator.bigdata.jobtype;
 
 import java.io.File;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties;
 import org.dromara.hodor.actuator.bigdata.executor.ProcessJob;
 import org.dromara.hodor.actuator.bigdata.security.commons.HadoopSecurityManager;

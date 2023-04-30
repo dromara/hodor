@@ -19,8 +19,18 @@ package org.dromara.hodor.actuator.bigdata.register;
 
 import cn.hutool.core.util.ZipUtil;
 import com.google.common.collect.Sets;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.dromara.hodor.actuator.api.ExecutableJob;
+import org.dromara.hodor.actuator.api.JobRegister;
+import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
+import org.dromara.hodor.actuator.api.core.JobLogger;
+import org.dromara.hodor.actuator.api.utils.Props;
 import org.dromara.hodor.actuator.bigdata.config.HodorActuatorBigdataProperties;
 import org.dromara.hodor.actuator.bigdata.core.BigdataExecutableJob;
 import org.dromara.hodor.actuator.bigdata.core.JobTypeManager;
@@ -28,10 +38,6 @@ import org.dromara.hodor.actuator.bigdata.executor.AbstractProcessJob;
 import org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties;
 import org.dromara.hodor.actuator.bigdata.executor.Constants;
 import org.dromara.hodor.actuator.bigdata.executor.Job;
-import org.dromara.hodor.actuator.api.ExecutableJob;
-import org.dromara.hodor.actuator.api.JobRegister;
-import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
-import org.dromara.hodor.actuator.api.utils.Props;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.storage.filesystem.FileStorage;
 import org.dromara.hodor.common.utils.FileIOUtils;
@@ -39,19 +45,12 @@ import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 
 /**
  * BigdataJobRegister
  *
  * @author tomgs
- * @since 2021/12/28
+ * @since 1.0
  */
 public class BigdataJobRegister implements JobRegister {
 
@@ -90,7 +89,7 @@ public class BigdataJobRegister implements JobRegister {
     @Override
     public ExecutableJob provideExecutableJob(ExecutableJobContext executableJobContext) throws Exception {
         Props jobProps = new Props();
-        Logger logger = executableJobContext.getJobLogger().getLog4jLogger();
+        JobLogger logger = executableJobContext.getJobLogger();
 
         setup(executableJobContext, jobProps);
         resetJobProps(executableJobContext, jobProps);

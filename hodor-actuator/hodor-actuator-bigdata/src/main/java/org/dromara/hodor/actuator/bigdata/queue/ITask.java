@@ -1,8 +1,8 @@
 package org.dromara.hodor.actuator.bigdata.queue;
 
 /**
- * @author tangzhongyuan
- * @create 2019-03-14 9:44
+ * @author tomgs
+ * @since 1.0
  **/
 public interface ITask extends Comparable<ITask> {
 

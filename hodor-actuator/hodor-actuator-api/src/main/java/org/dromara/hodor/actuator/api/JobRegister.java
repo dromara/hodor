@@ -27,7 +27,7 @@ import org.dromara.hodor.model.job.JobDesc;
  * JobRegister
  *
  * @author tomgs
- * @since 2021/11/23
+ * @since 1.0
  */
 public interface JobRegister {
 

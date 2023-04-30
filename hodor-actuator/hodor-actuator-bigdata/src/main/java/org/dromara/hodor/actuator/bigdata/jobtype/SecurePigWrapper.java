@@ -29,7 +29,8 @@ import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.security.token.delegation.DelegationTokenIdentifier;
 import org.apache.hadoop.security.token.Token;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.security.commons.SecurityUtils;
 
 public class SecurePigWrapper {
@@ -40,7 +41,7 @@ public class SecurePigWrapper {
 
   public static void main(final String[] args) throws IOException,
           InterruptedException {
-    final Logger logger = Logger.getRootLogger();
+    final Logger logger = LogManager.getRootLogger();
     final Properties p = System.getProperties();
     final Configuration conf = new Configuration();
 

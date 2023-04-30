@@ -16,7 +16,7 @@
 
 package org.dromara.hodor.actuator.bigdata.executor;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.api.utils.Props;
 
 public abstract class AbstractJob implements Job {

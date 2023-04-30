@@ -1,17 +1,20 @@
 package org.dromara.hodor.actuator.bigdata.core;
 
-import org.apache.log4j.Logger;
-import org.dromara.hodor.actuator.bigdata.config.HodorActuatorBigdataProperties;
-import org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties;
-import org.dromara.hodor.actuator.bigdata.executor.Job;
-import org.dromara.hodor.actuator.bigdata.executor.NoopJob;
-import org.dromara.hodor.actuator.bigdata.register.BigdataJobRegister;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.api.ExecutableJob;
 import org.dromara.hodor.actuator.api.config.HodorProperties;
 import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.api.core.JobLogger;
 import org.dromara.hodor.actuator.api.core.JobLoggerManager;
 import org.dromara.hodor.actuator.api.utils.Props;
+import org.dromara.hodor.actuator.bigdata.config.HodorActuatorBigdataProperties;
+import org.dromara.hodor.actuator.bigdata.executor.CommonJobProperties;
+import org.dromara.hodor.actuator.bigdata.executor.Job;
+import org.dromara.hodor.actuator.bigdata.executor.NoopJob;
+import org.dromara.hodor.actuator.bigdata.register.BigdataJobRegister;
 import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
@@ -19,15 +22,13 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.util.HashMap;
-
 /**
  * @author tomgs
  * @version 2022/3/14 1.0
  */
 public class BigdataExecutableJobTest {
 
-    private final Logger logger = Logger.getLogger("BigdataExecutableJobTest");
+    private final Logger logger = LogManager.getLogger("BigdataExecutableJobTest");
 
     @Test
     public void testBase() {
@@ -35,7 +36,8 @@ public class BigdataExecutableJobTest {
         String jobKey = "testJob";
         Props props = new Props();
         props.put(CommonJobProperties.JOB_TYPE, "noop");
-        Job job = jobtypeManager.buildJobExecutor(jobKey, props, logger);
+        final JobLogger jobLogger = new JobLogger("test", Paths.get(""), logger);
+        Job job = jobtypeManager.buildJobExecutor(jobKey, props, jobLogger);
         Assert.assertTrue(job instanceof NoopJob);
     }
 
@@ -45,9 +47,9 @@ public class BigdataExecutableJobTest {
         Long requestId = 123L;
         JobKey jobKey = JobKey.of("testGroup", "testJob");
         JobLogger jobLogger = JobLoggerManager.getInstance().createJobLogger(dataPath,
-                jobKey.getGroupName(),
-                jobKey.getJobName(),
-                requestId);
+            jobKey.getGroupName(),
+            jobKey.getJobName(),
+            requestId);
         String jobPath = this.getClass().getResource("/sample_flow_01.zip").getPath();
 
         HodorProperties hodorProperties = Mockito.mock(HodorProperties.class);
@@ -65,14 +67,14 @@ public class BigdataExecutableJobTest {
         Mockito.when(jobExecuteRequest.getJobName()).thenReturn(jobKey.getJobName());
 
         ExecutableJobContext context = ExecutableJobContext.builder()
-                .requestId(requestId)
-                .jobKey(jobKey)
-                .jobCommandType("noop")
-                .dataPath(dataPath)
-                .requestContext(requestContext)
-                .executeRequest(jobExecuteRequest)
-                .jobLogger(jobLogger)
-                .build();
+            .requestId(requestId)
+            .jobKey(jobKey)
+            .jobCommandType("noop")
+            .dataPath(dataPath)
+            .requestContext(requestContext)
+            .executeRequest(jobExecuteRequest)
+            .jobLogger(jobLogger)
+            .build();
 
         BigdataJobRegister register = new BigdataJobRegister(properties);
         ExecutableJob executableJob = register.provideExecutableJob(context);

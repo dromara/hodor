@@ -19,7 +19,8 @@ package org.dromara.hodor.actuator.bigdata.jobtype.hiveutils;
 import java.io.File;
 import java.io.IOException;
 import org.apache.hadoop.hive.cli.CliDriver;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Grab bag of utilities for working with Hive. End users should obtain
@@ -27,7 +28,7 @@ import org.apache.log4j.Logger;
  */
 public class HiveUtils {
   private final static Logger LOG =
-      Logger.getLogger("com.linkedin.hive.HiveUtils");
+      LogManager.getLogger("com.linkedin.hive.HiveUtils");
 
   private HiveUtils() {
   }

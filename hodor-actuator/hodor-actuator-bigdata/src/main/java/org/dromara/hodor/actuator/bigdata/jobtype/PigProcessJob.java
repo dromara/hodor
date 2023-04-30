@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.bigdata.executor.JavaProcessJob;
 import org.dromara.hodor.actuator.bigdata.security.commons.HadoopSecurityManager;
 import org.dromara.hodor.actuator.bigdata.security.commons.SecurityUtils;

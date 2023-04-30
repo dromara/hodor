@@ -25,7 +25,7 @@ import org.dromara.hodor.remoting.api.message.ResponseBody;
  * RequestProcess
  *
  * @author tomgs
- * @since 2021/10/13
+ * @since 1.0
  */
 public interface RequestProcessor<T extends RequestBody, R extends ResponseBody> {
 

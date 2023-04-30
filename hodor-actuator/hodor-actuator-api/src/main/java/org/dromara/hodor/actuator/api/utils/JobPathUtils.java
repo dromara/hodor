@@ -26,7 +26,7 @@ import org.dromara.hodor.model.job.JobKey;
  * JobPathUtils
  *
  * @author tomgs
- * @since 2022/3/10
+ * @since 1.0
  */
 public class JobPathUtils {
 
