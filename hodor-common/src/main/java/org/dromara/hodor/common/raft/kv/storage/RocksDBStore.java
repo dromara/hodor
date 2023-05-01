@@ -25,7 +25,7 @@ import static org.dromara.hodor.common.raft.kv.exception.ExceptionHelper.toIOExc
  * RocksDBStore
  *
  * @author tomgs
- * @since 2022/3/24
+ * @since 1.0
  */
 @Slf4j
 public class RocksDBStore implements DBStore {

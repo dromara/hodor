@@ -17,7 +17,7 @@ import org.dromara.hodor.common.queue.ResizeQueuePolicy;
  * hodor executor factory
  *
  * @author tomgs
- * @since 2021/1/25
+ * @since 1.0
  */
 public class HodorExecutorFactory {
 

@@ -21,7 +21,7 @@ package org.dromara.hodor.actuator.java.core;
  * MapReduceRunnable
  *
  * @author tomgs
- * @since 2022/1/25
+ * @since 1.0
  */
 public interface MapReduceRunnable {
 

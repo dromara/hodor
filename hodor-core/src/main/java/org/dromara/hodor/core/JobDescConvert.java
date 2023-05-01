@@ -9,7 +9,7 @@ import org.dromara.hodor.core.entity.JobInfo;
  * job info convert
  *
  * @author tomgs
- * @since 2020/8/28
+ * @since 1.0
  */
 @Mapper
 public interface JobDescConvert {

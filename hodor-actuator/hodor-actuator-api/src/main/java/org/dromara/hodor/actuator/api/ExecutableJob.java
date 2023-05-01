@@ -30,7 +30,7 @@ import org.dromara.hodor.model.job.JobKey;
  * ExecutableJob
  *
  * @author tomgs
- * @since 2021/11/23
+ * @since 1.0
  */
 public interface ExecutableJob {
 

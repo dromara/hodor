@@ -16,7 +16,7 @@ import org.dromara.hodor.server.service.HodorService;
  * job distribute listener
  *
  * @author tomgs
- * @since 2020/7/30
+ * @since 1.0
  */
 @Slf4j
 public class HodorSchedulerChangeListener implements HodorEventListener<List<CopySet>> {

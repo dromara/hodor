@@ -35,7 +35,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * HodorRaftServerTest
  *
  * @author tomgs
- * @since 2022/3/31
+ * @since 1.0
  */
 public class HodorRaftServerTest {
 

@@ -10,7 +10,7 @@ import java.util.NoSuchElementException;
  * 2、这个是非线程安全的，安全使用要结合 {@link org.dromara.hodor.common.executor.HodorExecutor} 使用
  *
  * @author tomgs
- * @since 2021/1/21
+ * @since 1.0
  */
 public class CircleQueue<T> extends AbstractQueue<T> {
 

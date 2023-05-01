@@ -33,7 +33,7 @@ import org.dromara.hodor.common.raft.HodorRaftStateMachine;
  * DemoHodorRaftStateMachine
  *
  * @author tomgs
- * @since 2022/3/31
+ * @since 1.0
  */
 public class Demo2HodorRaftStateMachine extends HodorRaftStateMachine {
 

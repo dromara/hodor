@@ -17,7 +17,7 @@ import org.dromara.hodor.remoting.api.RemotingConst;
  * hodor rest client
  *
  * @author tomgs
- * @since 2021/8/4
+ * @since 1.0
  */
 @Slf4j
 public class HodorRestClient {

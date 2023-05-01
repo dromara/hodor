@@ -24,7 +24,7 @@ import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
  * MRJavaJob
  *
  * @author tomgs
- * @since 2021/12/23
+ * @since 1.0
  */
 public class MRJavaJob implements ExecutableJob {
 

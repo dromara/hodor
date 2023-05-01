@@ -24,7 +24,7 @@ import org.dromara.hodor.core.entity.ActuatorBinding;
  * ActuatorBindingMapper
  *
  * @author tomgs
- * @since 2022/1/25
+ * @since 1.0
  */
 public interface ActuatorBindingMapper extends BaseMapper<ActuatorBinding> {
 

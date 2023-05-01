@@ -32,7 +32,7 @@ import org.dromara.hodor.remoting.api.message.response.KillRunningJobResponse;
  * HodorRequestProcessorProvider
  *
  * @author tomgs
- * @since 2021/10/13
+ * @since 1.0
  */
 public interface HodorRequestProcessorProvider {
 

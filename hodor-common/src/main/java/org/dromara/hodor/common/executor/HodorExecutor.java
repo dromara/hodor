@@ -15,7 +15,7 @@ import org.dromara.hodor.common.queue.RejectedEnqueueHandler;
  * HodorExecutor</br>
  *
  * @author tomgs
- * @since 2021/1/22
+ * @since 1.0
  */
 @Slf4j
 public class HodorExecutor {

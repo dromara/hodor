@@ -8,7 +8,7 @@ import org.dromara.hodor.remoting.api.HodorChannelHandler;
  * hodor client channel handler
  *
  * @author tomgs
- * @since 2020/9/7
+ * @since 1.0
  */
 @Slf4j
 public class HodorClientChannelHandler implements HodorChannelHandler {

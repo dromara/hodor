@@ -4,7 +4,7 @@ package org.dromara.hodor.remoting.api.message;
  * remoting response
  *
  * @author tomgs
- * @since 2021/3/4
+ * @since 1.0
  */
 public class RemotingResponse<T> {
 

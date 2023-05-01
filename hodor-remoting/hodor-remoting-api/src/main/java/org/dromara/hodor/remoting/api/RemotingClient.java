@@ -19,7 +19,7 @@ import org.dromara.hodor.remoting.api.message.RemotingMessage;
  * remoting client service
  *
  * @author tomgs
- * @since 2020/12/1
+ * @since 1.0
  */
 @Slf4j
 public class RemotingClient {

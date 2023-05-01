@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
  * serialize util
  *
  * @author tomgs
- * @since 2020/9/15
+ * @since 1.0
  */
 public class SerializeUtils {
 

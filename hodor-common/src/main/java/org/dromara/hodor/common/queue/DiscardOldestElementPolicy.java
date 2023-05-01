@@ -8,7 +8,7 @@ import java.util.Queue;
  * 丢弃最旧的元素策略
  *
  * @author tomgs
- * @since 2021/1/21
+ * @since 1.0
  */
 @Slf4j
 public class DiscardOldestElementPolicy<T> implements RejectedEnqueueHandler<T> {

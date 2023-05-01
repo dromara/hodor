@@ -17,7 +17,7 @@ import java.util.concurrent.CountDownLatch;
 
 /**
  * @author tomgs
- * @since 2021/2/24
+ * @since 1.0
  */
 @Slf4j
 public class RemotingClientTest {

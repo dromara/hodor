@@ -15,7 +15,7 @@ import org.dromara.hodor.model.job.JobDesc;
  * hodor api client
  *
  * @author tomgs
- * @since 2020/12/30
+ * @since 1.0
  */
 @Slf4j
 public class HodorApiClient {

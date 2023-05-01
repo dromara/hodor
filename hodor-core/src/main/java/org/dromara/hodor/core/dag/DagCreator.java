@@ -12,7 +12,7 @@ import org.dromara.hodor.model.job.JobDesc;
  * dag creator
  *
  * @author tomgs
- * @since 2021/9/2
+ * @since 1.0
  */
 public class DagCreator {
 

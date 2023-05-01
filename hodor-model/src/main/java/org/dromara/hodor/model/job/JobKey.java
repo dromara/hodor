@@ -8,7 +8,7 @@ import java.util.Objects;
  * job key
  *
  * @author tomgs
- * @since 2021/8/13
+ * @since 1.0
  */
 @Data
 public class JobKey {

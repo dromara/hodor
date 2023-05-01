@@ -7,7 +7,7 @@ import org.junit.Test;
  * id generator test
  *
  * @author tomgs
- * @since 2020/9/2
+ * @since 1.0
  */
 public class IdGeneratorTest {
 

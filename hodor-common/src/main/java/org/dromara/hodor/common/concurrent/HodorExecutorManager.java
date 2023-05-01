@@ -7,7 +7,7 @@ import org.dromara.hodor.common.disruptor.QueueConsumerFactory;
  * hodor executor manager
  *
  * @author tomgs
- * @since 2021/1/7
+ * @since 1.0
  */
 @Deprecated
 public class HodorExecutorManager {

@@ -57,7 +57,7 @@ hodor-scheduler
 
 1、在mysql下执行docs目录下面的`hodor_ddl.sql`
 
-2、进入到`hodor-server`，启动调度器。（调度器目前依赖zk）
+2、进入到`hodor-server`，启动调度器。
 
 3、进入到`examples`下面的`hodor-actuator-java-example`，启动java任务执行器程序
 

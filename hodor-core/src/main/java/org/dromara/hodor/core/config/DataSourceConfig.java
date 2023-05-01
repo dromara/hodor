@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
  * mapper scan config
  *
  * @author tomgs
- * @since 2020/9/3
+ * @since 1.0
  */
 @Configuration
 @MapperScan(basePackages = "org.dromara.hodor.core.mapper")

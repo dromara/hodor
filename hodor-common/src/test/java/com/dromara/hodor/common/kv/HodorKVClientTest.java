@@ -24,7 +24,7 @@ import org.dromara.hodor.common.raft.kv.core.HodorKVClient;
  * HodorKVClientTest
  *
  * @author tomgs
- * @since 2022/4/6
+ * @since 1.0
  */
 public class HodorKVClientTest {
 

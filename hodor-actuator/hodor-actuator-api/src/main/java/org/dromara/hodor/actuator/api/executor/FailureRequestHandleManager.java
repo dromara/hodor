@@ -22,7 +22,7 @@ import org.dromara.hodor.remoting.api.message.RemotingMessage;
  * failure request handler manager
  *
  * @author tomgs
- * @since 2021/3/22
+ * @since 1.0
  */
 @Slf4j
 public class FailureRequestHandleManager extends AbstractAsyncEventPublisher<RetryableMessage> {

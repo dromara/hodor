@@ -9,7 +9,7 @@ import org.dromara.hodor.remoting.api.HodorChannel;
  * client channel manager
  *
  * @author tomgs
- * @since 2021/7/30
+ * @since 1.0
  */
 public class ClientChannelManager {
 

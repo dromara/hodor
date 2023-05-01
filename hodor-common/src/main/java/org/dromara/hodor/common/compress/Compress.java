@@ -23,7 +23,7 @@ import java.lang.reflect.Type;
  * CompressData
  *
  * @author tomgs
- * @since 2021/9/14
+ * @since 1.0
  */
 public interface Compress {
 

@@ -10,7 +10,7 @@ import org.dromara.hodor.model.enums.JobExecuteStatus;
  * hodor_job_execution table entity
  *
  * @author tomgs
- * @since 2021/3/18
+ * @since 1.0
  */
 @Data
 @Builder

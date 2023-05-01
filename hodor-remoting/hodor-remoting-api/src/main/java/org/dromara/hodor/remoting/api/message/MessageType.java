@@ -11,7 +11,7 @@ import org.dromara.hodor.remoting.api.message.request.KillRunningJobRequest;
  * message type
  *
  * @author tomgs
- * @since 2020/9/24
+ * @since 1.0
  */
 public enum MessageType {
 

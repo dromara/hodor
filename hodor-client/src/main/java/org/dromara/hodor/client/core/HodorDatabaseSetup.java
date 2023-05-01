@@ -9,7 +9,7 @@ import org.dromara.hodor.common.storage.db.DBOperator;
  * hodor database setup
  *
  * @author tomgs
- * @since 2021/3/11
+ * @since 1.0
  */
 @Slf4j
 public class HodorDatabaseSetup {

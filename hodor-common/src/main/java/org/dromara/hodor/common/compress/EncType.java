@@ -21,7 +21,7 @@ package org.dromara.hodor.common.compress;
  * EncType
  *
  * @author tomgs
- * @since 2021/9/14
+ * @since 1.0
  */
 public enum EncType {
 

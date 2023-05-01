@@ -7,7 +7,7 @@ import org.dromara.hodor.core.entity.JobInfo;
  * JobInfoMapper
  *
  * @author tomgs
- * @since 2021/9/10
+ * @since 1.0
  */
 public interface JobInfoMapper extends BaseMapper<JobInfo> {
 

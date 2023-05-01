@@ -6,7 +6,7 @@ import lombok.Getter;
  * 数据变化事件
  *
  * @author tomgs
- * @since 2020/6/28
+ * @since 1.0
  */
 public class DataChangeEvent {
 

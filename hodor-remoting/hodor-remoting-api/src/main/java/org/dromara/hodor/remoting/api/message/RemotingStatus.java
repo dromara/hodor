@@ -4,7 +4,7 @@ package org.dromara.hodor.remoting.api.message;
  * remoting status
  *
  * @author tomgs
- * @since 2021/3/4
+ * @since 1.0
  */
 public interface RemotingStatus {
 

@@ -9,7 +9,7 @@ import org.dromara.hodor.server.service.HodorService;
  * leader elect change listener
  * 
  * @author tomgs
- * @since 2020/7/24
+ * @since 1.0
  */
 public class LeaderElectChangeListener implements DataChangeListener {
 

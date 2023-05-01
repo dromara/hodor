@@ -4,7 +4,7 @@ package org.dromara.hodor.common.raft.kv.exception;
  * HodorKVClientException
  *
  * @author tomgs
- * @since 2022/3/24
+ * @since 1.0
  */
 public class HodorKVClientException extends RuntimeException {
 

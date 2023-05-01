@@ -37,7 +37,7 @@ import org.dromara.hodor.server.manager.JobExecuteManager;
  * job request executor
  *
  * @author tomgs
- * @since 2020/9/22
+ * @since 1.0
  */
 @Slf4j
 public class HodorJobRequestHandler implements RequestHandler {

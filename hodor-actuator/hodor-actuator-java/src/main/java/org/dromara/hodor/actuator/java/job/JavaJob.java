@@ -31,7 +31,7 @@ import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
  * JavaJob
  *
  * @author tomgs
- * @since 2021/11/23
+ * @since 1.0
  */
 public class JavaJob implements ExecutableJob {
 

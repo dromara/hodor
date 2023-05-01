@@ -25,7 +25,7 @@ import org.junit.Test;
  * ActuatorBindingServiceTest
  *
  * @author tomgs
- * @since 2022/1/25
+ * @since 1.0
  */
 public class ActuatorBindingServiceTest extends BaseTest {
 

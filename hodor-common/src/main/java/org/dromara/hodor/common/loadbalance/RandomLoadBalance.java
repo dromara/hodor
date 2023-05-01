@@ -7,7 +7,7 @@ import org.dromara.hodor.common.Host;
 /**
  *
  * @author tomgs
- * @since 2020/12/29
+ * @since 1.0
  */
 public class RandomLoadBalance implements LoadBalance {
 

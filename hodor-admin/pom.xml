@@ -12,7 +12,6 @@
     <artifactId>hodor-admin</artifactId>
 
     <dependencies>
-
         <dependency>
             <groupId>org.dromara</groupId>
             <artifactId>hodor-core</artifactId>
@@ -64,15 +63,6 @@
         <finalName>hodor-admin</finalName>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
@@ -80,17 +70,6 @@
                     <executable>true</executable>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                    <useDefaultDelimiters>true</useDefaultDelimiters>
-                </configuration>
-            </plugin>
-
             <!-- maven install 跳过测试  等价于命令 mvn install -Dmaven.test.skip = true-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

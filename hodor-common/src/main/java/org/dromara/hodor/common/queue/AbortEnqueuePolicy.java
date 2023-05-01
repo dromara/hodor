@@ -6,7 +6,7 @@ import java.util.Queue;
  * 终止入队列策略
  *
  * @author tomgs
- * @since 2021/1/21
+ * @since 1.0
  */
 public class AbortEnqueuePolicy<T> implements RejectedEnqueueHandler<T> {
 

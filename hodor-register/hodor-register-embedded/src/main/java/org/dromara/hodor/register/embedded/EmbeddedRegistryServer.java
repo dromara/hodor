@@ -35,7 +35,7 @@ import org.dromara.hodor.register.embedded.watch.WatchGrpcRpcType;
  * EmbeddedRegistryServer
  *
  * @author tomgs
- * @since 2022/4/6
+ * @since 1.0
  */
 public class EmbeddedRegistryServer implements HodorLifecycle {
 

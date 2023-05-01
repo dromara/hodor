@@ -7,7 +7,7 @@ import org.dromara.hodor.remoting.api.message.RemotingMessage;
  * response future
  *
  * @author tomgs
- * @since 2021/4/7
+ * @since 1.0
  */
 public interface ResponseFuture {
 

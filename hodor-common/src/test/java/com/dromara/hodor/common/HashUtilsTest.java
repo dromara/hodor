@@ -5,7 +5,7 @@ import org.junit.Test;
 
 /**
  * @author tomgs
- * @since 2021/8/5
+ * @since 1.0
  */
 public class HashUtilsTest {
 

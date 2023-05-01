@@ -26,7 +26,7 @@ import lombok.Data;
  * Used by the YAML loader to deserialize DAG nodes in the flow
  *
  * @author tomgs
- * @since 2021/09/18
+ * @since 1.0
  */
 @Data
 public class FlowData implements Serializable {

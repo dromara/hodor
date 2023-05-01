@@ -21,7 +21,7 @@ package org.dromara.hodor.common.raft.kv.core;
  * KVConstant
  *
  * @author tomgs
- * @since 2022/4/6
+ * @since 1.0
  */
 public interface KVConstant {
 

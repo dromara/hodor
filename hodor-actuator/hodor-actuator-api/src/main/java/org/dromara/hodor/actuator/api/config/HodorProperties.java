@@ -8,7 +8,7 @@ import org.dromara.hodor.common.utils.HostUtils;
  * hodor client config
  *
  * @author tomgs
- * @since 2021/1/5
+ * @since 1.0
  */
 @Data
 public class HodorProperties {

@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * ProtostuffUtils
  *
  * @author tomgs
- * @since 2022/4/2
+ * @since 1.0
  */
 public class ProtostuffUtils {
 

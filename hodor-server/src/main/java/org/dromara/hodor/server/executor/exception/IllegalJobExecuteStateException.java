@@ -6,7 +6,7 @@ import org.dromara.hodor.common.utils.StringUtils;
  * IllegalJobExecuteStateException
  *
  * @author tomgs
- * @since 2021/8/10
+ * @since 1.0
  */
 public class IllegalJobExecuteStateException extends RuntimeException {
 

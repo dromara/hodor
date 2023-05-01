@@ -7,7 +7,7 @@ import lombok.Getter;
  * 注册中心配置
  *
  * @author tomgs
- * @since 2020/06/28
+ * @since 1.0
  */
 @Getter
 @Builder

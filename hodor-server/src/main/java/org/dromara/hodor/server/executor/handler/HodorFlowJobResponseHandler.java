@@ -19,7 +19,7 @@ import org.dromara.hodor.server.manager.JobExecuteManager;
  * HodorFlowJobResponseHandler
  *
  * @author tomgs
- * @since 2021/9/8
+ * @since 1.0
  */
 public class HodorFlowJobResponseHandler extends AbstractEventPublisher<Pair<JobKey, JobExecuteResponse>>
         implements ResponseHandler<Pair<JobKey, RemotingResponse<JobExecuteResponse>>> {

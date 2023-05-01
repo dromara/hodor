@@ -4,7 +4,7 @@ package org.dromara.hodor.common.exception;
  * hodor executor exception
  *
  * @author tomgs
- * @since 2021/3/18
+ * @since 1.0
  */
 public class HodorExecutorException extends RuntimeException {
 

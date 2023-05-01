@@ -27,7 +27,7 @@ import org.dromara.hodor.common.extension.SPI;
  * FileStorage
  *
  * @author tomgs
- * @since 2022/1/26
+ * @since 1.0
  */
 @SPI("fileStorage")
 public interface FileStorage {

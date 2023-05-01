@@ -43,7 +43,7 @@ import org.dromara.hodor.register.embedded.watch.HodorWatchClient;
  * EmbeddedRegistryCenter
  *
  * @author tomgs
- * @since 2022/3/29
+ * @since 1.0
  */
 @Join
 @Slf4j

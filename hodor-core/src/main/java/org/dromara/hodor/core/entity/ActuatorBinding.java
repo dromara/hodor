@@ -25,7 +25,7 @@ import lombok.Data;
  * ActuatorBindInfo
  *
  * @author tomgs
- * @since 2022/1/24
+ * @since 1.0
  */
 @Data
 @TableName("hodor_actuator_binding")

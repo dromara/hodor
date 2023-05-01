@@ -14,7 +14,7 @@ import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
  * HodorFlowJobRequestHandler
  *
  * @author tomgs
- * @since 2021/9/8
+ * @since 1.0
  */
 @Slf4j
 public class HodorFlowJobRequestHandler extends HodorJobRequestHandler {

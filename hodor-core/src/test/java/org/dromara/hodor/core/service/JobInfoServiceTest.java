@@ -11,7 +11,7 @@ import org.junit.Test;
  * job info service test
  *
  * @author tomgs
- * @since 2020/8/28
+ * @since 1.0
  */
 public class JobInfoServiceTest extends BaseTest {
 

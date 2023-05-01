@@ -13,7 +13,7 @@ import java.nio.file.Path;
  * job logger manager
  *
  * @author tomgs
- * @since 2021/3/23
+ * @since 1.0
  */
 public class JobLoggerManager {
 

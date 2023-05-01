@@ -20,7 +20,7 @@ import org.junit.Test;
  * scheduler service test
  *
  * @author tomgs
- * @since 2021/8/9
+ * @since 1.0
  */
 public class SchedulerResourceTest {
 

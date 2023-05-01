@@ -8,7 +8,7 @@ import cn.hutool.cron.pattern.CronPattern;
  * cron utils
  *
  * @author tomgs
- * @since 2021/8/3
+ * @since 1.0
  */
 public class CronUtils {
 

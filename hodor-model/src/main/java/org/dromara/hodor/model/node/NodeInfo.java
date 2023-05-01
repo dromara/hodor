@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
  * node info
  *
  * @author tomgs
- * @since 2021/1/6
+ * @since 1.0
  */
 @Data
 @Builder

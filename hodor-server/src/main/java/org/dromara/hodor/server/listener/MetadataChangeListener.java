@@ -22,7 +22,7 @@ import org.dromara.hodor.server.service.HodorService;
  * metadata change listener
  *
  * @author tomgs
- * @since 2020/7/23
+ * @since 1.0
  */
 @Slf4j
 public class MetadataChangeListener extends AbstractAsyncEventPublisher<List<CopySet>> implements DataChangeListener {

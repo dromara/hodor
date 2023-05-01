@@ -6,7 +6,7 @@ import org.dromara.hodor.common.exception.HodorExecutorException;
  * hodor runnable
  *
  * @author tomgs
- * @since 2021/1/21
+ * @since 1.0
  */
 public abstract class HodorRunnable implements Runnable {
 

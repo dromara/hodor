@@ -4,7 +4,7 @@ package org.dromara.hodor.remoting.netty.rpc.codec;
  * ResetReaderIndexException
  *
  * @author tomgs
- * @since 2021/8/4
+ * @since 1.0
  */
 public class ResetReaderIndexException extends Exception {
 

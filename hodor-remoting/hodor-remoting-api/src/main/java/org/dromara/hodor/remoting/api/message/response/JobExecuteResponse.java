@@ -11,7 +11,7 @@ import org.dromara.hodor.model.job.JobKey;
  * scheduled response
  *
  * @author tomgs
- * @since 2021/2/26
+ * @since 1.0
  */
 @Getter
 @Setter

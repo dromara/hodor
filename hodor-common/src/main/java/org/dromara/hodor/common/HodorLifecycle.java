@@ -4,7 +4,7 @@ package org.dromara.hodor.common;
  * HodorLifecycle
  *
  * @author tomgs
- * @since 2020/6/28
+ * @since 1.0
  */
 public interface HodorLifecycle {
 

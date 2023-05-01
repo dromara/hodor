@@ -37,7 +37,7 @@ import org.springframework.util.StringValueResolver;
  * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor
  *
  * @author tomgs
- * @since 2020/12/30
+ * @since 1.0
  */
 @Slf4j
 public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProcessor, EmbeddedValueResolverAware {

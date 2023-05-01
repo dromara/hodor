@@ -4,7 +4,7 @@ package org.dromara.hodor.register.api;
  * Connection State
  *
  * @author tomgs
- * @since 2021/8/18
+ * @since 1.0
  */
 public enum ConnectionState {
     CONNECTED {

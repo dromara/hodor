@@ -17,7 +17,7 @@ import org.dromara.hodor.server.service.HodorService;
  * server node change listener
  *
  * @author tomgs
- * @since 2020/7/23
+ * @since 1.0
  */
 @Slf4j
 public class SchedulerNodeChangeListener implements DataChangeListener {

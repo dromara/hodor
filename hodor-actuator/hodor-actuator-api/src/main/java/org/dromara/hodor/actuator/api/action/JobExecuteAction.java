@@ -21,7 +21,7 @@ import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
  * job execution
  *
  * @author tomgs
- * @since 2021/3/2
+ * @since 1.0
  */
 public class JobExecuteAction extends AbstractExecuteAction {
 

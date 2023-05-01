@@ -10,7 +10,7 @@ import org.junit.Test;
 
 /**
  * @author tomgs
- * @since 2021/8/24
+ * @since 1.0
  */
 public class MetadataManagerTest {
 

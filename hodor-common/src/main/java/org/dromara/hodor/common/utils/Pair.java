@@ -6,7 +6,7 @@ import cn.hutool.core.lang.Tuple;
  * Tuple 2
  *
  * @author tomgs
- * @since 2021/8/16
+ * @since 1.0
  */
 public class Pair<F, S> extends Tuple {
 

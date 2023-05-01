@@ -17,7 +17,6 @@
 
 package org.dromara.hodor.actuator.api.core;
 
-import org.apache.log4j.Category;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
@@ -26,7 +25,7 @@ import java.nio.file.Path;
  * JobLogger
  *
  * @author tomgs
- * @since 2022/2/15
+ * @since 1.0
  */
 public class JobLogger {
 
@@ -54,10 +53,22 @@ public class JobLogger {
         return logger;
     }
 
-    public org.apache.log4j.Logger getLog4jLogger() {
+    public void info(String msg) {
+        logger.info(msg);
+    }
+
+    public void error(String msg) {
+        logger.error(msg);
+    }
+
+    public void error(String msg, Throwable t) {
+        logger.error(msg, t);
+    }
+
+    /*public Logger getLog4jLogger() {
         Category category = Category.getInstance(logger.getName());
         return (org.apache.log4j.Logger) category;
-    }
+    }*/
 
 
 }

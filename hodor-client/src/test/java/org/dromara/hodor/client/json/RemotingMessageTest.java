@@ -8,7 +8,7 @@ import org.junit.Test;
 
 /**
  * @author tomgs
- * @since 2021/7/29
+ * @since 1.0
  */
 public class RemotingMessageTest {
 

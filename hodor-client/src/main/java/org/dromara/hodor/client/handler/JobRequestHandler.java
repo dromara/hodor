@@ -13,7 +13,7 @@ import org.dromara.hodor.remoting.api.message.RequestContext;
  * job execute request handler
  *
  * @author tomgs
- * @since 2021/1/7
+ * @since 1.0
  */
 @Slf4j
 public class JobRequestHandler implements HodorChannelHandler {

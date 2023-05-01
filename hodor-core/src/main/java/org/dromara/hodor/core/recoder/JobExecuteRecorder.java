@@ -16,7 +16,7 @@ import org.dromara.hodor.model.job.JobKey;
  * JobExecuteRecorder
  *
  * @author tomgs
- * @since 2021/09/15
+ * @since 1.0
  */
 public interface JobExecuteRecorder {
 

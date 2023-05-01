@@ -8,7 +8,7 @@ import lombok.Data;
  * flow job info
  *
  * @author tomgs
- * @since 2021/9/13
+ * @since 1.0
  */
 @Data
 @TableName("hodor_flow_job_info")

@@ -31,7 +31,7 @@ import org.springframework.stereotype.Service;
  * ActuatorBindingServiceImpl
  *
  * @author tomgs
- * @since 2022/1/24
+ * @since 1.0
  */
 @Slf4j
 @Service

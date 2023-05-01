@@ -28,7 +28,7 @@ import org.junit.Test;
  * EmbeddedRegistryCenterTest
  *
  * @author tomgs
- * @since 2022/10/8
+ * @since 1.0
  */
 @Slf4j
 public class EmbeddedRegistryCenterTest {

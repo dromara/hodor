@@ -8,7 +8,7 @@ import org.dromara.hodor.model.job.JobKey;
  * FlowJobInfoService
  *
  * @author tomgs
- * @since 2021/9/10
+ * @since 1.0
  */
 public interface FlowJobInfoService {
 

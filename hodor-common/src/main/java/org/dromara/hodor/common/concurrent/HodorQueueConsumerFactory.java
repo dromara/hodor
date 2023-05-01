@@ -7,7 +7,7 @@ import org.dromara.hodor.common.disruptor.QueueConsumerFactory;
  * HodorJobConsumerFactory
  *
  * @author tomgs
- * @since 2020/9/22
+ * @since 1.0
  */
 @Deprecated
 public class HodorQueueConsumerFactory<T> implements QueueConsumerFactory<T> {
