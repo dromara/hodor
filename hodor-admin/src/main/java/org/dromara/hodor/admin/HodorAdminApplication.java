@@ -18,6 +18,7 @@
 
 package org.dromara.hodor.admin;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -27,6 +28,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author xiaoyu
  */
 @SpringBootApplication
+@MapperScan(basePackages = "org.dromara.hodor.admin.mapper")
 public class HodorAdminApplication {
 
     /**

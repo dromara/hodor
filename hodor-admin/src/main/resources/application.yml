@@ -1,4 +1,25 @@
 spring:
-   profiles:
-     active: local
+  application:
+    name: hodor-admin
+  profiles:
+    include: core
 
+server:
+  servlet:
+    context-path: /hodor/app/
+  port: 8088
+
+hodor:
+  database:
+    driverClass: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/hodor?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
+    username: root
+    password: 123456
+
+# mybatis-plus
+mybatis-plus:
+  mapper-locations: classpath*:/mappers/*.xml
+  typeEnumsPackage: org.dromara.hodor.model.enums
+  configuration:
+    map-underscore-to-camel-case: true
+    defaultEnumTypeHandler: org.apache.ibatis.type.EnumOrdinalTypeHandler
