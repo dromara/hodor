@@ -1,6 +1,6 @@
 package org.dromara.hodor.common.utils;
 
-import it.sauronsoftware.base64.Base64;
+import cn.hutool.core.codec.Base64;
 
 import java.io.*;
 

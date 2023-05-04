@@ -117,10 +117,6 @@
             <groupId>net.openhft</groupId>
             <artifactId>affinity</artifactId>
         </dependency>
-        <dependency>
-            <groupId>javabase64</groupId>
-            <artifactId>javabase64</artifactId>
-        </dependency>
     </dependencies>
 
 </project>
