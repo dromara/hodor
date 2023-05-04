@@ -11,7 +11,7 @@ import org.dromara.hodor.remoting.api.http.HodorHttpResponse;
  * http client
  *
  * @author tomgs
- * @date 2021/7/26 16:32
+ * @since 1.0
  * @since 1.0
  */
 @Slf4j
