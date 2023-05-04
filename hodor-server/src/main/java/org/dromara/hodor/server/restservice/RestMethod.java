@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * rest method mark
  *
  * @author tomgs
- * @date 2021/7/22 11:05
+ * @since 1.0
  * @since 1.0
  */
 @Target({ElementType.METHOD})

@@ -12,7 +12,7 @@ import org.dromara.hodor.model.node.NodeInfo;
  * 节点管理
  *
  * @author tomgs
- * @date 2021/01/18
+ * @since 1.0
  */
 public class NodeManager {
 

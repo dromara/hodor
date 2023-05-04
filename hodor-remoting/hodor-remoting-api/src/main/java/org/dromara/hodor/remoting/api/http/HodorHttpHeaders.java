@@ -8,7 +8,7 @@ import java.util.Set;
  * hodor http headers
  *
  * @author tomgs
- * @date 2021/7/27 10:42
+ * @since 1.0
  * @since 1.0
  */
 public class HodorHttpHeaders {

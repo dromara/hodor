@@ -19,7 +19,7 @@ import org.junit.Test;
  * remoting http client test
  *
  * @author tomgs
- * @date 2021/7/26 16:26
+ * @since 1.0
  * @since 1.0
  */
 public class RemotingHttpClientTest {
