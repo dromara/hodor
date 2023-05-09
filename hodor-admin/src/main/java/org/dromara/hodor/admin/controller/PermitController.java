@@ -1,6 +1,7 @@
 package org.dromara.hodor.admin.controller;
 
 import org.dromara.hodor.admin.core.Result;
+import org.dromara.hodor.admin.core.ResultUtil;
 import org.dromara.hodor.admin.domain.PermitItem;
 import org.dromara.hodor.admin.domain.RolePermit;
 import org.dromara.hodor.admin.domain.User;
@@ -79,7 +80,7 @@ public class PermitController {
 		for (RolePermit rolePermit : list) {
 			items.add(rolePermit.getPermitIterm());
 		}
-		return Result.success(items);
+		return ResultUtil.success(items);
 	}
 	
 }

@@ -4,11 +4,12 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dromara.hodor.admin.core.PageInfo;
 import org.dromara.hodor.admin.core.Result;
+import org.dromara.hodor.admin.core.ResultUtil;
 import org.dromara.hodor.admin.core.ServerConfigKeys;
 import org.dromara.hodor.admin.core.Status;
-import org.dromara.hodor.core.entity.JobGroup;
 import org.dromara.hodor.admin.domain.User;
 import org.dromara.hodor.admin.service.JobGroupService;
+import org.dromara.hodor.core.entity.JobGroup;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,13 +32,13 @@ public class JobGroupController {
     public Result<JobGroup> createGroup(@RequestAttribute(value = ServerConfigKeys.USER_SESSION) User user,
                                         @RequestBody JobGroup group) {
         JobGroup jobGroup = jobGroupService.createGroup(user, group);
-        return Result.success(jobGroup);
+        return ResultUtil.success(jobGroup);
     }
 
     @GetMapping("/list")
     public Result<List<JobGroup>> list(@RequestAttribute(value = ServerConfigKeys.USER_SESSION) User user) {
         final List<JobGroup> allGroup = jobGroupService.getAllGroup(user);
-        return Result.success(allGroup);
+        return ResultUtil.success(allGroup);
     }
 
     @GetMapping("/listPage")
@@ -46,22 +47,22 @@ public class JobGroupController {
                                                            @RequestParam(value = "pageSize") Integer pageSize,
                                                            @RequestAttribute(value = ServerConfigKeys.USER_SESSION) User user) {
         PageInfo<JobGroup> pageInfo = jobGroupService.queryGroupListPaging(user, queryVal, pageNo, pageSize);
-        return Result.success(pageInfo);
+        return ResultUtil.success(pageInfo);
     }
 
     @PutMapping("/{id}")
     public Result<Void> update(@RequestAttribute(value = ServerConfigKeys.USER_SESSION) User user,
                                @PathVariable(value = "id") int id,
-                               @RequestBody JobGroup group) throws Exception {
+                               @RequestBody JobGroup group) {
         jobGroupService.updateJobGroup(user, id, group);
-        return Result.success();
+        return ResultUtil.success();
     }
 
     @DeleteMapping("/{id}")
     public Result<Void> delete(@RequestAttribute(value = ServerConfigKeys.USER_SESSION) User user,
-                               @PathVariable(value = "id") int id) throws Exception {
+                               @PathVariable(value = "id") int id) {
         jobGroupService.deleteJobGroup(user, id);
-        return Result.errorWithArgs(Status.INTERNAL_SERVER_ERROR_ARGS, "group暂不支持删除");
+        return ResultUtil.errorWithArgs(Status.INTERNAL_SERVER_ERROR_ARGS, "group暂不支持删除");
     }
 
 }

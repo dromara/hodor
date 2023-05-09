@@ -19,6 +19,7 @@ package org.dromara.hodor.admin.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.admin.core.Result;
+import org.dromara.hodor.admin.core.ResultUtil;
 import org.dromara.hodor.admin.core.Status;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -31,24 +32,24 @@ import org.springframework.web.method.HandlerMethod;
 @RestControllerAdvice
 @ResponseBody
 @Slf4j
-public class ApiExceptionHandler {
+public class AdminExceptionHandler {
 
     @ExceptionHandler(ServiceException.class)
     public Result<Object> exceptionHandler(ServiceException e, HandlerMethod hm) {
-        log.error("ServiceException: ", e);
+        log.error("ServiceException: {}", e.getMessage(), e);
         return new Result<>(e.getCode(), e.getMessage());
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public Result<Object> badRequestExceptionHandler(Exception e, HandlerMethod hm) {
+        log.error("BadRequestException: {}", e.getMessage(), e);
+        return ResultUtil.errorWithArgs(Status.REQUEST_BAD, e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
     public Result<Object> exceptionHandler(Exception e, HandlerMethod hm) {
-        ApiException ce = hm.getMethodAnnotation(ApiException.class);
-        if (ce == null) {
-            log.error(e.getMessage(), e);
-            return Result.errorWithArgs(Status.INTERNAL_SERVER_ERROR_ARGS, e.getMessage());
-        }
-        Status st = ce.value();
-        log.error(st.getMsg(), e);
-        return Result.error(st);
+        log.error("Exception: {}", e.getMessage(), e);
+        return ResultUtil.errorWithArgs(Status.INTERNAL_SERVER_ERROR_ARGS, e.getMessage());
     }
 
 }

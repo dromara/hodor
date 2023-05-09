@@ -17,15 +17,17 @@
 
 package org.dromara.hodor.admin.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.admin.core.PageInfo;
-import org.dromara.hodor.core.entity.JobGroup;
 import org.dromara.hodor.admin.domain.User;
-import org.dromara.hodor.core.mapper.JobGroupMapper;
 import org.dromara.hodor.admin.service.JobGroupService;
+import org.dromara.hodor.core.entity.JobGroup;
+import org.dromara.hodor.core.mapper.JobGroupMapper;
 import org.springframework.stereotype.Service;
 
 /**
@@ -48,7 +50,16 @@ public class JobGroupServiceImpl implements JobGroupService {
 
     @Override
     public PageInfo<JobGroup> queryGroupListPaging(User user, String queryVal, Integer pageNo, Integer pageSize) {
-        return null;
+        IPage<JobGroup> page = new Page<>(pageNo, pageSize);
+        jobGroupMapper.selectPage(page, Wrappers.<JobGroup>lambdaQuery()
+            .like(JobGroup::getGroupName, queryVal));
+        PageInfo<JobGroup> pageInfo = new PageInfo<>();
+        return pageInfo.setTotalList(page.getRecords())
+            .setTotal(page.getTotal())
+            .setTotalPage((int)page.getPages())
+            .setCurrentPage((int) page.getCurrent())
+            .setPageNo(pageNo)
+            .setPageSize(pageSize);
     }
 
     @Override
@@ -60,7 +71,7 @@ public class JobGroupServiceImpl implements JobGroupService {
 
     @Override
     public void updateJobGroup(User user, int id, JobGroup group) {
-        group.setId((long)id);
+        group.setId((long) id);
         jobGroupMapper.updateById(group);
     }
 

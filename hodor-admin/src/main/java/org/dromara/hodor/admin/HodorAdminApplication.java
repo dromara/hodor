@@ -27,8 +27,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *
  * @author xiaoyu
  */
-@SpringBootApplication
-@MapperScan(basePackages = "org.dromara.hodor.admin.mapper")
+@SpringBootApplication(scanBasePackages = {"org.dromara.hodor.core", "org.dromara.hodor.admin"})
+@MapperScan(basePackages = {"org.dromara.hodor.core.mapper", "org.dromara.hodor.admin.mapper"})
 public class HodorAdminApplication {
 
     /**

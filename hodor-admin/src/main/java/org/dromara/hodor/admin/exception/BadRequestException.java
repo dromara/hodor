@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,50 +15,23 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.admin.core;
-
-import java.util.Collections;
-import java.util.List;
-import lombok.Data;
-import lombok.experimental.Accessors;
+package org.dromara.hodor.admin.exception;
 
 /**
- * page info
+ * BadRequestException
  *
- * @param <T> model
+ * @author tomgs
+ * @since 1.0
  */
-@Data
-@Accessors(chain = true)
-public class PageInfo<T> {
+public class BadRequestException extends RuntimeException {
 
-    /**
-     * totalList
-     */
-    private List<T> totalList = Collections.emptyList();
+    private static final long serialVersionUID = -4897317002983996400L;
 
-    /**
-     * total
-     */
-    private Long total = 0L;
+    public BadRequestException(String message) {
+        super(message);
+    }
 
-    /**
-     * total Page
-     */
-    private Integer totalPage;
-
-    /**
-     * page size
-     */
-    private Integer pageSize = 20;
-
-    /**
-     * current page
-     */
-    private Integer currentPage = 0;
-
-    /**
-     * pageNo
-     */
-    private Integer pageNo;
-
+    public BadRequestException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

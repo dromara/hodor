@@ -1,5 +1,6 @@
 package org.dromara.hodor.admin.domain;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -9,6 +10,7 @@ import java.util.Arrays;
  * User
  */
 @Data
+@TableName("hodor_user")
 public class User implements Serializable {
 
     private static final long serialVersionUID = 7195750353498840884L;

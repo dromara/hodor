@@ -18,7 +18,6 @@
 package org.dromara.hodor.admin.core;
 
 import java.util.Locale;
-import java.util.Optional;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 /**
@@ -32,14 +31,8 @@ public enum Status {
     REQUEST_BAD(10002, "request bad: {0}", "请求错误：[{0}]"),
     USER_NAME_EXIST(10003, "user name already exists", "用户名已存在"),
     USER_NAME_NULL(10004, "user name is null", "用户名不能为空"),
-    RECEIVER_DATA_ERROR(10005, "data receive exception", "接收数据失败"),
-    SEARCH_DATA_ERROR(10006, "search data failed, type {0}, message {1}", "搜索数据失败，原因：{0}，{1}"),
-    CREATE_INDEX_ERROR(10007, "create index error, type {0}, message {1}", "创建索引失败，原因：{0}，{1}"),
-    DELETE_INDEX_ERROR(10008, "delete index error, type {0}, message {1}", "创建索引失败，原因：{0}，{1}"),
-    EXIST_INDEX_ERROR(10012, "exist index error, type {0}, message {1}", "获取文档失败，原因：{0}，{1}"),
-    CREATE_INDEX_DOC_ERROR(10009, "create index doc error, type {0}, message {1}", "创建文档失败，原因：{0}，{1}"),
-    GET_INDEX_DOC_ERROR(10010, "get index doc error, type {0}, message {1}", "获取文档失败，原因：{0}，{1}"),
-    DELETE_INDEX_DOC_ERROR(10011, "delete index doc error, type {0}, message {1}", "获取文档失败，原因：{0}，{1}"),
+    NO_OPERATION_PERMISSION(10005, "no operation permission", "没有操作权限"),
+    LOGIN_EXPIRED(10006, "login expired", "登陆已失效")
     ;
 
     private final int code;
@@ -62,17 +55,5 @@ public enum Status {
         } else {
             return this.enMsg;
         }
-    }
-
-    /**
-     * Retrieve Status enum entity by status code.
-     */
-    public static Optional<Status> findStatusBy(int code) {
-        for (Status status : Status.values()) {
-            if (code == status.getCode()) {
-                return Optional.of(status);
-            }
-        }
-        return Optional.empty();
     }
 }

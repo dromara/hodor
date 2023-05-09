@@ -1,60 +1,37 @@
 package org.dromara.hodor.admin.controller;
 
 import cn.hutool.json.JSONUtil;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.dromara.hodor.admin.core.PageInfo;
 import org.dromara.hodor.admin.core.Result;
+import org.dromara.hodor.admin.core.ResultUtil;
 import org.dromara.hodor.admin.core.ServerConfigKeys;
+import org.dromara.hodor.admin.core.Status;
 import org.dromara.hodor.admin.domain.User;
 import org.dromara.hodor.admin.domain.UserFeedback;
 import org.dromara.hodor.admin.service.impl.RoleService;
 import org.dromara.hodor.admin.service.impl.UserService;
 import org.dromara.hodor.common.utils.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.web.bind.ServletRequestDataBinder;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/service/user")
+@RequiredArgsConstructor
 public class UserController {
 
-//    @Autowired
-//    @Qualifier("dbUserActionRecordService")
-//    DBUserActionRecordService userActionRecordService;
+    private final UserService userService;
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private RoleService roleService;
-
-    // limit:10
-    // offset:5
-//    @RequestMapping("/userActionList")
-//    public PageResult userActionList(@RequestParam(value = "limit", required = true) int limit,
-//                                        @RequestParam(value = "offset", required = true) int offset,
-//                                        @RequestParam(value = "search", required = false) String search,
-//                                        HttpSession session) {
-//        if (search != null)
-//            search = search.trim();
-//        final DBUser user = (DBUser) session.getAttribute(SystemDefault.USER_SESSION_KEY);
-//        if (PermitUtil.isAdmin(user.getUsername())) {
-//            PageResult pageResult = new PageResult();
-//            pageResult.setRows(userActionRecordService.selectUserActionRecordList(limit, offset, search, null));
-//            pageResult.setTotal(userActionRecordService.selectUserActionRecordCount(search, null));
-//            return pageResult;
-//        }
-//
-//        PageResult pageResult = new PageResult();
-//        pageResult.setRows(userActionRecordService.selectUserActionRecordList(limit, offset, search, user.getUsername()));
-//        pageResult.setTotal(userActionRecordService.selectUserActionRecordCount(search, user.getUsername()));
-//        return pageResult;
-//    }
+    private final RoleService roleService;
 
     @RequestMapping("/listUser")
     public Result<PageInfo<User>> listUser(@RequestParam(value = "limit", required = true) int pageSize,
@@ -62,36 +39,36 @@ public class UserController {
                                            @RequestParam(value = "search", required = false) String userName) {
         int pageNum = start / pageSize + 1;
         PageInfo<User> pageInfo = userService.queryUser(userName, pageNum, pageSize);
-        return Result.success(pageInfo);
+        return ResultUtil.success(pageInfo);
 
     }
 
     @RequestMapping("/saveUser")
-    public Result saveUser(@RequestParam(value = "user", required = true) String userStr) {
+    public Result<Boolean> saveUser(@RequestParam(value = "user", required = true) String userStr) {
         User user = JSONUtil.toBean(userStr, User.class);
         if (user.getRoleId() != null) {
             user.setRoleName(roleService.getRoleByIdOrName(user.getRoleId(), "").getRoleName());
         }
         boolean flag = userService.saveUser(user);
-        return Result.success(flag);
+        return ResultUtil.success(flag);
 
     }
 
     @RequestMapping("/updateUser")
-    public Result updateUser(@RequestParam(value = "user", required = true) String userStr) {
+    public Result<Boolean> updateUser(@RequestParam(value = "user", required = true) String userStr) {
         User user = JSONUtil.toBean(userStr, User.class);
         if (user.getRoleId() != null) {
             user.setRoleName(roleService.getRoleByIdOrName(user.getRoleId(), "").getRoleName());
         }
         boolean flag = userService.updateUser(user);
-        return Result.success(flag);
+        return ResultUtil.success(flag);
 
     }
 
     @RequestMapping("/checkUserName")
-    public Result checkUserName(@RequestParam(value = "username", required = true) String userName) {
+    public Result<Boolean> checkUserName(@RequestParam(value = "username", required = true) String userName) {
         boolean flag = userService.checkUserName(userName);
-        return Result.success(flag);
+        return ResultUtil.success(flag);
     }
 
     @InitBinder
@@ -100,19 +77,18 @@ public class UserController {
     }
 
     @RequestMapping(value = "/recommend", method = RequestMethod.POST)
-    public Result addRecommend(@RequestParam(value = "username") String userName, @RequestParam(value = "content") String content) {
+    public Result<Boolean> addRecommend(@RequestParam(value = "username") String userName, @RequestParam(value = "content") String content) {
         if (StringUtils.isBlank(userName)) {
-            return new Result(false, "用户不能为空");
+            return ResultUtil.errorWithArgs(Status.REQUEST_PARAMS_NOT_VALID_ERROR, "用户不能为空");
         }
         boolean flag = userService.addRecommend(userName, content);
-        return new Result(flag, flag ? "添加成功" : "添加失败");
+        return ResultUtil.success(flag);
     }
 
     @RequestMapping(value = "/recommend", method = RequestMethod.GET)
     public Result<PageInfo<UserFeedback>> listRecommend(@RequestParam(value = "offset") int start,
                                                         @RequestParam(value = "limit") int pageSize,
                                                         @RequestParam(value = "username", required = false) String userName) {
-
         List<User> user = userService.findUser(userName);
         if (user != null && user.size() > 0) {
             User dbUser = user.get(0);
@@ -126,12 +102,12 @@ public class UserController {
         List<UserFeedback> userFeedbacks = userService.listRecommend(userName, start, pageSize);
         pageInfo.setTotalPage((int) total);
         pageInfo.setTotalList(userFeedbacks);
-        return Result.success(pageInfo);
+        return ResultUtil.success(pageInfo);
     }
 
     @RequestMapping(value = "/recommend", method = RequestMethod.DELETE)
-    public Result deleteRecommend(@RequestParam(value = "id") int id, @RequestParam(value = "username") String userName) {
+    public Result<Boolean> deleteRecommend(@RequestParam(value = "id") int id, @RequestParam(value = "username") String userName) {
         boolean result = userService.deleteRecommend(id, userName);
-        return new Result(result, result ? "删除成功" : "删除失败");
+        return ResultUtil.success(result);
     }
 }

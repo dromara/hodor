@@ -23,6 +23,8 @@ import org.dromara.hodor.admin.core.Status;
 @Data
 public class ServiceException extends RuntimeException {
 
+    private static final long serialVersionUID = -7341723939198986717L;
+
     private int code;
 
     public ServiceException() {

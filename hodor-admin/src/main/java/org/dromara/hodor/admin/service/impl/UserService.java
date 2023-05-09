@@ -1,8 +1,10 @@
 package org.dromara.hodor.admin.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.google.common.collect.Lists;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.hodor.admin.core.PageInfo;
@@ -12,8 +14,6 @@ import org.dromara.hodor.admin.mapper.UserMapper;
 import org.dromara.hodor.admin.mapper.UserRecommendMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 /**
  * 用户信息服务
  */
@@ -21,20 +21,22 @@ import java.util.List;
 @Service
 public class UserService {
 
-    private final UserMapper mapper;
+    private final UserMapper userMapper;
 
     private final UserRecommendMapper userRecommendMapper;
 
-    public User findUser(String userName, String password) {
-        if (StringUtils.isEmpty(userName)) {
+    public User findUser(String username, String password) {
+        if (StringUtils.isEmpty(username)) {
             return null;
         }
-        return mapper.findUser(userName, password);// 查找
+        return userMapper.selectOne(Wrappers.<User>lambdaQuery()
+            .eq(User::getUsername, username)
+            .eq(User::getPassword, password));
     }
 
     public List<String> getAllUsername() {
         List<String> list = Lists.newArrayList("admin", "visitor");
-        return mapper.getAllUsername(list);
+        return userMapper.getAllUsername(list);
 
     }
 
@@ -46,11 +48,10 @@ public class UserService {
      * @param pageSize
      * @return
      */
-
     public PageInfo<User> queryUser(String userName, int pageNum, int pageSize) {
         PageInfo<User> pageInfo = new PageInfo<>();
         Page<User> page = PageHelper.startPage(pageNum, pageSize);
-        mapper.queryUser(userName);
+        userMapper.queryUser(userName);
         List<User> data = page.getResult();
         pageInfo.setTotalList(data);
         pageInfo.setTotalPage((int) page.getTotal());
@@ -62,7 +63,7 @@ public class UserService {
         if (StringUtils.isBlank(userName)) {
             return null;
         }
-        return mapper.queryUser(userName);
+        return userMapper.queryUser(userName);
     }
 
     /**
@@ -73,7 +74,7 @@ public class UserService {
      */
     public boolean saveUser(User user) {
         try {
-            mapper.saveUser(user);
+            userMapper.saveUser(user);
         } catch (Exception e) {
             return false;
         }
@@ -88,7 +89,7 @@ public class UserService {
      */
     public boolean updateUser(User user) {
         try {
-            mapper.updateUser(user);
+            userMapper.updateUser(user);
         } catch (Exception e) {
             return false;
         }
@@ -104,7 +105,7 @@ public class UserService {
     public boolean checkUserName(String userName) {
         User user;
         try {
-            user = mapper.checkUserName(userName);
+            user = userMapper.checkUserName(userName);
         } catch (Exception e) {
             return false;
         }
@@ -143,7 +144,7 @@ public class UserService {
      */
 
     public User getUserByName(String userName) {
-        User user = mapper.checkUserName(userName);
+        User user = userMapper.checkUserName(userName);
         return user;
     }
 }

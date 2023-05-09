@@ -1,6 +1,7 @@
 package org.dromara.hodor.admin.controller;
 
 import org.dromara.hodor.admin.core.Result;
+import org.dromara.hodor.admin.core.ResultUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,7 +13,7 @@ public class CronController {
 
     @RequestMapping("/transferFromCron")
     @ResponseBody
-    public Result transferFromCron(@RequestParam(value = "cronExpression", required = true) String cronExpression) {
-        return Result.success();
+    public Result<Void> transferFromCron(@RequestParam(value = "cronExpression", required = true) String cronExpression) {
+        return ResultUtil.success();
     }
 }

@@ -2,7 +2,6 @@ package org.dromara.hodor.admin.filter;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,10 +16,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.admin.core.Result;
+import org.dromara.hodor.admin.core.ResultUtil;
 import org.dromara.hodor.admin.core.ServerConfigKeys;
+import org.dromara.hodor.admin.core.Status;
 import org.dromara.hodor.admin.domain.User;
 import org.dromara.hodor.admin.service.impl.PermitService;
+import org.dromara.hodor.common.utils.JSONUtils;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,7 +33,7 @@ public class AuthorizeFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain fc)
-            throws IOException, ServletException {
+        throws IOException, ServletException {
         if (req instanceof HttpServletRequest) {
             HttpServletRequest request = (HttpServletRequest) req;
             if ("/login".equals(request.getPathInfo())) {
@@ -75,7 +76,8 @@ public class AuthorizeFilter implements Filter {
         try {
             if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
                 ServletOutputStream os = resp.getOutputStream();
-                os.write(new Gson().toJson(new Result(false, "NO OPERATION PERMISSION")).getBytes(ServerConfigKeys.CHARSET));
+                os.write(JSONUtils.toJsonStr(ResultUtil.error(Status.NO_OPERATION_PERMISSION))
+                    .getBytes(ServerConfigKeys.CHARSET));
                 os.flush();
             } else {
                 request.getRequestDispatcher("/app/page/permit/nopermission").forward(request, resp);

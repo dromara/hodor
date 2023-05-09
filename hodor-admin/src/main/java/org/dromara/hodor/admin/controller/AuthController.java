@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.admin.core.Result;
+import org.dromara.hodor.admin.core.ResultUtil;
 import org.dromara.hodor.admin.service.AuthService;
 import org.dromara.hodor.admin.service.impl.UserService;
 import org.springframework.stereotype.Controller;
@@ -26,7 +27,7 @@ public class AuthController {
                        @RequestParam(value = "username", required = true) String username,
                        @RequestParam(value = "authtype", required = true) String authtype) throws Exception {
         authService.assign(username, groupName, authtype);
-        return Result.success();
+        return ResultUtil.success();
     }
 
     @RequestMapping("/unAuth")
@@ -34,7 +35,7 @@ public class AuthController {
                          @RequestParam(value = "username", required = true) String username,
                          @RequestParam(value = "authtype", required = true) String authtype) {
         authService.unAssign(username, groupName, authtype);
-        return new Result();
+        return ResultUtil.success();
     }
 
     @RequestMapping("/getUserList")

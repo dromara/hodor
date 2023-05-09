@@ -6,31 +6,31 @@ import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.admin.core.Result;
-import org.dromara.hodor.admin.core.Status;
+import org.dromara.hodor.admin.core.ResultUtil;
 import org.dromara.hodor.admin.core.ServerConfigKeys;
+import org.dromara.hodor.admin.core.Status;
 import org.dromara.hodor.admin.domain.RolePermit;
 import org.dromara.hodor.admin.domain.User;
-import org.dromara.hodor.admin.service.impl.UserService;
 import org.dromara.hodor.admin.service.impl.PermitService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.dromara.hodor.admin.service.impl.UserService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
-@Controller
+@RestController
 public class AccountController {
 
     private final UserService userService;
 
     private final PermitService permitService;
 
-
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String loginPage(HttpSession session, Model model) {
+    @GetMapping("/login")
+    public String loginPage(HttpSession session) {
         User user = (User) session.getAttribute(ServerConfigKeys.USER_SESSION);
         if (user == null) {
             return "login";
@@ -39,11 +39,10 @@ public class AccountController {
         return "main";
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    @ResponseBody
-    public Result login(
-        @RequestParam(value = "username", required = true) String username,
-        @RequestParam(value = "password", required = true) String password,
+    @PostMapping("/login")
+    public Result<User> login(
+        @RequestParam(value = "username") String username,
+        @RequestParam(value = "password") String password,
         HttpSession session) {
         User user = userService.findUser(username, password);
         if (user != null) {
@@ -54,10 +53,10 @@ public class AccountController {
             for (RolePermit rolePermit : list) {
                 items.add(rolePermit.getPermitIterm());
             }
-            user.setPermitItems((items.toArray(new String[items.size()])));
-            return Result.success(user);
+            user.setPermitItems((items.toArray(new String[0])));
+            return ResultUtil.success(user);
         } else {
-            return Result.errorWithArgs(Status.INTERNAL_SERVER_ERROR_ARGS, "用户名密码不匹配");
+            return ResultUtil.errorWithArgs(Status.INTERNAL_SERVER_ERROR_ARGS, "用户名密码不匹配");
         }
     }
 
@@ -67,15 +66,15 @@ public class AccountController {
         if (session != null) {
             session.invalidate();
         }
-        return Result.success();
+        return ResultUtil.success();
     }
 
     @RequestMapping("checkSession")
     @ResponseBody
     public Result checkSession(HttpSession session) {
         if (session.getAttribute(ServerConfigKeys.USER_SESSION) != null) {
-            return Result.success();
+            return ResultUtil.success();
         }
-        return Result.success(false);
+        return ResultUtil.success(false);
     }
 }
