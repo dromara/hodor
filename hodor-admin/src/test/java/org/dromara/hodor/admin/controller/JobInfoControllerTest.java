@@ -17,6 +17,7 @@
 
 package org.dromara.hodor.admin.controller;
 
+import org.dromara.hodor.admin.BaseWebTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -30,10 +31,7 @@ import org.springframework.test.web.servlet.MockMvc;
  * @author tomgs
  * @since 1.0
  */
-@SpringBootTest
-@AutoConfigureMockMvc
-@DirtiesContext
-public class JobInfoControllerTest {
+public class JobInfoControllerTest extends BaseWebTest {
 
     @Autowired
     private MockMvc mockMvc;
