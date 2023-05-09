@@ -21,6 +21,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 任务分组管理
+ *
+ * @author tomgs
+ * @since 1.0
+ */
 @RestController
 @RequestMapping("/group")
 @RequiredArgsConstructor

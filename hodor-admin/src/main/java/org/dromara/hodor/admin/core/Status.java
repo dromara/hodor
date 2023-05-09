@@ -32,8 +32,8 @@ public enum Status {
     USER_NAME_EXIST(10003, "user name already exists", "用户名已存在"),
     USER_NAME_NULL(10004, "user name is null", "用户名不能为空"),
     NO_OPERATION_PERMISSION(10005, "no operation permission", "没有操作权限"),
-    LOGIN_EXPIRED(10006, "login expired", "登陆已失效")
-    ;
+    LOGIN_EXPIRED(10006, "login expired", "登陆已失效"),
+    USER_NOT_LOGIN(10007, "user not login", "用户未登录");
 
     private final int code;
     private final String enMsg;

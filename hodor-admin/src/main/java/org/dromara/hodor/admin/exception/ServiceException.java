@@ -18,9 +18,11 @@ package org.dromara.hodor.admin.exception;
 
 import java.text.MessageFormat;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.dromara.hodor.admin.core.Status;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class ServiceException extends RuntimeException {
 
     private static final long serialVersionUID = -7341723939198986717L;

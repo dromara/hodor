@@ -62,7 +62,7 @@ public class AccountController {
 
     @RequestMapping("/logout")
     @ResponseBody
-    public Result logout(HttpSession session) {
+    public Result<Void> logout(HttpSession session) {
         if (session != null) {
             session.invalidate();
         }
@@ -71,7 +71,7 @@ public class AccountController {
 
     @RequestMapping("checkSession")
     @ResponseBody
-    public Result checkSession(HttpSession session) {
+    public Result<Boolean> checkSession(HttpSession session) {
         if (session.getAttribute(ServerConfigKeys.USER_SESSION) != null) {
             return ResultUtil.success();
         }
