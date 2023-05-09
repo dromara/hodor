@@ -106,7 +106,7 @@ CREATE TABLE `hodor_actuator_binding` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ALTER TABLE hodor.hodor_actuator_binding ADD CONSTRAINT hodor_actuator_binding_UN UNIQUE KEY (group_name,cluster_name);
 
-CREATE TABLE `hodor_job_user` (
+CREATE TABLE `hodor_user` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `username` varchar(32) NOT NULL COMMENT '用户名',
   `password` varchar(32) NOT NULL COMMENT '密码',
