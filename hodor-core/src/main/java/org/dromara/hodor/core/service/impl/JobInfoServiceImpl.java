@@ -2,6 +2,7 @@ package org.dromara.hodor.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.cron.CronUtils;
@@ -12,8 +13,6 @@ import org.dromara.hodor.model.enums.JobStatus;
 import org.dromara.hodor.model.scheduler.DataInterval;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * job info service
@@ -59,7 +58,8 @@ public class JobInfoServiceImpl implements JobInfoService {
         return jobInfoMapper.selectCount(Wrappers.<JobInfo>lambdaQuery()
             .eq(JobInfo::getJobStatus, JobStatus.READY)
             .or()
-            .eq(JobInfo::getJobStatus, JobStatus.RUNNING));
+            .eq(JobInfo::getJobStatus, JobStatus.RUNNING))
+            .intValue();
     }
 
     @Override
