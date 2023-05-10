@@ -1,4 +1,4 @@
-package com.dromara.hodor.common;
+package org.dromara.hodor.common;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;

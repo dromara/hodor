@@ -1,4 +1,4 @@
-package com.dromara.hodor.common;
+package org.dromara.hodor.common;
 
 import java.util.ArrayList;
 import java.util.List;

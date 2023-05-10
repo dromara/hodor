@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.dromara.hodor.common.raft;
+package org.dromara.hodor.common.raft;
 
 import com.google.common.collect.Lists;
 import java.io.File;
@@ -24,10 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import org.dromara.hodor.common.raft.HodorRaftGroup;
-import org.dromara.hodor.common.raft.HodorRaftServer;
-import org.dromara.hodor.common.raft.HodorRaftStateMachine;
-import org.dromara.hodor.common.raft.RaftOptions;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -41,7 +37,7 @@ public class HodorRaftServerTest {
 
     public static void main(String[] args) throws IOException {
         if (args.length < 1) {
-            System.err.println("Usage: java -cp *.jar com.dromara.hodor.common.raft.HodorRaftServerTest {serverIndex}");
+            System.err.println("Usage: java -cp *.jar org.dromara.hodor.common.raft.HodorRaftServerTest {serverIndex}");
             System.err.println("{serverIndex} could be 1, 2 or 3");
             System.exit(1);
         }

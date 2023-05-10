@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 
-package com.dromara.hodor.common.raft;
+package org.dromara.hodor.common.raft;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
+import org.apache.ratis.proto.RaftProtos;
 import org.apache.ratis.protocol.Message;
 import org.apache.ratis.protocol.RaftGroupId;
 import org.apache.ratis.protocol.RaftGroupMemberId;
@@ -35,11 +36,14 @@ import org.dromara.hodor.common.raft.HodorRaftStateMachine;
  * @author tomgs
  * @since 1.0
  */
-public class Demo2HodorRaftStateMachine extends HodorRaftStateMachine {
+public class DemoHodorRaftStateMachine extends HodorRaftStateMachine {
+
+    private RaftServer raftServer;
 
     @Override
     public void initialize(RaftServer raftServer, RaftGroupId raftGroupId, RaftStorage storage) throws IOException {
         super.initialize(raftServer, raftGroupId, storage);
+        this.raftServer = raftServer;
     }
 
     @Override
@@ -59,8 +63,16 @@ public class Demo2HodorRaftStateMachine extends HodorRaftStateMachine {
 
     @Override
     public void notifyLeaderChanged(RaftGroupMemberId groupMemberId, RaftPeerId newLeaderId) {
-        System.out.println("Demo2HodorRaftStateMachine#notifyLeaderChanged ================================ " + groupMemberId + ":" + newLeaderId);
+        System.out.println("DemoHodorRaftStateMachine#notifyLeaderChanged ================================ " + groupMemberId + ":" + newLeaderId);
         RaftPeerId currentPeerId = groupMemberId.getPeerId();
+        try {
+            final RaftServer.Division division = raftServer.getDivision(getGroupId());
+            final boolean leader = division.getInfo().isLeader();
+            System.out.println("IS_LEADER:" + leader);
+            final RaftProtos.RoleInfoProto roleInfoProto = division.getInfo().getRoleInfoProto();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if (currentPeerId.equals(newLeaderId)) {
             System.out.println("LEADER");
         } else {
@@ -71,6 +83,8 @@ public class Demo2HodorRaftStateMachine extends HodorRaftStateMachine {
     @Override
     public void notifyNotLeader(Collection<TransactionContext> pendingEntries) throws IOException {
         // 不是主节点时回调
-        System.out.println("Demo2HodorRaftStateMachine#notifyNotLeader ================================ " + pendingEntries);
+        System.out.println("DemoHodorRaftStateMachine#notifyNotLeader ================================ " + pendingEntries);
     }
+
+
 }

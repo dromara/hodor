@@ -1,4 +1,4 @@
-package com.dromara.hodor.common.kv;
+package org.dromara.hodor.common.kv;
 
 import java.io.File;
 import java.util.Scanner;

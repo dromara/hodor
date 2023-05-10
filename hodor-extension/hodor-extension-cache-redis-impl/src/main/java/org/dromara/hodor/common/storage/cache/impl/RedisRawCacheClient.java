@@ -15,42 +15,46 @@
  * limitations under the License.
  */
 
-package com.dromara.hodor.common;
+package org.dromara.hodor.common.storage.cache.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-import lombok.Data;
-import org.dromara.hodor.common.utils.TypedMapWrapper;
-import org.junit.Assert;
-import org.junit.Test;
+import org.dromara.hodor.common.storage.cache.CacheClient;
 
 /**
- * TypeMapWrapperTest
+ * RedisRawCacheSource
  *
  * @author tomgs
- * @since 1.0
+ * @version 1.0
  */
-public class TypeMapWrapperTest {
+public class RedisRawCacheClient<K, V> implements CacheClient<K, V> {
 
-    @Test
-    public void testConvertInstance() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", 123312L);
-        map.put("name", "test");
-        map.put("age", 18);
-
-        TypedMapWrapper<String, Object> typedMapWrapper = new TypedMapWrapper<>(map);
-        Demo demo = typedMapWrapper.convertInstance(Demo.class);
-        Assert.assertEquals(123312L, (long) demo.getId());
+    @Override
+    public V get(K key) {
+        return null;
     }
 
-    @Data
-    public static class Demo {
+    @Override
+    public void put(K key, V value) {
 
-        private Long id;
-
-        private String name;
-
-        private Integer age;
     }
+
+    @Override
+    public void put(K key, V value, int expire) {
+
+    }
+
+    @Override
+    public void delete(K key) {
+
+    }
+
+    @Override
+    public void clear() {
+
+    }
+
+    @Override
+    public void close() {
+
+    }
+
 }

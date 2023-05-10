@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
-package com.dromara.hodor.common.kv;
+package org.dromara.hodor.common.kv;
 
+import java.util.Arrays;
 import org.dromara.hodor.common.raft.kv.core.HodorKVClient;
 
 /**
@@ -25,11 +26,12 @@ import org.dromara.hodor.common.raft.kv.core.HodorKVClient;
  * @author tomgs
  * @since 1.0
  */
-public class SingleHodorKVClientTest {
+public class HodorKVClientTest {
 
     public static void main(String[] args) {
-        HodorKVClient kvClient = new HodorKVClient("127.0.0.1:8081");
-        kvClient.defaultKvOperator().put("a".getBytes(), "1".getBytes());
+        HodorKVClient kvClient = new HodorKVClient("127.0.0.1:8081,127.0.0.1:8082,127.0.0.1:8083");
+        kvClient.defaultKvOperator()
+            .put("a".getBytes(), "1".getBytes());
 
         byte[] bytes = kvClient.defaultKvOperator().get("a".getBytes());
         System.out.println(new String(bytes));
@@ -37,12 +39,11 @@ public class SingleHodorKVClientTest {
         kvClient.defaultKvOperator().delete("a".getBytes());
 
         bytes = kvClient.defaultKvOperator().get("a".getBytes());
-        System.out.println(bytes);
+        System.out.println(Arrays.toString(bytes));
 
         final Boolean aBoolean = kvClient.defaultKvOperator().containsKey("a".getBytes());
         System.out.println(aBoolean);
 
-        kvClient.defaultKvOperator().put("b".getBytes(), "2".getBytes());
         final Boolean bBoolean = kvClient.defaultKvOperator().containsKey("b".getBytes());
         System.out.println(bBoolean);
     }

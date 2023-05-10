@@ -1,4 +1,4 @@
-package com.dromara.hodor.common.kv;
+package org.dromara.hodor.common.kv;
 
 import com.google.common.collect.Lists;
 import org.apache.ratis.conf.RaftProperties;
@@ -24,7 +24,7 @@ public class HodorKVServerTest {
 
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {
-            System.err.println("Usage: java -cp *.jar com.dromara.hodor.common.kv.HodorKVServerTest {serverIndex}");
+            System.err.println("Usage: java -cp *.jar org.dromara.hodor.common.kv.HodorKVServerTest {serverIndex}");
             System.err.println("{serverIndex} could be 1, 2 or 3");
             System.exit(1);
         }

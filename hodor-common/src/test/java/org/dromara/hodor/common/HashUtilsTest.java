@@ -1,4 +1,4 @@
-package com.dromara.hodor.common;
+package org.dromara.hodor.common;
 
 import org.dromara.hodor.common.utils.HashUtils;
 import org.junit.Test;
