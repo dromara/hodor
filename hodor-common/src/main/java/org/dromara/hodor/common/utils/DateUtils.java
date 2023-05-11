@@ -53,4 +53,8 @@ public class DateUtils extends DateUtil {
         DateFormat df = new SimpleDateFormat(SIMPLE_PATTEN);
         return df.parse(date);
     }
+
+    public static Date nowDate() {
+        return new Date();
+    }
 }
