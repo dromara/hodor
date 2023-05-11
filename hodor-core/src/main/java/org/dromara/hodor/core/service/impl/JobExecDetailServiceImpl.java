@@ -2,6 +2,7 @@ package org.dromara.hodor.core.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.core.PageInfo;
 import org.dromara.hodor.core.entity.JobExecDetail;
 import org.dromara.hodor.core.mapper.JobExecDetailMapper;
 import org.dromara.hodor.core.service.JobExecDetailService;
@@ -32,6 +33,21 @@ public class JobExecDetailServiceImpl implements JobExecDetailService {
     @Override
     public void createIfAbsent(JobExecDetail jobExecDetail) {
         jobExecDetailMapper.insertIgnore(jobExecDetail);
+    }
+
+    @Override
+    public Boolean deleteById(Long id) {
+        return null;
+    }
+
+    @Override
+    public PageInfo<JobExecDetail> queryByPage(JobExecDetail jobExecDetail, Integer pageNo, Integer pageSize) {
+        return null;
+    }
+
+    @Override
+    public JobExecDetail queryById(Long id) {
+        return null;
     }
 
 }

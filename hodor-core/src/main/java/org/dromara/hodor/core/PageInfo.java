@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.admin.core;
+package org.dromara.hodor.core;
 
 import java.util.Collections;
 import java.util.List;

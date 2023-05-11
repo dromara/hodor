@@ -1,6 +1,7 @@
 package org.dromara.hodor.core.service;
 
 import java.util.List;
+import org.dromara.hodor.core.PageInfo;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.model.enums.JobStatus;
 import org.dromara.hodor.model.scheduler.DataInterval;
@@ -18,7 +19,7 @@ public interface JobInfoService {
      *
      * @param jobInfo 任务信息
      */
-    void addJob(JobInfo jobInfo);
+    JobInfo addJob(JobInfo jobInfo);
 
     /**
      * 如果不存在则新增任务，存在则跳过
@@ -105,4 +106,23 @@ public interface JobInfoService {
      * @return true正在运行，false为正在运行
      */
     boolean isRunningJob(JobInfo jobInfo);
+
+    /**
+     * 删除任务
+     *
+     * @param id 任务id
+     * @return 是否成功
+     */
+    boolean deleteById(Long id);
+
+    /**
+     * 更新任务
+     * @param jobInfo 任务信息
+     * @return 更新后的任务信息
+     */
+    JobInfo update(JobInfo jobInfo);
+
+    JobInfo queryById(Long id);
+
+    PageInfo<JobInfo> queryByPage(JobInfo jobInfo, Integer pageNo, Integer pageSize);
 }
