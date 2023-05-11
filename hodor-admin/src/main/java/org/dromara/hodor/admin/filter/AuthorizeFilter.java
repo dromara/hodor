@@ -16,18 +16,18 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.admin.core.MsgCode;
 import org.dromara.hodor.admin.core.ResultUtil;
 import org.dromara.hodor.admin.core.ServerConfigKeys;
-import org.dromara.hodor.admin.core.Status;
 import org.dromara.hodor.admin.domain.User;
-import org.dromara.hodor.admin.service.impl.PermitService;
+import org.dromara.hodor.admin.service.PermissionService;
 import org.dromara.hodor.common.utils.JSONUtils;
 
 @Slf4j
 @RequiredArgsConstructor
 public class AuthorizeFilter implements Filter {
 
-    private final PermitService permitService;
+    private final PermissionService permissionService;
 
     private Map<String, Map<String, Boolean>> authCacheMap;
 
@@ -52,7 +52,7 @@ public class AuthorizeFilter implements Filter {
                         backNoOperatePermit(username, permitItem, request, resp);
                     }
                 } else {
-                    boolean hasPermit = permitService.hasPermit(user, permitItem);
+                    boolean hasPermit = permissionService.check(user, permitItem);
                     if (authCacheMap.containsKey(username)) {
                         authCacheMap.get(username).put(permitItem, hasPermit);
                     } else {
@@ -76,7 +76,7 @@ public class AuthorizeFilter implements Filter {
         try {
             if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
                 ServletOutputStream os = resp.getOutputStream();
-                os.write(JSONUtils.toJsonStr(ResultUtil.error(Status.NO_OPERATION_PERMISSION))
+                os.write(JSONUtils.toJsonStr(ResultUtil.error(MsgCode.NO_OPERATION_PERMISSION))
                     .getBytes(ServerConfigKeys.CHARSET));
                 os.flush();
             } else {

@@ -30,7 +30,7 @@ public class ResultUtil {
     private ResultUtil() {}
 
     public static <T> Result<T> success(T data) {
-        return new Result<>(Status.SUCCESS.getCode(), Status.SUCCESS.getMsg(), data);
+        return new Result<>(MsgCode.SUCCESS.getCode(), MsgCode.SUCCESS.getMsg(), data);
     }
 
     public static <T> Result<T> success() {
@@ -43,22 +43,22 @@ public class ResultUtil {
     /**
      * Call this function if there is any error
      *
-     * @param status status
+     * @param msgCode status
      * @return result
      */
-    public static <T> Result<T> error(Status status) {
-        return new Result<>(status);
+    public static <T> Result<T> error(MsgCode msgCode) {
+        return new Result<>(msgCode);
     }
 
     /**
      * Call this function if there is any error
      *
-     * @param status status
+     * @param msgCode status
      * @param args   args
      * @return result
      */
-    public static <T> Result<T> errorWithArgs(Status status, Object... args) {
-        return new Result<>(status.getCode(), MessageFormat.format(status.getMsg(), args));
+    public static <T> Result<T> errorWithArgs(MsgCode msgCode, Object... args) {
+        return new Result<>(msgCode.getCode(), MessageFormat.format(msgCode.getMsg(), args));
     }
 
 }

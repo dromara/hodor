@@ -2,7 +2,7 @@ package org.dromara.hodor.admin.mapper;
 
 import org.apache.ibatis.annotations.Param;
 import org.dromara.hodor.admin.domain.JobStatusStatistics;
-import org.dromara.hodor.admin.domain.CostTimeRankJob;
+import org.dromara.hodor.admin.domain.JobCostTimeStatistics;
 
 import java.util.Date;
 import java.util.List;
@@ -50,7 +50,7 @@ public interface JobStatMapper {
      * @param groupName 组名
      * @return 任务耗时排名列表
      */
-    List<CostTimeRankJob> getRankConsumerTimeJob(@Param("startTime") Date startTime, @Param("endTime") Date endTime, @Param("groupName") String groupName);
+    List<JobCostTimeStatistics> getRankConsumerTimeJob(@Param("startTime") Date startTime, @Param("endTime") Date endTime, @Param("groupName") String groupName);
 
     /**
      * 获取job的状态统计信息

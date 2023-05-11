@@ -11,6 +11,8 @@ import java.util.List;
  **/
 public class UserRole implements Serializable {
 
+    private static final long serialVersionUID = 3519883221401672845L;
+
     private Integer id;
     private String roleName;
     private String description;

@@ -1,9 +1,9 @@
 package org.dromara.hodor.admin;
 
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * springboot测试基类
@@ -11,9 +11,9 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author tomgs
  * @since 1.0
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = {BaseTest.class, HodorAdminApplication.class})
+@SpringBootTest
 @DirtiesContext
+@ExtendWith(SpringExtension.class)
 public class BaseTest {
 
 }

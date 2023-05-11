@@ -19,7 +19,7 @@ package org.dromara.hodor.admin.exception;
 import java.text.MessageFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.dromara.hodor.admin.core.Status;
+import org.dromara.hodor.admin.core.MsgCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -30,19 +30,19 @@ public class ServiceException extends RuntimeException {
     private int code;
 
     public ServiceException() {
-        this(Status.INTERNAL_SERVER_ERROR_ARGS);
+        this(MsgCode.INTERNAL_SERVER_ERROR);
     }
 
-    public ServiceException(Status status) {
-        this(status.getCode(), status.getMsg());
+    public ServiceException(MsgCode msgCode) {
+        this(msgCode.getCode(), msgCode.getMsg());
     }
 
-    public ServiceException(Status status, Object... formatter) {
-        this(status.getCode(), MessageFormat.format(status.getMsg(), formatter));
+    public ServiceException(MsgCode msgCode, Object... formatter) {
+        this(msgCode.getCode(), MessageFormat.format(msgCode.getMsg(), formatter));
     }
 
     public ServiceException(String message) {
-        this(Status.INTERNAL_SERVER_ERROR_ARGS, message);
+        this(MsgCode.INTERNAL_SERVER_ERROR, message);
     }
 
     public ServiceException(int code, String message) {

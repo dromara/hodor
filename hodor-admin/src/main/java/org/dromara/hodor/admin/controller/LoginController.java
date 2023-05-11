@@ -1,18 +1,14 @@
 package org.dromara.hodor.admin.controller;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.admin.core.Result;
 import org.dromara.hodor.admin.core.ResultUtil;
 import org.dromara.hodor.admin.core.ServerConfigKeys;
-import org.dromara.hodor.admin.core.Status;
-import org.dromara.hodor.admin.domain.RolePermit;
+import org.dromara.hodor.admin.core.MsgCode;
 import org.dromara.hodor.admin.domain.User;
-import org.dromara.hodor.admin.service.impl.PermitService;
-import org.dromara.hodor.admin.service.impl.UserService;
+import org.dromara.hodor.admin.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,13 +17,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
-@RequiredArgsConstructor
 @RestController
-public class AccountController {
+@RequiredArgsConstructor
+public class LoginController {
 
     private final UserService userService;
-
-    private final PermitService permitService;
 
     @GetMapping("/login")
     public String loginPage(HttpSession session) {
@@ -46,17 +40,10 @@ public class AccountController {
         HttpSession session) {
         User user = userService.findUser(username, password);
         if (user != null) {
-            log.info(String.format("【web信息】AccountController { %s } login success", user));
             session.setAttribute(ServerConfigKeys.USER_SESSION, user);
-            List<RolePermit> list = permitService.getPermitListByRoleId(user.getRoleId());
-            List<String> items = new ArrayList<>();
-            for (RolePermit rolePermit : list) {
-                items.add(rolePermit.getPermitIterm());
-            }
-            user.setPermitItems((items.toArray(new String[0])));
             return ResultUtil.success(user);
         } else {
-            return ResultUtil.errorWithArgs(Status.INTERNAL_SERVER_ERROR_ARGS, "用户名密码不匹配");
+            return ResultUtil.errorWithArgs(MsgCode.INTERNAL_SERVER_ERROR, "用户名密码不匹配");
         }
     }
 

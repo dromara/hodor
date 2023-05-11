@@ -13,7 +13,7 @@ public class WorkNode implements Serializable {
     /**
      * 当前执行结果  0:未完成 2：执行成功 3: 执行完成
      */
-    private WorkNodeStatus currentstatus;
+    private WorkNodeStatus currentStatus;
 
     /**
      * 任务标识  groupName#jobName

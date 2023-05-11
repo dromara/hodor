@@ -15,29 +15,17 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.admin.controller;
+package org.dromara.hodor.admin.service;
 
-import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.admin.BaseWebTest;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.servlet.MockMvc;
+import org.dromara.hodor.admin.domain.User;
 
 /**
- * JobInfoControllerTest
+ * PermissionService
  *
  * @author tomgs
  * @since 1.0
  */
-@Slf4j
-public class JobInfoControllerTest extends BaseWebTest {
+public interface PermissionService {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Test
-    public void testCreateJob() {
-        log.info("test create job");
-    }
-
+    boolean check(User user, String permitItem);
 }

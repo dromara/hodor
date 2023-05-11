@@ -1,12 +1,11 @@
 package org.dromara.hodor.admin.controller;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.dromara.hodor.admin.core.PageInfo;
+import org.dromara.hodor.admin.core.MsgCode;
+import org.dromara.hodor.core.PageInfo;
 import org.dromara.hodor.admin.core.Result;
 import org.dromara.hodor.admin.core.ResultUtil;
-import org.dromara.hodor.admin.core.ServerConfigKeys;
-import org.dromara.hodor.admin.core.Status;
+import org.dromara.hodor.admin.core.UserContext;
 import org.dromara.hodor.admin.domain.User;
 import org.dromara.hodor.admin.service.JobGroupService;
 import org.dromara.hodor.core.entity.JobGroup;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,41 +32,39 @@ public class JobGroupController {
 
     private final JobGroupService jobGroupService;
 
-    @PostMapping("/create")
-    public Result<JobGroup> createGroup(@RequestAttribute(value = ServerConfigKeys.USER_SESSION) User user,
-                                        @RequestBody JobGroup group) {
+    @PostMapping()
+    public Result<JobGroup> createGroup(@RequestBody JobGroup group) {
+        final User user = UserContext.getUser();
         JobGroup jobGroup = jobGroupService.createGroup(user, group);
         return ResultUtil.success(jobGroup);
     }
 
-    @GetMapping("/list")
-    public Result<List<JobGroup>> list(@RequestAttribute(value = ServerConfigKeys.USER_SESSION) User user) {
-        final List<JobGroup> allGroup = jobGroupService.getAllGroup(user);
-        return ResultUtil.success(allGroup);
-    }
-
-    @GetMapping("/listPage")
+    @GetMapping()
     public Result<PageInfo<JobGroup>> queryGroupListPaging(@RequestParam(value = "queryVal", required = false) String queryVal,
                                                            @RequestParam(value = "pageNo") Integer pageNo,
-                                                           @RequestParam(value = "pageSize") Integer pageSize,
-                                                           @RequestAttribute(value = ServerConfigKeys.USER_SESSION) User user) {
+                                                           @RequestParam(value = "pageSize") Integer pageSize) {
+        final User user = UserContext.getUser();
         PageInfo<JobGroup> pageInfo = jobGroupService.queryGroupListPaging(user, queryVal, pageNo, pageSize);
         return ResultUtil.success(pageInfo);
     }
 
-    @PutMapping("/{id}")
-    public Result<Void> update(@RequestAttribute(value = ServerConfigKeys.USER_SESSION) User user,
-                               @PathVariable(value = "id") int id,
-                               @RequestBody JobGroup group) {
-        jobGroupService.updateJobGroup(user, id, group);
+    @GetMapping("{id}")
+    public Result<JobGroup> queryById(@PathVariable("id") Long id) {
+        return ResultUtil.success(jobGroupService.queryById(id));
+    }
+
+    @PutMapping()
+    public Result<Void> update(@RequestBody JobGroup group) {
+        final User user = UserContext.getUser();
+        jobGroupService.updateJobGroup(user, group);
         return ResultUtil.success();
     }
 
-    @DeleteMapping("/{id}")
-    public Result<Void> delete(@RequestAttribute(value = ServerConfigKeys.USER_SESSION) User user,
-                               @PathVariable(value = "id") int id) {
+    @DeleteMapping()
+    public Result<Void> delete(@RequestParam(value = "id") int id) {
+        final User user = UserContext.getUser();
         jobGroupService.deleteJobGroup(user, id);
-        return ResultUtil.errorWithArgs(Status.INTERNAL_SERVER_ERROR_ARGS, "group暂不支持删除");
+        return ResultUtil.errorWithArgs(MsgCode.INTERNAL_SERVER_ERROR, "group暂不支持删除");
     }
 
 }

@@ -1,47 +1,49 @@
 package org.dromara.hodor.admin.domain;
 
-import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
 import java.io.Serializable;
+import java.util.Date;
+import lombok.Data;
 
 /**
- * (User)实体类
+ * (Tenant)实体类
  *
  * @author tomgs
  * @since 1.0
  */
 @Data
-@TableName("hodor_user")
-public class User implements Serializable {
+@TableName("hodor_tenant")
+public class Tenant implements Serializable {
 
-    private static final long serialVersionUID = 157545728486218301L;
-    
+    private static final long serialVersionUID = -86082780926539643L;
+
     private Long id;
+
     /**
-     * 用户名
+     * 租户名称
      */
-    private String username;
+    private String tenantName;
+
     /**
-     * 密码
+     * 公司名称
      */
-    private String password;
+    private String corpName;
+
     /**
      * 联系邮箱
      */
     private String email;
+
     /**
-     * 联系电话
+     * 租户描述
      */
-    private String phone;
-    /**
-     * 租户id
-     */
-    private Long tenantId;
+    private String description;
+
     /**
      * 创建时间
      */
     private Date createdAt;
+
     /**
      * 更新时间
      */

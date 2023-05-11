@@ -17,7 +17,7 @@ public class UserContext {
     
     private static final ThreadLocal<User> LOCAL_REQUEST_USER = new ThreadLocal<>();
 
-    public static final String USER_KEY = User.class.getName();
+    public static final String USER_KEY = "userInfo";
 
 
     /**
@@ -37,7 +37,7 @@ public class UserContext {
     public static User getUser() {
         User user = LOCAL_REQUEST_USER.get();
         if (user == null) {
-            throw new ServiceException(Status.USER_NOT_LOGIN);
+            throw new ServiceException(MsgCode.USER_NOT_LOGIN);
         }
         // 避免修改当前用户信息
         return BeanUtil.toBean(user, User.class);

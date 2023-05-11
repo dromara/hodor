@@ -21,25 +21,50 @@ import java.util.Locale;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 /**
- * status enum
+ * MsgCode enum
+ * <p>
+ * 10 客户、服务端异常、参数解析失败
+ * 20 任务相关异常
+ * 30 openapi相关异常
+ *
+ * @author tomgs
+ * @since 1.0
  */
-public enum Status {
+public enum MsgCode {
 
     SUCCESS(0, "success", "成功"),
-    INTERNAL_SERVER_ERROR_ARGS(10000, "Internal Server Error: {0}", "服务端异常: {0}"),
+    // 服务端
+    INTERNAL_SERVER_ERROR(10000, "Internal Server Error: {0}", "服务端异常: {0}"),
     REQUEST_PARAMS_NOT_VALID_ERROR(10001, "request parameter {0} is not valid", "请求参数[{0}]无效"),
     REQUEST_BAD(10002, "request bad: {0}", "请求错误：[{0}]"),
     USER_NAME_EXIST(10003, "user name already exists", "用户名已存在"),
     USER_NAME_NULL(10004, "user name is null", "用户名不能为空"),
     NO_OPERATION_PERMISSION(10005, "no operation permission", "没有操作权限"),
     LOGIN_EXPIRED(10006, "login expired", "登陆已失效"),
-    USER_NOT_LOGIN(10007, "user not login", "用户未登录");
+    USER_NOT_LOGIN(10007, "user not login", "用户未登录"),
+    JSON_PARSE_ERROR(10008, "json parsing failed", "JSON解析失败"),
+
+    // 任务相关
+    INVALID_JOB(20001, "invalid job", "非法任务"),
+    JOB_PARSE_ERROR(20002, "job parsing failed", "任务解析失败"),
+    EMPTY_JOB(20003, "jobs is empty", "任务为空"),
+    EMPTY_CRON(20004, "cron is empty", "Cron表达式为空"),
+    INVALID_CRON(20005, "Invalid cron", "非法Cron表达式"),
+    FEWER_FIELDS(20006, "groupName, jobName, jobUser can not be empty", "groupName, jobName, jobUser 不能为空"),
+
+    // openapi
+    INVALID_SIGN(30001, "the signature is invalid", "非法签名"),
+    REQUEST_TIMEOUT(30002, "request timed out", "请求超时"),
+    INVALID_APP_KEY(30003, "appKey is invalid", "非法appKey"),
+    EMPTY_PARAM(30004, "parameter {0} is empty", "参数[{0}]为空");
 
     private final int code;
+
     private final String enMsg;
+
     private final String zhMsg;
 
-    Status(int code, String enMsg, String zhMsg) {
+    MsgCode(int code, String enMsg, String zhMsg) {
         this.code = code;
         this.enMsg = enMsg;
         this.zhMsg = zhMsg;

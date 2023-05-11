@@ -6,7 +6,9 @@ import java.io.Serializable;
 
 
 @Data
-public class CostTimeRankJob implements Serializable {
+public class JobCostTimeStatistics implements Serializable {
+
+    private static final long serialVersionUID = 4242455475576975495L;
 
     private String jobName;//job的名称
 

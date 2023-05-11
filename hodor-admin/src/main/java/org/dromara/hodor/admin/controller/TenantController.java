@@ -1,39 +1,39 @@
 package org.dromara.hodor.admin.controller;
 
+import org.dromara.hodor.admin.domain.Tenant;
+import org.dromara.hodor.admin.service.TenantService;
 import lombok.RequiredArgsConstructor;
 import org.dromara.hodor.core.PageInfo;
 import org.dromara.hodor.admin.core.Result;
 import org.dromara.hodor.admin.core.ResultUtil;
-import org.dromara.hodor.core.entity.JobInfo;
-import org.dromara.hodor.core.service.JobInfoService;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * JobInfoController
+ * TenantController
  *
  * @author tomgs
  * @since 1.0
  */
 @RestController
-@RequestMapping("jobInfo")
+@RequestMapping("tenant")
 @RequiredArgsConstructor
-public class JobInfoController {
+public class TenantController {
 
-    private final JobInfoService jobInfoService;
+    private final TenantService tenantService;
 
     /**
      * 分页查询
      *
-     * @param jobInfo 筛选条件
+     * @param tenant 筛选条件
      * @param pageNo      第几页
      * @param pageSize    分页大小
      * @return 查询结果
      */
     @GetMapping
-    public Result<PageInfo<JobInfo>> queryByPage(@RequestBody JobInfo jobInfo,
+    public Result<PageInfo<Tenant>> queryByPage(@RequestBody Tenant tenant, 
                                                     @RequestParam(value = "pageNo") Integer pageNo,
                                                     @RequestParam(value = "pageSize") Integer pageSize) {
-		PageInfo<JobInfo> pageInfo = jobInfoService.queryByPage(jobInfo, pageNo, pageSize);
+		PageInfo<Tenant> pageInfo = tenantService.queryByPage(tenant, pageNo, pageSize);
 		return ResultUtil.success(pageInfo);
     }
 
@@ -44,30 +44,30 @@ public class JobInfoController {
      * @return 单条数据
      */
     @GetMapping("{id}")
-    public Result<JobInfo> queryById(@PathVariable("id") Long id) {
-		return ResultUtil.success(jobInfoService.queryById(id));
+    public Result<Tenant> queryById(@PathVariable("id") Long id) {
+		return ResultUtil.success(tenantService.queryById(id));
     }
 
     /**
      * 新增数据
      *
-     * @param jobInfo 实体
+     * @param tenant 实体
      * @return 新增结果
      */
     @PostMapping
-    public Result<JobInfo> add(@RequestBody JobInfo jobInfo) {
-        return ResultUtil.success(jobInfoService.addJob(jobInfo));
+    public Result<Tenant> add(@RequestBody Tenant tenant) {
+        return ResultUtil.success(tenantService.insert(tenant));
     }
 
     /**
      * 编辑数据
      *
-     * @param jobInfo 实体
+     * @param tenant 实体
      * @return 编辑结果
      */
     @PutMapping
-    public Result<JobInfo> update(@RequestBody JobInfo jobInfo) {
-        return ResultUtil.success(jobInfoService.update(jobInfo));
+    public Result<Tenant> update(@RequestBody Tenant tenant) {
+        return ResultUtil.success(tenantService.update(tenant));
     }
 
     /**
@@ -78,7 +78,7 @@ public class JobInfoController {
      */
     @DeleteMapping
     public Result<Boolean> deleteById(Long id) {
-        return ResultUtil.success(jobInfoService.deleteById(id));
+        return ResultUtil.success(tenantService.deleteById(id));
     }
 
 }

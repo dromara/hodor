@@ -53,10 +53,10 @@ public class Result<T> implements Serializable {
         this.msg = msg;
     }
 
-    public Result(Status status) {
-        if (status != null) {
-            this.code = status.getCode();
-            this.msg = status.getMsg();
+    public Result(MsgCode msgCode) {
+        if (msgCode != null) {
+            this.code = msgCode.getCode();
+            this.msg = msgCode.getMsg();
         }
     }
 

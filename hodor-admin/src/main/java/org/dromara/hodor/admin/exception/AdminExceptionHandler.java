@@ -20,7 +20,7 @@ package org.dromara.hodor.admin.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.admin.core.Result;
 import org.dromara.hodor.admin.core.ResultUtil;
-import org.dromara.hodor.admin.core.Status;
+import org.dromara.hodor.admin.core.MsgCode;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -43,13 +43,13 @@ public class AdminExceptionHandler {
     @ExceptionHandler(BadRequestException.class)
     public Result<Object> badRequestExceptionHandler(Exception e, HandlerMethod hm) {
         log.error("BadRequestException: {}", e.getMessage(), e);
-        return ResultUtil.errorWithArgs(Status.REQUEST_BAD, e.getMessage());
+        return ResultUtil.errorWithArgs(MsgCode.REQUEST_BAD, e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
     public Result<Object> exceptionHandler(Exception e, HandlerMethod hm) {
         log.error("Exception: {}", e.getMessage(), e);
-        return ResultUtil.errorWithArgs(Status.INTERNAL_SERVER_ERROR_ARGS, e.getMessage());
+        return ResultUtil.errorWithArgs(MsgCode.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 
 }

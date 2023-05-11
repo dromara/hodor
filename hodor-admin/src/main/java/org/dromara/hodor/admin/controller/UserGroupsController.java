@@ -1,39 +1,39 @@
 package org.dromara.hodor.admin.controller;
 
+import org.dromara.hodor.admin.domain.UserGroups;
+import org.dromara.hodor.admin.service.UserGroupsService;
 import lombok.RequiredArgsConstructor;
 import org.dromara.hodor.core.PageInfo;
 import org.dromara.hodor.admin.core.Result;
 import org.dromara.hodor.admin.core.ResultUtil;
-import org.dromara.hodor.core.entity.JobInfo;
-import org.dromara.hodor.core.service.JobInfoService;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * JobInfoController
+ * UserGroupsController
  *
  * @author tomgs
  * @since 1.0
  */
 @RestController
-@RequestMapping("jobInfo")
+@RequestMapping("/userGroups")
 @RequiredArgsConstructor
-public class JobInfoController {
+public class UserGroupsController {
 
-    private final JobInfoService jobInfoService;
+    private final UserGroupsService userGroupsService;
 
     /**
      * 分页查询
      *
-     * @param jobInfo 筛选条件
+     * @param userGroups 筛选条件
      * @param pageNo      第几页
      * @param pageSize    分页大小
      * @return 查询结果
      */
     @GetMapping
-    public Result<PageInfo<JobInfo>> queryByPage(@RequestBody JobInfo jobInfo,
+    public Result<PageInfo<UserGroups>> queryByPage(UserGroups userGroups, 
                                                     @RequestParam(value = "pageNo") Integer pageNo,
                                                     @RequestParam(value = "pageSize") Integer pageSize) {
-		PageInfo<JobInfo> pageInfo = jobInfoService.queryByPage(jobInfo, pageNo, pageSize);
+		PageInfo<UserGroups> pageInfo = userGroupsService.queryByPage(userGroups, pageNo, pageSize);
 		return ResultUtil.success(pageInfo);
     }
 
@@ -43,31 +43,31 @@ public class JobInfoController {
      * @param id 主键
      * @return 单条数据
      */
-    @GetMapping("{id}")
-    public Result<JobInfo> queryById(@PathVariable("id") Long id) {
-		return ResultUtil.success(jobInfoService.queryById(id));
+    @GetMapping("/{id}")
+    public Result<UserGroups> queryById(@PathVariable("id") Long id) {
+		return ResultUtil.success(userGroupsService.queryById(id));
     }
 
     /**
      * 新增数据
      *
-     * @param jobInfo 实体
+     * @param userGroups 实体
      * @return 新增结果
      */
     @PostMapping
-    public Result<JobInfo> add(@RequestBody JobInfo jobInfo) {
-        return ResultUtil.success(jobInfoService.addJob(jobInfo));
+    public Result<UserGroups> add(UserGroups userGroups) {
+        return ResultUtil.success(userGroupsService.insert(userGroups));
     }
 
     /**
      * 编辑数据
      *
-     * @param jobInfo 实体
+     * @param userGroups 实体
      * @return 编辑结果
      */
     @PutMapping
-    public Result<JobInfo> update(@RequestBody JobInfo jobInfo) {
-        return ResultUtil.success(jobInfoService.update(jobInfo));
+    public Result<UserGroups> update(UserGroups userGroups) {
+        return ResultUtil.success(userGroupsService.update(userGroups));
     }
 
     /**
@@ -78,7 +78,7 @@ public class JobInfoController {
      */
     @DeleteMapping
     public Result<Boolean> deleteById(Long id) {
-        return ResultUtil.success(jobInfoService.deleteById(id));
+        return ResultUtil.success(userGroupsService.deleteById(id));
     }
 
 }

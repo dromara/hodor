@@ -10,19 +10,16 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import org.dromara.hodor.admin.core.ResultUtil;
 import org.dromara.hodor.admin.core.ServerConfigKeys;
-import org.dromara.hodor.admin.core.Status;
-import org.dromara.hodor.admin.service.KeySecretService;
+import org.dromara.hodor.admin.core.MsgCode;
+import org.dromara.hodor.admin.core.UserContext;
+import org.dromara.hodor.admin.domain.User;
+import org.dromara.hodor.admin.service.SecretService;
 import org.dromara.hodor.common.utils.JSONUtils;
 
 public class LoginFilter extends BaseFilter {
 
-    public LoginFilter(KeySecretService keySecretService) {
-        super(keySecretService);
-    }
-
-    @Override
-    public void destroy() {
-
+    public LoginFilter(SecretService secretService) {
+        super(secretService);
     }
 
     @Override
@@ -32,11 +29,14 @@ public class LoginFilter extends BaseFilter {
             HttpServletRequest httpServletRequest = (javax.servlet.http.HttpServletRequest) req;
             Object attribute = httpServletRequest.getSession().getAttribute(ServerConfigKeys.USER_SESSION);
             if (attribute != null || "/login".equals(httpServletRequest.getPathInfo())) {
+                if (attribute instanceof User) {
+                    UserContext.setUser((User) attribute);
+                }
                 fc.doFilter(req, resp);
             } else {
                 if ("XMLHttpRequest".equals(httpServletRequest.getHeader("X-Requested-With"))) {
                     ServletOutputStream os = resp.getOutputStream();
-                    os.write(JSONUtils.toJsonStr(ResultUtil.error(Status.LOGIN_EXPIRED))
+                    os.write(JSONUtils.toJsonStr(ResultUtil.error(MsgCode.LOGIN_EXPIRED))
                         .getBytes(ServerConfigKeys.CHARSET));
                     os.flush();
                 } else {
