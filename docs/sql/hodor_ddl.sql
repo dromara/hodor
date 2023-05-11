@@ -85,7 +85,7 @@ CREATE TABLE `hodor_flow_job_exec_detail` (
   `group_name` varchar(100) NOT NULL DEFAULT '' COMMENT 'job所属组名',
   `job_name` varchar(100) NOT NULL DEFAULT '' COMMENT 'job名称',
   `scheduler_name` varchar(100) NOT NULL DEFAULT '' COMMENT '调度节点名称',
-  `status` varchar(100) NOT NULL DEFAULT 'READY' COMMENT 'Flow状态',
+  `msgCode` varchar(100) NOT NULL DEFAULT 'READY' COMMENT 'Flow状态',
   `execute_start` timestamp DEFAULT NULL COMMENT '创建时间',
   `execute_end` timestamp DEFAULT NULL COMMENT '更新时间',
   `elapsed_time` int(4) NOT NULL DEFAULT 0 COMMENT '执行耗时',
@@ -94,7 +94,7 @@ CREATE TABLE `hodor_flow_job_exec_detail` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_request_id` (`request_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE INDEX index_job_key_status USING BTREE ON hodor.hodor_flow_job_exec_detail (group_name, job_name, status);
+CREATE INDEX index_job_key_status USING BTREE ON hodor.hodor_flow_job_exec_detail (group_name, job_name, msgCode);
 
 CREATE TABLE `hodor_actuator_binding` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
@@ -106,26 +106,49 @@ CREATE TABLE `hodor_actuator_binding` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ALTER TABLE hodor.hodor_actuator_binding ADD CONSTRAINT hodor_actuator_binding_UN UNIQUE KEY (group_name,cluster_name);
 
+CREATE TABLE `hodor_tenant` (
+    `id` bigint NOT NULL AUTO_INCREMENT,
+    `tenant_name` varchar(32) NOT NULL COMMENT '租户名称',
+    `corp_name` varchar(32) NOT NULL COMMENT '公司名称',
+    `email` varchar(32) NOT NULL COMMENT '联系邮箱',
+    `description` varchar(256) DEFAULT '' COMMENT '租户描述',
+    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE `hodor_user` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `username` varchar(32) NOT NULL COMMENT '用户名',
   `password` varchar(32) NOT NULL COMMENT '密码',
-  `role_name` varchar(32) DEFAULT '普通用户' COMMENT '角色名',
+  `email` varchar(32) DEFAULT '' COMMENT '联系邮箱',
+  `phone` varchar(32) DEFAULT '' COMMENT '联系电话',
+  `tenant_id` bigint NOT NULL COMMENT '租户id',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
 CREATE TABLE `hodor_job_group` (
-    `id` bigint NOT NULL AUTO_INCREMENT,
-    `group_name` varchar(32) NOT NULL COMMENT '分组名称',
-    `create_user` varchar(32) NOT NULL COMMENT '创建人',
-    `remark` varchar(128) DEFAULT '' COMMENT '备注',
-    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-    PRIMARY KEY (`id`)
+   `id` bigint NOT NULL AUTO_INCREMENT,
+   `group_name` varchar(32) NOT NULL COMMENT '分组名称',
+   `create_user` varchar(32) NOT NULL COMMENT '创建人',
+   `user_id` bigint NOT NULL COMMENT '用户id',
+   `tenant_id` bigint NOT NULL COMMENT '租户id',
+   `remark` varchar(128) DEFAULT '' COMMENT '备注',
+   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+   PRIMARY KEY (`id`),
+   UNIQUE KEY `idx_group_name` (`group_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `hodor_user_groups` (
+ `id` bigint NOT NULL AUTO_INCREMENT,
+ `user_id` bigint NOT NULL COMMENT '用户id',
+ `group_id` bigint NOT NULL COMMENT '租户id',
+ PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 SET FOREIGN_KEY_CHECKS = 1;
