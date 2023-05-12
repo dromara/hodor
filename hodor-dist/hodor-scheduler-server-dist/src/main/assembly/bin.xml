@@ -18,12 +18,12 @@
 <assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.0 http://maven.apache.org/xsd/assembly-2.1.0.xsd">
-    <id>hodor-actuator-bigdata</id>
+    <id>hodor-scheduler-server</id>
     <formats>
         <format>tar.gz</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
-    <baseDirectory>hodor-actuator-bigdata</baseDirectory>
+    <baseDirectory>hodor-scheduler-server</baseDirectory>
     <fileSets>
         <fileSet>
             <directory>${basedir}/src/main/resources</directory>
@@ -34,7 +34,7 @@
             <outputDirectory>conf</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>${project.basedir}/../../hodor-actuator/hodor-actuator-bigdata/hodor-actuator-bigdata-bootstrap/src/main/resources</directory>
+            <directory>${project.basedir}/../../hodor-server/src/main/resources</directory>
             <includes>
                 <include>**/*</include>
             </includes>

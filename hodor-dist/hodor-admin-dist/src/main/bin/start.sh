@@ -31,4 +31,4 @@ fi
 
 java $JAVA_OPTS \
   -cp "$HODOR_ACTUATOR_HOME/conf":"$HODOR_ACTUATOR_HOME/lib/*" \
-  org.dromara.hodor.actuator.bigdata.BigdataActuatorApplication
+  org.dromara.hodor.admin.HodorAdminApplication

@@ -23,7 +23,7 @@ echo "Starting HODOR_ACTUATOR_HOME: $HODOR_ACTUATOR_HOMEE"
 
 source "$HODOR_ACTUATOR_HOMEE/conf/hodor_env.sh"
 
-JAVA_OPTS=${JAVA_OPTS:-"-server -Duser.timezone=${SPRING_JACKSON_TIME_ZONE} -Xms512m -Xmx2g -Xmn512m -XX:+PrintGCDetails -Xloggc:gc.log -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=dump.hprof"}
+JAVA_OPTS=${JAVA_OPTS:-"-server -Duser.timezone=${SPRING_JACKSON_TIME_ZONE} -Xms4g -Xmx4g -Xmn512m -XX:+PrintGCDetails -Xloggc:gc.log -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=dump.hprof"}
 
 if [[ "$DOCKER" == "true" ]]; then
   JAVA_OPTS="${JAVA_OPTS} -XX:-UseContainerSupport"
@@ -31,4 +31,4 @@ fi
 
 java $JAVA_OPTS \
   -cp "$HODOR_ACTUATOR_HOME/conf":"$HODOR_ACTUATOR_HOME/lib/*" \
-  org.dromara.hodor.actuator.bigdata.BigdataActuatorApplication
+  org.dromara.hodor.server.HodorServer
