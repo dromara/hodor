@@ -44,12 +44,12 @@ public class JobGroupServiceImpl implements JobGroupService {
     private final JobGroupMapper jobGroupMapper;
 
     @Override
-    public PageInfo<JobGroup> queryGroupListPaging(User user, String queryVal, Integer pageNo, Integer pageSize) {
+    public PageInfo<JobGroup> queryGroupListPaging(User user, String groupName, Integer pageNo, Integer pageSize) {
         IPage<JobGroup> page = new Page<>(pageNo, pageSize);
         jobGroupMapper.selectPage(page, Wrappers.<JobGroup>lambdaQuery()
-            .like(queryVal != null, JobGroup::getGroupName, queryVal));
+            .like(groupName != null, JobGroup::getGroupName, groupName));
         PageInfo<JobGroup> pageInfo = new PageInfo<>();
-        return pageInfo.setTotalList(page.getRecords())
+        return pageInfo.setRows(page.getRecords())
             .setTotal(page.getTotal())
             .setTotalPage((int) page.getPages())
             .setCurrentPage((int) page.getCurrent())

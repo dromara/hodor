@@ -58,9 +58,10 @@ public abstract class BaseFilter implements Filter {
             doFilter1(req, resp, fc);
             return;
         }
+        fc.doFilter(req, resp);
         // 在过滤url之外
-        try {
-            if (((HttpServletRequest) req).getPathInfo().contains("/freeService")) {
+        /*try {
+            if (((HttpServletRequest) req).getRequestURI().contains("/freeService")) {
                 User user = new User();
                 user.setUsername("admin");
                 //user.setRoleId(0);
@@ -78,9 +79,10 @@ public abstract class BaseFilter implements Filter {
                 }
             }
         } catch (Exception e) {
+            log.error("doFilter error, msg {}", e.getMessage(), e);
             ((HttpServletRequest) req).getSession().removeAttribute(ServerConfigKeys.USER_SESSION);
             ajaxResponse(resp, ResultUtil.errorWithArgs(MsgCode.INTERNAL_SERVER_ERROR, e.getMessage()));
-        }
+        }*/
     }
 
     @Override
@@ -189,6 +191,8 @@ public abstract class BaseFilter implements Filter {
                 }
             }
         }*/
+        excludePaths.add("/login");
+        excludePaths.add("/logout");
         final String[] strings = new String[excludePaths.size()];
         return excludePaths.toArray(strings);
     }

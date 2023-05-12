@@ -32,7 +32,7 @@ public class UserGroupsServiceImpl implements UserGroupsService {
         long total = userGroupsMapper.count(userGroups);
         List<UserGroups> result = userGroupsMapper.queryAllByLimit(userGroups, pageNo, pageSize);
 		PageInfo<UserGroups> pageInfo = new PageInfo<>();
-        return pageInfo.setTotalList(result)
+        return pageInfo.setRows(result)
             .setTotal(total)
             .setPageNo(pageNo)
             .setPageSize(pageSize);

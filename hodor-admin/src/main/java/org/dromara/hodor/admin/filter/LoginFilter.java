@@ -26,9 +26,9 @@ public class LoginFilter extends BaseFilter {
     public void doFilter1(ServletRequest req, ServletResponse resp, FilterChain fc)
         throws IOException, ServletException {
         if (req instanceof HttpServletRequest) {
-            HttpServletRequest httpServletRequest = (javax.servlet.http.HttpServletRequest) req;
+            HttpServletRequest httpServletRequest = (HttpServletRequest) req;
             Object attribute = httpServletRequest.getSession().getAttribute(ServerConfigKeys.USER_SESSION);
-            if (attribute != null || "/login".equals(httpServletRequest.getPathInfo())) {
+            if (attribute != null || httpServletRequest.getRequestURI().contains("/login")) {
                 if (attribute instanceof User) {
                     UserContext.setUser((User) attribute);
                 }

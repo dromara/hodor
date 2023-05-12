@@ -31,6 +31,11 @@ public class Result<T> implements Serializable {
     private static final long serialVersionUID = -6567814428394143641L;
 
     /**
+     * successful
+     */
+    private boolean successful;
+
+    /**
      * status
      */
     private Integer code;
@@ -48,19 +53,22 @@ public class Result<T> implements Serializable {
     public Result() {
     }
 
-    public Result(Integer code, String msg) {
+    public Result(Boolean successful, Integer code, String msg) {
+        this.successful = successful;
         this.code = code;
         this.msg = msg;
     }
 
-    public Result(MsgCode msgCode) {
+    public Result(Boolean successful, MsgCode msgCode) {
+        this.successful = successful;
         if (msgCode != null) {
             this.code = msgCode.getCode();
             this.msg = msgCode.getMsg();
         }
     }
 
-    public Result(Integer code, String msg, T data) {
+    public Result(Boolean successful, Integer code, String msg, T data) {
+        this.successful = successful;
         this.code = code;
         this.msg = msg;
         this.data = data;

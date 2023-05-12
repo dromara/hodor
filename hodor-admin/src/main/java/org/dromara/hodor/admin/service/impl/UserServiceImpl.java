@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
         long total = userMapper.count(user);
         List<User> result = userMapper.queryAllByLimit(user, pageNo, pageSize);
         PageInfo<User> pageInfo = new PageInfo<>();
-        return pageInfo.setTotalList(result)
+        return pageInfo.setRows(result)
             .setTotal(total)
             .setPageNo(pageNo)
             .setPageSize(pageSize);

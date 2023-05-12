@@ -29,7 +29,7 @@ import org.dromara.hodor.core.entity.JobGroup;
  */
 public interface JobGroupService {
 
-    PageInfo<JobGroup> queryGroupListPaging(User user, String queryVal, Integer pageNo, Integer pageSize);
+    PageInfo<JobGroup> queryGroupListPaging(User user, String groupName, Integer pageNo, Integer pageSize);
 
     JobGroup createGroup(User user, JobGroup group);
 

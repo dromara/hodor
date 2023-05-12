@@ -30,7 +30,7 @@ public class ResultUtil {
     private ResultUtil() {}
 
     public static <T> Result<T> success(T data) {
-        return new Result<>(MsgCode.SUCCESS.getCode(), MsgCode.SUCCESS.getMsg(), data);
+        return new Result<>(true, MsgCode.SUCCESS.getCode(), MsgCode.SUCCESS.getMsg(), data);
     }
 
     public static <T> Result<T> success() {
@@ -38,7 +38,7 @@ public class ResultUtil {
     }
 
     public static <T> Result<T> error(Integer code, String msg) {
-        return new Result<>(code, msg);
+        return new Result<>(false, code, msg);
     }
     /**
      * Call this function if there is any error
@@ -47,7 +47,7 @@ public class ResultUtil {
      * @return result
      */
     public static <T> Result<T> error(MsgCode msgCode) {
-        return new Result<>(msgCode);
+        return new Result<>(false, msgCode);
     }
 
     /**
@@ -58,7 +58,7 @@ public class ResultUtil {
      * @return result
      */
     public static <T> Result<T> errorWithArgs(MsgCode msgCode, Object... args) {
-        return new Result<>(msgCode.getCode(), MessageFormat.format(msgCode.getMsg(), args));
+        return new Result<>(false, msgCode.getCode(), MessageFormat.format(msgCode.getMsg(), args));
     }
 
 }

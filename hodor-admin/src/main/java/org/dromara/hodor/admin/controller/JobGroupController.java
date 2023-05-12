@@ -40,11 +40,11 @@ public class JobGroupController {
     }
 
     @GetMapping()
-    public Result<PageInfo<JobGroup>> queryGroupListPaging(@RequestParam(value = "queryVal", required = false) String queryVal,
+    public Result<PageInfo<JobGroup>> queryGroupListPaging(@RequestParam(value = "groupName", required = false) String groupName,
                                                            @RequestParam(value = "pageNo") Integer pageNo,
                                                            @RequestParam(value = "pageSize") Integer pageSize) {
         final User user = UserContext.getUser();
-        PageInfo<JobGroup> pageInfo = jobGroupService.queryGroupListPaging(user, queryVal, pageNo, pageSize);
+        PageInfo<JobGroup> pageInfo = jobGroupService.queryGroupListPaging(user, groupName, pageNo, pageSize);
         return ResultUtil.success(pageInfo);
     }
 

@@ -32,7 +32,7 @@ public class TenantServiceImpl implements TenantService {
         long total = tenantMapper.count(tenant);
         List<Tenant> result = tenantMapper.queryAllByLimit(tenant, pageNo, pageSize);
 		PageInfo<Tenant> pageInfo = new PageInfo<>();
-        return pageInfo.setTotalList(result)
+        return pageInfo.setRows(result)
             .setTotal(total)
             .setPageNo(pageNo)
             .setPageSize(pageSize);
