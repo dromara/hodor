@@ -32,9 +32,9 @@ import lombok.experimental.Accessors;
 public class PageInfo<T> {
 
     /**
-     * totalList
+     * rows
      */
-    private List<T> totalList = Collections.emptyList();
+    private List<T> rows = Collections.emptyList();
 
     /**
      * total
