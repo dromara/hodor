@@ -30,7 +30,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class BigdataActuatorApplication {
 
     public static void main(String[] args) {
-        System.setProperty("log4j2.debug", "false");
         // Fix error: java.lang.AbstractMethodError: javax.xml.parsers.DocumentBuilderFactory.setFeature(Ljava/lang/String;Z)
         System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
                 "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl");

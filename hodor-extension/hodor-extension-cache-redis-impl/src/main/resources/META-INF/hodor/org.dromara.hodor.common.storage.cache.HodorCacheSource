@@ -1,1 +1,1 @@
-redis=com.dromara.hodor.common.storage.cache.impl.RedisCacheSource
+redis=org.dromara.hodor.common.RedisCacheSource

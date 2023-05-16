@@ -15,7 +15,7 @@ import org.dromara.hodor.model.enums.JobExecuteStatus;
 @TableName("hodor_job_exec_detail")
 public class JobExecDetail {
 
-    private long id;
+    private Long id;
 
     private String groupName;
 

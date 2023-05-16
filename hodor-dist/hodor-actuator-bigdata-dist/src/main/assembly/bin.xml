@@ -34,7 +34,7 @@
             <outputDirectory>conf</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>${project.basedir}/../../hodor-actuator/hodor-actuator-bigdata/src/main/resources</directory>
+            <directory>${project.basedir}/../../hodor-actuator/hodor-actuator-bigdata/hodor-actuator-bigdata-bootstrap/src/main/resources</directory>
             <includes>
                 <include>**/*</include>
             </includes>

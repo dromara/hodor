@@ -2,9 +2,11 @@ package org.dromara.hodor.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.cron.CronUtils;
+import org.dromara.hodor.core.PageInfo;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.core.mapper.JobInfoMapper;
 import org.dromara.hodor.core.service.JobInfoService;
@@ -12,8 +14,6 @@ import org.dromara.hodor.model.enums.JobStatus;
 import org.dromara.hodor.model.scheduler.DataInterval;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * job info service
@@ -29,8 +29,9 @@ public class JobInfoServiceImpl implements JobInfoService {
     private final @NonNull JobInfoMapper jobInfoMapper;
 
     @Override
-    public void addJob(JobInfo jobInfo) {
+    public JobInfo addJob(JobInfo jobInfo) {
         jobInfoMapper.insert(jobInfo);
+        return jobInfo;
     }
 
     @Override
@@ -59,7 +60,8 @@ public class JobInfoServiceImpl implements JobInfoService {
         return jobInfoMapper.selectCount(Wrappers.<JobInfo>lambdaQuery()
             .eq(JobInfo::getJobStatus, JobStatus.READY)
             .or()
-            .eq(JobInfo::getJobStatus, JobStatus.RUNNING));
+            .eq(JobInfo::getJobStatus, JobStatus.RUNNING))
+            .intValue();
     }
 
     @Override
@@ -115,6 +117,26 @@ public class JobInfoServiceImpl implements JobInfoService {
             .eq(JobInfo::getGroupName, jobInfo.getGroupName())
             .eq(JobInfo::getJobName, jobInfo.getJobName())
             .eq(JobInfo::getJobStatus, JobStatus.RUNNING)) > 0;
+    }
+
+    @Override
+    public boolean deleteById(Long id) {
+        return jobInfoMapper.deleteById(id) > 0;
+    }
+
+    @Override
+    public JobInfo update(JobInfo jobInfo) {
+        return null;
+    }
+
+    @Override
+    public JobInfo queryById(Long id) {
+        return null;
+    }
+
+    @Override
+    public PageInfo<JobInfo> queryByPage(JobInfo jobInfo, Integer pageNo, Integer pageSize) {
+        return null;
     }
 
 }

@@ -27,7 +27,7 @@ public class FlowJobExecDetailServiceImpl implements FlowJobExecDetailService {
 
     @Override
     public void createFlowJobExecDetail(FlowJobExecDetail flowJobExecDetail) {
-        Integer count = flowJobExecDetailMapper.selectCount(Wrappers.<FlowJobExecDetail>lambdaQuery()
+        Long count = flowJobExecDetailMapper.selectCount(Wrappers.<FlowJobExecDetail>lambdaQuery()
             .eq(FlowJobExecDetail::getGroupName, flowJobExecDetail.getGroupName())
             .eq(FlowJobExecDetail::getJobName, flowJobExecDetail.getJobName())
             .eq(FlowJobExecDetail::getStatus, Status.RUNNING));

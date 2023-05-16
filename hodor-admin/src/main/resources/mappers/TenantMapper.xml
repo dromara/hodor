@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dromara.hodor.admin.mapper.TenantMapper">
+
+    <resultMap type="org.dromara.hodor.admin.domain.Tenant" id="TenantMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="tenantName" column="tenant_name" jdbcType="VARCHAR"/>
+        <result property="corpName" column="corp_name" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+        <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TenantMap">
+        select
+          id, tenant_name, corp_name, email, description, created_at, updated_at
+        from hodor_tenant
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TenantMap">
+        select
+          id, tenant_name, corp_name, email, description, created_at, updated_at
+        from hodor_tenant
+        <where>
+            <if test="tenant.id != null">
+                and id = #{tenant.id}
+            </if>
+            <if test="tenant.tenantName != null and tenant.tenantName != ''">
+                and tenant_name = #{tenant.tenantName}
+            </if>
+            <if test="tenant.corpName != null and tenant.corpName != ''">
+                and corp_name = #{tenant.corpName}
+            </if>
+            <if test="tenant.email != null and tenant.email != ''">
+                and email = #{tenant.email}
+            </if>
+            <if test="tenant.description != null and tenant.description != ''">
+                and description = #{tenant.description}
+            </if>
+            <if test="tenant.createdAt != null">
+                and created_at = #{tenant.createdAt}
+            </if>
+            <if test="tenant.updatedAt != null">
+                and updated_at = #{tenant.updatedAt}
+            </if>
+        </where>
+        limit #{pageNo}, #{pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from hodor_tenant
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="tenantName != null and tenantName != ''">
+                and tenant_name = #{tenantName}
+            </if>
+            <if test="corpName != null and corpName != ''">
+                and corp_name = #{corpName}
+            </if>
+            <if test="email != null and email != ''">
+                and email = #{email}
+            </if>
+            <if test="description != null and description != ''">
+                and description = #{description}
+            </if>
+            <if test="createdAt != null">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null">
+                and updated_at = #{updatedAt}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into hodor_tenant(tenant_name, corp_name, email, description, created_at, updated_at)
+        values (#{tenantName}, #{corpName}, #{email}, #{description}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into hodor_tenant(tenant_name, corp_name, email, description, created_at, updated_at)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.tenantName}, #{entity.corpName}, #{entity.email}, #{entity.description}, #{entity.createdAt}, #{entity.updatedAt})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into hodor_tenant(tenant_name, corp_name, email, description, created_at, updated_at)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.tenantName}, #{entity.corpName}, #{entity.email}, #{entity.description}, #{entity.createdAt}, #{entity.updatedAt})
+        </foreach>
+        on duplicate key update
+        tenant_name = values(tenant_name),
+        corp_name = values(corp_name),
+        email = values(email),
+        description = values(description),
+        created_at = values(created_at),
+        updated_at = values(updated_at)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update hodor_tenant
+        <set>
+            <if test="tenantName != null and tenantName != ''">
+                tenant_name = #{tenantName},
+            </if>
+            <if test="corpName != null and corpName != ''">
+                corp_name = #{corpName},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from hodor_tenant where id = #{id}
+    </delete>
+
+</mapper>
+

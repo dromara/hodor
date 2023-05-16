@@ -1,5 +1,6 @@
 package org.dromara.hodor.core.service;
 
+import org.dromara.hodor.core.PageInfo;
 import org.dromara.hodor.core.entity.JobExecDetail;
 
 /**
@@ -15,4 +16,10 @@ public interface JobExecDetailService {
     void update(JobExecDetail jobExecDetail);
 
     void createIfAbsent(JobExecDetail jobExecDetail);
+
+    Boolean deleteById(Long id);
+
+    PageInfo<JobExecDetail> queryByPage(JobExecDetail jobExecDetail, Integer pageNo, Integer pageSize);
+
+    JobExecDetail queryById(Long id);
 }
