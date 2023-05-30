@@ -17,34 +17,31 @@
 
 package org.dromara.hodor.admin.config;
 
-import lombok.RequiredArgsConstructor;
-import org.dromara.hodor.admin.filter.LoginFilter;
-import org.dromara.hodor.admin.service.SecretService;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * AdminConfig
+ * SwaggerConfig
  *
  * @author tomgs
  * @since 1.0
  */
 @Configuration
-@RequiredArgsConstructor
-public class AdminConfig implements WebMvcConfigurer {
-
-    private final SecretService secretService;
+public class OpenApiConfig implements WebMvcConfigurer {
 
     @Bean
-    public FilterRegistrationBean<LoginFilter> registerLoginFilter(){
-        FilterRegistrationBean<LoginFilter> registrationBean = new FilterRegistrationBean<>();
-        registrationBean.setOrder(1);
-        registrationBean.setFilter(new LoginFilter(secretService));
-        registrationBean.addUrlPatterns("/*");
-        registrationBean.addInitParameter("excludeUris", "/login, /logout, /doc.html");
-        return registrationBean;
+    public OpenAPI apiV1Info() {
+        return new OpenAPI()
+            .info(new Info()
+                .title("Hodor Admin Api Docs")
+                .description("HodorAdmin接口文档")
+                .contact(new Contact()
+                    .name("Hodor Group")
+                    .email("tincopper@foxmail.com"))
+                .version("v1"));
     }
-
 }

@@ -1,15 +1,15 @@
 package org.dromara.hodor.admin.filter;
 
+import com.google.common.collect.Sets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import javax.servlet.Filter;
@@ -22,12 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.admin.core.ApiConstants;
-import org.dromara.hodor.admin.core.MsgCode;
 import org.dromara.hodor.admin.core.Result;
-import org.dromara.hodor.admin.core.ResultUtil;
-import org.dromara.hodor.admin.core.ServerConfigKeys;
 import org.dromara.hodor.admin.domain.KeySecret;
-import org.dromara.hodor.admin.domain.User;
 import org.dromara.hodor.admin.exception.ValidationException;
 import org.dromara.hodor.admin.service.SecretService;
 import org.dromara.hodor.common.utils.DateUtils;
@@ -40,7 +36,7 @@ import org.dromara.hodor.common.utils.StringUtils;
 @RequiredArgsConstructor
 public abstract class BaseFilter implements Filter {
 
-    private String[] excludedPaths = new String[] {};
+    private Set<String> excludedPaths = new HashSet<>();
 
     private final SecretService secretService;
 
@@ -48,8 +44,13 @@ public abstract class BaseFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain fc) throws IOException, ServletException {
         boolean isExcludedPage = false;
         String contextPath = ((HttpServletRequest) req).getContextPath();
-        for (String page : excludedPaths) {// 判断是否在过滤url之外
-            if (((HttpServletRequest) req).getRequestURI().equals(contextPath + page)) {
+        final String requestURI = ((HttpServletRequest) req).getRequestURI();
+        // 判断是否在过滤url之外
+        for (String page : excludedPaths) {
+            if (requestURI.startsWith(contextPath + page)
+                || requestURI.endsWith(".css")
+                || requestURI.endsWith(".js")
+                || requestURI.contains("api-docs")) {
                 isExcludedPage = true;
                 break;
             }
@@ -59,43 +60,16 @@ public abstract class BaseFilter implements Filter {
             return;
         }
         fc.doFilter(req, resp);
-        // 在过滤url之外
-        /*try {
-            if (((HttpServletRequest) req).getRequestURI().contains("/freeService")) {
-                User user = new User();
-                user.setUsername("admin");
-                //user.setRoleId(0);
-                ((HttpServletRequest) req).getSession().setAttribute(ServerConfigKeys.USER_SESSION, user);
-                fc.doFilter(req, resp);
-                ((HttpServletRequest) req).getSession().removeAttribute(ServerConfigKeys.USER_SESSION);
-            } else {
-                if (checkRequestLegal(req, resp)) {
-                    User user = new User();
-                    user.setUsername("admin");
-                    //user.setRoleId(0);
-                    ((HttpServletRequest) req).getSession().setAttribute(ServerConfigKeys.USER_SESSION, user);
-                    fc.doFilter(req, resp);
-                    ((HttpServletRequest) req).getSession().removeAttribute(ServerConfigKeys.USER_SESSION);
-                }
-            }
-        } catch (Exception e) {
-            log.error("doFilter error, msg {}", e.getMessage(), e);
-            ((HttpServletRequest) req).getSession().removeAttribute(ServerConfigKeys.USER_SESSION);
-            ajaxResponse(resp, ResultUtil.errorWithArgs(MsgCode.INTERNAL_SERVER_ERROR, e.getMessage()));
-        }*/
     }
 
     @Override
     public void init(FilterConfig fConfig) throws ServletException {
         excludedPaths = excludedPaths();
-        String excludedPageStr = fConfig.getInitParameter("excludedPages");
-        if (StringUtils.isNoneEmpty(excludedPageStr)) {
+        String excludedPageStr = fConfig.getInitParameter("excludedUris");
+        if (StringUtils.isNotBlank(excludedPageStr)) {
             String[] excludedPages = excludedPageStr.split(",");
             if (excludedPages.length > 0) {
-                int dest = excludedPaths.length;
-                int src = excludedPages.length;
-                excludedPaths = Arrays.copyOf(excludedPaths, dest + src);
-                System.arraycopy(excludedPages, 0, excludedPaths, dest, dest + src);
+                excludedPaths.addAll(Arrays.asList(excludedPages));
             }
         }
         init1(fConfig);
@@ -167,34 +141,8 @@ public abstract class BaseFilter implements Filter {
      * 获得Controller中有OpenApi注解的方法
      * 找出其路径加到过滤页数组中
      */
-    private String[] excludedPaths() {
-        List<String> excludePaths = new ArrayList<>();
-        /*Map<String, Object> beanMap = SpringWorkFactory.getController();
-        for (String key : beanMap.keySet()) {
-            String classUrl = "";
-            Class<?> clazz = AopTargetUtils.getTarget(beanMap.get(key)).getClass();
-            RequestMapping classMapping = clazz.getAnnotation(RequestMapping.class);
-            if (classMapping != null) {
-                classUrl = classMapping.value()[0];
-            }
-            Method[] deckaredMethods = clazz.getDeclaredMethods();
-            for (Method method : deckaredMethods) {
-                RequestMapping methodMapping = method.getAnnotation(RequestMapping.class);
-                if (methodMapping == null) {
-                    continue;
-                }
-                OpenApi ann = method.getAnnotation(OpenApi.class);
-                if (methodMapping.value().length > 0 && ann != null) {
-                    for (String url : methodMapping.value()) {
-                        excludePageList.add(ann.basePath() + classUrl + url + ann.suffix());
-                    }
-                }
-            }
-        }*/
-        excludePaths.add("/login");
-        excludePaths.add("/logout");
-        final String[] strings = new String[excludePaths.size()];
-        return excludePaths.toArray(strings);
+    private Set<String> excludedPaths() {
+        return Sets.newHashSet("/login", "/logout", "/doc.html");
     }
 
 }
