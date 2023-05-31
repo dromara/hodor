@@ -11,7 +11,6 @@ import org.dromara.hodor.admin.core.ResultUtil;
 import org.dromara.hodor.admin.core.ServerConfigKeys;
 import org.dromara.hodor.admin.domain.User;
 import org.dromara.hodor.admin.service.UserService;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,17 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
 
     private final UserService userService;
-
-    @Operation(summary = "登录页面接口")
-    @GetMapping("/login")
-    public String loginPage(HttpSession session) {
-        User user = (User) session.getAttribute(ServerConfigKeys.USER_SESSION);
-        if (user == null) {
-            return "login";
-        }
-
-        return "main";
-    }
 
     @Operation(summary = "登录接口")
     @PostMapping("/login")
@@ -61,13 +49,4 @@ public class LoginController {
         return ResultUtil.success();
     }
 
-    @Operation(summary = "会话检查")
-    @GetMapping("checkSession")
-    @ResponseBody
-    public Result<Boolean> checkSession(HttpSession session) {
-        if (session.getAttribute(ServerConfigKeys.USER_SESSION) != null) {
-            return ResultUtil.success();
-        }
-        return ResultUtil.success(false);
-    }
 }

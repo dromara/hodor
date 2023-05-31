@@ -3,9 +3,6 @@ spring:
     name: hodor-admin
   profiles:
     include: core
-  mvc:
-    pathmatch:
-      matching-strategy: ANT_PATH_MATCHER
 
 server:
   servlet:

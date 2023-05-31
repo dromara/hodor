@@ -18,11 +18,10 @@
 package org.dromara.hodor.admin.config;
 
 import lombok.RequiredArgsConstructor;
-import org.dromara.hodor.admin.filter.LoginFilter;
-import org.dromara.hodor.admin.service.SecretService;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.dromara.hodor.admin.interceptor.LoginInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -35,16 +34,23 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class AdminConfig implements WebMvcConfigurer {
 
-    private final SecretService secretService;
-
     @Bean
-    public FilterRegistrationBean<LoginFilter> registerLoginFilter(){
-        FilterRegistrationBean<LoginFilter> registrationBean = new FilterRegistrationBean<>();
-        registrationBean.setOrder(1);
-        registrationBean.setFilter(new LoginFilter(secretService));
-        registrationBean.addUrlPatterns("/*");
-        registrationBean.addInitParameter("excludeUris", "/login, /logout, /doc.html");
-        return registrationBean;
+    public LoginInterceptor loginInterceptor() {
+        return new LoginInterceptor();
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(loginInterceptor())
+            .addPathPatterns("/**")
+            .excludePathPatterns(
+                "/login",
+                "/logout",
+                "/v3/api-docs/**",
+                "/webjars/**",
+                "/swagger-resources/**",
+                "/swagger-ui.html",
+                "/doc.html");
     }
 
 }
