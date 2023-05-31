@@ -17,40 +17,31 @@
 
 package org.dromara.hodor.admin.config;
 
-import lombok.RequiredArgsConstructor;
-import org.dromara.hodor.admin.interceptor.LoginInterceptor;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * AdminConfig
+ * SwaggerConfig
  *
  * @author tomgs
  * @since 1.0
  */
 @Configuration
-@RequiredArgsConstructor
-public class AdminConfig implements WebMvcConfigurer {
+public class OpenApiConfig implements WebMvcConfigurer {
 
     @Bean
-    public LoginInterceptor loginInterceptor() {
-        return new LoginInterceptor();
+    public OpenAPI apiV1Info() {
+        return new OpenAPI()
+            .info(new Info()
+                .title("Hodor Admin Api Docs")
+                .description("HodorAdmin接口文档")
+                .contact(new Contact()
+                    .name("Hodor Group")
+                    .email("tincopper@foxmail.com"))
+                .version("v1"));
     }
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(loginInterceptor())
-            .addPathPatterns("/**")
-            .excludePathPatterns(
-                "/login",
-                "/logout",
-                "/v3/api-docs/**",
-                "/webjars/**",
-                "/swagger-resources/**",
-                "/swagger-ui.html",
-                "/doc.html");
-    }
-
 }

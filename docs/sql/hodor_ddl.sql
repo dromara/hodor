@@ -102,9 +102,9 @@ CREATE TABLE `hodor_actuator_binding` (
   `group_name` varchar(100) NOT NULL COMMENT '绑定任务分组名称',
   `create_time` timestamp DEFAULT NULL COMMENT '创建时间',
   `update_time` timestamp DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_group_cluster` (`group_name`, `cluster_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-ALTER TABLE hodor.hodor_actuator_binding ADD CONSTRAINT hodor_actuator_binding_UN UNIQUE KEY (group_name,cluster_name);
 
 CREATE TABLE `hodor_tenant` (
     `id` bigint NOT NULL AUTO_INCREMENT,

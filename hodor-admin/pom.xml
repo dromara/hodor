@@ -15,6 +15,12 @@
         <dependency>
             <groupId>org.dromara</groupId>
             <artifactId>hodor-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>rocksdbjni</artifactId>
+                    <groupId>org.rocksdb</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -32,10 +38,28 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+        <!-- 热部署模块 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- spring security -->
+        <!--<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>-->
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
         </dependency>
 
         <dependency>

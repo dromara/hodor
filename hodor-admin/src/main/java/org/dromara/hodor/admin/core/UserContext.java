@@ -46,7 +46,7 @@ public class UserContext {
     /**
      * 移除当前线程的用户
      */
-    protected static void removeUser() {
+    public static void removeUser() {
         LOCAL_REQUEST_USER.remove();
     }
 

@@ -35,13 +35,13 @@ import org.springframework.web.method.HandlerMethod;
 public class AdminExceptionHandler {
 
     @ExceptionHandler(ServiceException.class)
-    public Result<Object> exceptionHandler(ServiceException e, HandlerMethod hm) {
+    public Result<Void> exceptionHandler(ServiceException e, HandlerMethod hm) {
         log.error("ServiceException: {}", e.getMessage(), e);
         return ResultUtil.error(e.getCode(), e.getMessage());
     }
 
     @ExceptionHandler(BadRequestException.class)
-    public Result<Object> badRequestExceptionHandler(Exception e, HandlerMethod hm) {
+    public Result<Void> badRequestExceptionHandler(Exception e, HandlerMethod hm) {
         log.error("BadRequestException: {}", e.getMessage(), e);
         return ResultUtil.errorWithArgs(MsgCode.REQUEST_BAD, e.getMessage());
     }
