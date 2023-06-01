@@ -1,9 +1,10 @@
 package org.dromara.hodor.admin.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.dromara.hodor.admin.domain.UserGroups;
-import org.apache.ibatis.annotations.Param;
+import com.github.yulichang.base.MPJBaseMapper;
 import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.dromara.hodor.admin.domain.UserGroups;
 
 /**
  * (UserGroups)表数据库访问层
@@ -11,7 +12,8 @@ import java.util.List;
  * @author tomgs
  * @since 2023-05-10 19:31:21
  */
-public interface UserGroupsMapper extends BaseMapper<UserGroups> {
+@Mapper
+public interface UserGroupsMapper extends MPJBaseMapper<UserGroups> {
 
     /**
      * 通过ID查询单条数据

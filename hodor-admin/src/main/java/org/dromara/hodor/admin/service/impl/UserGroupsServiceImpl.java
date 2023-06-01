@@ -1,12 +1,18 @@
 package org.dromara.hodor.admin.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.yulichang.toolkit.JoinWrappers;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.core.PageInfo;
 import org.dromara.hodor.admin.domain.UserGroups;
 import org.dromara.hodor.admin.mapper.UserGroupsMapper;
 import org.dromara.hodor.admin.service.UserGroupsService;
+import org.dromara.hodor.core.PageInfo;
+import org.dromara.hodor.core.entity.JobGroup;
 import org.springframework.stereotype.Service;
 
 /**
@@ -53,5 +59,29 @@ public class UserGroupsServiceImpl implements UserGroupsService {
     @Override
     public boolean deleteById(Long id) {
         return userGroupsMapper.deleteById(id) > 0;
+    }
+
+    @Override
+    public PageInfo<JobGroup> queryByUserId(Long userId, Integer pageNo, Integer pageSize) {
+        final MPJLambdaWrapper<UserGroups> joinWrapper = JoinWrappers.lambda(UserGroups.class)
+            .selectAll(JobGroup.class)
+            .leftJoin(JobGroup.class, JobGroup::getId, UserGroups::getGroupId)
+            .eq(UserGroups::getUserId, userId);
+        Page<JobGroup> listPage = userGroupsMapper.selectJoinPage(new Page<>(pageNo, pageSize), JobGroup.class, joinWrapper);
+        PageInfo<JobGroup> pageInfo = new PageInfo<>();
+        pageInfo.setCurrentPage(pageNo)
+            .setPageSize(pageSize)
+            .setTotal(listPage.getTotal())
+            .setRows(listPage.getRecords());
+        return pageInfo;
+    }
+
+    @Override
+    public Boolean deleteByUserIdAndGroupId(UserGroups userGroups) {
+        final LambdaQueryWrapper<UserGroups> wrapper = Wrappers.<UserGroups>lambdaQuery()
+            .eq(UserGroups::getUserId, userGroups.getUserId())
+            .eq(UserGroups::getGroupId, userGroups.getGroupId());
+        final int delete = userGroupsMapper.delete(wrapper);
+        return delete > 0;
     }
 }

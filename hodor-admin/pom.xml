@@ -45,6 +45,12 @@
             <optional>true</optional>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.yulichang</groupId>
+            <artifactId>mybatis-plus-join-boot-starter</artifactId>
+            <version>1.4.5</version>
+        </dependency>
+
         <!-- spring security -->
         <!--<dependency>
             <groupId>org.springframework.boot</groupId>

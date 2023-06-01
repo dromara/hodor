@@ -40,3 +40,11 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
     defaultEnumTypeHandler: org.apache.ibatis.type.EnumOrdinalTypeHandler
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+mybatis-plus-join:
+  # 打印 mybatis plus join banner
+  banner: false
+  sub-table-logic: true
+  ms-cache: true
+  logic-del-type: where
