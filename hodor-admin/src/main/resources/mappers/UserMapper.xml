@@ -87,12 +87,6 @@
         </where>
     </select>
 
-    <!--新增所有列-->
-    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into hodor_user(username, password, email, phone, tenant_id, created_at, updated_at)
-        values (#{username}, #{password}, #{email}, #{phone}, #{tenantId}, #{createdAt}, #{updatedAt})
-    </insert>
-
     <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
         insert into hodor_user(username, password, email, phone, tenant_id, created_at, updated_at)
         values
@@ -116,40 +110,6 @@
         created_at = values(created_at),
         updated_at = values(updated_at)
     </insert>
-
-    <!--通过主键修改数据-->
-    <update id="update">
-        update hodor_user
-        <set>
-            <if test="username != null and username != ''">
-                username = #{username},
-            </if>
-            <if test="password != null and password != ''">
-                password = #{password},
-            </if>
-            <if test="email != null and email != ''">
-                email = #{email},
-            </if>
-            <if test="phone != null and phone != ''">
-                phone = #{phone},
-            </if>
-            <if test="tenantId != null">
-                tenant_id = #{tenantId},
-            </if>
-            <if test="createdAt != null">
-                created_at = #{createdAt},
-            </if>
-            <if test="updatedAt != null">
-                updated_at = #{updatedAt},
-            </if>
-        </set>
-        where id = #{id}
-    </update>
-
-    <!--通过主键删除-->
-    <delete id="deleteById">
-        delete from hodor_user where id = #{id}
-    </delete>
 
 </mapper>
 

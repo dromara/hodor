@@ -1,8 +1,10 @@
 package org.dromara.hodor.admin.mapper;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.dromara.hodor.admin.domain.RolePermit;
 import java.util.List;
 
+@Mapper
 public interface RolePermitMapper {
 
 	void insert(RolePermit rolePermit);

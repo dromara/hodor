@@ -1,5 +1,6 @@
 package org.dromara.hodor.admin.mapper;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.dromara.hodor.admin.domain.UserRole;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
@@ -9,6 +10,7 @@ import org.apache.ibatis.annotations.Param;
  * 
  * @since 1.0
  **/
+@Mapper
 public interface UserRoleMapper {
 
     /**

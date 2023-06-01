@@ -31,7 +31,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 1.0
  */
 @Configuration
-@MapperScan(basePackages = {"org.dromara.hodor.core.mapper", "org.dromara.hodor.admin.mapper"})
+@MapperScan(basePackages = {"org.dromara.hodor.admin.mapper"})
 public class MybatisPlusConfig {
 
     /**

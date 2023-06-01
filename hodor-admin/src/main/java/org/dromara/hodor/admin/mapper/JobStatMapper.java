@@ -1,5 +1,6 @@
 package org.dromara.hodor.admin.mapper;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.dromara.hodor.admin.domain.JobStatusStatistics;
 import org.dromara.hodor.admin.domain.JobCostTimeStatistics;
@@ -10,6 +11,7 @@ import java.util.List;
 /**
  * 任务状态统计Mapper
  */
+@Mapper
 public interface JobStatMapper {
 
     /**

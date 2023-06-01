@@ -80,12 +80,6 @@
         </where>
     </select>
 
-    <!--新增所有列-->
-    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into hodor_tenant(tenant_name, corp_name, email, description, created_at, updated_at)
-        values (#{tenantName}, #{corpName}, #{email}, #{description}, #{createdAt}, #{updatedAt})
-    </insert>
-
     <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
         insert into hodor_tenant(tenant_name, corp_name, email, description, created_at, updated_at)
         values
@@ -108,37 +102,6 @@
         created_at = values(created_at),
         updated_at = values(updated_at)
     </insert>
-
-    <!--通过主键修改数据-->
-    <update id="update">
-        update hodor_tenant
-        <set>
-            <if test="tenantName != null and tenantName != ''">
-                tenant_name = #{tenantName},
-            </if>
-            <if test="corpName != null and corpName != ''">
-                corp_name = #{corpName},
-            </if>
-            <if test="email != null and email != ''">
-                email = #{email},
-            </if>
-            <if test="description != null and description != ''">
-                description = #{description},
-            </if>
-            <if test="createdAt != null">
-                created_at = #{createdAt},
-            </if>
-            <if test="updatedAt != null">
-                updated_at = #{updatedAt},
-            </if>
-        </set>
-        where id = #{id}
-    </update>
-
-    <!--通过主键删除-->
-    <delete id="deleteById">
-        delete from hodor_tenant where id = #{id}
-    </delete>
 
 </mapper>
 
