@@ -1,6 +1,7 @@
 package org.dromara.hodor.core.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 import org.dromara.hodor.core.entity.JobExecDetail;
 
 /**
@@ -9,6 +10,7 @@ import org.dromara.hodor.core.entity.JobExecDetail;
  * @author tomgs
  * @since 1.0
  */
+@Mapper
 public interface JobExecDetailMapper extends BaseMapper<JobExecDetail> {
 
     void insertIgnore(JobExecDetail jobExecDetail);

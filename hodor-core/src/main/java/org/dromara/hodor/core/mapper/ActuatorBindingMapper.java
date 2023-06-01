@@ -18,6 +18,7 @@
 package org.dromara.hodor.core.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 import org.dromara.hodor.core.entity.ActuatorBinding;
 
 /**
@@ -26,6 +27,7 @@ import org.dromara.hodor.core.entity.ActuatorBinding;
  * @author tomgs
  * @since 1.0
  */
+@Mapper
 public interface ActuatorBindingMapper extends BaseMapper<ActuatorBinding> {
 
 }
