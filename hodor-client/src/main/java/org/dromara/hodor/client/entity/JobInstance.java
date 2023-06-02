@@ -15,19 +15,33 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.core.mapper;
+package org.dromara.hodor.client.entity;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
-import org.dromara.hodor.core.entity.ActuatorBinding;
+import lombok.Builder;
+import lombok.Getter;
 
 /**
- * ActuatorBindingMapper
+ * JobInstance
  *
  * @author tomgs
  * @since 1.0
  */
-@Mapper
-public interface ActuatorBindingMapper extends BaseMapper<ActuatorBinding> {
+@Getter
+@Builder
+public class JobInstance {
+
+    private final String groupName;
+
+    private final String jobName;
+
+    private final String commandType;
+
+    private final String cron;
+
+    private final Boolean fireNow;
+
+    private final Boolean broadcast;
+
+    private final Integer timeout;
 
 }

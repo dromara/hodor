@@ -1,5 +1,7 @@
 package org.dromara.hodor.admin.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.dromara.hodor.admin.core.MsgCode;
 import org.dromara.hodor.core.PageInfo;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author tomgs
  * @since 1.0
  */
+@Tag(name = "任务分组管理")
 @RestController
 @RequestMapping("/group")
 @RequiredArgsConstructor
@@ -32,6 +35,7 @@ public class JobGroupController {
 
     private final JobGroupService jobGroupService;
 
+    @Operation(summary = "创建分组")
     @PostMapping()
     public Result<JobGroup> createGroup(@RequestBody JobGroup group) {
         final User user = UserContext.getUser();
@@ -39,6 +43,7 @@ public class JobGroupController {
         return ResultUtil.success(jobGroup);
     }
 
+    @Operation(summary = "分页查询分组信息")
     @GetMapping()
     public Result<PageInfo<JobGroup>> queryGroupListPaging(@RequestParam(value = "groupName", required = false) String groupName,
                                                            @RequestParam(value = "pageNo") Integer pageNo,
@@ -48,11 +53,13 @@ public class JobGroupController {
         return ResultUtil.success(pageInfo);
     }
 
+    @Operation(summary = "id查询分组")
     @GetMapping("{id}")
     public Result<JobGroup> queryById(@PathVariable("id") Long id) {
         return ResultUtil.success(jobGroupService.queryById(id));
     }
 
+    @Operation(summary = "更新分组信息")
     @PutMapping()
     public Result<Void> update(@RequestBody JobGroup group) {
         final User user = UserContext.getUser();
@@ -60,6 +67,7 @@ public class JobGroupController {
         return ResultUtil.success();
     }
 
+    @Operation(summary = "删除分组信息")
     @DeleteMapping()
     public Result<Void> delete(@RequestParam(value = "id") int id) {
         final User user = UserContext.getUser();

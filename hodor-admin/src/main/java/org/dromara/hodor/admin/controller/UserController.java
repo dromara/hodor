@@ -61,6 +61,7 @@ public class UserController {
      * @param id 主键
      * @return 单条数据
      */
+    @Operation(summary = "通过用户Id查询")
     @GetMapping("{id}")
     public Result<User> queryById(@PathVariable("id") Long id) {
         return ResultUtil.success(userService.queryById(id));
@@ -72,6 +73,7 @@ public class UserController {
      * @param user 实体
      * @return 新增结果
      */
+    @Operation(summary = "创建用户")
     @PostMapping
     public Result<User> add(@RequestBody User user) {
         return ResultUtil.success(userService.insert(user));
@@ -83,6 +85,7 @@ public class UserController {
      * @param user 实体
      * @return 编辑结果
      */
+    @Operation(summary = "更新用户")
     @PutMapping
     public Result<User> update(@RequestBody User user) {
         return ResultUtil.success(userService.update(user));
@@ -94,6 +97,7 @@ public class UserController {
      * @param id 主键
      * @return 删除是否成功
      */
+    @Operation(summary = "删除用户")
     @DeleteMapping
     public Result<Boolean> deleteById(Long id) {
         return ResultUtil.success(userService.deleteById(id));

@@ -52,12 +52,6 @@
         </where>
     </select>
 
-    <!--新增所有列-->
-    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into hodor_user_groups(user_id, group_id)
-        values (#{userId}, #{groupId})
-    </insert>
-
     <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
         insert into hodor_user_groups(user_id, group_id)
         values
@@ -76,25 +70,5 @@
         user_id = values(user_id),
         group_id = values(group_id)
     </insert>
-
-    <!--通过主键修改数据-->
-    <update id="update">
-        update hodor_user_groups
-        <set>
-            <if test="userId != null">
-                user_id = #{userId},
-            </if>
-            <if test="groupId != null">
-                group_id = #{groupId},
-            </if>
-        </set>
-        where id = #{id}
-    </update>
-
-    <!--通过主键删除-->
-    <delete id="deleteById">
-        delete from hodor_user_groups where id = #{id}
-    </delete>
-
 </mapper>
 

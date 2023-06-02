@@ -15,19 +15,31 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.core.mapper;
+package org.dromara.hodor.admin.service;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
-import org.dromara.hodor.core.entity.ActuatorBinding;
+import javax.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.admin.BaseTest;
+import org.dromara.hodor.core.PageInfo;
+import org.dromara.hodor.core.entity.JobGroup;
+import org.junit.jupiter.api.Test;
 
 /**
- * ActuatorBindingMapper
+ * UserGroupsServiceTest
  *
  * @author tomgs
  * @since 1.0
  */
-@Mapper
-public interface ActuatorBindingMapper extends BaseMapper<ActuatorBinding> {
+@Slf4j
+public class UserGroupsServiceTest extends BaseTest {
+
+    @Resource
+    private UserGroupsService userGroupsService;
+
+    @Test
+    public void testQueryByUserId() {
+        final PageInfo<JobGroup> jobGroupPageInfo = userGroupsService.queryByUserId(1L, 0, 10);
+        log.info("{}", jobGroupPageInfo);
+    }
 
 }

@@ -1,13 +1,14 @@
 package org.dromara.hodor.actuator.api;
 
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.http.HttpUtil;
 import java.util.Collection;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.actuator.api.config.HodorProperties;
-import org.dromara.hodor.actuator.api.core.ConnectStringParser;
-import org.dromara.hodor.actuator.api.core.TrySender;
+import org.dromara.hodor.common.connect.ConnectStringParser;
+import org.dromara.hodor.common.connect.TrySender;
 import org.dromara.hodor.common.utils.GsonUtils;
+import org.dromara.hodor.common.utils.Utils.Assert;
+import org.dromara.hodor.common.utils.Utils.Collections;
+import org.dromara.hodor.common.utils.Utils.Https;
 import org.dromara.hodor.model.actuator.ActuatorInfo;
 import org.dromara.hodor.model.job.JobDesc;
 
@@ -29,16 +30,20 @@ public class HodorApiClient {
     private final GsonUtils gsonUtils = GsonUtils.getInstance();
 
     public HodorApiClient(final HodorProperties properties) {
+        Assert.notBlank(properties.getAppName(), "App name must be not null");
+        Assert.notBlank(properties.getAppKey(), "App key must be not null");
+        Assert.notBlank(properties.getRegistryAddress(), "Registry address must be not null");
+
         this.connectStringParser = new ConnectStringParser(properties.getRegistryAddress());
         this.appKey = properties.getAppKey();
         this.appName = properties.getAppName();
     }
 
     public void registerJobs(Collection<JobDesc> jobs) throws Exception {
-        if (CollectionUtil.isEmpty(jobs)) {
+        if (Collections.isEmpty(jobs)) {
             return;
         }
-        String result = TrySender.send(connectStringParser, (url) -> HttpUtil.createPost( url + "/scheduler/batchCreateJob")
+        String result = TrySender.send(connectStringParser, (url) -> Https.createPost( url + "/scheduler/batchCreateJob")
             .body(gsonUtils.toJson(jobs))
             .header("appName", appName)
             .header("appKey", appKey)
@@ -48,7 +53,7 @@ public class HodorApiClient {
     }
 
     public void sendHeartbeat(ActuatorInfo actuatorInfo) throws Exception {
-        String result = TrySender.send(connectStringParser, (url) -> HttpUtil.createPost(url + "/actuator/heartbeat")
+        String result = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/actuator/heartbeat")
             .body(gsonUtils.toJson(actuatorInfo))
             .header("appName", appName)
             .header("appKey", appKey)
@@ -58,7 +63,7 @@ public class HodorApiClient {
     }
 
     public void sendOfflineMsg(ActuatorInfo actuatorInfo) throws Exception {
-        String result = TrySender.send(connectStringParser, (url) -> HttpUtil.createPost(url + "/actuator/offline")
+        String result = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/actuator/offline")
             .body(gsonUtils.toJson(actuatorInfo))
             .header("appName", appName)
             .header("appKey", appKey)

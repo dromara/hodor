@@ -1,5 +1,6 @@
 package org.dromara.hodor.admin.mapper;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.dromara.hodor.admin.domain.UserFeedback;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
@@ -8,6 +9,7 @@ import org.apache.ibatis.annotations.Param;
  * @author tomgs
  * @since 1.0
  **/
+@Mapper
 public interface UserRecommendMapper {
 
     void insert(UserFeedback userFeedback);

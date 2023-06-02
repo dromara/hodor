@@ -1,6 +1,5 @@
 package org.dromara.hodor.actuator.api;
 
-import cn.hutool.core.lang.Assert;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -10,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.api.core.JobInstance;
+import org.dromara.hodor.common.utils.Utils.Assert;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.model.job.JobKey;
 

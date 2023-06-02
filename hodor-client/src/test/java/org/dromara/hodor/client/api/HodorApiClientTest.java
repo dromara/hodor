@@ -15,19 +15,31 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.core.mapper;
+package org.dromara.hodor.client.api;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
-import org.dromara.hodor.core.entity.ActuatorBinding;
+import org.dromara.hodor.client.HodorApiClient;
+import org.dromara.hodor.client.config.HodorClientConfig;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
- * ActuatorBindingMapper
+ * HodorApiClientTest
  *
  * @author tomgs
  * @since 1.0
  */
-@Mapper
-public interface ActuatorBindingMapper extends BaseMapper<ActuatorBinding> {
+public class HodorApiClientTest {
+
+    @Test
+    public void testJobApi() throws Exception {
+        HodorClientConfig config = new HodorClientConfig();
+        config.setRegistryAddress("http://localhost:8080/hodor");
+        config.setAppName("appNameTest");
+        config.setAppKey("appKeyTest");
+        final HodorApiClient hodorApiClient = new HodorApiClient(config);
+        final JobApi api = hodorApiClient.createApi(JobApi.class);
+        Assertions.assertNotNull(api);
+        //api.executeJob(JobKey.of("test#job"));
+    }
 
 }

@@ -1,6 +1,5 @@
 package org.dromara.hodor.server.executor.handler;
 
-import cn.hutool.core.lang.Assert;
 import cn.hutool.core.lang.TypeReference;
 import com.google.common.collect.Maps;
 import java.util.Date;
@@ -17,6 +16,7 @@ import org.dromara.hodor.common.storage.cache.CacheClient;
 import org.dromara.hodor.common.storage.cache.HodorCacheSource;
 import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.common.utils.TypedMapWrapper;
+import org.dromara.hodor.common.utils.Utils.Assert;
 import org.dromara.hodor.core.Constants.FlowNodeConstants;
 import org.dromara.hodor.core.dag.DagCreator;
 import org.dromara.hodor.core.dag.FlowData;

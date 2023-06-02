@@ -15,19 +15,35 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.core.mapper;
+package org.dromara.hodor.common.utils;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
-import org.dromara.hodor.core.entity.ActuatorBinding;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ReflectUtil;
+import cn.hutool.http.HttpUtil;
 
 /**
- * ActuatorBindingMapper
+ * Utils
+ * </p>
+ * Manage third-party tools in a unified manner
  *
  * @author tomgs
  * @since 1.0
  */
-@Mapper
-public interface ActuatorBindingMapper extends BaseMapper<ActuatorBinding> {
+public class Utils {
 
+    public static class Assert extends cn.hutool.core.lang.Assert {
+
+    }
+
+    public static class Https extends HttpUtil {
+
+    }
+
+    public static class Collections extends CollUtil {
+
+    }
+
+    public static class Reflections extends ReflectUtil {
+
+    }
 }

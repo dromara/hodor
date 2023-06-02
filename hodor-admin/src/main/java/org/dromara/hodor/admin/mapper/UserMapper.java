@@ -1,6 +1,7 @@
 package org.dromara.hodor.admin.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 import org.dromara.hodor.admin.domain.User;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
  * @author tomgs
  * @since 2023-05-11 10:54:29
  */
+@Mapper
 public interface UserMapper extends BaseMapper<User> {
 
     /**

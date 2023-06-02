@@ -15,19 +15,13 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.core.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
-import org.dromara.hodor.core.entity.ActuatorBinding;
+package org.dromara.hodor.client.api;
 
 /**
- * ActuatorBindingMapper
+ * SchedulerApi
  *
  * @author tomgs
  * @since 1.0
  */
-@Mapper
-public interface ActuatorBindingMapper extends BaseMapper<ActuatorBinding> {
-
+public class SchedulerApi {
 }

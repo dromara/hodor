@@ -1,10 +1,10 @@
 package org.dromara.hodor.actuator.api.action;
 
-import cn.hutool.core.lang.Assert;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.actuator.api.executor.RequestHandleManager;
 import org.dromara.hodor.common.executor.HodorRunnable;
 import org.dromara.hodor.common.utils.ThreadUtils;
+import org.dromara.hodor.common.utils.Utils.Assert;
 import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
 import org.dromara.hodor.remoting.api.message.RemotingResponse;
 import org.dromara.hodor.remoting.api.message.RequestBody;

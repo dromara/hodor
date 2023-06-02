@@ -1,8 +1,10 @@
 package org.dromara.hodor.admin.mapper;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.dromara.hodor.admin.domain.PermitItem;
 import java.util.List;
 
+@Mapper
 public interface PermitItemMapper {
 
     List<PermitItem> getAllPermitIterm();

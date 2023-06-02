@@ -30,7 +30,7 @@ hodor-scheduler
 │  ├─hodor-actuator-java                        # Java任务执行器
 │  └─hodor-actuator-bigdata                     # 大数据任务执行器   
 ├─hodor-admin                                   # hodor管理控制台（TODO）
-├─hodor-client                                  # 待废弃
+├─hodor-client                                  # 提供与hodor server的交互sdk
 ├─hodor-common                                  # hodor公共依赖
 ├─hodor-core                                    # hodor核心业务
 ├─hodor-examples                                # hodor测试用例

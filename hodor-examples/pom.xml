@@ -12,9 +12,7 @@
     <artifactId>hodor-examples</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>hodor-client-demo-springboot</module>
         <module>hodor-actuator-java-example</module>
     </modules>
-
 
 </project>

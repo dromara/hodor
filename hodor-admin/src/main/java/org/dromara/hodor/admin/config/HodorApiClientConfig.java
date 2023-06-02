@@ -17,32 +17,36 @@
 
 package org.dromara.hodor.admin.config;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import org.mybatis.spring.annotation.MapperScan;
+import org.dromara.hodor.client.HodorApiClient;
+import org.dromara.hodor.client.config.HodorClientConfig;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * MybatisPlusConfig
+ * HodorApiClientConfig
  *
  * @author tomgs
  * @since 1.0
  */
 @Configuration
-@MapperScan(basePackages = {"org.dromara.hodor.admin.mapper"})
-public class MybatisPlusConfig {
+public class HodorApiClientConfig {
 
-    /**
-     * MyBatisPlus拦截器（用于分页）
-     */
+    @Value("${hodor.client.registryAddress}")
+    private String registryAddress;
+
+    @Value("${hodor.client.appName}")
+    private String appName;
+
+    @Value("${hodor.client.appKey}")
+    private String appKey;
+
     @Bean
-    public MybatisPlusInterceptor paginationInterceptor() {
-        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        //添加MySQL的分页拦截器
-        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
-        return interceptor;
+    public HodorApiClient hodorApiClient() {
+        HodorClientConfig config = new HodorClientConfig();
+        config.setRegistryAddress(registryAddress);
+        config.setAppName(appName);
+        config.setAppKey(appKey);
+        return new HodorApiClient(config);
     }
-
 }

@@ -1,6 +1,5 @@
 package org.dromara.hodor.common.raft;
 
-import cn.hutool.core.lang.Assert;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -20,6 +19,7 @@ import org.apache.ratis.server.RaftServerConfigKeys;
 import org.apache.ratis.server.impl.ServerImplUtils;
 import org.apache.ratis.statemachine.StateMachine;
 import org.apache.ratis.util.NetUtils;
+import org.dromara.hodor.common.utils.Utils.Assert;
 
 /**
  * HodorRaftServer
