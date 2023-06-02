@@ -1,7 +1,5 @@
 package org.dromara.hodor.server.restservice;
 
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.lang.Assert;
 import cn.hutool.core.text.StrSplitter;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -9,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.utils.GsonUtils;
+import org.dromara.hodor.common.utils.Utils.Assert;
+import org.dromara.hodor.common.utils.Utils.Collections;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.HodorChannelHandler;
 import org.dromara.hodor.remoting.api.http.HodorHttpRequest;
@@ -69,7 +69,7 @@ public class RestServiceRequestHandler implements HodorChannelHandler {
             } else {
                 args = new Object[parameters.length];
                 Map<String, List<String>> queryParameters = httpRequest.getQueryParameters();
-                if (CollectionUtil.isNotEmpty(queryParameters)) {
+                if (Collections.isNotEmpty(queryParameters)) {
                     for (int i = 0; i < parameters.length; i++) {
                         String parameterName = parameters[i].getParameterName();
                         List<String> values = queryParameters.get(parameterName);

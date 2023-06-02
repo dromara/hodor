@@ -1,6 +1,5 @@
 package org.dromara.hodor.actuator.api;
 
-import cn.hutool.core.lang.Assert;
 import java.sql.SQLException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -19,6 +18,7 @@ import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.storage.db.DBOperator;
 import org.dromara.hodor.common.storage.db.DataSourceConfig;
 import org.dromara.hodor.common.storage.db.HodorDataSource;
+import org.dromara.hodor.common.utils.Utils.Assert;
 import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
 
 /**

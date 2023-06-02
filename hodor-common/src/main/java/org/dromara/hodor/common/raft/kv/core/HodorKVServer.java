@@ -1,6 +1,5 @@
 package org.dromara.hodor.common.raft.kv.core;
 
-import cn.hutool.core.lang.Assert;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -18,6 +17,7 @@ import org.dromara.hodor.common.raft.RaftGroupManager;
 import org.dromara.hodor.common.raft.RaftOptions;
 import org.dromara.hodor.common.raft.kv.storage.StorageEngine;
 import org.dromara.hodor.common.raft.kv.storage.StorageOptions;
+import org.dromara.hodor.common.utils.Utils.Assert;
 
 /**
  * HodorKVServer

@@ -1,8 +1,8 @@
 package org.dromara.hodor.common.cron;
 
-import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.cron.pattern.CronPattern;
+import org.dromara.hodor.common.utils.Utils.Assert;
 
 /**
  * cron utils

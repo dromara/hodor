@@ -1,9 +1,9 @@
 package org.dromara.hodor.server.executor.handler;
 
-import cn.hutool.core.lang.Assert;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.utils.Pair;
+import org.dromara.hodor.common.utils.Utils.Assert;
 import org.dromara.hodor.core.Constants.FlowNodeConstants;
 import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.remoting.api.message.RemotingResponse;

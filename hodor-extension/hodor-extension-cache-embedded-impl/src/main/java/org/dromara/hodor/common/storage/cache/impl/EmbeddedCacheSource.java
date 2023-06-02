@@ -1,12 +1,12 @@
 package org.dromara.hodor.common.storage.cache.impl;
 
-import cn.hutool.core.lang.Assert;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.dromara.hodor.common.extension.Join;
 import org.dromara.hodor.common.storage.cache.CacheClient;
 import org.dromara.hodor.common.storage.cache.CacheSourceConfig;
 import org.dromara.hodor.common.storage.cache.HodorCacheSource;
+import org.dromara.hodor.common.utils.Utils.Assert;
 
 /**
  * EmbeddedCacheSource
