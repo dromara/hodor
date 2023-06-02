@@ -1,6 +1,7 @@
-package org.dromara.hodor.client.core;
+package org.dromara.hodor.client.api;
 
 import org.dromara.hodor.common.Host;
+import org.dromara.hodor.common.connect.ConnectStringParser;
 import org.junit.Test;
 
 /**

@@ -28,6 +28,10 @@ knife4j:
     language: zh_cn
 
 hodor:
+  client:
+    registryAddress: http://localhost:8080/hodor
+    appName: hodor-admin
+    appKey: hodor-admin
   database:
     driverClass: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/hodor?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC

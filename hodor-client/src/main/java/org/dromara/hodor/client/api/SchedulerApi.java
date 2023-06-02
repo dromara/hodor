@@ -15,33 +15,13 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.client.core;
-
-import lombok.Builder;
-import lombok.Getter;
+package org.dromara.hodor.client.api;
 
 /**
- * JobInstance
+ * SchedulerApi
  *
  * @author tomgs
  * @since 1.0
  */
-@Getter
-@Builder
-public class JobInstance {
-
-    private final String groupName;
-
-    private final String jobName;
-
-    private final String commandType;
-
-    private final String cron;
-
-    private final Boolean fireNow;
-
-    private final Boolean broadcast;
-
-    private final Integer timeout;
-
+public class SchedulerApi {
 }

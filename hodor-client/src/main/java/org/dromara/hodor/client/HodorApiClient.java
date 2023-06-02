@@ -1,14 +1,12 @@
 package org.dromara.hodor.client;
 
-import cn.hutool.http.HttpUtil;
-import java.util.Collection;
-import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.client.config.HodorProperties;
-import org.dromara.hodor.client.core.ConnectStringParser;
-import org.dromara.hodor.client.core.JobInstance;
-import org.dromara.hodor.client.core.TrySender;
-import org.dromara.hodor.common.utils.GsonUtils;
-import org.dromara.hodor.model.actuator.ActuatorInfo;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import org.dromara.hodor.client.config.HodorClientConfig;
+import org.dromara.hodor.common.connect.ConnectStringParser;
+import org.dromara.hodor.common.exception.HodorException;
+import org.dromara.hodor.common.utils.Utils.Assert;
+import org.dromara.hodor.common.utils.Utils.Reflections;
 
 /**
  * hodor api client
@@ -16,7 +14,6 @@ import org.dromara.hodor.model.actuator.ActuatorInfo;
  * @author tomgs
  * @since 1.0
  */
-@Slf4j
 public class HodorApiClient {
 
     private final String appName;
@@ -25,42 +22,22 @@ public class HodorApiClient {
 
     private final ConnectStringParser connectStringParser;
 
-    private final GsonUtils gsonUtils = GsonUtils.getInstance();
-
-    public HodorApiClient(final HodorProperties properties) {
-        this.connectStringParser = new ConnectStringParser(properties.getRegistryAddress());
-        this.appKey = properties.getAppKey();
-        this.appName = properties.getAppName();
+    public HodorApiClient(final HodorClientConfig config) {
+        Assert.notBlank(config.getAppName(), "App name must be not null");
+        Assert.notBlank(config.getAppKey(), "App key must be not null");
+        Assert.notBlank(config.getRegistryAddress(), "Registry address must be not null");
+        this.connectStringParser = new ConnectStringParser(config.getRegistryAddress());
+        this.appKey = config.getAppKey();
+        this.appName = config.getAppName();
     }
 
-    public void registerJobs(Collection<JobInstance> jobs) throws Exception {
-        String result = TrySender.send(connectStringParser, (url) -> HttpUtil.createPost( url + "/scheduler/batchCreateJob")
-            .body(gsonUtils.toJson(jobs))
-            .header("appName", appName)
-            .header("appKey", appKey)
-            .execute()
-            .body());
-        log.debug("Register jobs result: {}", result);
-    }
-
-    public void sendHeartbeat(ActuatorInfo actuatorInfo) throws Exception {
-        String result = TrySender.send(connectStringParser, (url) -> HttpUtil.createPost(url + "/actuator/heartbeat")
-            .body(gsonUtils.toJson(actuatorInfo))
-            .header("appName", appName)
-            .header("appKey", appKey)
-            .execute()
-            .body());
-        log.debug("Send heartbeat result: {}", result);
-    }
-
-    public void sendOfflineMsg(ActuatorInfo actuatorInfo) throws Exception {
-        String result = TrySender.send(connectStringParser, (url) -> HttpUtil.createPost(url + "/actuator/offline")
-            .body(gsonUtils.toJson(actuatorInfo))
-            .header("appName", appName)
-            .header("appKey", appKey)
-            .execute()
-            .body());
-        log.debug("Send Offline result: {}", result);
+    public <API> API createApi(Class<API> apiClass) {
+        try {
+            final Constructor<API> constructor = Reflections.getConstructor(apiClass, ConnectStringParser.class, String.class, String.class);
+            return constructor.newInstance(connectStringParser, appName, appKey);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new HodorException(e);
+        }
     }
 
 }
