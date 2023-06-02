@@ -1,4 +1,4 @@
-package org.dromara.hodor.client.core;
+package org.dromara.hodor.common.connect;
 
 import java.util.function.Function;
 import org.dromara.hodor.common.Host;

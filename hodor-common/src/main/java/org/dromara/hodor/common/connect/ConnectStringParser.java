@@ -1,6 +1,6 @@
-package org.dromara.hodor.client.core;
+package org.dromara.hodor.common.connect;
 
-import cn.hutool.core.lang.Assert;
+import org.dromara.hodor.common.utils.Utils.Assert;
 import java.util.ArrayList;
 import org.dromara.hodor.common.Host;
 
@@ -12,7 +12,7 @@ import org.dromara.hodor.common.Host;
  */
 public class ConnectStringParser {
 
-    private static final int DEFAULT_PORT = 46367;
+    private static final int DEFAULT_PORT = 80;
 
     private final String protocolName;
 
