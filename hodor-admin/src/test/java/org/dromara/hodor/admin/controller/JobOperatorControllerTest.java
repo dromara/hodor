@@ -30,7 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
  * @since 1.0
  */
 @Slf4j
-public class JobInfoControllerTest extends BaseWebTest {
+public class JobOperatorControllerTest extends BaseWebTest {
 
     @Autowired
     private MockMvc mockMvc;

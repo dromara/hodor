@@ -125,13 +125,17 @@ public class JobInfoServiceImpl implements JobInfoService {
     }
 
     @Override
-    public JobInfo update(JobInfo jobInfo) {
+    public JobInfo updateById(JobInfo jobInfo) {
+        final int result = jobInfoMapper.updateById(jobInfo);
+        if (result > 0) {
+            return queryById(jobInfo.getId());
+        }
         return null;
     }
 
     @Override
     public JobInfo queryById(Long id) {
-        return null;
+        return jobInfoMapper.selectById(id);
     }
 
     @Override

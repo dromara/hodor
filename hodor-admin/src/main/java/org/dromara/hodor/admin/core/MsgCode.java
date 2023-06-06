@@ -46,11 +46,19 @@ public enum MsgCode {
 
     // 任务相关
     INVALID_JOB(20001, "invalid job", "非法任务"),
-    JOB_PARSE_ERROR(20002, "job parsing failed", "任务解析失败"),
-    EMPTY_JOB(20003, "jobs is empty", "任务为空"),
-    EMPTY_CRON(20004, "cron is empty", "Cron表达式为空"),
-    INVALID_CRON(20005, "Invalid cron", "非法Cron表达式"),
-    FEWER_FIELDS(20006, "groupName, jobName, jobUser can not be empty", "groupName, jobName, jobUser 不能为空"),
+    INVALID_JOB_ID(20002, "invalid job id {0}", "非法任务id {0}"),
+    JOB_PARSE_ERROR(20003, "job parsing failed", "任务解析失败"),
+    EMPTY_JOB(20004, "jobs is empty", "任务为空"),
+    EMPTY_CRON(20005, "cron is empty", "Cron表达式为空"),
+    INVALID_CRON(20006, "Invalid cron", "非法Cron表达式"),
+    FEWER_FIELDS(20007, "groupName, jobName, jobUser can not be empty", "groupName, jobName, jobUser 不能为空"),
+    CREATE_JOB_ERROR(20008, "create job error, msg {0}", "创建任务失败，信息 {0}"),
+    UPDATE_JOB_ERROR(20009, "update job error, msg {0}", "更新任务失败，信息 {0}"),
+    DELETE_JOB_ERROR(20010, "delete job error, msg {0}", "更新任务失败，信息 {0}"),
+    PAUSE_JOB_ERROR(20011, "pause job error, msg {0}", "暂停任务失败，信息 {0}"),
+    STOP_JOB_ERROR(20012, "stop job error, msg {0}", "停止任务失败，信息 {0}"),
+    RESUME_JOB_ERROR(20013, "resume job error, msg {0}", "恢复任务失败，信息 {0}"),
+    EXECUTE_JOB_ERROR(20013, "execute job error, msg {0}", "执行任务失败，信息 {0}"),
 
     // openapi
     INVALID_SIGN(30001, "the signature is invalid", "非法签名"),

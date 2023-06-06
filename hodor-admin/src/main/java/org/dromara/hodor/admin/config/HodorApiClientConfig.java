@@ -18,7 +18,7 @@
 package org.dromara.hodor.admin.config;
 
 import org.dromara.hodor.client.HodorApiClient;
-import org.dromara.hodor.client.config.HodorClientConfig;
+import org.dromara.hodor.client.HodorClientConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
