@@ -18,7 +18,7 @@
 package org.dromara.hodor.client.api;
 
 import org.dromara.hodor.client.HodorApiClient;
-import org.dromara.hodor.client.config.HodorClientConfig;
+import org.dromara.hodor.client.HodorClientConfig;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

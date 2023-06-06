@@ -15,29 +15,23 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.admin.controller;
-
-import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.admin.BaseWebTest;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.servlet.MockMvc;
+package org.dromara.hodor.client.exception;
 
 /**
- * JobInfoControllerTest
+ * HodorClientException
  *
  * @author tomgs
  * @since 1.0
  */
-@Slf4j
-public class JobInfoControllerTest extends BaseWebTest {
+public class HodorClientException extends RuntimeException {
 
-    @Autowired
-    private MockMvc mockMvc;
+    private static final long serialVersionUID = 5468037249824950664L;
 
-    @Test
-    public void testCreateJob() {
-        log.info("test create job");
+    public HodorClientException(String message) {
+        super(message);
     }
 
+    public HodorClientException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

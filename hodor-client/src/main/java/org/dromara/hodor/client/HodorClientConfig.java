@@ -1,4 +1,4 @@
-package org.dromara.hodor.client.config;
+package org.dromara.hodor.client;
 
 import lombok.Data;
 

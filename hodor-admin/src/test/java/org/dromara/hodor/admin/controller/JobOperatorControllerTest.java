@@ -15,33 +15,29 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.client.entity;
+package org.dromara.hodor.admin.controller;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.admin.BaseWebTest;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.MockMvc;
 
 /**
- * JobInstance
+ * JobInfoControllerTest
  *
  * @author tomgs
  * @since 1.0
  */
-@Getter
-@Builder
-public class JobInstance {
+@Slf4j
+public class JobOperatorControllerTest extends BaseWebTest {
 
-    private final String groupName;
+    @Autowired
+    private MockMvc mockMvc;
 
-    private final String jobName;
-
-    private final String commandType;
-
-    private final String cron;
-
-    private final Boolean fireNow;
-
-    private final Boolean broadcast;
-
-    private final Integer timeout;
+    @Test
+    public void testCreateJob() {
+        log.info("test create job");
+    }
 
 }

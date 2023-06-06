@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("/service/job/cron")
+@RequestMapping("/cron")
 public class CronController {
 
-    @RequestMapping("/transferFromCron")
+    @RequestMapping("/convertCron")
     @ResponseBody
-    public Result<Void> transferFromCron(@RequestParam(value = "cronExpression", required = true) String cronExpression) {
+    public Result<Void> convertCron(@RequestParam(value = "cronExpr", required = true) String cronExpression) {
         return ResultUtil.success();
     }
 }

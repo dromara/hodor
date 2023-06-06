@@ -17,14 +17,17 @@
 
 package org.dromara.hodor.client.api;
 
+import cn.hutool.http.HttpResponse;
 import java.util.Collection;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.client.entity.JobInstance;
+import org.dromara.hodor.client.exception.HodorClientException;
 import org.dromara.hodor.common.connect.ConnectStringParser;
 import org.dromara.hodor.common.connect.TrySender;
 import org.dromara.hodor.common.utils.GsonUtils;
 import org.dromara.hodor.common.utils.Utils;
+import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.model.job.JobKey;
 
 /**
@@ -45,7 +48,19 @@ public class JobApi {
 
     private final String appKey;
 
-    public void registerJobs(Collection<JobInstance> jobs) throws Exception {
+    public void registerJob(JobDesc job) throws Exception {
+        final HttpResponse response = TrySender.send(connectStringParser, (url) -> Utils.Https.createPost(url + "/scheduler/createJob")
+            .body(gsonUtils.toJson(job))
+            .header("appName", appName)
+            .header("appKey", appKey)
+            .execute());
+        if (!Objects.requireNonNull(response).isOk()) {
+            throw new HodorClientException("Register job failure, " + response.body());
+        }
+        log.debug("Register job result: {}", response.body());
+    }
+
+    public void registerJobs(Collection<JobDesc> jobs) throws Exception {
         String result = TrySender.send(connectStringParser, (url) -> Utils.Https.createPost(url + "/scheduler/batchCreateJob")
             .body(gsonUtils.toJson(jobs))
             .header("appName", appName)
@@ -53,6 +68,18 @@ public class JobApi {
             .execute()
             .body());
         log.debug("Register jobs result: {}", result);
+    }
+
+    public void updateJob(JobDesc job) throws Exception {
+        final HttpResponse response = TrySender.send(connectStringParser, (url) -> Utils.Https.createPost(url + "/scheduler/updateJob")
+            .body(gsonUtils.toJson(job))
+            .header("appName", appName)
+            .header("appKey", appKey)
+            .execute());
+        if (!Objects.requireNonNull(response).isOk()) {
+            throw new HodorClientException("Update job failure, " + response.body());
+        }
+        log.debug("Update job result: {}", response.body());
     }
 
     public void deleteJob(JobKey jobKey) throws Exception {

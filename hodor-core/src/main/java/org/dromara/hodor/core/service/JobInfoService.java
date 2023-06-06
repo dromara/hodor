@@ -120,9 +120,23 @@ public interface JobInfoService {
      * @param jobInfo 任务信息
      * @return 更新后的任务信息
      */
-    JobInfo update(JobInfo jobInfo);
+    JobInfo updateById(JobInfo jobInfo);
 
+    /**
+     * 任务id查询任务信息
+     *
+     * @param id 任务id
+     * @return 任务信息
+     */
     JobInfo queryById(Long id);
 
+    /**
+     * 分页查询任务列表
+     *
+     * @param jobInfo 任务查询条件
+     * @param pageNo 当前页
+     * @param pageSize 页大小
+     * @return 任务列表
+     */
     PageInfo<JobInfo> queryByPage(JobInfo jobInfo, Integer pageNo, Integer pageSize);
 }
