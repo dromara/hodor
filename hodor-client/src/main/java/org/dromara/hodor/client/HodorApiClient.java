@@ -2,7 +2,6 @@ package org.dromara.hodor.client;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import org.dromara.hodor.client.config.HodorClientConfig;
 import org.dromara.hodor.common.connect.ConnectStringParser;
 import org.dromara.hodor.common.exception.HodorException;
 import org.dromara.hodor.common.utils.Utils.Assert;

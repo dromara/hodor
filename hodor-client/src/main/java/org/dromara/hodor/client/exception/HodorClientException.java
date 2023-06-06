@@ -15,31 +15,23 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.client.api;
-
-import org.dromara.hodor.client.HodorApiClient;
-import org.dromara.hodor.client.HodorClientConfig;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+package org.dromara.hodor.client.exception;
 
 /**
- * HodorApiClientTest
+ * HodorClientException
  *
  * @author tomgs
  * @since 1.0
  */
-public class HodorApiClientTest {
+public class HodorClientException extends RuntimeException {
 
-    @Test
-    public void testJobApi() throws Exception {
-        HodorClientConfig config = new HodorClientConfig();
-        config.setRegistryAddress("http://localhost:8080/hodor");
-        config.setAppName("appNameTest");
-        config.setAppKey("appKeyTest");
-        final HodorApiClient hodorApiClient = new HodorApiClient(config);
-        final JobApi api = hodorApiClient.createApi(JobApi.class);
-        Assertions.assertNotNull(api);
-        //api.executeJob(JobKey.of("test#job"));
+    private static final long serialVersionUID = 5468037249824950664L;
+
+    public HodorClientException(String message) {
+        super(message);
     }
 
+    public HodorClientException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
