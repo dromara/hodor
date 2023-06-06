@@ -55,6 +55,7 @@
         <springfox.version>2.6.1</springfox.version>
         <mybatis.starter.version>1.1.1</mybatis.starter.version>
         <mybatis-plus.starter.version>3.5.3.1</mybatis-plus.starter.version>
+        <mybatis-plus.join.starter.version>1.4.5</mybatis-plus.join.starter.version>
         <mysql.version>8.0.28</mysql.version>
         <druid.version>1.0.29</druid.version>
         <reactor-spring.version>1.0.1.RELEASE</reactor-spring.version>
@@ -251,6 +252,11 @@
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
                 <version>${mybatis.starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.yulichang</groupId>
+                <artifactId>mybatis-plus-join-boot-starter</artifactId>
+                <version>${mybatis-plus.join.starter.version}</version>
             </dependency>
             <dependency>
                 <groupId>mysql</groupId>
