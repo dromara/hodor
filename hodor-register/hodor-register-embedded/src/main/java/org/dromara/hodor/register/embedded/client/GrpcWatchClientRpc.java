@@ -40,6 +40,7 @@ import org.dromara.hodor.common.proto.WatchRequest;
 import org.dromara.hodor.common.proto.WatchResponse;
 import org.dromara.hodor.common.proto.WatchServiceGrpc;
 import org.dromara.hodor.common.utils.BytesUtil;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * GrpcWatchClientRpc
@@ -49,6 +50,8 @@ import org.dromara.hodor.common.utils.BytesUtil;
  */
 @Slf4j
 public class GrpcWatchClientRpc implements WatchClientRpc {
+
+    private static final AtomicBoolean started = new AtomicBoolean();
 
     private static final BytesUtil.ByteArrayComparator byteArrayComparator = BytesUtil.getDefaultByteArrayComparator();
 
@@ -68,8 +71,6 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
 
     private final ClientId clientId;
 
-    private final AtomicBoolean started;
-
     public GrpcWatchClientRpc(ClientId clientId, RaftProperties properties) {
         this.clientId = clientId;
         this.grpcExecutor = ThreadUtil.newExecutor(4, 4);
@@ -77,7 +78,6 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
         this.executor = MoreExecutors.listeningDecorator(Executors.newScheduledThreadPool(1));
         this.channelKeepAlive = properties.getLong("hodor.watch.keepalive", 60 * 1000);
         this.maxInboundMessageSize = properties.getInt("hodor.watch.max.messageSize", 4096);
-        this.started = new AtomicBoolean();
     }
 
     @Override
@@ -124,7 +124,7 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
     }
 
     public void startHandleWatchStream() {
-        if (this.started.get() && !this.started.compareAndSet(false, true)) {
+        if (!started.compareAndSet(false, true)) {
             return;
         }
         if (peers.size() == 0) {
@@ -214,7 +214,7 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
             listenableFuture,
             new FutureCallback<Object>() {
                 @Override
-                public void onFailure(Throwable throwable) {
+                public void onFailure(@NotNull Throwable throwable) {
                     log.error(message, throwable);
                 }
 

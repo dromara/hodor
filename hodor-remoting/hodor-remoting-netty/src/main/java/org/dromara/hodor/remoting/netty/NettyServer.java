@@ -20,19 +20,13 @@ package org.dromara.hodor.remoting.netty;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.WriteBufferWaterMark;
+import io.netty.channel.*;
 import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 import org.dromara.hodor.common.concurrent.HodorThreadFactory;
 import org.dromara.hodor.common.utils.OSInfo;
 import org.dromara.hodor.remoting.api.AbstractNetServer;
@@ -68,7 +62,6 @@ public class NettyServer extends AbstractNetServer {
     public void bind() throws Exception {
         try {
             this.bootstrap.group(bossGroup, workerGroup)
-                .handler(new LoggingHandler(LogLevel.INFO))
                 .channel(serverSocketChannelClass)
                 .option(ChannelOption.SO_BACKLOG, 1024)
                 .option(ChannelOption.SO_REUSEADDR, true)

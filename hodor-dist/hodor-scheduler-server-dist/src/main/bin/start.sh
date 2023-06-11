@@ -17,13 +17,13 @@
 #
 
 BIN_DIR=$(dirname $0)
-HODOR_ACTUATOR_HOME=${HODOR_ACTUATOR_HOME:-$(cd $BIN_DIR/..; pwd)}
+HODOR_ACTUATOR_HOME=${HODOR_HOME:-$(cd $BIN_DIR/..; pwd)}
 
-echo "Starting HODOR_ACTUATOR_HOME: $HODOR_ACTUATOR_HOMEE"
+echo "Starting HODOR_HOME: $HODOR_HOME"
 
-source "$HODOR_ACTUATOR_HOMEE/conf/hodor_env.sh"
+source "$HODOR_HOME/conf/hodor_env.sh"
 
-JAVA_OPTS=${JAVA_OPTS:-"-server -Duser.timezone=${SPRING_JACKSON_TIME_ZONE} -Xms4g -Xmx4g -Xmn512m -XX:+PrintGCDetails -Xloggc:gc.log -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=dump.hprof"}
+JAVA_OPTS=${JAVA_OPTS:-"-server -Duser.timezone=${SPRING_JACKSON_TIME_ZONE} -Xms128m -Xmn128m -Xmx512m -XX:+PrintGCDetails -Xloggc:gc.log -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=dump.hprof"}
 
 if [[ "$DOCKER" == "true" ]]; then
   JAVA_OPTS="${JAVA_OPTS} -XX:-UseContainerSupport"

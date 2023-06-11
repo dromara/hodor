@@ -1,11 +1,10 @@
 package org.dromara.hodor.remoting.netty;
 
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import org.dromara.hodor.remoting.netty.rpc.codec.RemotingMessageCodec;
 
@@ -25,18 +24,18 @@ public class NettyClientInitializer extends ChannelInitializer<SocketChannel> {
 
     @Override
     protected void initChannel(SocketChannel channel) {
-        channel.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
+        ChannelPipeline pipeline = channel.pipeline();
         if (channelHandler.isHttpProtocol()) {
-            channel.pipeline().addLast("http", new HttpClientCodec());
-            /*channel.pipeline().addLast("websocket", WebSocketClientCompressionHandler.INSTANCE);*/
-            channel.pipeline().addLast("http-aggregator", new HttpObjectAggregator(1024 * 1024 * 64));
-            channel.pipeline().addLast("chunkedWriter", new ChunkedWriteHandler());
+            pipeline.addLast("http", new HttpClientCodec());
+            /*pipeline.addLast("websocket", WebSocketClientCompressionHandler.INSTANCE);*/
+            pipeline.addLast("http-aggregator", new HttpObjectAggregator(1024 * 1024 * 64));
+            pipeline.addLast("chunkedWriter", new ChunkedWriteHandler());
         } else if (channelHandler.isTcpProtocol()) {
-            channel.pipeline().addLast(new RemotingMessageCodec());
+            pipeline.addLast(new RemotingMessageCodec());
         } else {
             throw new UnsupportedOperationException("unsupported protocol.");
         }
-        channel.pipeline().addLast(channelHandler);
+        pipeline.addLast(channelHandler);
     }
 
 }
