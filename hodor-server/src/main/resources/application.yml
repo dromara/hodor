@@ -26,11 +26,3 @@ hodor:
     type: embedded
     serverAddresses: 127.0.0.1:2181
     timeout: 1000
-
-# mybatis-plus
-mybatis-plus:
-  mapper-locations: classpath*:/mappers/*.xml
-  typeEnumsPackage: org.dromara.hodor.model.enums
-  configuration:
-    map-underscore-to-camel-case: true
-    defaultEnumTypeHandler: org.apache.ibatis.type.EnumOrdinalTypeHandler
