@@ -1,3 +1,7 @@
+hodor:
+  database:
+    type: ${hodor.database.type}
+
 spring:
    datasource:
      driver-class-name: ${hodor.database.driverClass}
