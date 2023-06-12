@@ -5,7 +5,7 @@ spring:
     include: core
 
 hodor:
-  clusterName: hodor
+  clusterName: hodor-scheduler
   clusterNodes: 1
   logDir: E:\\data\\hodor-scheduler\\recordset
   netServer:
@@ -13,7 +13,7 @@ hodor:
     port: 8081
   registry:
     type: embedded
-    namespace: "hodor-test"
+    namespace: hodor-test
     servers: 127.0.0.1:2181
     endpoint: 127.0.0.1:2181
     dataPath: E:\\data\\hodor-scheduler\\register-db
