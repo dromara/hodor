@@ -19,6 +19,10 @@
             <groupId>org.dromara</groupId>
             <artifactId>hodor-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.dromara</groupId>
+            <artifactId>hodor-remoting-netty</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

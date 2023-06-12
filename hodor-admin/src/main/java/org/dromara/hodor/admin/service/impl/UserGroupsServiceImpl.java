@@ -71,6 +71,7 @@ public class UserGroupsServiceImpl implements UserGroupsService {
         PageInfo<JobGroup> pageInfo = new PageInfo<>();
         pageInfo.setCurrentPage(pageNo)
             .setPageSize(pageSize)
+            .setTotalPage((int) listPage.getPages())
             .setTotal(listPage.getTotal())
             .setRows(listPage.getRecords());
         return pageInfo;
