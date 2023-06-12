@@ -8,6 +8,12 @@ import lombok.NoArgsConstructor;
 import org.dromara.hodor.model.enums.JobType;
 import org.dromara.hodor.model.enums.Priority;
 
+/**
+ * job info describe
+ *
+ * @author tomgs
+ * @since 1.0
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -24,10 +30,16 @@ public class JobDesc {
 
   private String jobName;
 
+  /**
+   * 任务类型：普通任务、定时任务、工作流任务
+   */
   private JobType jobType;
 
   private String jobPath;
 
+  /**
+   * 任务命令类型：java、shell、python等，根据执行器支持执行的任务
+   */
   private String jobCommandType;
 
   private String jobCommand;
