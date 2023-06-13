@@ -2,6 +2,8 @@ package org.dromara.hodor.remoting.api;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.RemovalListener;
+import com.google.common.cache.RemovalNotification;
 import java.net.ConnectException;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -40,11 +42,13 @@ public class RemotingClient {
     private RemotingClient() {
         this.bidiActiveChannels = CacheBuilder.newBuilder()
             .initialCapacity(30)
-            .expireAfterWrite(30, TimeUnit.MINUTES)
+            .expireAfterAccess(30, TimeUnit.MINUTES)
+            .removalListener(new ChannelRemoveListener())
             .build();
         this.commonActiveChannels = CacheBuilder.newBuilder()
             .initialCapacity(30)
-            .expireAfterWrite(30, TimeUnit.MINUTES)
+            .expireAfterAccess(30, TimeUnit.MINUTES)
+            .removalListener(new ChannelRemoveListener())
             .build();
         this.clientTransport = ExtensionLoader.getExtensionLoader(NetClientTransport.class).getDefaultJoin();
     }
@@ -208,6 +212,24 @@ public class RemotingClient {
             callback.onFailure(cause);
         }
 
+    }
+
+    private static class ChannelRemoveListener implements RemovalListener<Host, HodorChannel> {
+
+        @Override
+        public void onRemoval(RemovalNotification<Host, HodorChannel> event) {
+            final HodorChannel hodorChannel = event.getValue();
+            if (hodorChannel == null || hodorChannel.isClose()) {
+                return;
+            }
+            hodorChannel.close().operationComplete(e -> {
+                if (e.isSuccess()) {
+                    log.info("ChannelRemoveListener host {} remove", event.getKey());
+                } else {
+                    log.info("ChannelRemoveListener host {} remove failed, msg {}", event.getKey(), e.cause());
+                }
+            });
+        }
     }
 
 }
