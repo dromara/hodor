@@ -2,7 +2,7 @@ package org.dromara.hodor.admin.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
-import org.dromara.hodor.admin.domain.User;
+import org.dromara.hodor.admin.entity.User;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
 

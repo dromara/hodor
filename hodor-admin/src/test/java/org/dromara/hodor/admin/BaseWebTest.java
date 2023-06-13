@@ -9,7 +9,7 @@ import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.admin.core.MsgCode;
 import org.dromara.hodor.admin.core.UserContext;
-import org.dromara.hodor.admin.domain.User;
+import org.dromara.hodor.admin.entity.User;
 import org.dromara.hodor.common.utils.JSONUtils;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.core.convert.ConversionService;

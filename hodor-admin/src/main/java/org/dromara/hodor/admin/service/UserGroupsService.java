@@ -1,6 +1,6 @@
 package org.dromara.hodor.admin.service;
 
-import org.dromara.hodor.admin.domain.UserGroups;
+import org.dromara.hodor.admin.entity.UserGroups;
 import org.dromara.hodor.core.PageInfo;
 import org.dromara.hodor.core.entity.JobGroup;
 

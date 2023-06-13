@@ -1,4 +1,4 @@
-package org.dromara.hodor.admin.domain;
+package org.dromara.hodor.admin.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;

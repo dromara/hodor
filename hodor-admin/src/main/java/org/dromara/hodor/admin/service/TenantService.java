@@ -1,6 +1,6 @@
 package org.dromara.hodor.admin.service;
 
-import org.dromara.hodor.admin.domain.Tenant;
+import org.dromara.hodor.admin.entity.Tenant;
 import org.dromara.hodor.core.PageInfo;
 
 /**

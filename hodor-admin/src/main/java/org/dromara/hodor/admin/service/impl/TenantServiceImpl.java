@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.core.PageInfo;
-import org.dromara.hodor.admin.domain.Tenant;
+import org.dromara.hodor.admin.entity.Tenant;
 import org.dromara.hodor.admin.mapper.TenantMapper;
 import org.dromara.hodor.admin.service.TenantService;
 import org.springframework.stereotype.Service;

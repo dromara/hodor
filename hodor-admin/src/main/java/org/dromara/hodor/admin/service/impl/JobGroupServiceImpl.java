@@ -23,7 +23,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.core.PageInfo;
-import org.dromara.hodor.admin.domain.User;
+import org.dromara.hodor.admin.entity.User;
 import org.dromara.hodor.admin.service.JobGroupService;
 import org.dromara.hodor.common.utils.DateUtils;
 import org.dromara.hodor.core.entity.JobGroup;

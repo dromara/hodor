@@ -4,7 +4,7 @@ import com.github.yulichang.base.MPJBaseMapper;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.dromara.hodor.admin.domain.UserGroups;
+import org.dromara.hodor.admin.entity.UserGroups;
 
 /**
  * (UserGroups)表数据库访问层

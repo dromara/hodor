@@ -8,7 +8,7 @@ import org.dromara.hodor.core.PageInfo;
 import org.dromara.hodor.admin.core.Result;
 import org.dromara.hodor.admin.core.ResultUtil;
 import org.dromara.hodor.admin.core.UserContext;
-import org.dromara.hodor.admin.domain.User;
+import org.dromara.hodor.admin.entity.User;
 import org.dromara.hodor.admin.service.JobGroupService;
 import org.dromara.hodor.core.entity.JobGroup;
 import org.springframework.web.bind.annotation.DeleteMapping;
