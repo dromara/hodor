@@ -23,6 +23,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.api.core.JobLogger;
@@ -160,7 +161,11 @@ public class JobTypeManager {
         plugins.setCommonPluginLoadProps(commonPluginLoadProps);
 
         // Loading job types
-        for (final File dir : jobPluginsDir.listFiles()) {
+        final File[] files = jobPluginsDir.listFiles();
+        if (Objects.isNull(files)) {
+            return;
+        }
+        for (final File dir : files) {
             if (dir.isDirectory() && dir.canRead()) {
                 try {
                     loadJobTypes(dir, plugins);
@@ -173,13 +178,14 @@ public class JobTypeManager {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void loadJobTypes(final File pluginDir, final JobTypePluginSet plugins)
         throws JobTypeManagerException {
         // Directory is the jobtypeName
         final String jobTypeName = pluginDir.getName();
         log.info("Loading plugin " + jobTypeName);
 
-        Props pluginJobProps = null;
+        Props pluginJobProps;
         Props pluginLoadProps = null;
 
         final File pluginJobPropsFile = new File(pluginDir, JOBTYPECONFFILE);
@@ -210,9 +216,7 @@ public class JobTypeManager {
         }
         // Add properties into the plugin set
         plugins.addPluginLoadProps(jobTypeName, pluginLoadProps);
-        if (pluginJobProps != null) {
-            plugins.addPluginJobProps(jobTypeName, pluginJobProps);
-        }
+        plugins.addPluginJobProps(jobTypeName, pluginJobProps);
 
         final ClassLoader jobTypeLoader =
             loadJobTypeClassLoader(pluginDir, jobTypeName, plugins);
@@ -223,10 +227,9 @@ public class JobTypeManager {
             return;
         }
 
-        Class<? extends Job> clazz = null;
+        Class<? extends Job> clazz;
         try {
             clazz = (Class<? extends Job>) jobTypeLoader.loadClass(jobtypeClass);
-            plugins.addPluginClass(jobTypeName, clazz);
         } catch (final ClassNotFoundException e) {
             throw new JobTypeManagerException(e);
         }
@@ -235,14 +238,15 @@ public class JobTypeManager {
         try {
             final Props fakeSysProps = new Props(pluginLoadProps);
             final Props fakeJobProps = new Props(pluginJobProps);
-            final Job job =
-                (Job) Utils.callConstructor(clazz, "dummy", fakeSysProps,
-                    fakeJobProps, log);
+            Utils.callConstructor(clazz, "dummy", fakeSysProps,
+                fakeJobProps, log);
         } catch (final Throwable t) {
             log.info("Jobtype " + jobTypeName + " failed test!", t);
             throw new JobExecutionException(t);
         }
 
+        // Checked pass to add plugin class
+        plugins.addPluginClass(jobTypeName, clazz);
         log.info("Loaded jobtype " + jobTypeName + " " + jobtypeClass);
     }
 
@@ -260,34 +264,22 @@ public class JobTypeManager {
             log.info("Adding global resources for " + jobTypeName);
             final List<String> typeGlobalClassPath =
                 pluginLoadProps.getStringList("jobtype.global.classpath", null, ",");
-            if (typeGlobalClassPath != null) {
-                for (final String jar : typeGlobalClassPath) {
-                    final URL cpItem = new File(jar).toURI().toURL();
-                    if (!resources.contains(cpItem)) {
-                        log.info("adding to classpath " + cpItem);
-                        resources.add(cpItem);
-                    }
-                }
-            }
+            addJarResource(resources, typeGlobalClassPath);
 
             // type specific classpath
             log.info("Adding type resources.");
             final List<String> typeClassPath =
                 pluginLoadProps.getStringList("jobtype.classpath", null, ",");
-            if (typeClassPath != null) {
-                for (final String jar : typeClassPath) {
-                    final URL cpItem = new File(jar).toURI().toURL();
-                    if (!resources.contains(cpItem)) {
-                        log.info("adding to classpath " + cpItem);
-                        resources.add(cpItem);
-                    }
-                }
-            }
+            addJarResource(resources, typeClassPath);
             final List<String> jobtypeLibDirs =
                 pluginLoadProps.getStringList("jobtype.lib.dir", null, ",");
             if (jobtypeLibDirs != null) {
                 for (final String libDir : jobtypeLibDirs) {
-                    for (final File f : new File(libDir).listFiles()) {
+                    final File[] files = new File(libDir).listFiles();
+                    if (Objects.isNull(files)) {
+                        continue;
+                    }
+                    for (final File f : files) {
                         if (f.getName().endsWith(".jar")) {
                             resources.add(f.toURI().toURL());
                             log.info("adding to classpath " + f.toURI().toURL());
@@ -297,7 +289,7 @@ public class JobTypeManager {
             }
 
             log.info("Adding type override resources.");
-            for (final File f : pluginDir.listFiles()) {
+            for (final File f : Objects.requireNonNull(pluginDir.listFiles())) {
                 if (f.getName().endsWith(".jar")) {
                     resources.add(f.toURI().toURL());
                     log.info("adding to classpath " + f.toURI().toURL());
@@ -312,10 +304,19 @@ public class JobTypeManager {
         log.info(String
             .format("Classpath for plugin[dir: %s, JobType: %s]: %s", pluginDir, jobTypeName,
                 resources));
-        final ClassLoader jobTypeLoader =
-            new URLClassLoader(resources.toArray(new URL[resources.size()]),
-                this.parentLoader);
-        return jobTypeLoader;
+        return new URLClassLoader(resources.toArray(new URL[0]), this.parentLoader);
+    }
+
+    private void addJarResource(List<URL> resources, List<String> classPath) throws MalformedURLException {
+        if (classPath != null) {
+            for (final String jar : classPath) {
+                final URL cpItem = new File(jar).toURI().toURL();
+                if (!resources.contains(cpItem)) {
+                    log.info("adding to classpath " + cpItem);
+                    resources.add(cpItem);
+                }
+            }
+        }
     }
 
     public Job buildJobExecutor(final String jobKey, Props jobProps, final JobLogger log)
@@ -335,13 +336,8 @@ public class JobTypeManager {
 
             log.info("Building " + jobType + " job executor. ");
 
-            final Class<? extends Object> executorClass = pluginSet.getPluginClass(jobType);
+            final Class<?> executorClass = pluginSet.getPluginClass(jobType);
             if (executorClass == null) {
-        /*
-        throw new JobExecutionException(String.format("Job type '" + jobType
-                + "' is unrecognized. Could not construct job[%s] of type[%s].",
-            jobProps, jobType));
-        */
                 throw new JobExecutionException(String.format("Job type [%s] is unrecognized.", jobType));
             }
 
