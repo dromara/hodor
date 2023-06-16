@@ -66,7 +66,7 @@ public class ActuatorApi {
         this.connectStringParser = connectStringParser;
         this.appName = appName;
         this.appKey = appKey;
-        this.serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();;
+        this.serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
         this.remotingClient = RemotingClient.getInstance();
     }
 
