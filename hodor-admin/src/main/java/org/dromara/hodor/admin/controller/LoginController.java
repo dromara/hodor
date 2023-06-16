@@ -9,8 +9,10 @@ import org.dromara.hodor.admin.core.MsgCode;
 import org.dromara.hodor.admin.core.Result;
 import org.dromara.hodor.admin.core.ResultUtil;
 import org.dromara.hodor.admin.core.ServerConfigKeys;
+import org.dromara.hodor.admin.domain.UserInfo;
 import org.dromara.hodor.admin.entity.User;
 import org.dromara.hodor.admin.service.UserService;
+import org.dromara.hodor.common.utils.Utils.Beans;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,14 +28,16 @@ public class LoginController {
 
     @Operation(summary = "登录接口")
     @PostMapping("/login")
-    public Result<User> login(
+    public Result<UserInfo> login(
         @RequestParam(value = "username") String username,
         @RequestParam(value = "password") String password,
         HttpSession session) {
         User user = userService.findUser(username, password);
         if (user != null) {
-            session.setAttribute(ServerConfigKeys.USER_SESSION, user);
-            return ResultUtil.success(user);
+            UserInfo userInfo = new UserInfo();
+            Beans.copyProperties(user, userInfo);
+            session.setAttribute(ServerConfigKeys.USER_SESSION, userInfo);
+            return ResultUtil.success(userInfo);
         } else {
             return ResultUtil.errorWithArgs(MsgCode.INTERNAL_SERVER_ERROR, "用户名密码不匹配");
         }

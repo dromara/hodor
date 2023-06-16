@@ -15,30 +15,47 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.admin.service.impl;
+package org.dromara.hodor.admin.domain;
 
-import lombok.RequiredArgsConstructor;
-import org.dromara.hodor.admin.service.ActuatorOperatorService;
-import org.dromara.hodor.admin.service.LogService;
-import org.dromara.hodor.client.model.LogQueryRequest;
-import org.dromara.hodor.client.model.LogQueryResult;
-import org.springframework.stereotype.Service;
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.Date;
 
 /**
- * LogServiceImpl
+ * UserInfo
  *
  * @author tomgs
  * @since 1.0
  */
-@Service
-@RequiredArgsConstructor
-public class LogServiceImpl implements LogService {
+@Schema(title = "user info")
+public class UserInfo {
 
-    private final ActuatorOperatorService actuatorOperatorService;
+    @Schema(name = "user id")
+    private Long id;
 
-    @Override
-    public LogQueryResult queryLog(LogQueryRequest request) throws Exception {
-        return actuatorOperatorService.queryLog(request);
-    }
+    /**
+     * 用户名
+     */
+    @Schema(name = "user name")
+    private String username;
+    /**
+     * 联系邮箱
+     */
+    @Schema(name = "user email")
+    private String email;
+    /**
+     * 联系电话
+     */
+    @Schema(name = "user phone")
+    private String phone;
+    /**
+     * 租户id
+     */
+    @Schema(name = "user tenantId")
+    private Long tenantId;
+    /**
+     * 创建时间
+     */
+    @Schema(name = "user create time")
+    private Date createdAt;
 
 }

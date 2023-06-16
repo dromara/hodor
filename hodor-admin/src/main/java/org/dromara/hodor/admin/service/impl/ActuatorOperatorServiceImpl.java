@@ -17,28 +17,41 @@
 
 package org.dromara.hodor.admin.service.impl;
 
-import lombok.RequiredArgsConstructor;
 import org.dromara.hodor.admin.service.ActuatorOperatorService;
-import org.dromara.hodor.admin.service.LogService;
+import org.dromara.hodor.client.HodorApiClient;
+import org.dromara.hodor.client.api.ActuatorApi;
 import org.dromara.hodor.client.model.LogQueryRequest;
 import org.dromara.hodor.client.model.LogQueryResult;
 import org.springframework.stereotype.Service;
 
 /**
- * LogServiceImpl
+ * ActuatorOperatorServiceImpl
  *
  * @author tomgs
  * @since 1.0
  */
 @Service
-@RequiredArgsConstructor
-public class LogServiceImpl implements LogService {
+public class ActuatorOperatorServiceImpl implements ActuatorOperatorService {
 
-    private final ActuatorOperatorService actuatorOperatorService;
+    private final ActuatorApi actuatorApi;
+
+    public ActuatorOperatorServiceImpl(final HodorApiClient hodorApiClient) {
+        this.actuatorApi = hodorApiClient.createApi(ActuatorApi.class);
+    }
 
     @Override
     public LogQueryResult queryLog(LogQueryRequest request) throws Exception {
-        return actuatorOperatorService.queryLog(request);
+        return actuatorApi.queryLog(request);
+    }
+
+    @Override
+    public void binding(String clusterName, String group) throws Exception {
+        actuatorApi.binding(clusterName, group);
+    }
+
+    @Override
+    public void unbinding(String clusterName, String group) throws Exception {
+        actuatorApi.unbinding(clusterName, group);
     }
 
 }

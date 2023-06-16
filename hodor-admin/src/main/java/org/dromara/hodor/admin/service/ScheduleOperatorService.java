@@ -15,30 +15,14 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.admin.service.impl;
-
-import lombok.RequiredArgsConstructor;
-import org.dromara.hodor.admin.service.ActuatorOperatorService;
-import org.dromara.hodor.admin.service.LogService;
-import org.dromara.hodor.client.model.LogQueryRequest;
-import org.dromara.hodor.client.model.LogQueryResult;
-import org.springframework.stereotype.Service;
+package org.dromara.hodor.admin.service;
 
 /**
- * LogServiceImpl
+ * ScheduleOperatorService
  *
  * @author tomgs
  * @since 1.0
  */
-@Service
-@RequiredArgsConstructor
-public class LogServiceImpl implements LogService {
-
-    private final ActuatorOperatorService actuatorOperatorService;
-
-    @Override
-    public LogQueryResult queryLog(LogQueryRequest request) throws Exception {
-        return actuatorOperatorService.queryLog(request);
-    }
+public interface ScheduleOperatorService {
 
 }

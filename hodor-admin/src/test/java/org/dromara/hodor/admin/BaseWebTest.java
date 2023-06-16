@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.admin.core.MsgCode;
 import org.dromara.hodor.admin.core.UserContext;
 import org.dromara.hodor.admin.entity.User;
-import org.dromara.hodor.common.utils.JSONUtils;
+import org.dromara.hodor.common.utils.Utils.Jsons;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.MediaType;
@@ -54,7 +54,7 @@ public class BaseWebTest extends BaseTest {
     }
 
     protected String postJson(String uri, Object param) throws Exception {
-        return postJson(uri, JSONUtils.toJsonStr(param));
+        return postJson(uri, Jsons.toJsonStr(param));
     }
 
     protected String postJson(String uri, String paramJsonString) throws Exception {
@@ -81,7 +81,7 @@ public class BaseWebTest extends BaseTest {
     }
 
     protected String putRequest(String uri, Object obj) throws Exception {
-        return putRequest(uri, JSONUtils.toJsonStr(obj));
+        return putRequest(uri, Jsons.toJsonStr(obj));
     }
     protected String putRequest(String uri, String content) throws Exception {
         MockHttpServletRequestBuilder request = put(uri)
@@ -118,7 +118,7 @@ public class BaseWebTest extends BaseTest {
 
     private static void assertResult(String context) {
         log.info("request result：{}", context);
-        JSONObject jsonObject = JSONUtils.parseObj(context);
+        JSONObject jsonObject = Jsons.parseObj(context);
         assertEquals(MsgCode.SUCCESS.getCode(), jsonObject.getInt("code"));
     }
 
@@ -132,7 +132,7 @@ public class BaseWebTest extends BaseTest {
     }
 
     protected Map<String, String> toUriParams(Object requestVo) {
-        JSONObject json = JSONUtils.parseObj(requestVo);
+        JSONObject json = Jsons.parseObj(requestVo);
         Map<String, String> params = Maps.newHashMap();
         for (Map.Entry<String, Object> entry : json.entrySet()) {
             params.put(entry.getKey(), conversionService.convert(entry.getValue(), String.class));
