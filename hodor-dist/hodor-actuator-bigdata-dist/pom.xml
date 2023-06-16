@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>org.dromara</groupId>
-            <artifactId>hodor-actuator-bigdata</artifactId>
+            <artifactId>hodor-actuator-bigdata-bootstrap</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
