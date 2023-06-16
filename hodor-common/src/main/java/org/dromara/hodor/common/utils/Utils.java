@@ -17,9 +17,11 @@
 
 package org.dromara.hodor.common.utils;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONUtil;
 
 /**
  * Utils
@@ -46,4 +48,13 @@ public class Utils {
     public static class Reflections extends ReflectUtil {
 
     }
+
+    public static class Beans extends BeanUtil {
+
+    }
+
+    public static class Jsons extends JSONUtil {
+
+    }
+
 }
