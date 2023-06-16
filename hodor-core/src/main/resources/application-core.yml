@@ -1,18 +1,17 @@
 hodor:
-  database:
+  datasource:
     type: ${hodor.database.type}
 
 spring:
-   datasource:
-     driver-class-name: ${hodor.database.driverClass}
-     url: ${hodor.database.url}
-     username: ${hodor.database.username}
-     password: ${hodor.database.password}
+  datasource:
+    driver-class-name: ${hodor.database.driverClass}
+    url: ${hodor.database.url}
+    username: ${hodor.database.username}
+    password: ${hodor.database.password}
 
 # mybatis-plus
 mybatis-plus:
   mapper-locations: classpath*:/mappers/*.xml
-  typeEnumsPackage: org.dromara.hodor.model.enums
   configuration:
     map-underscore-to-camel-case: true
     defaultEnumTypeHandler: org.apache.ibatis.type.EnumOrdinalTypeHandler

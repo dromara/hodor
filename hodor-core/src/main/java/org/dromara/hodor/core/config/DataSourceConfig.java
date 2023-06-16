@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 @MapperScan(basePackages = "org.dromara.hodor.core.mapper")
 public class DataSourceConfig {
 
-    @Value("${hodor.database.type:mysql}")
+    @Value("${hodor.datasource.type:mysql}")
     private String type;
 
     @Bean
