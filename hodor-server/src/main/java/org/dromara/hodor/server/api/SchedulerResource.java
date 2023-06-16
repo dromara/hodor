@@ -60,6 +60,12 @@ public class SchedulerResource {
         return HodorResult.success("success");
     }
 
+    @RestMethod("jobTypeNames")
+    public HodorResult<String> jobTypeNames(List<String> jobTypeNames) {
+        // TODO: create job types
+        return HodorResult.success("success");
+    }
+
     @RestMethod("createJob")
     public HodorResult<String> createJob(JobInfo jobInfo) {
         // check arguments
