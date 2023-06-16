@@ -1,5 +1,6 @@
 package org.dromara.hodor.actuator.api;
 
+import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -46,6 +47,11 @@ public class DefaultJobRegister implements JobRegister {
     @Override
     public String bindingCluster() {
         return clusterName;
+    }
+
+    @Override
+    public List<String> registerJobType() {
+        return Lists.newArrayList("java");
     }
 
     @Override
