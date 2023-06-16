@@ -131,15 +131,13 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
             throw new RuntimeException("peers is empty");
         }
         for (RaftPeer peer : peers.values()) {
+            ManagedChannel channel = null;
             try {
                 final String address = peer.getAddress();
                 final List<String> endpoint = StrUtil.splitTrim(address, ":");
                 String host = endpoint.get(0);
                 int port = Integer.parseInt(endpoint.get(1));
-                final ManagedChannel channel = createNewManagedChannel(host, port);
-
-                //final ConnectivityState state = channel.getState(true);
-                //channel.notifyWhenStateChanged();
+                channel = createNewManagedChannel(host, port);
                 final ClientCall<WatchRequest, WatchResponse> clientCall = channel.newCall(WatchServiceGrpc.getWatchMethod(), CallOptions.DEFAULT);
                 this.watchRequestStreamObserver = ClientCalls.asyncBidiStreamingCall(clientCall, new StreamObserver<WatchResponse>() {
                     @Override
@@ -178,6 +176,9 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
             } catch (Exception e) {
                 log.error("connection exception: {}", e.getMessage(), e);
             }
+            if (channel != null && !channel.isShutdown()) {
+                channel.shutdownNow();
+            }
         }
     }
 
@@ -197,7 +198,8 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
      */
     private ManagedChannel createNewManagedChannel(String serverIp, int serverPort) {
         ManagedChannelBuilder<?> managedChannelBuilder = ManagedChannelBuilder.forAddress(serverIp, serverPort)
-            .executor(grpcExecutor).compressorRegistry(CompressorRegistry.getDefaultInstance())
+            .executor(grpcExecutor)
+            .compressorRegistry(CompressorRegistry.getDefaultInstance())
             .decompressorRegistry(DecompressorRegistry.getDefaultInstance())
             .maxInboundMessageSize(maxInboundMessageSize)
             //.keepAliveTime(channelKeepAlive, TimeUnit.MILLISECONDS)

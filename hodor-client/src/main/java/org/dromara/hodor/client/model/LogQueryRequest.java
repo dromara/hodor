@@ -15,19 +15,36 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.admin.config;
+package org.dromara.hodor.client.model;
 
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.context.annotation.Configuration;
+import lombok.Data;
 
 /**
- * MybatisPlusConfig
+ * LogQueryRequest
  *
  * @author tomgs
  * @since 1.0
  */
-@Configuration
-@MapperScan(basePackages = {"org.dromara.hodor.admin.mapper"})
-public class MybatisPlusConfig {
+@Data
+public class LogQueryRequest {
+
+    private Long requestId;
+
+    private String groupName;
+
+    private String jobName;
+
+    private Integer timeout;
+
+    /**
+     * 日志存储类型：local(default)，s3，mysql etc.
+      */
+    private String logStorageType;
+
+    private String actuatorEndpoint;
+
+    private Integer offset;
+
+    private Integer length;
 
 }

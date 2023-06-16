@@ -2,7 +2,7 @@ package org.dromara.hodor.admin.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.admin.BaseWebTest;
-import org.dromara.hodor.admin.domain.Tenant;
+import org.dromara.hodor.admin.entity.Tenant;
 import org.dromara.hodor.common.utils.DateUtils;
 import org.junit.jupiter.api.Test;
 

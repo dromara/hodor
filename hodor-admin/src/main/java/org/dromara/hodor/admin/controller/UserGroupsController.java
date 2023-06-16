@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.dromara.hodor.admin.core.Result;
 import org.dromara.hodor.admin.core.ResultUtil;
-import org.dromara.hodor.admin.domain.UserGroups;
+import org.dromara.hodor.admin.entity.UserGroups;
 import org.dromara.hodor.admin.service.UserGroupsService;
 import org.dromara.hodor.core.PageInfo;
 import org.dromara.hodor.core.entity.JobGroup;

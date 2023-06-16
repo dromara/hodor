@@ -3,6 +3,7 @@ package org.dromara.hodor.server.api;
 import com.google.common.base.Preconditions;
 import org.dromara.hodor.core.service.ActuatorBindingService;
 import org.dromara.hodor.model.actuator.ActuatorInfo;
+import org.dromara.hodor.model.actuator.BindingInfo;
 import org.dromara.hodor.model.common.HodorResult;
 import org.dromara.hodor.server.restservice.HodorRestService;
 import org.dromara.hodor.server.restservice.RestMethod;
@@ -43,18 +44,20 @@ public class ActuatorResource {
     }
 
     @RestMethod("binding")
-    public HodorResult<String> binding(String clusterName, String groupName) {
-        Preconditions.checkNotNull(clusterName, "clusterName must be not null.");
-        Preconditions.checkNotNull(groupName, "groupName must be not null.");
+    public HodorResult<String> binding(BindingInfo bindingInfo) {
+        Preconditions.checkNotNull(bindingInfo, "bindingInfo must be not null");
+        final String clusterName = Preconditions.checkNotNull(bindingInfo.getClusterName(), "clusterName must be not null.");
+        final String groupName = Preconditions.checkNotNull(bindingInfo.getGroupName(), "groupName must be not null.");
         registryService.createBindingPath(clusterName, groupName);
         actuatorBindingService.bind(clusterName, groupName);
         return HodorResult.success("success");
     }
 
     @RestMethod("unbinding")
-    public HodorResult<String> unbinding(String clusterName, String groupName) {
-        Preconditions.checkNotNull(clusterName, "clusterName must be not null.");
-        Preconditions.checkNotNull(groupName, "groupName must be not null.");
+    public HodorResult<String> unbinding(BindingInfo bindingInfo) {
+        Preconditions.checkNotNull(bindingInfo, "bindingInfo must be not null");
+        final String clusterName = Preconditions.checkNotNull(bindingInfo.getClusterName(), "clusterName must be not null.");
+        final String groupName = Preconditions.checkNotNull(bindingInfo.getGroupName(), "groupName must be not null.");
         registryService.removeBindingPath(clusterName, groupName);
         actuatorBindingService.unbind(clusterName, groupName);
         return HodorResult.success("success");

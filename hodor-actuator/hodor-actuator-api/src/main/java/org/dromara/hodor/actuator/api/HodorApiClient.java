@@ -1,6 +1,7 @@
 package org.dromara.hodor.actuator.api;
 
 import java.util.Collection;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.actuator.api.config.HodorProperties;
 import org.dromara.hodor.common.connect.ConnectStringParser;
@@ -72,4 +73,16 @@ public class HodorApiClient {
         log.info("Send Offline result: {}", result);
     }
 
+    public void registerJobTypeName(List<String> jobTypeNames) throws Exception {
+        if (Collections.isEmpty(jobTypeNames)) {
+            return;
+        }
+        String result = TrySender.send(connectStringParser, (url) -> Https.createPost( url + "/scheduler/jobTypeNames")
+            .body(gsonUtils.toJson(jobTypeNames))
+            .header("appName", appName)
+            .header("appKey", appKey)
+            .execute()
+            .body());
+        log.info("Register jobTypeNames result: {}", result);
+    }
 }

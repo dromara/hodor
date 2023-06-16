@@ -81,6 +81,11 @@ public class BigdataJobRegister implements JobRegister {
     }
 
     @Override
+    public List<String> registerJobType() {
+        return jobTypeManager.getJobTypePluginSet().getJobTypeNames();
+    }
+
+    @Override
     public List<JobDesc> registerJobs() {
         return new ArrayList<>();
     }

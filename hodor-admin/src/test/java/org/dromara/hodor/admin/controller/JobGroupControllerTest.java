@@ -2,7 +2,7 @@ package org.dromara.hodor.admin.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.admin.BaseWebTest;
-import org.dromara.hodor.common.utils.JSONUtils;
+import org.dromara.hodor.common.utils.Utils.Jsons;
 import org.dromara.hodor.core.entity.JobGroup;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +15,7 @@ class JobGroupControllerTest extends BaseWebTest {
         jobGroup.setGroupName("testGroup");
         jobGroup.setCreateUser("test");
         jobGroup.setRemark("test group name");
-        final String result = postJson("/group", JSONUtils.toJsonStr(jobGroup));
+        final String result = postJson("/group", Jsons.toJsonStr(jobGroup));
         log.info(result);
     }
 

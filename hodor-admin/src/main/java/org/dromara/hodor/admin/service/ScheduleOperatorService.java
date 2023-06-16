@@ -15,19 +15,14 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.admin.config;
-
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.context.annotation.Configuration;
+package org.dromara.hodor.admin.service;
 
 /**
- * MybatisPlusConfig
+ * ScheduleOperatorService
  *
  * @author tomgs
  * @since 1.0
  */
-@Configuration
-@MapperScan(basePackages = {"org.dromara.hodor.admin.mapper"})
-public class MybatisPlusConfig {
+public interface ScheduleOperatorService {
 
 }

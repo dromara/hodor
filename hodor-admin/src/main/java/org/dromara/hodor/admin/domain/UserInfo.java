@@ -15,19 +15,47 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.admin.config;
+package org.dromara.hodor.admin.domain;
 
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.context.annotation.Configuration;
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.Date;
 
 /**
- * MybatisPlusConfig
+ * UserInfo
  *
  * @author tomgs
  * @since 1.0
  */
-@Configuration
-@MapperScan(basePackages = {"org.dromara.hodor.admin.mapper"})
-public class MybatisPlusConfig {
+@Schema(title = "user info")
+public class UserInfo {
+
+    @Schema(name = "user id")
+    private Long id;
+
+    /**
+     * 用户名
+     */
+    @Schema(name = "user name")
+    private String username;
+    /**
+     * 联系邮箱
+     */
+    @Schema(name = "user email")
+    private String email;
+    /**
+     * 联系电话
+     */
+    @Schema(name = "user phone")
+    private String phone;
+    /**
+     * 租户id
+     */
+    @Schema(name = "user tenantId")
+    private Long tenantId;
+    /**
+     * 创建时间
+     */
+    @Schema(name = "user create time")
+    private Date createdAt;
 
 }

@@ -103,6 +103,7 @@ public class HodorActuatorManager {
     }
 
     public void registerJobs() throws Exception {
+        hodorApiClient.registerJobTypeName(jobRegister.registerJobType());
         hodorApiClient.registerJobs(jobRegister.registerJobs());
     }
 

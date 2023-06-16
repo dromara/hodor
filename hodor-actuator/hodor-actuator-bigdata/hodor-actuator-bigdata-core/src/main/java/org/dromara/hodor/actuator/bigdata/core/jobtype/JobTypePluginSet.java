@@ -15,7 +15,9 @@
  */
 package org.dromara.hodor.actuator.bigdata.core.jobtype;
 
+import com.google.common.collect.Lists;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.dromara.hodor.actuator.bigdata.core.executor.Job;
 import org.dromara.hodor.actuator.api.utils.Props;
@@ -113,6 +115,10 @@ public class JobTypePluginSet {
   public void addPluginClass(final String jobTypeName,
       final Class<? extends Job> jobTypeClass) {
     this.jobToClass.put(jobTypeName, jobTypeClass);
+  }
+
+  public List<String> getJobTypeNames() {
+      return Lists.newArrayList(this.jobToClass.keySet());
   }
 
   /**

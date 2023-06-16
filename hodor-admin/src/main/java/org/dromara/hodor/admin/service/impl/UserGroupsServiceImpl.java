@@ -8,7 +8,7 @@ import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.admin.domain.UserGroups;
+import org.dromara.hodor.admin.entity.UserGroups;
 import org.dromara.hodor.admin.mapper.UserGroupsMapper;
 import org.dromara.hodor.admin.service.UserGroupsService;
 import org.dromara.hodor.core.PageInfo;
@@ -71,6 +71,7 @@ public class UserGroupsServiceImpl implements UserGroupsService {
         PageInfo<JobGroup> pageInfo = new PageInfo<>();
         pageInfo.setCurrentPage(pageNo)
             .setPageSize(pageSize)
+            .setTotalPage((int) listPage.getPages())
             .setTotal(listPage.getTotal())
             .setRows(listPage.getRecords());
         return pageInfo;

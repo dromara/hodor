@@ -1,4 +1,4 @@
-package org.dromara.hodor.admin.domain;
+package org.dromara.hodor.admin.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -15,7 +15,7 @@ import java.io.Serializable;
 public class UserGroups implements Serializable {
 
     private static final long serialVersionUID = 834864089345973312L;
-    
+
         private Long id;
         /**
          * 用户id

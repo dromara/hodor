@@ -1,5 +1,9 @@
 package org.dromara.hodor.remoting.api;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.RemovalListener;
+import com.google.common.cache.RemovalNotification;
 import java.net.ConnectException;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -7,7 +11,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.concurrent.FutureCallback;
@@ -28,11 +31,25 @@ public class RemotingClient {
 
     private static final Map<Long, CompletableFuture<RemotingMessage>> FUTURE_MAP = new ConcurrentHashMap<>();
 
-    private final Map<Host, HodorChannel> activeChannels = new ConcurrentHashMap<>();
+    private final Cache<Host, HodorChannel> bidiActiveChannels;
+    //private final Map<Host, HodorChannel> bidiActiveChannels = new ConcurrentHashMap<>();
+
+    private final Cache<Host, HodorChannel> commonActiveChannels;
+    //private final Map<Host, HodorChannel> commonActiveChannels = new ConcurrentHashMap<>();
 
     private final NetClientTransport clientTransport;
 
     private RemotingClient() {
+        this.bidiActiveChannels = CacheBuilder.newBuilder()
+            .initialCapacity(30)
+            .expireAfterAccess(30, TimeUnit.MINUTES)
+            .removalListener(new ChannelRemoveListener())
+            .build();
+        this.commonActiveChannels = CacheBuilder.newBuilder()
+            .initialCapacity(30)
+            .expireAfterAccess(30, TimeUnit.MINUTES)
+            .removalListener(new ChannelRemoveListener())
+            .build();
         this.clientTransport = ExtensionLoader.getExtensionLoader(NetClientTransport.class).getDefaultJoin();
     }
 
@@ -41,7 +58,7 @@ public class RemotingClient {
     }
 
     public void sendBidiRequest(final Host host, final RemotingMessage request, final FutureCallback<RemotingMessage> responseCallback) throws RemotingException {
-        HodorChannel channel = computeIfInActiveChannel(host, e -> createChannel(e, new KeepAliveChannelResponseHandler(responseCallback)));
+        HodorChannel channel = getOrCreateBidiChannel(host, responseCallback);
         HodorChannelFuture hodorChannelFuture = channel.send(request);
         hodorChannelFuture.operationComplete(future -> {
             if (future.isSuccess()) {
@@ -49,7 +66,7 @@ public class RemotingClient {
             } else {
                 // 异常节点
                 channel.close();
-                activeChannels.remove(host);
+                bidiActiveChannels.invalidate(host);
                 throw new RemotingException(String.format("send request [%s]::[%s] failed.", host.getEndpoint(), request), future.cause());
             }
         });
@@ -88,9 +105,9 @@ public class RemotingClient {
     public CompletableFuture<RemotingMessage> sendRequest(final Host host, final RemotingMessage request) {
         final CompletableFuture<RemotingMessage> future = new CompletableFuture<>();
         FUTURE_MAP.put(request.getHeader().getId(), future);
-        //final HodorChannel channel = computeIfInActiveChannel(host, e -> createChannel(e, new CommonResponseHandler()));
         try {
-            final HodorChannel channel = createChannel(host, new CommonResponseHandler());
+            //final HodorChannel channel = createChannel(host, new CommonResponseHandler());
+            final HodorChannel channel = getOrCreateCommonChannel(host);
             channel.send(request).operationComplete(e -> {
                 if (!e.isSuccess()) {
                     FUTURE_MAP.remove(request.getHeader().getId());
@@ -104,13 +121,23 @@ public class RemotingClient {
         return future;
     }
 
-    public HodorChannel computeIfInActiveChannel(final Host host, final Function<Host, HodorChannel> function) {
-        HodorChannel hodorChannel = activeChannels.get(host);
+    public HodorChannel getOrCreateBidiChannel(final Host host, FutureCallback<RemotingMessage> responseCallback) {
+        HodorChannel hodorChannel = bidiActiveChannels.getIfPresent(host);
         if (hodorChannel != null && hodorChannel.isOpen()) {
             return hodorChannel;
         }
-        HodorChannel activeChannel = function.apply(host);
-        activeChannels.put(host, activeChannel);
+        final HodorChannel activeChannel = createChannel(host, new KeepAliveChannelResponseHandler(responseCallback));
+        bidiActiveChannels.put(host, activeChannel);
+        return activeChannel;
+    }
+
+    public HodorChannel getOrCreateCommonChannel(final Host host) {
+        HodorChannel hodorChannel = commonActiveChannels.getIfPresent(host);
+        if (hodorChannel != null && hodorChannel.isOpen()) {
+            return hodorChannel;
+        }
+        final HodorChannel activeChannel = createChannel(host, new CommonResponseHandler());
+        commonActiveChannels.put(host, activeChannel);
         return activeChannel;
     }
 
@@ -185,6 +212,24 @@ public class RemotingClient {
             callback.onFailure(cause);
         }
 
+    }
+
+    private static class ChannelRemoveListener implements RemovalListener<Host, HodorChannel> {
+
+        @Override
+        public void onRemoval(RemovalNotification<Host, HodorChannel> event) {
+            final HodorChannel hodorChannel = event.getValue();
+            if (hodorChannel == null || hodorChannel.isClose()) {
+                return;
+            }
+            hodorChannel.close().operationComplete(e -> {
+                if (e.isSuccess()) {
+                    log.info("ChannelRemoveListener host {} remove", event.getKey());
+                } else {
+                    log.info("ChannelRemoveListener host {} remove failed, msg {}", event.getKey(), e.cause());
+                }
+            });
+        }
     }
 
 }

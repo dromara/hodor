@@ -1,6 +1,6 @@
 package org.dromara.hodor.admin.controller;
 
-import org.dromara.hodor.admin.domain.Tenant;
+import org.dromara.hodor.admin.entity.Tenant;
 import org.dromara.hodor.admin.service.TenantService;
 import lombok.RequiredArgsConstructor;
 import org.dromara.hodor.core.PageInfo;
@@ -30,7 +30,7 @@ public class TenantController {
      * @return 查询结果
      */
     @GetMapping
-    public Result<PageInfo<Tenant>> queryByPage(@RequestBody Tenant tenant, 
+    public Result<PageInfo<Tenant>> queryByPage(@RequestBody Tenant tenant,
                                                     @RequestParam(value = "pageNo") Integer pageNo,
                                                     @RequestParam(value = "pageSize") Integer pageSize) {
 		PageInfo<Tenant> pageInfo = tenantService.queryByPage(tenant, pageNo, pageSize);

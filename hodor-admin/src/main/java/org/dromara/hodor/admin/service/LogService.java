@@ -15,19 +15,18 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.admin.config;
+package org.dromara.hodor.admin.service;
 
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.context.annotation.Configuration;
+import org.dromara.hodor.client.model.LogQueryRequest;
+import org.dromara.hodor.client.model.LogQueryResult;
 
 /**
- * MybatisPlusConfig
+ * LogService
  *
  * @author tomgs
  * @since 1.0
  */
-@Configuration
-@MapperScan(basePackages = {"org.dromara.hodor.admin.mapper"})
-public class MybatisPlusConfig {
+public interface LogService {
 
+    LogQueryResult queryLog(LogQueryRequest request) throws Exception;
 }

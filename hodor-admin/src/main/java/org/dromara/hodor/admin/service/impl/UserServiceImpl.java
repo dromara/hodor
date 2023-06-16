@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.hodor.core.PageInfo;
-import org.dromara.hodor.admin.domain.User;
+import org.dromara.hodor.admin.entity.User;
 import org.dromara.hodor.admin.mapper.UserMapper;
 import org.dromara.hodor.admin.service.UserService;
 import org.springframework.stereotype.Service;

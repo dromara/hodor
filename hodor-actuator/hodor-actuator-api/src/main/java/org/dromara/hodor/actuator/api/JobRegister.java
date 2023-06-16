@@ -45,6 +45,8 @@ public interface JobRegister {
      */
     String bindingCluster();
 
+    List<String> registerJobType();
+
     /**
      * register job to scheduler
      *

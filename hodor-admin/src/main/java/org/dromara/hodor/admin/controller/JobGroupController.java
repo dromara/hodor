@@ -4,12 +4,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.dromara.hodor.admin.core.MsgCode;
-import org.dromara.hodor.core.PageInfo;
 import org.dromara.hodor.admin.core.Result;
 import org.dromara.hodor.admin.core.ResultUtil;
 import org.dromara.hodor.admin.core.UserContext;
-import org.dromara.hodor.admin.domain.User;
+import org.dromara.hodor.admin.entity.User;
+import org.dromara.hodor.admin.service.ActuatorOperatorService;
 import org.dromara.hodor.admin.service.JobGroupService;
+import org.dromara.hodor.core.PageInfo;
 import org.dromara.hodor.core.entity.JobGroup;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +35,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class JobGroupController {
 
     private final JobGroupService jobGroupService;
+
+    private final ActuatorOperatorService actuatorOperatorService;
 
     @Operation(summary = "创建分组")
     @PostMapping()
@@ -75,4 +78,19 @@ public class JobGroupController {
         return ResultUtil.errorWithArgs(MsgCode.INTERNAL_SERVER_ERROR, "group暂不支持删除");
     }
 
+    @Operation(summary = "绑定执行集群")
+    @PostMapping("/bindActuator")
+    public Result<Void> bindActuatorCluster(@RequestParam String clusterName, @RequestParam String group) throws Exception {
+        final User user = UserContext.getUser();
+        actuatorOperatorService.binding(clusterName, group);
+        return ResultUtil.success();
+    }
+
+    @Operation(summary = "解绑执行集群")
+    @PostMapping("/unbindActuator")
+    public Result<Void> unbindActuatorCluster(@RequestParam String clusterName, @RequestParam String group) throws Exception {
+        final User user = UserContext.getUser();
+        actuatorOperatorService.unbinding(clusterName, group);
+        return ResultUtil.success();
+    }
 }

@@ -15,19 +15,23 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.admin.config;
+package org.dromara.hodor.model.actuator;
 
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.context.annotation.Configuration;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
- * MybatisPlusConfig
+ * BindingInfo
  *
  * @author tomgs
  * @since 1.0
  */
-@Configuration
-@MapperScan(basePackages = {"org.dromara.hodor.admin.mapper"})
-public class MybatisPlusConfig {
+@Data
+@Accessors(chain = true)
+public class BindingInfo {
+
+    private String clusterName;
+
+    private String groupName;
 
 }

@@ -3,7 +3,7 @@ package org.dromara.hodor.admin.core;
 
 import cn.hutool.core.bean.BeanUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.admin.domain.User;
+import org.dromara.hodor.admin.entity.User;
 import org.dromara.hodor.admin.exception.ServiceException;
 
 /**
@@ -14,7 +14,7 @@ import org.dromara.hodor.admin.exception.ServiceException;
  */
 @Slf4j
 public class UserContext {
-    
+
     private static final ThreadLocal<User> LOCAL_REQUEST_USER = new ThreadLocal<>();
 
     public static final String USER_KEY = "userInfo";

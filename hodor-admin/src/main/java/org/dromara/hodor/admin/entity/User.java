@@ -1,4 +1,4 @@
-package org.dromara.hodor.admin.domain;
+package org.dromara.hodor.admin.entity;
 
 import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -16,7 +16,7 @@ import java.io.Serializable;
 public class User implements Serializable {
 
     private static final long serialVersionUID = 157545728486218301L;
-    
+
     private Long id;
     /**
      * 用户名

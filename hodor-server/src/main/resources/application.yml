@@ -13,11 +13,12 @@ hodor:
     port: 8081
   registry:
     type: embedded
-    namespace: "hodor-test"
+    namespace: hodor-test
     servers: 127.0.0.1:2181
     endpoint: 127.0.0.1:2181
     dataPath: E:\\data\\hodor-scheduler\\register-db
   database:
+    type: mysql
     driverClass: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/hodor?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
     username: root
