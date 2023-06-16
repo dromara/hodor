@@ -34,6 +34,8 @@ public class LogQueryRequest {
 
     private String jobName;
 
+    private Integer timeout;
+
     /**
      * 日志存储类型：local(default)，s3，mysql etc.
       */
