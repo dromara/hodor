@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.dromara.hodor.admin.core.ServerConfigKeys;
 import org.dromara.hodor.admin.core.UserContext;
-import org.dromara.hodor.admin.entity.User;
+import org.dromara.hodor.admin.domain.UserInfo;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -42,7 +42,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        UserContext.setUser((User) userSession);
+        UserContext.setUser((UserInfo) userSession);
         return true;
     }
 

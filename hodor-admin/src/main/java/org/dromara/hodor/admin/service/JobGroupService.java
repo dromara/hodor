@@ -17,8 +17,8 @@
 
 package org.dromara.hodor.admin.service;
 
+import org.dromara.hodor.admin.domain.UserInfo;
 import org.dromara.hodor.core.PageInfo;
-import org.dromara.hodor.admin.entity.User;
 import org.dromara.hodor.core.entity.JobGroup;
 
 /**
@@ -29,13 +29,13 @@ import org.dromara.hodor.core.entity.JobGroup;
  */
 public interface JobGroupService {
 
-    PageInfo<JobGroup> queryGroupListPaging(User user, String groupName, Integer pageNo, Integer pageSize);
+    PageInfo<JobGroup> queryGroupListPaging(UserInfo user, String groupName, Integer pageNo, Integer pageSize);
 
-    JobGroup createGroup(User user, JobGroup group);
+    JobGroup createGroup(UserInfo user, JobGroup group);
 
-    void updateJobGroup(User user, JobGroup group);
+    void updateJobGroup(UserInfo user, JobGroup group);
 
-    void deleteJobGroup(User user, int id);
+    void deleteJobGroup(UserInfo user, int id);
 
     JobGroup queryById(Long id);
 }

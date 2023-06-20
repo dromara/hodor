@@ -7,7 +7,7 @@ import org.dromara.hodor.admin.core.MsgCode;
 import org.dromara.hodor.admin.core.Result;
 import org.dromara.hodor.admin.core.ResultUtil;
 import org.dromara.hodor.admin.core.UserContext;
-import org.dromara.hodor.admin.entity.User;
+import org.dromara.hodor.admin.domain.UserInfo;
 import org.dromara.hodor.admin.service.ActuatorOperatorService;
 import org.dromara.hodor.admin.service.JobGroupService;
 import org.dromara.hodor.core.PageInfo;
@@ -41,7 +41,7 @@ public class JobGroupController {
     @Operation(summary = "创建分组")
     @PostMapping()
     public Result<JobGroup> createGroup(@RequestBody JobGroup group) {
-        final User user = UserContext.getUser();
+        final UserInfo user = UserContext.getUser();
         JobGroup jobGroup = jobGroupService.createGroup(user, group);
         return ResultUtil.success(jobGroup);
     }
@@ -51,7 +51,7 @@ public class JobGroupController {
     public Result<PageInfo<JobGroup>> queryGroupListPaging(@RequestParam(value = "groupName", required = false) String groupName,
                                                            @RequestParam(value = "pageNo") Integer pageNo,
                                                            @RequestParam(value = "pageSize") Integer pageSize) {
-        final User user = UserContext.getUser();
+        final UserInfo user = UserContext.getUser();
         PageInfo<JobGroup> pageInfo = jobGroupService.queryGroupListPaging(user, groupName, pageNo, pageSize);
         return ResultUtil.success(pageInfo);
     }
@@ -65,7 +65,7 @@ public class JobGroupController {
     @Operation(summary = "更新分组信息")
     @PutMapping()
     public Result<Void> update(@RequestBody JobGroup group) {
-        final User user = UserContext.getUser();
+        final UserInfo user = UserContext.getUser();
         jobGroupService.updateJobGroup(user, group);
         return ResultUtil.success();
     }
@@ -73,7 +73,7 @@ public class JobGroupController {
     @Operation(summary = "删除分组信息")
     @DeleteMapping()
     public Result<Void> delete(@RequestParam(value = "id") int id) {
-        final User user = UserContext.getUser();
+        final UserInfo user = UserContext.getUser();
         jobGroupService.deleteJobGroup(user, id);
         return ResultUtil.errorWithArgs(MsgCode.INTERNAL_SERVER_ERROR, "group暂不支持删除");
     }
@@ -81,7 +81,7 @@ public class JobGroupController {
     @Operation(summary = "绑定执行集群")
     @PostMapping("/bindActuator")
     public Result<Void> bindActuatorCluster(@RequestParam String clusterName, @RequestParam String group) throws Exception {
-        final User user = UserContext.getUser();
+        final UserInfo user = UserContext.getUser();
         actuatorOperatorService.binding(clusterName, group);
         return ResultUtil.success();
     }
@@ -89,7 +89,7 @@ public class JobGroupController {
     @Operation(summary = "解绑执行集群")
     @PostMapping("/unbindActuator")
     public Result<Void> unbindActuatorCluster(@RequestParam String clusterName, @RequestParam String group) throws Exception {
-        final User user = UserContext.getUser();
+        final UserInfo user = UserContext.getUser();
         actuatorOperatorService.unbinding(clusterName, group);
         return ResultUtil.success();
     }

@@ -22,10 +22,10 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.core.PageInfo;
-import org.dromara.hodor.admin.entity.User;
+import org.dromara.hodor.admin.domain.UserInfo;
 import org.dromara.hodor.admin.service.JobGroupService;
 import org.dromara.hodor.common.utils.DateUtils;
+import org.dromara.hodor.core.PageInfo;
 import org.dromara.hodor.core.entity.JobGroup;
 import org.dromara.hodor.core.mapper.JobGroupMapper;
 import org.springframework.stereotype.Service;
@@ -44,7 +44,7 @@ public class JobGroupServiceImpl implements JobGroupService {
     private final JobGroupMapper jobGroupMapper;
 
     @Override
-    public PageInfo<JobGroup> queryGroupListPaging(User user, String groupName, Integer pageNo, Integer pageSize) {
+    public PageInfo<JobGroup> queryGroupListPaging(UserInfo user, String groupName, Integer pageNo, Integer pageSize) {
         IPage<JobGroup> page = new Page<>(pageNo, pageSize);
         jobGroupMapper.selectPage(page, Wrappers.<JobGroup>lambdaQuery()
             .like(groupName != null, JobGroup::getGroupName, groupName));
@@ -58,20 +58,20 @@ public class JobGroupServiceImpl implements JobGroupService {
     }
 
     @Override
-    public JobGroup createGroup(User user, JobGroup group) {
+    public JobGroup createGroup(UserInfo user, JobGroup group) {
         setGroupInfo(user, group);
         jobGroupMapper.insert(group);
         return group;
     }
 
     @Override
-    public void updateJobGroup(User user, JobGroup group) {
+    public void updateJobGroup(UserInfo user, JobGroup group) {
         setGroupInfo(user, group);
         jobGroupMapper.updateById(group);
     }
 
     @Override
-    public void deleteJobGroup(User user, int id) {
+    public void deleteJobGroup(UserInfo user, int id) {
         jobGroupMapper.deleteById(id);
     }
 
@@ -80,7 +80,7 @@ public class JobGroupServiceImpl implements JobGroupService {
         return jobGroupMapper.selectById(id);
     }
 
-    private static void setGroupInfo(User user, JobGroup group) {
+    private static void setGroupInfo(UserInfo user, JobGroup group) {
         group.setCreateUser(user.getUsername());
         group.setUserId(user.getId());
         group.setTenantId(user.getTenantId());
