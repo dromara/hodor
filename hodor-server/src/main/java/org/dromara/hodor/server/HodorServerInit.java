@@ -1,7 +1,5 @@
 package org.dromara.hodor.server;
 
-import java.util.concurrent.CountDownLatch;
-
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.server.service.HodorService;
 import org.dromara.hodor.server.service.RegistryService;
