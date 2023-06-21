@@ -9,11 +9,11 @@
                 </a-menu-item>
                 <a-menu-item key="2" @click="changeMenu('scheduler')">
                     <BlockOutlined />
-                    <span>调度器管理</span>
+                    <span>调度节点管理</span>
                 </a-menu-item>
                 <a-menu-item key="3" @click="changeMenu('actuator')">
                     <BuildOutlined />
-                    <span>执行器管理</span>
+                    <span>执行节点管理</span>
                 </a-menu-item>
                 <a-sub-menu key="sub1">
                     <template #title>
