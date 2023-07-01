@@ -40,8 +40,11 @@ import org.dromara.hodor.register.embedded.core.WatchManager;
 @Slf4j
 public class HodorWatchStateMachine extends HodorKVStateMachine {
 
-    public HodorWatchStateMachine(final RequestHandler requestHandler) {
+    private final WatchManager watchManager;
+
+    public HodorWatchStateMachine(final RequestHandler requestHandler, final WatchManager watchManager) {
         super(requestHandler);
+        this.watchManager = watchManager;
     }
 
     @Override
@@ -54,13 +57,13 @@ public class HodorWatchStateMachine extends HodorKVStateMachine {
         if (currentPeerId.equals(newLeaderId)) {
             log.info("Current peer {} is LEADER", currentPeerId);
             dataChangeEventBuilder.setType(DataChangeEvent.Type.NODE_ADDED);
-            WatchManager.getInstance().setLeader(true);
+            watchManager.setLeader(true);
         } else {
             log.info("Current peer {} is FOLLOWER", currentPeerId);
             dataChangeEventBuilder.setType(DataChangeEvent.Type.NODE_REMOVED);
-            WatchManager.getInstance().setLeader(false);
+            watchManager.setLeader(false);
         }
-        WatchManager.getInstance().publish(Event.create(dataChangeEventBuilder.build(), DataChangeEvent.Type.INITIALIZED));
+        watchManager.publish(Event.create(dataChangeEventBuilder.build(), DataChangeEvent.Type.INITIALIZED));
     }
 
     @Override

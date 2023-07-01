@@ -58,6 +58,7 @@ import org.apache.ratis.util.MemoizedSupplier;
 import org.apache.ratis.util.PeerProxyMap;
 import org.apache.ratis.util.SizeInBytes;
 import org.apache.ratis.util.TimeDuration;
+import org.dromara.hodor.register.embedded.core.WatchManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,8 +71,13 @@ public final class WatchGrpcService extends RaftServerRpcWithProxy<GrpcServerPro
   public static final String GRPC_SEND_SERVER_REQUEST =
       JavaUtils.getClassSimpleName(WatchGrpcService.class) + ".sendRequest";
 
-  public static final class Builder {
+    private final WatchManager watchManager;
+
+    public static final class Builder {
     private RaftServer server;
+
+    private WatchManager watchManager;
+
     private GrpcTlsConfig tlsConfig;
     private GrpcTlsConfig adminTlsConfig;
     private GrpcTlsConfig clientTlsConfig;
@@ -84,8 +90,13 @@ public final class WatchGrpcService extends RaftServerRpcWithProxy<GrpcServerPro
       return this;
     }
 
+    public Builder setWatchManager(WatchManager watchManager) {
+      this.watchManager = watchManager;
+      return this;
+    }
+
     public WatchGrpcService build() {
-      return new WatchGrpcService(server, adminTlsConfig, clientTlsConfig, serverTlsConfig);
+      return new WatchGrpcService(server, watchManager, adminTlsConfig, clientTlsConfig, serverTlsConfig);
     }
 
     public Builder setTlsConfig(GrpcTlsConfig tlsConfig) {
@@ -132,8 +143,8 @@ public final class WatchGrpcService extends RaftServerRpcWithProxy<GrpcServerPro
   }
 
   private WatchGrpcService(RaftServer server,
-                           GrpcTlsConfig adminTlsConfig, GrpcTlsConfig clientTlsConfig, GrpcTlsConfig serverTlsConfig) {
-    this(server, server::getId,
+                           WatchManager watchManager, GrpcTlsConfig adminTlsConfig, GrpcTlsConfig clientTlsConfig, GrpcTlsConfig serverTlsConfig) {
+    this(server, watchManager, server::getId,
         GrpcConfigKeys.Admin.host(server.getProperties()),
         GrpcConfigKeys.Admin.port(server.getProperties()),
         adminTlsConfig,
@@ -151,7 +162,7 @@ public final class WatchGrpcService extends RaftServerRpcWithProxy<GrpcServerPro
   }
 
   @SuppressWarnings("checkstyle:ParameterNumber") // private constructor
-  private WatchGrpcService(RaftServer raftServer, Supplier<RaftPeerId> idSupplier,
+  private WatchGrpcService(RaftServer raftServer, WatchManager watchManager, Supplier<RaftPeerId> idSupplier,
                            String adminHost, int adminPort, GrpcTlsConfig adminTlsConfig,
                            String clientHost, int clientPort, GrpcTlsConfig clientTlsConfig,
                            String serverHost, int serverPort, GrpcTlsConfig serverTlsConfig,
@@ -168,6 +179,7 @@ public final class WatchGrpcService extends RaftServerRpcWithProxy<GrpcServerPro
     }
 
     final RaftProperties properties = raftServer.getProperties();
+    this.watchManager = watchManager;
     this.executor = ConcurrentUtils.newThreadPoolWithMax(
         GrpcConfigKeys.Server.asyncRequestThreadPoolCached(properties),
         GrpcConfigKeys.Server.asyncRequestThreadPoolSize(properties),
@@ -185,7 +197,7 @@ public final class WatchGrpcService extends RaftServerRpcWithProxy<GrpcServerPro
     final NettyServerBuilder serverBuilder =
         startBuildingNettyServer(serverHost, serverPort, serverTlsConfig, grpcMessageSizeMax, flowControlWindow);
     serverBuilder.addService(ServerInterceptors.intercept(new GrpcServerProtocolService(idSupplier, raftServer), serverInterceptor))
-            .addService(ServerInterceptors.intercept(new GrpcWatchServerProtocolService(), serverInterceptor));
+            .addService(ServerInterceptors.intercept(new GrpcWatchServerProtocolService(watchManager), serverInterceptor));
     if (!separateAdminServer) {
       addAdminService(raftServer, serverBuilder);
     }

@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ratis.client.RaftClient;
+import org.apache.ratis.conf.Parameters;
 import org.apache.ratis.conf.RaftProperties;
 import org.apache.ratis.grpc.GrpcConfigKeys;
 import org.apache.ratis.protocol.RaftGroup;
@@ -40,6 +41,8 @@ public class HodorRaftServer {
 
     private final RaftProperties raftProperties;
 
+    private final Parameters parameters;
+
     private RaftServer server;
 
     private RaftPeer currentPeer;
@@ -50,6 +53,7 @@ public class HodorRaftServer {
         this.endpoint = raftOptions.getEndpoint();
         this.storageDir = raftOptions.getStorageDir();
         this.raftProperties = raftOptions.getRaftProperties();
+        this.parameters = raftOptions.getParameters();
         init();
     }
 
@@ -64,7 +68,7 @@ public class HodorRaftServer {
         initRaftGroup(raftOptions.getStateMachineMap());
         //create and start the Raft server
         this.server = ServerImplUtils.newRaftServer(currentPeer.getId(), null, registry::get,
-            null, raftProperties, null);
+            null, raftProperties, parameters);
     }
 
     public void start() throws IOException {

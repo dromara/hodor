@@ -3,7 +3,10 @@ package org.dromara.hodor.common.storage.cache.impl;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.dromara.hodor.common.concurrent.LockUtil;
+import org.dromara.hodor.common.raft.HodorRaftGroup;
+import org.dromara.hodor.common.raft.RaftUtils;
 import org.dromara.hodor.common.raft.kv.core.HodorKVClient;
+import org.dromara.hodor.common.raft.kv.core.KVConstant;
 import org.dromara.hodor.common.raft.kv.storage.DBColumnFamily;
 import org.dromara.hodor.common.storage.cache.CacheClient;
 import org.dromara.hodor.common.utils.Pair;
@@ -26,7 +29,12 @@ public class EmbeddedRawCacheClient<K, V> implements CacheClient<K, V> {
     private final String tableName;
 
     public EmbeddedRawCacheClient(final String serverAddresses, final String cacheGroup) {
-        this.hodorKVClient = new HodorKVClient(serverAddresses);
+        RaftUtils.assertRaftGroupAddress(serverAddresses);
+        HodorRaftGroup hodorRaftGroup = HodorRaftGroup.builder()
+            .raftGroupName(KVConstant.HODOR_KV_GROUP_NAME)
+            .addresses(serverAddresses)
+            .build();
+        this.hodorKVClient = new HodorKVClient(hodorRaftGroup);
         this.readWriteLock = new ReentrantReadWriteLock();
         this.cacheGroup = cacheGroup;
         this.tableName = DBColumnFamily.Default.getName();

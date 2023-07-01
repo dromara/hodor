@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Data;
+import org.apache.ratis.conf.Parameters;
 import org.apache.ratis.conf.RaftProperties;
 
 /**
@@ -40,6 +41,8 @@ public class RaftOptions {
     private String serverAddresses;
 
     private RaftProperties raftProperties;
+
+    private Parameters parameters;
 
     private Map<HodorRaftGroup, HodorRaftStateMachine> stateMachineMap;
 

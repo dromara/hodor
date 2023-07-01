@@ -18,7 +18,9 @@
 package org.dromara.hodor.register.embedded;
 
 import java.io.File;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ratis.RaftConfigKeys;
+import org.apache.ratis.conf.Parameters;
 import org.apache.ratis.conf.RaftProperties;
 import org.dromara.hodor.common.HodorLifecycle;
 import org.dromara.hodor.common.raft.RaftOptions;
@@ -37,11 +39,12 @@ import org.dromara.hodor.register.embedded.watch.WatchGrpcRpcType;
  * @author tomgs
  * @since 1.0
  */
+@Slf4j
 public class EmbeddedRegistryServer implements HodorLifecycle {
 
     private final HodorWatchServer hodorWatchServer;
 
-    public EmbeddedRegistryServer(final RegistryConfig registryConfig) throws Exception {
+    public EmbeddedRegistryServer(final RegistryConfig registryConfig, final WatchManager watchManager) throws Exception {
         RaftProperties raftProperties = new RaftProperties();
         RaftConfigKeys.Rpc.setType(raftProperties, WatchGrpcRpcType.INSTANCE);
         RaftOptions raftOptions = RaftOptions.builder()
@@ -49,6 +52,7 @@ public class EmbeddedRegistryServer implements HodorLifecycle {
             .storageDir(new File(registryConfig.getDataPath()))
             .serverAddresses(registryConfig.getServers())
             .raftProperties(raftProperties)
+            .parameters(new Parameters())
             //.stateMachineMap(stateMachineMap) // for customer
             .build();
         StorageOptions storageOptions = StorageOptions.builder()
@@ -61,17 +65,18 @@ public class EmbeddedRegistryServer implements HodorLifecycle {
             .raftOptions(raftOptions)
             .storageOptions(storageOptions)
             .build();
-        this.hodorWatchServer = new HodorWatchServer(kvOptions);
+        this.hodorWatchServer = new HodorWatchServer(kvOptions, watchManager);
     }
 
     @Override
     public void start() throws Exception {
+        log.info("registry server starting ...");
         hodorWatchServer.start();
-        WatchManager.getInstance().startWatchEvent("hodor-watch-event");
     }
 
     @Override
     public void stop() throws Exception {
+        log.info("registry server closing ...");
         hodorWatchServer.stop();
     }
 

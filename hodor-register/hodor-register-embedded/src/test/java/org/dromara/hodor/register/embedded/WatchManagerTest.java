@@ -34,11 +34,11 @@ public class WatchManagerTest {
 
     @Test
     public void testContainsWatchKey() {
-        final WatchManager watchManager = WatchManager.getInstance();
+        final WatchManager watchManager = new WatchManager(null, null);
         WatchCreateRequest watchCreateRequest = WatchCreateRequest.newBuilder()
             .setKey(ByteString.copyFrom("/a/b".getBytes(StandardCharsets.UTF_8)))
             .build();
-        watchManager.addWatchRequest(watchCreateRequest);
+        watchManager.addWatchRequest("connectionId", watchCreateRequest);
 
         boolean result = watchManager.containsWatchKey("/a/b/c");
         System.out.println(result);

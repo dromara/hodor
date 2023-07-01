@@ -25,6 +25,8 @@ public class HodorKVRequest implements Serializable {
 
     private Long traceId;
 
+    private String sessionId;
+
     private GetRequest getRequest;
 
     private PutRequest putRequest;

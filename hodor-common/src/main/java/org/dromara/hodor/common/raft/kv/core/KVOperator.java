@@ -32,10 +32,11 @@ public interface KVOperator extends AutoCloseable {
 
     void put(byte[] key, byte[] value);
 
+    void putEphemeral(byte[] key, byte[] value);
+
     void delete(byte[] key);
 
     Boolean containsKey(byte[] key);
 
     List<KVEntry> scan(byte[] startKey, byte[] endKey, boolean returnValue);
-
 }

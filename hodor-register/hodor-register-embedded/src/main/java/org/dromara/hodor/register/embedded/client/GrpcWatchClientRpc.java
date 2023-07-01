@@ -9,6 +9,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningScheduledExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ratis.conf.RaftProperties;
+import org.apache.ratis.grpc.GrpcUtil;
 import org.apache.ratis.protocol.ClientId;
 import org.apache.ratis.protocol.RaftPeer;
 import org.apache.ratis.protocol.RaftPeerId;
@@ -124,13 +126,17 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
     }
 
     public void startHandleWatchStream() {
+        // 实现client的状态
         if (!started.compareAndSet(false, true)) {
             return;
         }
         if (peers.size() == 0) {
             throw new RuntimeException("peers is empty");
         }
-        for (RaftPeer peer : peers.values()) {
+        final Optional<RaftPeer> any = peers.values().stream().findAny();
+        List<RaftPeer> list = new ArrayList<>(peers.values());
+        list.add(0, any.get());
+        for (RaftPeer peer : list) {
             ManagedChannel channel = null;
             try {
                 final String address = peer.getAddress();
@@ -144,6 +150,8 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
                     public void onNext(WatchResponse response) {
                         try {
                             final DataChangeEvent event = response.getEvent();
+                            log.info("watch event received, {}", event);
+
                             final Optional<byte[]> watchKeyOptional = getWatchKey(event.getKey().toByteArray());
                             watchKeyOptional.ifPresent(watchKey -> {
                                 final WatchCallback watchCallback = watchClientCallBackMap.getOrDefault(watchKey,
@@ -159,6 +167,8 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
                     public void onError(Throwable t) {
                         log.error("Watch error, {}", t.getMessage(), t);
                         if (shouldReconnect(t)) {
+                            log.error("Watch reconnect, {}", t.getMessage(), t);
+                            started.compareAndSet(true, false);
                             addOnFailureLoggingCallback(
                                 grpcExecutor,
                                 executor.schedule(() -> startHandleWatchStream(), 500, TimeUnit.MILLISECONDS),
@@ -173,11 +183,11 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
                     }
                 });
                 break;
-            } catch (Exception e) {
-                log.error("connection exception: {}", e.getMessage(), e);
+            } catch (Throwable e) {
+                log.warn("connection exception: {}", e.getMessage(), e);
             }
-            if (channel != null && !channel.isShutdown()) {
-                channel.shutdownNow();
+            if (channel != null) {
+                GrpcUtil.shutdownManagedChannel(channel);
             }
         }
     }

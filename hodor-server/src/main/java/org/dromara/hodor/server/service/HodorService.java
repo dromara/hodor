@@ -7,6 +7,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.hodor.common.HodorLifecycle;
 import org.dromara.hodor.common.exception.HodorException;
 import org.dromara.hodor.common.utils.CopySets;
+import org.dromara.hodor.common.utils.Utils;
 import org.dromara.hodor.core.Constants.CopySetConstants;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.core.service.JobInfoService;
@@ -63,11 +64,11 @@ public class HodorService implements HodorLifecycle {
     public void start() {
         // waiting node ready
         registryService.waitServerStarted();
-        // init data
-        registryService.registrySchedulerNodeListener(new SchedulerNodeChangeListener(schedulerNodeManager, this));
+        // register listener
         registryService.registryActuatorNodeListener(new ActuatorNodeChangeListener(actuatorNodeManager));
         registryService.registryMetadataListener(new MetadataChangeListener(this));
         registryService.registryElectLeaderListener(new LeaderElectChangeListener(this));
+        registryService.registrySchedulerNodeListener(new SchedulerNodeChangeListener(schedulerNodeManager, this));
         //registerService.registryJobEventListener(new JobEventDispatchListener(this));
 
         // select leader
@@ -86,13 +87,11 @@ public class HodorService implements HodorLifecycle {
     public void electLeader() {
         leaderService.electLeader(() -> {
             actuatorNodeManager.startOfflineActuatorClean();
-            // TODO: check exist metadata
             this.createNewHodorMetadata();
         });
     }
 
     public void createNewHodorMetadata() {
-        log.info("server {} to be leader.", registryService.getServerEndpoint());
         // after to be leader write here
         List<String> currRunningNodes = registryService.getRunningNodes();
         if (CollectionUtils.isEmpty(currRunningNodes)) {
@@ -139,7 +138,7 @@ public class HodorService implements HodorLifecycle {
             .copySets(copySets)
             .build();
 
-        log.info("Create new metadata: {}", metadata);
+        log.info("Create metadata: {}", Utils.Jsons.toJsonPrettyStr(metadata));
 
         registryService.createMetadata(metadata);
     }

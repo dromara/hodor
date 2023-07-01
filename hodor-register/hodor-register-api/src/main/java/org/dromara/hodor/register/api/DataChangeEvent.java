@@ -1,6 +1,7 @@
 package org.dromara.hodor.register.api;
 
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * 数据变化事件
@@ -8,6 +9,7 @@ import lombok.Getter;
  * @author tomgs
  * @since 1.0
  */
+@ToString
 public class DataChangeEvent {
 
     @Getter

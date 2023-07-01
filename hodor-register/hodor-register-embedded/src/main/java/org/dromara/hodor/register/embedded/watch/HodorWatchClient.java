@@ -71,6 +71,7 @@ public class HodorWatchClient implements AutoCloseable {
             .setProperties(raftProperties)
             .setRaftGroup(raftGroup)
             .setRetryPolicy(retryPolicy)
+            .setClientId(clientId)
             .setClientRpc(
                 new WatchGrpcFactory(parameters)
                     .newRaftClientRpc(clientId, raftProperties))
@@ -82,11 +83,10 @@ public class HodorWatchClient implements AutoCloseable {
 
     public void watch(byte[] watchKey, DataChangeListener dataChangeListener) {
         WatchCreateRequest createRequest = WatchCreateRequest.newBuilder()
-            .setWatchId(123L)
             .setKey(ByteString.copyFrom(watchKey))
             .build();
         WatchRequest watchRequest = WatchRequest.newBuilder()
-            .setNodeIdBytes(ByteString.copyFromUtf8("127.0.0.1"))
+            .setNodeIdBytes(ByteString.copyFromUtf8(kvClient.getRaftClient().getId().toString()))
             .setCreateRequest(createRequest)
             .build();
 
@@ -105,11 +105,10 @@ public class HodorWatchClient implements AutoCloseable {
 
     public void unwatch(byte[] watchKey) {
         WatchCancelRequest createRequest = WatchCancelRequest.newBuilder()
-            .setWatchId(123L)
             .setKey(ByteString.copyFrom(watchKey))
             .build();
         WatchRequest watchRequest = WatchRequest.newBuilder()
-            .setNodeIdBytes(ByteString.copyFromUtf8("127.0.0.1"))
+            .setNodeIdBytes(ByteString.copyFromUtf8(kvClient.getRaftClient().getId().toString()))
             .setCancelRequest(createRequest)
             .build();
         watchRaftClient.watchClientRpc().unwatch(watchRequest);
