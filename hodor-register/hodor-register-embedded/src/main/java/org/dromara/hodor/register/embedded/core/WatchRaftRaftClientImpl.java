@@ -4,6 +4,7 @@ import java.io.IOException;
 import org.apache.ratis.client.RaftClient;
 import org.apache.ratis.conf.Parameters;
 import org.apache.ratis.conf.RaftProperties;
+import org.apache.ratis.protocol.ClientId;
 import org.apache.ratis.protocol.RaftGroup;
 import org.apache.ratis.retry.RetryPolicy;
 import org.dromara.hodor.register.embedded.client.WatchClientRpc;
@@ -22,15 +23,23 @@ public class WatchRaftRaftClientImpl implements WatchRaftClient {
     private final RaftProperties properties;
     private final Parameters parameters;
 
-    public WatchRaftRaftClientImpl(final RaftClient raftClient, final WatchClientRpc watchClientRpc,
+    private final ClientId clientId;
+
+    public WatchRaftRaftClientImpl(ClientId clientId, final RaftClient raftClient, final WatchClientRpc watchClientRpc,
                                    final RaftGroup group, final RetryPolicy retryPolicy,
                                    final RaftProperties properties, final Parameters parameters) {
+        this.clientId = clientId;
         this.raftClient = raftClient;
         this.watchClientRpc = watchClientRpc;
         this.retryPolicy = retryPolicy;
         this.properties = properties;
         this.parameters = parameters;
         watchClientRpc.addRaftPeers(group.getPeers());
+    }
+
+    @Override
+    public ClientId clientId() {
+        return clientId;
     }
 
     @Override

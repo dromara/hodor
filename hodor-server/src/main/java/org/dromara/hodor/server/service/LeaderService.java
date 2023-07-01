@@ -30,6 +30,7 @@ public class LeaderService {
      */
     public void electLeader(final LeaderExecutionCallback callback) {
         registryCenter.executeInLeader(SchedulerNode.LATCH_PATH, () -> {
+            log.info("server {} to be leader.", registryService.getServerEndpoint());
             createLeaderNode();
             callback.execute();
             /*if (!hasLeader()) {

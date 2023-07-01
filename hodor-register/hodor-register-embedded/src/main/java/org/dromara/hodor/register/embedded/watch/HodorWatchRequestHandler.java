@@ -42,9 +42,9 @@ public class HodorWatchRequestHandler extends HodorKVRequestHandler {
 
     private final WatchManager watchManager;
 
-    public HodorWatchRequestHandler(final StorageEngine storageEngine) {
+    public HodorWatchRequestHandler(final StorageEngine storageEngine, final WatchManager watchManager) {
         super(storageEngine);
-        this.watchManager = WatchManager.getInstance();
+        this.watchManager = watchManager;
     }
 
     @Override
@@ -60,10 +60,14 @@ public class HodorWatchRequestHandler extends HodorKVRequestHandler {
             return hodorKVResponse;
         }
 
+        final String sessionId = kvRequest.getSessionId();
         final CmdType cmdType = kvRequest.getCmdType();
         switch (cmdType) {
             case PUT:
                 final PutRequest putRequest = kvRequest.getPutRequest();
+                if (sessionId != null) {
+                    watchManager.addEphemeralSession(sessionId, putRequest.getKey());
+                }
                 if (watchManager.containsWatchKey(putRequest.getKey())) {
                     final DataChangeEvent dataChangeEvent = DataChangeEvent.newBuilder()
                         .setKey(ByteString.copyFrom(putRequest.getKey()))

@@ -2,6 +2,7 @@ package org.dromara.hodor.register.embedded.core;
 
 import cn.hutool.core.thread.ThreadUtil;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -20,6 +21,8 @@ import org.dromara.hodor.common.proto.DataChangeEvent;
 import org.dromara.hodor.common.proto.WatchCancelRequest;
 import org.dromara.hodor.common.proto.WatchCreateRequest;
 import org.dromara.hodor.common.proto.WatchResponse;
+import org.dromara.hodor.common.raft.HodorRaftGroup;
+import org.dromara.hodor.common.raft.kv.core.HodorKVClient;
 import org.dromara.hodor.common.utils.BytesUtil;
 
 /**
@@ -31,30 +34,30 @@ import org.dromara.hodor.common.utils.BytesUtil;
 @Slf4j
 public class WatchManager extends AbstractAsyncEventPublisher<DataChangeEvent> {
 
-    private static final WatchManager INSTANCE = new WatchManager();
+    private final BlockingQueue<DataChangeEvent> events;
 
     private static final int MAX_WAIT_EVENT_TIME = 100;
 
-    private final BlockingQueue<DataChangeEvent> events;
-
-    //private final Set<ByteString> watchKeySet = new HashSet<>();
-
-    private final static byte[] EMPTY_BYTE = new byte[0];
+    private static final byte[] EMPTY_BYTE = new byte[0];
 
     private static final BytesUtil.ByteArrayComparator byteArrayComparator = BytesUtil.getDefaultByteArrayComparator();
 
-    private final static Map<byte[], byte[]> watchKeyMap = new TreeMap<>(byteArrayComparator);
+    private static final Map<byte[], byte[]> watchKeyMap = new TreeMap<>(byteArrayComparator);
 
     private static final Map<String, AbstractConnection<WatchResponse>> connections = new ConcurrentHashMap<>(16);
 
-    private final AtomicBoolean isLeader = new AtomicBoolean(false);
+    private static final Map<String, HashSet<byte[]>> ephemerals = new ConcurrentHashMap<>();
 
-    private WatchManager() {
+    private static final AtomicBoolean isLeader = new AtomicBoolean(false);
+
+    private final HodorRaftGroup hodorRaftGroup;
+
+    private final String tableName;
+
+    public WatchManager(final HodorRaftGroup hodorRaftGroup, final String tableName) {
+        this.hodorRaftGroup = hodorRaftGroup;
         this.events = new ArrayBlockingQueue<>(16);
-    }
-
-    public static WatchManager getInstance() {
-        return INSTANCE;
+        this.tableName = tableName;
     }
 
     public void notify(DataChangeEvent event) {
@@ -90,12 +93,33 @@ public class WatchManager extends AbstractAsyncEventPublisher<DataChangeEvent> {
             .findFirst();
     }
 
-    public void addWatchRequest(WatchCreateRequest createRequest) {
+    public void addWatchRequest(String connectionId, WatchCreateRequest createRequest) {
         final ByteString key = createRequest.getKey();
         watchKeyMap.put(key.toByteArray(), EMPTY_BYTE);
     }
 
-    public void cancelWatchRequest(WatchCancelRequest cancelRequest) {
+    public void addEphemeralSession(String sessionId, byte[] key) {
+        HashSet<byte[]> list = ephemerals.computeIfAbsent(sessionId, k -> new HashSet<>());
+        list.add(key);
+    }
+
+    public void killSession(String sessionId) {
+        log.info("Kill session {}, all session: {}", sessionId, ephemerals.keySet());
+        final HodorKVClient hodorKVClient = new HodorKVClient(hodorRaftGroup);
+        final HashSet<byte[]> list = ephemerals.remove(sessionId);
+        if (list != null) {
+            for (byte[] key : list) {
+                try {
+                    hodorKVClient.kvOperator(tableName)
+                        .delete(key);
+                } catch (Exception e) {
+                    log.error("kill session [{}#{}] exception: {}", sessionId, BytesUtil.readUtf8(key), e.getMessage(), e);
+                }
+            }
+        }
+    }
+
+    public void cancelWatchRequest(String connectionId, WatchCancelRequest cancelRequest) {
         final ByteString key = cancelRequest.getKey();
         watchKeyMap.remove(key.toByteArray());
     }

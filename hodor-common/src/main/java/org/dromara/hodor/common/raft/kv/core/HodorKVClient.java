@@ -61,6 +61,10 @@ public class HodorKVClient implements AutoCloseable {
         return kvOperator(DBColumnFamily.Default.getName());
     }
 
+    public RaftClient getRaftClient() {
+        return this.raftClient;
+    }
+
     @Override
     public void close() throws Exception {
         this.raftClient.close();

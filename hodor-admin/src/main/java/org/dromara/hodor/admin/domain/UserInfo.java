@@ -19,6 +19,8 @@ package org.dromara.hodor.admin.domain;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Date;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * UserInfo
@@ -27,6 +29,8 @@ import java.util.Date;
  * @since 1.0
  */
 @Schema(title = "user info")
+@Data
+@Accessors(chain = true)
 public class UserInfo {
 
     @Schema(name = "user id")

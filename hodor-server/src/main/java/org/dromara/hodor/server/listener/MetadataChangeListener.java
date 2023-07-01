@@ -47,6 +47,7 @@ public class MetadataChangeListener extends AbstractAsyncEventPublisher<List<Cop
 
     @Override
     public void dataChanged(DataChangeEvent event) {
+        log.info("Metadata changed, event: {}", event);
         if (!SchedulerNode.isMetadataPath(event.getPath())) {
             return;
         }

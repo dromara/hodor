@@ -15,4 +15,6 @@ import lombok.Data;
 public class PutResponse implements Serializable {
 
     private static final long serialVersionUID = 2034924846457819834L;
+
+    private byte[] value;
 }

@@ -35,6 +35,7 @@ import org.apache.ratis.util.JavaUtils;
 import org.dromara.hodor.register.embedded.client.GrpcWatchClientRpc;
 import org.dromara.hodor.register.embedded.client.WatchClientFactory;
 import org.dromara.hodor.register.embedded.client.WatchClientRpc;
+import org.dromara.hodor.register.embedded.core.WatchManager;
 import org.dromara.hodor.register.embedded.service.WatchGrpcLogAppender;
 import org.dromara.hodor.register.embedded.service.WatchGrpcService;
 import org.slf4j.Logger;
@@ -56,7 +57,9 @@ public class WatchGrpcFactory implements ServerFactory, ClientFactory, WatchClie
     }
   }
 
-  static boolean checkPooledByteBufAllocatorUseCacheForAllThreads(Consumer<String> log) {
+    private final Parameters parameters;
+
+    static boolean checkPooledByteBufAllocatorUseCacheForAllThreads(Consumer<String> log) {
     final boolean value = PooledByteBufAllocator.defaultUseCacheForAllThreads();
     if (value) {
       log.accept("PERFORMANCE WARNING: " + USE_CACHE_FOR_ALL_THREADS_NAME + " is " + true
@@ -80,6 +83,7 @@ public class WatchGrpcFactory implements ServerFactory, ClientFactory, WatchClie
 
   public WatchGrpcFactory(Parameters parameters) {
     this(
+        parameters,
         GrpcConfigKeys.TLS.conf(parameters),
         GrpcConfigKeys.Admin.tlsConf(parameters),
         GrpcConfigKeys.Client.tlsConf(parameters),
@@ -88,11 +92,12 @@ public class WatchGrpcFactory implements ServerFactory, ClientFactory, WatchClie
   }
 
   public WatchGrpcFactory(GrpcTlsConfig tlsConfig) {
-    this(tlsConfig, null, null, null);
+    this(null, tlsConfig, null, null, null);
   }
 
-  private WatchGrpcFactory(GrpcTlsConfig tlsConfig, GrpcTlsConfig adminTlsConfig,
+  private WatchGrpcFactory(Parameters parameters, GrpcTlsConfig tlsConfig, GrpcTlsConfig adminTlsConfig,
                            GrpcTlsConfig clientTlsConfig, GrpcTlsConfig serverTlsConfig) {
+      this.parameters = parameters;
     this.tlsConfig = tlsConfig;
     this.adminTlsConfig = adminTlsConfig;
     this.clientTlsConfig = clientTlsConfig;
@@ -130,13 +135,18 @@ public class WatchGrpcFactory implements ServerFactory, ClientFactory, WatchClie
     checkPooledByteBufAllocatorUseCacheForAllThreads(LOG::info);
     return WatchGrpcService.newBuilder()
         .setServer(server)
+        .setWatchManager(getWatchManager())
         .setAdminTlsConfig(getAdminTlsConfig())
         .setServerTlsConfig(getServerTlsConfig())
         .setClientTlsConfig(getClientTlsConfig())
         .build();
   }
 
-  @Override
+    private WatchManager getWatchManager() {
+        return parameters.get(WatchManager.class.getName(), WatchManager.class);
+    }
+
+    @Override
   public GrpcClientRpc newRaftClientRpc(ClientId clientId, RaftProperties properties) {
     checkPooledByteBufAllocatorUseCacheForAllThreads(LOG::debug);
     return new GrpcClientRpc(clientId, properties,

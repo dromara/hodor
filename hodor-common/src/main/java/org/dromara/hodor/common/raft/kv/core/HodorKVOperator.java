@@ -89,6 +89,24 @@ public class HodorKVOperator implements KVOperator {
     }
 
     @Override
+    public void putEphemeral(byte[] key, byte[] value) {
+        PutRequest putRequest = PutRequest.builder()
+            .key(key)
+            .value(value)
+            .build();
+        HodorKVRequest request = HodorKVRequest.builder()
+            .table(tableName)
+            .sessionId(raftClient.getId().toString())
+            .cmdType(CmdType.PUT)
+            .putRequest(putRequest)
+            .build();
+        HodorKVResponse response = handleWriteRequest(request);
+        if (!response.getSuccess()) {
+            throw new HodorKVClientException(response.getMessage());
+        }
+    }
+
+    @Override
     public void delete(byte[] key) {
         DeleteRequest deleteRequest = DeleteRequest.builder()
             .key(key)

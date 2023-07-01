@@ -31,6 +31,8 @@ public interface WatchRaftClient extends Closeable {
 
     Logger LOG = LoggerFactory.getLogger(WatchRaftClient.class);
 
+    ClientId clientId();
+
     WatchClientRpc watchClientRpc();
 
     RaftClient raftClient();
@@ -76,7 +78,7 @@ public interface WatchRaftClient extends Closeable {
             final RaftClient raftClient = ClientImplUtils.newRaftClient(clientId, group, leaderId, primaryDataStreamServer,
                     Objects.requireNonNull(clientRpc, "The 'clientRpc' field is not initialized."), retryPolicy,
                     properties, parameters);
-            return new WatchRaftRaftClientImpl(raftClient, watchClientRpc, group, retryPolicy,
+            return new WatchRaftRaftClientImpl(clientId, raftClient, watchClientRpc, group, retryPolicy,
                     properties, parameters);
         }
 

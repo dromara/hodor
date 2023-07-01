@@ -10,6 +10,8 @@ import org.dromara.hodor.common.raft.kv.core.HodorKVOptions;
 import org.dromara.hodor.common.raft.kv.core.HodorKVServer;
 import org.dromara.hodor.common.raft.kv.core.KVConstant;
 import org.dromara.hodor.common.raft.kv.core.RequestHandler;
+import org.dromara.hodor.common.raft.kv.storage.DBColumnFamily;
+import org.dromara.hodor.register.embedded.core.WatchManager;
 
 /**
  * HodorWatchServer
@@ -20,22 +22,27 @@ import org.dromara.hodor.common.raft.kv.core.RequestHandler;
 @Slf4j
 public class HodorWatchServer extends HodorKVServer {
 
-    public HodorWatchServer(final HodorKVOptions hodorKVOptions) throws Exception {
+    private final WatchManager watchManager;
+
+    public HodorWatchServer(final HodorKVOptions hodorKVOptions, final WatchManager watchManager) throws Exception {
         super(hodorKVOptions);
+        this.watchManager = watchManager;
         final RaftOptions raftOptions = hodorKVOptions.getRaftOptions();
         Map<HodorRaftGroup, HodorRaftStateMachine> stateMachineMap = new HashMap<>();
         HodorRaftGroup hodorRaftGroup = HodorRaftGroup.builder()
             .raftGroupName(KVConstant.HODOR_KV_GROUP_NAME)
             .addresses(raftOptions.getServerAddresses())
             .build();
-        RequestHandler requestHandler = new HodorWatchRequestHandler(this.storageEngine);
-        stateMachineMap.putIfAbsent(hodorRaftGroup, new HodorWatchStateMachine(requestHandler));
+        raftOptions.getParameters().put(WatchManager.class.getName(), watchManager, WatchManager.class);
+        RequestHandler requestHandler = new HodorWatchRequestHandler(this.storageEngine, watchManager);
+        stateMachineMap.putIfAbsent(hodorRaftGroup, new HodorWatchStateMachine(requestHandler, watchManager));
         raftOptions.setStateMachineMap(stateMachineMap);
     }
 
     @Override
     public void start() throws Exception {
         super.start();
+        watchManager.startWatchEvent("hodor-watch-event");
     }
 
     @Override

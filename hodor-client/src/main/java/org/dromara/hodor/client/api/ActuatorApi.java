@@ -80,18 +80,22 @@ public class ActuatorApi {
         executeLogRequest.setOffset(request.getOffset());
         executeLogRequest.setLength(request.getLength());
 
+        final JobExecuteLogResponse jobExecuteLogResponse = getJobExecuteLogResponse(host, executeLogRequest, timeout);
+        LogQueryResult queryResult = new LogQueryResult();
+        queryResult.setOffset(jobExecuteLogResponse.getOffset());
+        queryResult.setLength(jobExecuteLogResponse.getLength());
+        queryResult.setLogData(jobExecuteLogResponse.getData());
+        return queryResult;
+    }
+
+    private JobExecuteLogResponse getJobExecuteLogResponse(Host host, JobExecuteLogRequest executeLogRequest, int timeout) throws InterruptedException, ExecutionException, TimeoutException {
         final byte[] bodyBytes = serializer.serialize(executeLogRequest);
         RemotingMessage requestMessage = RemotingMessage.builder()
             .header(buildJobLogHeader(bodyBytes.length, executeLogRequest))
             .body(bodyBytes)
             .build();
         final RemotingMessage remotingMessage = remotingClient.sendSyncRequest(host, requestMessage, timeout);
-        final JobExecuteLogResponse jobExecuteLogResponse = serializer.deserialize(remotingMessage.getBody(), JobExecuteLogResponse.class);
-        LogQueryResult queryResult = new LogQueryResult();
-        queryResult.setOffset(jobExecuteLogResponse.getOffset());
-        queryResult.setLength(jobExecuteLogResponse.getLength());
-        queryResult.setLogData(jobExecuteLogResponse.getData());
-        return queryResult;
+        return serializer.deserialize(remotingMessage.getBody(), JobExecuteLogResponse.class);
     }
 
     private Header buildJobLogHeader(int bodyLength, JobExecuteLogRequest request) {

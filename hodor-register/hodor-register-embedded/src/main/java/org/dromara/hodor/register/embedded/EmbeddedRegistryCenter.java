@@ -17,8 +17,6 @@
 
 package org.dromara.hodor.register.embedded;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
 import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +28,7 @@ import org.dromara.hodor.common.raft.kv.core.KVConstant;
 import org.dromara.hodor.common.raft.kv.protocol.KVEntry;
 import org.dromara.hodor.common.raft.kv.storage.DBColumnFamily;
 import org.dromara.hodor.common.utils.BytesUtil;
+import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.register.api.ConnectionStateChangeListener;
 import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.LeaderExecutionCallback;
@@ -49,27 +48,33 @@ import org.dromara.hodor.register.embedded.watch.HodorWatchClient;
 @Slf4j
 public class EmbeddedRegistryCenter implements RegistryCenter {
 
+    private EmbeddedRegistryServer embeddedRegistryServer;
+
     private HodorWatchClient watchClient;
 
     private String tableName;
 
+    private WatchManager watchManager;
+
     @Override
     public void init(RegistryConfig config) throws Exception {
-        final EmbeddedRegistryServer embeddedRegistryServer = new EmbeddedRegistryServer(config);
-        embeddedRegistryServer.init();
-        embeddedRegistryServer.start();
         // init client
         HodorRaftGroup hodorRaftGroup = HodorRaftGroup.builder()
             .raftGroupName(KVConstant.HODOR_KV_GROUP_NAME)
             .addresses(config.getServers())
             .build();
-        this.watchClient = new HodorWatchClient(hodorRaftGroup);
         this.tableName = DBColumnFamily.HodorWatch.getName();
+        this.watchManager = new WatchManager(hodorRaftGroup, tableName);
+        embeddedRegistryServer = new EmbeddedRegistryServer(config, watchManager);
+        embeddedRegistryServer.init();
+        embeddedRegistryServer.start();
+        this.watchClient = new HodorWatchClient(hodorRaftGroup);
     }
 
     @Override
     public void close() throws Exception {
         this.watchClient.close();
+        this.embeddedRegistryServer.stop();
     }
 
     @Override
@@ -101,7 +106,7 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
             .stream()
             .map(e -> {
                 final String fullKey = BytesUtil.readUtf8(e.getKey());
-                return StrUtil.removePrefix(StrUtil.removePrefix(fullKey, key), "/");
+                return StringUtils.removeStart(StringUtils.removeStart(fullKey, key), "/");
             })
             .collect(Collectors.toList());
     }
@@ -117,7 +122,7 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
     public void createEphemeral(String key, String value) {
         this.watchClient.getKvClient()
             .kvOperator(tableName)
-            .put(BytesUtil.writeUtf8(key), BytesUtil.writeUtf8(value));
+            .putEphemeral(BytesUtil.writeUtf8(key), BytesUtil.writeUtf8(value));
     }
 
     @Override
@@ -150,22 +155,20 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
     }
 
     private void leaderLatch(String latchPath, LeaderExecutionCallback callback) {
-        if (WatchManager.getInstance().isLeader()) {
+        if (watchManager.isLeader()) {
             try {
                 leaderCallback(latchPath, callback);
             } catch (Exception e) {
                 throw new RegistryException(e);
             }
         }
-        WatchManager.getInstance().addListener(event -> {
+        watchManager.addListener(event -> {
             try {
                 final org.dromara.hodor.common.proto.DataChangeEvent dataChangeEvent = event.getValue();
                 if (dataChangeEvent.getType() == org.dromara.hodor.common.proto.DataChangeEvent.Type.NODE_ADDED) {
                     leaderCallback(latchPath, callback);
                 } else if (dataChangeEvent.getType() == org.dromara.hodor.common.proto.DataChangeEvent.Type.NODE_REMOVED) {
-                    this.watchClient.getKvClient()
-                        .kvOperator(tableName)
-                        .delete(BytesUtil.writeUtf8(latchPath));
+                    log.warn("leader changed , {}", dataChangeEvent.getData().toStringUtf8());
                 }
             } catch (Exception e) {
                 throw new RegistryException(e);
@@ -174,13 +177,7 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
     }
 
     private void leaderCallback(String latchPath, LeaderExecutionCallback callback) throws Exception {
-        this.watchClient.getKvClient()
-            .kvOperator(tableName)
-            .delete(BytesUtil.writeUtf8(latchPath));
         callback.execute();
-        this.watchClient.getKvClient()
-            .kvOperator(tableName)
-            .put(BytesUtil.writeUtf8(latchPath), BytesUtil.writeUtf8(DateUtil.now()));
     }
 
 }

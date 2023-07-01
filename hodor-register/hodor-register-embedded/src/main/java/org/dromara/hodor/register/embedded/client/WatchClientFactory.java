@@ -13,12 +13,12 @@ import org.apache.ratis.rpc.RpcFactory;
  */
 public interface WatchClientFactory extends RpcFactory {
 
-    static ClientFactory cast(RpcFactory rpcFactory) {
-        if (rpcFactory instanceof ClientFactory) {
-            return (ClientFactory)rpcFactory;
+    static WatchClientFactory cast(RpcFactory rpcFactory) {
+        if (rpcFactory instanceof WatchClientFactory) {
+            return (WatchClientFactory)rpcFactory;
         }
         throw new ClassCastException("Cannot cast " + rpcFactory.getClass()
-                + " to " + ClientFactory.class
+                + " to " + WatchClientFactory.class
                 + "; rpc type is " + rpcFactory.getRpcType());
     }
 

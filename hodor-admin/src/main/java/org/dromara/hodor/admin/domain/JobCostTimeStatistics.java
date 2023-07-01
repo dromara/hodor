@@ -1,18 +1,21 @@
 package org.dromara.hodor.admin.domain;
 
-import lombok.Data;
-
 import java.io.Serializable;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 
 @Data
+@Accessors(chain = true)
 public class JobCostTimeStatistics implements Serializable {
 
     private static final long serialVersionUID = 4242455475576975495L;
 
-    private String jobName;//job的名称
+    private String groupName;
 
-    private int costTime;//耗时
+    private String jobName;
+
+    private int costTime;
 
 }
 

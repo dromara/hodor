@@ -1,6 +1,5 @@
 package org.dromara.hodor.register.embedded.service;
 
-import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ratis.thirdparty.io.grpc.Status;
 import org.apache.ratis.thirdparty.io.grpc.stub.StreamObserver;
@@ -9,6 +8,7 @@ import org.dromara.hodor.common.proto.WatchCreateRequest;
 import org.dromara.hodor.common.proto.WatchRequest;
 import org.dromara.hodor.common.proto.WatchResponse;
 import org.dromara.hodor.common.proto.WatchServiceGrpc;
+import org.dromara.hodor.common.utils.Utils;
 import org.dromara.hodor.register.embedded.core.AbstractConnection;
 import org.dromara.hodor.register.embedded.core.WatchManager;
 import org.dromara.hodor.register.embedded.core.WatchedStatus;
@@ -22,7 +22,12 @@ import org.dromara.hodor.register.embedded.core.WatchedStatus;
 @Slf4j
 public class GrpcWatchServerProtocolService extends WatchServiceGrpc.WatchServiceImplBase {
 
-    private final WatchManager watchManager = WatchManager.getInstance();
+    private final WatchManager watchManager;
+
+    public GrpcWatchServerProtocolService(WatchManager watchManager) {
+        Utils.Assert.notNull(watchManager, "watch manager must be not null");
+        this.watchManager = watchManager;
+    }
 
     @Override
     public StreamObserver<WatchRequest> watch(StreamObserver<WatchResponse> responseObserver) {
@@ -35,19 +40,20 @@ public class GrpcWatchServerProtocolService extends WatchServiceGrpc.WatchServic
             @Override
             public void onNext(WatchRequest request) {
                 // init request
+                final String connectionId = request.getNodeId();
                 if (initRequest) {
-                    watchStreamConnection.setConnectionId(StrUtil.toString(request.getNodeId()));
+                    watchStreamConnection.setConnectionId(connectionId);
                     watchManager.addWatchConnection(watchStreamConnection.getConnectionId(), watchStreamConnection);
                     initRequest = false;
                 }
 
                 if (request.hasCreateRequest()) {
                     final WatchCreateRequest createRequest = request.getCreateRequest();
-                    watchManager.addWatchRequest(createRequest);
+                    watchManager.addWatchRequest(connectionId, createRequest);
                 }
                 if (request.hasCancelRequest()) {
                     final WatchCancelRequest cancelRequest = request.getCancelRequest();
-                    watchManager.cancelWatchRequest(cancelRequest);
+                    watchManager.cancelWatchRequest(connectionId, cancelRequest);
                 }
             }
 
@@ -65,6 +71,9 @@ public class GrpcWatchServerProtocolService extends WatchServiceGrpc.WatchServic
             public void onCompleted() {
                 log.info("watch stream: {} stream close.", watchStreamConnection.getConnectionId());
                 responseObserver.onCompleted();
+                final String connectionId = watchStreamConnection.getConnectionId();
+                final int lastIndexOf = connectionId.lastIndexOf("-");
+                watchManager.killSession(connectionId.substring(0, lastIndexOf));
                 clear();
             }
 
