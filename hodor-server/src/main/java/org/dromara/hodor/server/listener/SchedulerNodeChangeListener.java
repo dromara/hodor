@@ -3,6 +3,7 @@ package org.dromara.hodor.server.listener;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.utils.StringUtils;
+import org.dromara.hodor.common.utils.Utils;
 import org.dromara.hodor.model.scheduler.CopySet;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
 import org.dromara.hodor.register.api.DataChangeEvent;
@@ -66,7 +67,7 @@ public class SchedulerNodeChangeListener implements DataChangeListener {
         }
 
         String nodeIp = schedulerNodePath.get(2);
-        if (event.getType() == DataChangeEvent.Type.NODE_ADDED) {
+        if (event.getType() == DataChangeEvent.Type.NODE_ADDED || event.getType() == DataChangeEvent.Type.NODE_UPDATED) {
             manager.addNodeServer(nodeIp);
             if (!hodorService.isMasterNode()) {
                 return;
@@ -90,6 +91,7 @@ public class SchedulerNodeChangeListener implements DataChangeListener {
                 }
             });
             // update metadata
+            log.info("UpdateMetadata {}", Utils.Jsons.toJsonPrettyStr(metadata));
             hodorService.updateMetadata(metadata);
         }
 

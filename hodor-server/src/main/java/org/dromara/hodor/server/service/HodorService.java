@@ -1,7 +1,6 @@
 package org.dromara.hodor.server.service;
 
 import com.google.common.collect.Lists;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.hodor.common.HodorLifecycle;
@@ -18,13 +17,14 @@ import org.dromara.hodor.scheduler.api.HodorScheduler;
 import org.dromara.hodor.scheduler.api.SchedulerManager;
 import org.dromara.hodor.server.executor.JobExecutorTypeManager;
 import org.dromara.hodor.server.listener.ActuatorNodeChangeListener;
-import org.dromara.hodor.server.listener.LeaderElectChangeListener;
 import org.dromara.hodor.server.listener.MetadataChangeListener;
 import org.dromara.hodor.server.listener.SchedulerNodeChangeListener;
 import org.dromara.hodor.server.manager.ActuatorNodeManager;
 import org.dromara.hodor.server.manager.CopySetManager;
 import org.dromara.hodor.server.manager.SchedulerNodeManager;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * hodor service
@@ -62,12 +62,13 @@ public class HodorService implements HodorLifecycle {
 
     @Override
     public void start() {
+        registryService.initNode();
         // waiting node ready
         registryService.waitServerStarted();
         // register listener
         registryService.registryActuatorNodeListener(new ActuatorNodeChangeListener(actuatorNodeManager));
         registryService.registryMetadataListener(new MetadataChangeListener(this));
-        registryService.registryElectLeaderListener(new LeaderElectChangeListener(this));
+        //registryService.registryElectLeaderListener(new LeaderElectChangeListener(this));
         registryService.registrySchedulerNodeListener(new SchedulerNodeChangeListener(schedulerNodeManager, this));
         //registerService.registryJobEventListener(new JobEventDispatchListener(this));
 
@@ -77,6 +78,7 @@ public class HodorService implements HodorLifecycle {
 
     @Override
     public void stop() throws Exception {
+        registryService.removeServerNode();
         registryService.stop();
         copySetManager.clearCopySet();
         schedulerNodeManager.clearNodeServer();
@@ -156,10 +158,6 @@ public class HodorService implements HodorLifecycle {
     }
 
     public boolean isMasterNode() {
-        if (!leaderService.hasLeader()) {
-            log.info("not exist leader node.");
-            return false;
-        }
         // 节点下线，由主节点通知进行CopySet的主从切换
         return leaderService.isLeader();
     }

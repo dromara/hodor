@@ -31,38 +31,16 @@ public class LeaderService {
     public void electLeader(final LeaderExecutionCallback callback) {
         registryCenter.executeInLeader(SchedulerNode.LATCH_PATH, () -> {
             log.info("server {} to be leader.", registryService.getServerEndpoint());
-            createLeaderNode();
             callback.execute();
-            /*if (!hasLeader()) {
-                createLeaderNode();
-                callback.execute();
-            }*/
         });
     }
 
-    /**
-     * 创建主节点
-     */
-    public void createLeaderNode() {
-        registryCenter.createEphemeral(SchedulerNode.MASTER_ACTIVE_PATH, registryService.getServerEndpoint());
-    }
-
-    /**
-     *是否存在主节点
-     */
-    public boolean hasLeader() {
-        return registryCenter.checkExists(SchedulerNode.MASTER_ACTIVE_PATH);
-    }
 
     /**
      * 当期节点是否为主节点
      */
     public boolean isLeader() {
-        return registryService.getServerEndpoint().equals(getLeaderEndpoint());
-    }
-
-    public String getLeaderEndpoint() {
-        return registryCenter.get(SchedulerNode.MASTER_ACTIVE_PATH);
+        return registryCenter.isLeaderNode();
     }
 
 }

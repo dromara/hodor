@@ -1,7 +1,5 @@
 package org.dromara.hodor.server.service;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.HodorLifecycle;
 import org.dromara.hodor.common.utils.GsonUtils;
@@ -18,6 +16,9 @@ import org.dromara.hodor.register.api.node.SchedulerNode;
 import org.dromara.hodor.server.config.HodorServerProperties;
 import org.dromara.hodor.server.listener.RegistryConnectionStateListener;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * register service
@@ -54,7 +55,6 @@ public class RegistryService implements HodorLifecycle {
             .build();
         registryCenter.init(config);
         this.registryConnectionStateListener(new RegistryConnectionStateListener(this));
-        initNode();
     }
 
     @Override
@@ -70,6 +70,10 @@ public class RegistryService implements HodorLifecycle {
         // init path
         // init data
         createServerNode(SchedulerNode.getServerNodePath(getServerEndpoint()), getServerEndpoint());
+    }
+
+    public void removeServerNode() {
+        registryCenter.remove(SchedulerNode.getServerNodePath(getServerEndpoint()));
     }
 
     public void waitServerStarted() {

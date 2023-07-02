@@ -17,8 +17,6 @@
 
 package org.dromara.hodor.register.embedded.watch;
 
-import java.nio.charset.StandardCharsets;
-import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ratis.client.RaftClientConfigKeys;
 import org.apache.ratis.conf.Parameters;
@@ -38,6 +36,9 @@ import org.dromara.hodor.common.utils.BytesUtil;
 import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.embedded.core.WatchRaftClient;
+
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
 
 /**
  * HodorWatchClient
@@ -81,7 +82,7 @@ public class HodorWatchClient implements AutoCloseable {
         return builder.build();
     }
 
-    public void watch(byte[] watchKey, DataChangeListener dataChangeListener) {
+    public void watch(byte[] watchKey, DataChangeListener dataChangeListener) throws Exception {
         WatchCreateRequest createRequest = WatchCreateRequest.newBuilder()
             .setKey(ByteString.copyFrom(watchKey))
             .build();
@@ -103,7 +104,7 @@ public class HodorWatchClient implements AutoCloseable {
         });
     }
 
-    public void unwatch(byte[] watchKey) {
+    public void unwatch(byte[] watchKey) throws Exception {
         WatchCancelRequest createRequest = WatchCancelRequest.newBuilder()
             .setKey(ByteString.copyFrom(watchKey))
             .build();

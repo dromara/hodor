@@ -36,4 +36,5 @@ public interface RegistryCenter {
 
     void executeInLeader(String latchPath, LeaderExecutionCallback callback);
 
+    boolean isLeaderNode();
 }

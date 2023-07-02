@@ -17,18 +17,19 @@
  */
 package org.dromara.hodor.register.embedded.client;
 
-import java.io.Closeable;
 import org.apache.ratis.protocol.RaftPeer;
 import org.apache.ratis.protocol.RaftPeerId;
 import org.apache.ratis.util.IOUtils;
 import org.dromara.hodor.common.proto.WatchRequest;
 
+import java.io.Closeable;
+
 /** The client side rpc of a raft service. */
 public interface WatchClientRpc extends RaftPeer.Add, Closeable {
 
-  void watch(WatchRequest watchRequest, WatchCallback watchCallback);
+  void watch(WatchRequest watchRequest, WatchCallback watchCallback) throws Exception;
 
-  void unwatch(WatchRequest watchRequest);
+  void unwatch(WatchRequest watchRequest) throws Exception;
 
   /**
    * Handle the given throwable. For example, try reconnecting.
