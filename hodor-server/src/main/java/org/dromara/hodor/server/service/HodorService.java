@@ -69,7 +69,6 @@ public class HodorService implements HodorLifecycle {
         registryService.registryActuatorNodeListener(new ActuatorNodeChangeListener(actuatorNodeManager));
         registryService.registryMetadataListener(new MetadataChangeListener(this));
         //registryService.registryElectLeaderListener(new LeaderElectChangeListener(this));
-        registryService.registrySchedulerNodeListener(new SchedulerNodeChangeListener(schedulerNodeManager, this));
         //registerService.registryJobEventListener(new JobEventDispatchListener(this));
 
         // select leader
@@ -79,7 +78,6 @@ public class HodorService implements HodorLifecycle {
     @Override
     public void stop() throws Exception {
         registryService.removeServerNode();
-        registryService.stop();
         copySetManager.clearCopySet();
         schedulerNodeManager.clearNodeServer();
         actuatorNodeManager.clearActuatorNodes();
@@ -89,6 +87,7 @@ public class HodorService implements HodorLifecycle {
     public void electLeader() {
         leaderService.electLeader(() -> {
             actuatorNodeManager.startOfflineActuatorClean();
+            registryService.registrySchedulerNodeListener(new SchedulerNodeChangeListener(schedulerNodeManager, this));
             this.createNewHodorMetadata();
         });
     }
