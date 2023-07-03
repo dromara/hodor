@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ratis.conf.Parameters;
+import org.apache.ratis.conf.RaftProperties;
 import org.dromara.hodor.common.exception.HodorException;
 import org.dromara.hodor.common.extension.Join;
 import org.dromara.hodor.common.raft.HodorRaftGroup;
@@ -60,9 +62,14 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
     @Override
     public void init(RegistryConfig config) throws Exception {
         // init client
+        final Parameters parameters = new Parameters();
+        final RaftProperties raftProperties = new RaftProperties();
+        raftProperties.set(KVConstant.HODOR_CLIENT_ID, config.getEndpoint());
         HodorRaftGroup hodorRaftGroup = HodorRaftGroup.builder()
             .raftGroupName(KVConstant.HODOR_KV_GROUP_NAME)
             .addresses(config.getServers())
+            .raftProperties(raftProperties)
+            .parameters(parameters)
             .build();
         this.tableName = DBColumnFamily.HodorWatch.getName();
         this.watchManager = new WatchManager(hodorRaftGroup, tableName);

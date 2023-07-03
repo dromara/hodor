@@ -32,6 +32,7 @@ import org.dromara.hodor.common.proto.WatchCreateRequest;
 import org.dromara.hodor.common.proto.WatchRequest;
 import org.dromara.hodor.common.raft.HodorRaftGroup;
 import org.dromara.hodor.common.raft.kv.core.HodorKVClient;
+import org.dromara.hodor.common.raft.kv.core.KVConstant;
 import org.dromara.hodor.common.utils.BytesUtil;
 import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;
@@ -53,24 +54,28 @@ public class HodorWatchClient implements AutoCloseable {
 
     private final WatchRaftClient watchRaftClient;
 
+    private final String endpoint;
+
     public HodorWatchClient(final HodorRaftGroup hodorRaftGroup) {
         this.kvClient = new HodorKVClient(hodorRaftGroup);
-        this.watchRaftClient = buildWatchClient(hodorRaftGroup.getRaftGroup(), RetryPolicies.retryForeverNoSleep());
+        this.watchRaftClient = buildWatchClient(hodorRaftGroup, RetryPolicies.retryForeverNoSleep());
+        final RaftProperties raftProperties = hodorRaftGroup.getRaftProperties();
+        this.endpoint = raftProperties.get(KVConstant.HODOR_CLIENT_ID);
     }
 
     public HodorKVClient getKvClient() {
         return this.kvClient;
     }
 
-    public WatchRaftClient buildWatchClient(RaftGroup raftGroup, RetryPolicy retryPolicy) {
-        Parameters parameters = new Parameters();
-        RaftProperties raftProperties = new RaftProperties();
+    public WatchRaftClient buildWatchClient(HodorRaftGroup hodorRaftGroup, RetryPolicy retryPolicy) {
+        Parameters parameters = hodorRaftGroup.getParameters();
+        RaftProperties raftProperties = hodorRaftGroup.getRaftProperties();
         ClientId clientId = ClientId.randomId();
         RaftClientConfigKeys.Rpc.setRequestTimeout(raftProperties,
             TimeDuration.valueOf(90, TimeUnit.SECONDS));
         WatchRaftClient.Builder builder = WatchRaftClient.newBuilder()
             .setProperties(raftProperties)
-            .setRaftGroup(raftGroup)
+            .setRaftGroup(hodorRaftGroup.getRaftGroup())
             .setRetryPolicy(retryPolicy)
             .setClientId(clientId)
             .setClientRpc(
@@ -87,7 +92,7 @@ public class HodorWatchClient implements AutoCloseable {
             .setKey(ByteString.copyFrom(watchKey))
             .build();
         WatchRequest watchRequest = WatchRequest.newBuilder()
-            .setNodeIdBytes(ByteString.copyFromUtf8(kvClient.getRaftClient().getId().toString()))
+            .setNodeIdBytes(ByteString.copyFromUtf8(endpoint))
             .setCreateRequest(createRequest)
             .build();
 
@@ -109,7 +114,7 @@ public class HodorWatchClient implements AutoCloseable {
             .setKey(ByteString.copyFrom(watchKey))
             .build();
         WatchRequest watchRequest = WatchRequest.newBuilder()
-            .setNodeIdBytes(ByteString.copyFromUtf8(kvClient.getRaftClient().getId().toString()))
+            .setNodeIdBytes(ByteString.copyFromUtf8(endpoint))
             .setCancelRequest(createRequest)
             .build();
         watchRaftClient.watchClientRpc().unwatch(watchRequest);

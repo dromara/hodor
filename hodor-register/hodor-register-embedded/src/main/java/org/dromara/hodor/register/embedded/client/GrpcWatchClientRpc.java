@@ -3,28 +3,52 @@ package org.dromara.hodor.register.embedded.client;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
 import com.google.common.collect.Maps;
-import com.google.common.util.concurrent.*;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningScheduledExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ratis.conf.RaftProperties;
 import org.apache.ratis.grpc.GrpcUtil;
 import org.apache.ratis.protocol.ClientId;
 import org.apache.ratis.protocol.RaftPeer;
 import org.apache.ratis.protocol.RaftPeerId;
-import org.apache.ratis.thirdparty.io.grpc.*;
+import org.apache.ratis.thirdparty.io.grpc.CallOptions;
+import org.apache.ratis.thirdparty.io.grpc.ClientCall;
+import org.apache.ratis.thirdparty.io.grpc.CompressorRegistry;
+import org.apache.ratis.thirdparty.io.grpc.DecompressorRegistry;
+import org.apache.ratis.thirdparty.io.grpc.ManagedChannel;
+import org.apache.ratis.thirdparty.io.grpc.ManagedChannelBuilder;
+import org.apache.ratis.thirdparty.io.grpc.StatusRuntimeException;
 import org.apache.ratis.thirdparty.io.grpc.stub.ClientCalls;
 import org.apache.ratis.thirdparty.io.grpc.stub.StreamObserver;
 import org.apache.ratis.util.IOUtils;
+import org.dromara.hodor.common.concurrent.LockUtil;
 import org.dromara.hodor.common.proto.DataChangeEvent;
 import org.dromara.hodor.common.proto.WatchRequest;
 import org.dromara.hodor.common.proto.WatchResponse;
 import org.dromara.hodor.common.proto.WatchServiceGrpc;
+import org.dromara.hodor.common.raft.kv.core.KVConstant;
 import org.dromara.hodor.common.utils.BytesUtil;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * GrpcWatchClientRpc
@@ -41,11 +65,13 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
 
     private static final Map<byte[], WatchCallback> watchClientCallBackMap = Maps.newTreeMap(byteArrayComparator);
 
+    private static final Lock lock = new ReentrantLock();
+
     private final Map<RaftPeerId, RaftPeer> peers = new ConcurrentHashMap<>();
 
-    private volatile StreamObserver<WatchRequest> watchRequestStreamObserver;
+    private StreamObserver<WatchRequest> watchRequestStreamObserver;
 
-    private volatile ManagedChannel channel;
+    private ManagedChannel channel;
 
     private final ListeningScheduledExecutorService executor;
 
@@ -57,6 +83,10 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
 
     private final ClientId clientId;
 
+    private final String endpoint;
+
+    private final List<WatchRequest> watchRequests;
+
     public GrpcWatchClientRpc(ClientId clientId, RaftProperties properties) {
         this.clientId = clientId;
         this.grpcExecutor = ThreadUtil.newExecutor(4, 4);
@@ -64,19 +94,29 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
         this.executor = MoreExecutors.listeningDecorator(Executors.newScheduledThreadPool(1));
         this.channelKeepAlive = properties.getLong("hodor.watch.keepalive", 60 * 1000);
         this.maxInboundMessageSize = properties.getInt("hodor.watch.max.messageSize", 4096);
+        this.endpoint = properties.get(KVConstant.HODOR_CLIENT_ID);
+        this.watchRequests = new ArrayList<>();
     }
 
     @Override
     public void watch(WatchRequest watchRequest, WatchCallback watchCallback) {
-        startHandleWatchStream();
-        watchRequestStreamObserver.onNext(watchRequest);
-        watchClientCallBackMap.put(watchRequest.getCreateRequest().getKey().toByteArray(), watchCallback);
+        LockUtil.lockMethod(lock, k -> {
+            startHandleWatchStream();
+            watchRequestStreamObserver.onNext(watchRequest);
+            watchRequests.add(watchRequest);
+            watchClientCallBackMap.put(watchRequest.getCreateRequest().getKey().toByteArray(), watchCallback);
+            return null;
+        }, null);
     }
 
     @Override
     public void unwatch(WatchRequest watchRequest) {
-        watchRequestStreamObserver.onNext(watchRequest);
-        watchClientCallBackMap.remove(watchRequest.getCancelRequest().getKey().toByteArray());
+        LockUtil.lockMethod(lock, k -> {
+            watchRequestStreamObserver.onNext(watchRequest);
+            watchRequests.add(watchRequest);
+            watchClientCallBackMap.remove(watchRequest.getCancelRequest().getKey().toByteArray());
+            return null;
+        }, null);
     }
 
     @Override
@@ -120,9 +160,11 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
         if (peers.size() == 0) {
             throw new RuntimeException("peers is empty");
         }
-        final Optional<RaftPeer> any = peers.values().stream().findAny();
-        List<RaftPeer> list = new ArrayList<>(peers.values());
-        list.add(0, any.get());
+        watchStreamSendHandler();
+    }
+
+    private void watchStreamSendHandler() {
+        List<RaftPeer> list = selectPeers();
         for (RaftPeer peer : list) {
             try {
                 final String address = peer.getAddress();
@@ -130,6 +172,9 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
                 String host = endpoint.get(0);
                 int port = Integer.parseInt(endpoint.get(1));
                 channel = createNewManagedChannel(host, port);
+
+                log.info("connect registry endpoint: {}", address);
+
                 final ClientCall<WatchRequest, WatchResponse> clientCall = channel.newCall(WatchServiceGrpc.getWatchMethod(), CallOptions.DEFAULT);
                 this.watchRequestStreamObserver = ClientCalls.asyncBidiStreamingCall(clientCall, new StreamObserver<WatchResponse>() {
                     @Override
@@ -150,17 +195,26 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
                     }
 
                     @Override
+                    @SuppressWarnings("UnstableApiUsage")
                     public void onError(Throwable t) {
-                        log.error("Watch error, {}", t.getMessage(), t);
-                        if (shouldReconnect(t)) {
-                            log.error("Watch reconnect");
-                            started.compareAndSet(true, false);
-                            addOnFailureLoggingCallback(
-                                grpcExecutor,
-                                executor.schedule(() -> startHandleWatchStream(), 500, TimeUnit.MILLISECONDS),
-                                "Scheduled startHandleWatchStream failed"
-                            );
+                        if (channel != null) {
+                            GrpcUtil.shutdownManagedChannel(channel);
                         }
+                        // closing
+                        if (!started.get()) {
+                            return;
+                        }
+                        addOnFailureLoggingCallback(
+                            grpcExecutor,
+                            executor.schedule(() -> {
+                                watchStreamSendHandler();
+                                log.info("Resend registry watch request ...");
+                                for (WatchRequest watchRequest : watchRequests) {
+                                    watchRequestStreamObserver.onNext(watchRequest);
+                                }
+                            }, 500, TimeUnit.MILLISECONDS),
+                            "Scheduled startHandleWatchStream failed"
+                        );
                     }
 
                     @Override
@@ -176,6 +230,21 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
                 GrpcUtil.shutdownManagedChannel(channel);
             }
         }
+    }
+
+    private List<RaftPeer> selectPeers() {
+        final Collection<RaftPeer> raftPeers = peers.values();
+        List<RaftPeer> list = new ArrayList<>(peers.values());
+        if (raftPeers.size() > 1) {
+            final Random rand = new Random();
+            final List<RaftPeer> peerList = raftPeers.stream()
+                .filter(e -> !e.getAddress().equals(endpoint))
+                .collect(Collectors.toList());
+            final int randIndex = rand.nextInt(peerList.size());
+            final RaftPeer raftPeer = peerList.get(randIndex);
+            Optional.ofNullable(raftPeer).ifPresent(e -> list.add(0, raftPeer));
+        }
+        return list;
     }
 
     public Optional<byte[]> getWatchKey(byte[] key) {

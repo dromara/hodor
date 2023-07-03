@@ -66,6 +66,7 @@ public class HodorWatchRequestHandler extends HodorKVRequestHandler {
             case PUT:
                 final PutRequest putRequest = kvRequest.getPutRequest();
                 if (sessionId != null) {
+                    log.info("add session {}", sessionId);
                     watchManager.addEphemeralSession(sessionId, putRequest.getKey());
                 }
                 if (watchManager.containsWatchKey(putRequest.getKey())) {
