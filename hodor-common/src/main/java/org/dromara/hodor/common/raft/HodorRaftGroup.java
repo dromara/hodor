@@ -18,6 +18,8 @@
 package org.dromara.hodor.common.raft;
 
 import lombok.Builder;
+import org.apache.ratis.conf.Parameters;
+import org.apache.ratis.conf.RaftProperties;
 import org.apache.ratis.protocol.RaftGroup;
 import org.apache.ratis.protocol.RaftGroupId;
 
@@ -34,6 +36,10 @@ public class HodorRaftGroup {
 
     private final String addresses;
 
+    private RaftProperties raftProperties;
+
+    private Parameters parameters;
+
     public RaftGroupId getRaftGroupId() {
         return getRaftGroup().getGroupId();
     }
@@ -44,4 +50,11 @@ public class HodorRaftGroup {
             .createRaftGroup(raftGroupName, segmentAddress);
     }
 
+    public RaftProperties getRaftProperties() {
+        return raftProperties == null ? new RaftProperties() : raftProperties;
+    }
+
+    public Parameters getParameters() {
+        return parameters == null ? new Parameters() : parameters;
+    }
 }

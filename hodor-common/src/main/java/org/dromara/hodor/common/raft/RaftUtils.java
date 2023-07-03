@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.ratis.client.RaftClient;
 import org.apache.ratis.client.RaftClientConfigKeys;
 import org.apache.ratis.conf.RaftProperties;
-import org.apache.ratis.protocol.RaftGroup;
 import org.apache.ratis.protocol.RaftPeerId;
 import org.apache.ratis.retry.ExponentialBackoffRetry;
 import org.apache.ratis.util.TimeDuration;
@@ -71,11 +70,11 @@ public final class RaftUtils {
     /**
      * Create a raft client to communicate to ratis server.
      *
-     * @param raftGroup the raft group
+     * @param hodorRaftGroup the raft group
      * @return return a raft client
      */
-    public static RaftClient createClient(RaftGroup raftGroup) {
-        RaftProperties properties = new RaftProperties();
+    public static RaftClient createClient(HodorRaftGroup hodorRaftGroup) {
+        final RaftProperties properties = hodorRaftGroup.getRaftProperties();
         RaftClientConfigKeys.Rpc.setRequestTimeout(properties,
             TimeDuration.valueOf(15, TimeUnit.SECONDS));
         ExponentialBackoffRetry retryPolicy = ExponentialBackoffRetry.newBuilder()
@@ -85,7 +84,7 @@ public final class RaftUtils {
                 TimeDuration.valueOf(100_000, TimeUnit.MILLISECONDS))
             .build();
         return RaftClient.newBuilder()
-            .setRaftGroup(raftGroup)
+            .setRaftGroup(hodorRaftGroup.getRaftGroup())
             .setProperties(properties)
             .setRetryPolicy(retryPolicy)
             .build();

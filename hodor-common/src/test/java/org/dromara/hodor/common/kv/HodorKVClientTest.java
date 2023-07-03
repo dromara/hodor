@@ -18,7 +18,9 @@
 package org.dromara.hodor.common.kv;
 
 import java.util.Arrays;
+import org.dromara.hodor.common.raft.HodorRaftGroup;
 import org.dromara.hodor.common.raft.kv.core.HodorKVClient;
+import org.dromara.hodor.common.raft.kv.core.KVConstant;
 
 /**
  * HodorKVClientTest
@@ -29,7 +31,10 @@ import org.dromara.hodor.common.raft.kv.core.HodorKVClient;
 public class HodorKVClientTest {
 
     public static void main(String[] args) {
-        HodorKVClient kvClient = new HodorKVClient("127.0.0.1:8081,127.0.0.1:8082,127.0.0.1:8083");
+        HodorKVClient kvClient = new HodorKVClient(HodorRaftGroup.builder()
+            .raftGroupName(KVConstant.HODOR_KV_GROUP_NAME)
+            .addresses("127.0.0.1:8081,127.0.0.1:8082,127.0.0.1:8083")
+            .build());
         kvClient.defaultKvOperator()
             .put("a".getBytes(), "1".getBytes());
 

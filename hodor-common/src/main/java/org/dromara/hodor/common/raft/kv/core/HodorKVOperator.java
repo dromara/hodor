@@ -44,11 +44,14 @@ import org.dromara.hodor.common.utils.ProtostuffUtils;
  */
 public class HodorKVOperator implements KVOperator {
 
+    private final String clientId;
+
     private final String tableName;
 
     private final RaftClient raftClient;
 
-    HodorKVOperator(String tableName, final RaftClient raftClient) {
+    HodorKVOperator(String clientId, String tableName, final RaftClient raftClient) {
+        this.clientId = clientId;
         this.tableName = tableName;
         this.raftClient = raftClient;
     }
@@ -96,7 +99,7 @@ public class HodorKVOperator implements KVOperator {
             .build();
         HodorKVRequest request = HodorKVRequest.builder()
             .table(tableName)
-            .sessionId(raftClient.getId().toString())
+            .sessionId(clientId)
             .cmdType(CmdType.PUT)
             .putRequest(putRequest)
             .build();
