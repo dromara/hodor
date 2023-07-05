@@ -1,12 +1,12 @@
 package org.dromara.hodor.actuator.api.handler;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.actuator.api.executor.RequestHandleManager;
 import org.dromara.hodor.remoting.api.HodorChannel;
 import org.dromara.hodor.remoting.api.HodorChannelHandler;
 import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
+import org.dromara.hodor.remoting.api.message.RequestContext;
 
 /**
  * job execute request handler
@@ -22,8 +22,6 @@ public class JobRequestHandler implements HodorChannelHandler {
     private final RemotingMessageSerializer remotingMessageSerializer;
 
     public JobRequestHandler(final RequestHandleManager requestHandleManager, final RemotingMessageSerializer remotingMessageSerializer) {
-        //this.requestHandleManager = RequestHandleManager.getInstance();
-        //this.serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
         this.requestHandleManager = requestHandleManager;
         this.remotingMessageSerializer = remotingMessageSerializer;
     }
