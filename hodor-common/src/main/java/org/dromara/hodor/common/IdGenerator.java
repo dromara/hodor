@@ -1,6 +1,7 @@
 package org.dromara.hodor.common;
 
-import org.dromara.hodor.common.utils.SnowflakeIdWorker;
+import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.util.IdUtil;
 
 /**
  * id generator
@@ -11,12 +12,15 @@ import org.dromara.hodor.common.utils.SnowflakeIdWorker;
 public enum IdGenerator {
     INSTANCE;
 
+    private final Snowflake snowflake = IdUtil.getSnowflake();
+
     public static IdGenerator defaultGenerator() {
         return INSTANCE;
     }
 
     public long nextId() {
-        return SnowflakeIdWorker.nextUniqId();
+        //return SnowflakeIdWorker.nextUniqId();
+        return snowflake.nextId();
     }
 
 }
