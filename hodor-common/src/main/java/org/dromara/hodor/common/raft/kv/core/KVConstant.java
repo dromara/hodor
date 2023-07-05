@@ -27,4 +27,6 @@ public interface KVConstant {
 
     String HODOR_KV_GROUP_NAME = "HodorKVGroup0000";
 
+    String HODOR_CLIENT_ID = "hodor.client.id";
+
 }

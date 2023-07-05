@@ -41,21 +41,21 @@ public class HodorServerInit implements ApplicationRunner, ApplicationContextAwa
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        // start remoting server
-        restServerService.start();
         // register service
         registryService.start();
         // start hodor server
         hodorService.start();
+        // start remoting server
+        restServerService.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             // log something in here.
             log.info("Hodor server shutting down ...");
             // stop service
             try {
+                restServerService.stop();
                 hodorService.stop();
                 registryService.stop();
-                restServerService.stop();
                 log.info("Hodor server shutdown complete ...");
             } catch (Exception e) {
                 log.error("Error where shutting down remote service.", e);

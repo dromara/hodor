@@ -41,6 +41,7 @@ public class GrpcWatchServerProtocolService extends WatchServiceGrpc.WatchServic
             public void onNext(WatchRequest request) {
                 // init request
                 final String connectionId = request.getNodeId();
+                log.info("initRequest: {}, connectionId: {}", initRequest, connectionId);
                 if (initRequest) {
                     watchStreamConnection.setConnectionId(connectionId);
                     watchManager.addWatchConnection(watchStreamConnection.getConnectionId(), watchStreamConnection);
@@ -59,7 +60,7 @@ public class GrpcWatchServerProtocolService extends WatchServiceGrpc.WatchServic
 
             @Override
             public void onError(Throwable t) {
-                log.error("error: {}", t.getMessage(), t);
+                //log.error("error: {}", t.getMessage(), t);
                 Status status = Status.fromThrowable(t);
                 if (status != null && status.getCode() != Status.Code.CANCELLED) {
                     responseObserver.onCompleted();

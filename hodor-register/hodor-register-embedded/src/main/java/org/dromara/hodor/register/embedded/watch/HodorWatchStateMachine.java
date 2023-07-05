@@ -20,6 +20,7 @@ package org.dromara.hodor.register.embedded.watch;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ratis.proto.RaftProtos;
 import org.apache.ratis.protocol.RaftGroupMemberId;
 import org.apache.ratis.protocol.RaftPeerId;
 import org.apache.ratis.statemachine.TransactionContext;
@@ -53,7 +54,7 @@ public class HodorWatchStateMachine extends HodorKVStateMachine {
         RaftPeerId currentPeerId = groupMemberId.getPeerId();
         final DataChangeEvent.Builder dataChangeEventBuilder = DataChangeEvent.newBuilder()
             .setKey(ByteString.copyFrom(SchedulerNode.LATCH_PATH.getBytes(StandardCharsets.UTF_8)))
-            .setData(currentPeerId.toByteString());
+            .setData(newLeaderId.toByteString());
         if (currentPeerId.equals(newLeaderId)) {
             log.info("Current peer {} is LEADER", currentPeerId);
             dataChangeEventBuilder.setType(DataChangeEvent.Type.NODE_ADDED);
@@ -64,6 +65,12 @@ public class HodorWatchStateMachine extends HodorKVStateMachine {
             watchManager.setLeader(false);
         }
         watchManager.publish(Event.create(dataChangeEventBuilder.build(), DataChangeEvent.Type.INITIALIZED));
+    }
+
+    @Override
+    public void notifyServerShutdown(RaftProtos.RoleInfoProto roleInfo) {
+        final ByteString id = this.getId().getRaftPeerIdProto().getId();
+        log.info("notifyServerShutdown: {}", id);
     }
 
     @Override

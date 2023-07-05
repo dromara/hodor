@@ -1,5 +1,6 @@
 package org.dromara.hodor.common.utils;
 
+import cn.hutool.core.util.RuntimeUtil;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
@@ -125,4 +126,7 @@ public final class HostUtils {
         return inetSocketAddress.getPort();
     }
 
+    public static int getPid() {
+        return RuntimeUtil.getPid();
+    }
 }

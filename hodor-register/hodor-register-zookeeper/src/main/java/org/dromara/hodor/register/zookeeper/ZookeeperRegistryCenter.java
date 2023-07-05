@@ -1,12 +1,6 @@
 package org.dromara.hodor.register.zookeeper;
 
 import com.google.common.base.Charsets;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -19,14 +13,17 @@ import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooKeeper;
 import org.dromara.hodor.common.extension.Join;
-import org.dromara.hodor.register.api.ConnectionState;
-import org.dromara.hodor.register.api.ConnectionStateChangeListener;
-import org.dromara.hodor.register.api.DataChangeEvent;
-import org.dromara.hodor.register.api.DataChangeListener;
-import org.dromara.hodor.register.api.LeaderExecutionCallback;
-import org.dromara.hodor.register.api.RegistryCenter;
-import org.dromara.hodor.register.api.RegistryConfig;
+import org.dromara.hodor.register.api.*;
 import org.dromara.hodor.register.api.exception.RegistryException;
+import org.dromara.hodor.register.api.node.SchedulerNode;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * registry center implements by zookeeper
@@ -39,10 +36,16 @@ import org.dromara.hodor.register.api.exception.RegistryException;
 public class ZookeeperRegistryCenter implements RegistryCenter {
 
     private CuratorFramework client;
+
+    private RegistryConfig config;
+
     private final Map<String, TreeCache> caches = new ConcurrentHashMap<>();
+
+    private static final AtomicBoolean isLeader = new AtomicBoolean(false);
 
     @Override
     public void init(final RegistryConfig config) {
+        this.config = config;
         log.info("zookeeper registry center init, server list is {}.", config.getServers());
         // TODO: 这里配置先简单处理
         client = CuratorFrameworkFactory.builder()
@@ -196,9 +199,26 @@ public class ZookeeperRegistryCenter implements RegistryCenter {
             latch.start();
             latch.await();
             callback.execute();
+            isLeader.set(true);
+            createEphemeral(SchedulerNode.MASTER_ACTIVE_PATH, config.getEndpoint());
         } catch (final Exception ex) {
             RegExceptionHandler.handleException(ex);
         }
+        addDataCacheListener(SchedulerNode.MASTER_ACTIVE_PATH, event -> {
+            log.info("LeaderElect change event, {}", event);
+            if (!SchedulerNode.isMasterActivePath(event.getPath())) {
+                return;
+            }
+            if (event.getType() == DataChangeEvent.Type.NODE_REMOVED
+                || event.getType() == DataChangeEvent.Type.NODE_UPDATED) {
+                this.executeInLeader(latchPath, callback);
+            }
+        });
+    }
+
+    @Override
+    public boolean isLeaderNode() {
+        return isLeader.get();
     }
 
     private String makePath(final String parent, final String firstChild, final String... restChildren) {

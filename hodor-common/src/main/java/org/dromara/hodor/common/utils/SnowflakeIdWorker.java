@@ -166,7 +166,8 @@ public class SnowflakeIdWorker {
     private static Long getWorkId() {
         try {
             String hostAddress = HostUtils.getLocalIp();
-            int[] ints = StringUtils.toCodePoints(hostAddress);
+            int pid = HostUtils.getPid();
+            int[] ints = StringUtils.toCodePoints(hostAddress + pid);
             int sums = 0;
             for (int b : ints) {
                 sums += b;

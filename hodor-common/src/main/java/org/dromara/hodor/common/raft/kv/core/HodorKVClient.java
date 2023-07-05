@@ -38,23 +38,16 @@ public class HodorKVClient implements AutoCloseable {
 
     private final Map<String, KVOperator> tableNameMap;
 
-    public HodorKVClient(String address) {
-        RaftUtils.assertRaftGroupAddress(address);
-        HodorRaftGroup hodorRaftGroup = HodorRaftGroup.builder()
-            .raftGroupName(KVConstant.HODOR_KV_GROUP_NAME)
-            .addresses(address)
-            .build();
-        this.raftClient = RaftUtils.createClient(hodorRaftGroup.getRaftGroup());
-        this.tableNameMap = new HashMap<>();
-    }
+    private final String clientId;
 
     public HodorKVClient(final HodorRaftGroup hodorRaftGroup) {
-        this.raftClient = RaftUtils.createClient(hodorRaftGroup.getRaftGroup());
+        this.raftClient = RaftUtils.createClient(hodorRaftGroup);
         this.tableNameMap = new HashMap<>();
+        this.clientId = hodorRaftGroup.getRaftProperties().get(KVConstant.HODOR_CLIENT_ID);
     }
 
     public KVOperator kvOperator(String tableName) {
-        return tableNameMap.computeIfAbsent(tableName, k -> new HodorKVOperator(tableName, raftClient));
+        return tableNameMap.computeIfAbsent(tableName, k -> new HodorKVOperator(clientId, tableName, raftClient));
     }
 
     public KVOperator defaultKvOperator() {

@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ratis.conf.Parameters;
+import org.apache.ratis.conf.RaftProperties;
+import org.dromara.hodor.common.exception.HodorException;
 import org.dromara.hodor.common.extension.Join;
 import org.dromara.hodor.common.raft.HodorRaftGroup;
 import org.dromara.hodor.common.raft.kv.core.KVConstant;
@@ -59,9 +62,14 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
     @Override
     public void init(RegistryConfig config) throws Exception {
         // init client
+        final Parameters parameters = new Parameters();
+        final RaftProperties raftProperties = new RaftProperties();
+        raftProperties.set(KVConstant.HODOR_CLIENT_ID, config.getEndpoint());
         HodorRaftGroup hodorRaftGroup = HodorRaftGroup.builder()
             .raftGroupName(KVConstant.HODOR_KV_GROUP_NAME)
             .addresses(config.getServers())
+            .raftProperties(raftProperties)
+            .parameters(parameters)
             .build();
         this.tableName = DBColumnFamily.HodorWatch.getName();
         this.watchManager = new WatchManager(hodorRaftGroup, tableName);
@@ -141,7 +149,11 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
 
     @Override
     public void addDataCacheListener(String path, DataChangeListener listener) {
-        this.watchClient.watch(BytesUtil.writeUtf8(path), listener);
+        try {
+            this.watchClient.watch(BytesUtil.writeUtf8(path), listener);
+        } catch (Exception e) {
+            throw new HodorException(e);
+        }
     }
 
     @Override
@@ -152,6 +164,11 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
     @Override
     public void executeInLeader(String latchPath, LeaderExecutionCallback callback) {
         leaderLatch(latchPath, callback);
+    }
+
+    @Override
+    public boolean isLeaderNode() {
+        return watchManager.isLeader();
     }
 
     private void leaderLatch(String latchPath, LeaderExecutionCallback callback) {
@@ -166,6 +183,7 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
             try {
                 final org.dromara.hodor.common.proto.DataChangeEvent dataChangeEvent = event.getValue();
                 if (dataChangeEvent.getType() == org.dromara.hodor.common.proto.DataChangeEvent.Type.NODE_ADDED) {
+                    log.warn("leader is {}", dataChangeEvent.getData().toStringUtf8());
                     leaderCallback(latchPath, callback);
                 } else if (dataChangeEvent.getType() == org.dromara.hodor.common.proto.DataChangeEvent.Type.NODE_REMOVED) {
                     log.warn("leader changed , {}", dataChangeEvent.getData().toStringUtf8());
