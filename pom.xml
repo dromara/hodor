@@ -71,7 +71,7 @@
         <curator.version>2.13.0</curator.version>
         <quartz.version>2.3.2</quartz.version>
         <metrics.version>3.2.5</metrics.version>
-        <h2.version>2.1.214</h2.version>
+        <h2.version>2.2.220</h2.version>
         <commons-dbutils.version>1.7</commons-dbutils.version>
         <commons-text.version>1.10.0</commons-text.version>
         <!-- appache commons components -->
