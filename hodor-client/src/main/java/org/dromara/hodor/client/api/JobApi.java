@@ -25,8 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.client.exception.HodorClientException;
 import org.dromara.hodor.common.connect.ConnectStringParser;
 import org.dromara.hodor.common.connect.TrySender;
-import org.dromara.hodor.common.utils.GsonUtils;
-import org.dromara.hodor.common.utils.Utils;
+import org.dromara.hodor.common.utils.Utils.Https;
+import org.dromara.hodor.common.utils.Utils.Jsons;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.model.job.JobKey;
 
@@ -40,8 +40,6 @@ import org.dromara.hodor.model.job.JobKey;
 @RequiredArgsConstructor
 public class JobApi {
 
-    private final GsonUtils gsonUtils = GsonUtils.getInstance();
-
     private final ConnectStringParser connectStringParser;
 
     private final String appName;
@@ -49,8 +47,8 @@ public class JobApi {
     private final String appKey;
 
     public void registerJob(JobDesc job) throws Exception {
-        final HttpResponse response = TrySender.send(connectStringParser, (url) -> Utils.Https.createPost(url + "/scheduler/createJob")
-            .body(gsonUtils.toJson(job))
+        final HttpResponse response = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/scheduler/createJob")
+            .body(Jsons.toJson(job))
             .header("appName", appName)
             .header("appKey", appKey)
             .execute());
@@ -61,8 +59,8 @@ public class JobApi {
     }
 
     public void registerJobs(Collection<JobDesc> jobs) throws Exception {
-        String result = TrySender.send(connectStringParser, (url) -> Utils.Https.createPost(url + "/scheduler/batchCreateJob")
-            .body(gsonUtils.toJson(jobs))
+        String result = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/scheduler/batchCreateJob")
+            .body(Jsons.toJson(jobs))
             .header("appName", appName)
             .header("appKey", appKey)
             .execute()
@@ -71,8 +69,8 @@ public class JobApi {
     }
 
     public void updateJob(JobDesc job) throws Exception {
-        final HttpResponse response = TrySender.send(connectStringParser, (url) -> Utils.Https.createPost(url + "/scheduler/updateJob")
-            .body(gsonUtils.toJson(job))
+        final HttpResponse response = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/scheduler/updateJob")
+            .body(Jsons.toJson(job))
             .header("appName", appName)
             .header("appKey", appKey)
             .execute());
@@ -83,8 +81,8 @@ public class JobApi {
     }
 
     public void deleteJob(JobKey jobKey) throws Exception {
-        String result = TrySender.send(connectStringParser, (url) -> Utils.Https.createPost(url + "/scheduler/deleteJob")
-            .body(gsonUtils.toJson(jobKey))
+        String result = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/scheduler/deleteJob")
+            .body(Jsons.toJson(jobKey))
             .header("appName", appName)
             .header("appKey", appKey)
             .execute()
@@ -93,8 +91,8 @@ public class JobApi {
     }
 
     public void executeJob(JobKey jobKey) throws Exception {
-        String result = TrySender.send(connectStringParser, (url) -> Utils.Https.createPost(url + "/scheduler/executeJob")
-            .body(gsonUtils.toJson(jobKey))
+        String result = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/scheduler/executeJob")
+            .body(Jsons.toJson(jobKey))
             .header("appName", appName)
             .header("appKey", appKey)
             .execute()
@@ -103,8 +101,8 @@ public class JobApi {
     }
 
     public void stopJob(JobKey jobKey) throws Exception {
-        String result = TrySender.send(connectStringParser, (url) -> Utils.Https.createPost(url + "/scheduler/stopJob")
-            .body(gsonUtils.toJson(jobKey))
+        String result = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/scheduler/stopJob")
+            .body(Jsons.toJson(jobKey))
             .header("appName", appName)
             .header("appKey", appKey)
             .execute()

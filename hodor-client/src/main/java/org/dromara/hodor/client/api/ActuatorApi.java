@@ -29,8 +29,8 @@ import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.connect.ConnectStringParser;
 import org.dromara.hodor.common.connect.TrySender;
 import org.dromara.hodor.common.extension.ExtensionLoader;
-import org.dromara.hodor.common.utils.GsonUtils;
-import org.dromara.hodor.common.utils.Utils;
+import org.dromara.hodor.common.utils.Utils.Https;
+import org.dromara.hodor.common.utils.Utils.Jsons;
 import org.dromara.hodor.model.actuator.BindingInfo;
 import org.dromara.hodor.remoting.api.RemotingClient;
 import org.dromara.hodor.remoting.api.RemotingConst;
@@ -49,8 +49,6 @@ import org.dromara.hodor.remoting.api.message.response.JobExecuteLogResponse;
  */
 @Slf4j
 public class ActuatorApi {
-
-    private final GsonUtils gsonUtils = GsonUtils.getInstance();
 
     private final ConnectStringParser connectStringParser;
 
@@ -111,8 +109,8 @@ public class ActuatorApi {
         BindingInfo bindingInfo = new BindingInfo()
             .setClusterName(clusterName)
             .setGroupName(group);
-        final HttpResponse response = TrySender.send(connectStringParser, (url) -> Utils.Https.createPost(url + "/actuator/binding")
-            .body(gsonUtils.toJson(bindingInfo))
+        final HttpResponse response = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/actuator/binding")
+            .body(Jsons.toJson(bindingInfo))
             .header("appName", appName)
             .header("appKey", appKey)
             .execute());
@@ -126,8 +124,8 @@ public class ActuatorApi {
         BindingInfo bindingInfo = new BindingInfo()
             .setClusterName(clusterName)
             .setGroupName(group);
-        final HttpResponse response = TrySender.send(connectStringParser, (url) -> Utils.Https.createPost(url + "/actuator/unbinding")
-            .body(gsonUtils.toJson(bindingInfo))
+        final HttpResponse response = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/actuator/unbinding")
+            .body(Jsons.toJson(bindingInfo))
             .header("appName", appName)
             .header("appKey", appKey)
             .execute());

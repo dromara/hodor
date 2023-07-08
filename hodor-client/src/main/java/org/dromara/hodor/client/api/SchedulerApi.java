@@ -17,11 +17,83 @@
 
 package org.dromara.hodor.client.api;
 
+import cn.hutool.core.lang.TypeReference;
+import cn.hutool.http.HttpResponse;
+import java.util.List;
+import java.util.Objects;
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.client.exception.HodorClientException;
+import org.dromara.hodor.client.model.SchedulerNodeResult;
+import org.dromara.hodor.common.connect.ConnectStringParser;
+import org.dromara.hodor.common.connect.TrySender;
+import org.dromara.hodor.common.utils.StringUtils;
+import org.dromara.hodor.common.utils.Utils.Https;
+import org.dromara.hodor.common.utils.Utils.Jsons;
+import org.dromara.hodor.model.common.HodorResult;
+import org.dromara.hodor.model.scheduler.HodorMetadata;
+
 /**
  * SchedulerApi
  *
  * @author tomgs
  * @since 1.0
  */
+@Slf4j
 public class SchedulerApi {
+
+    private final ConnectStringParser connectStringParser;
+
+    private final String appName;
+
+    private final String appKey;
+
+    public SchedulerApi(ConnectStringParser connectStringParser, String appName, String appKey) {
+        this.connectStringParser = connectStringParser;
+        this.appName = appName;
+        this.appKey = appKey;
+    }
+
+    public List<SchedulerNodeResult> getSchedulers() throws Exception {
+        final HttpResponse response = TrySender.send(connectStringParser, (url) -> Https.createGet(url + "/scheduler/nodeInfos")
+            .header("appName", appName)
+            .header("appKey", appKey)
+            .execute());
+        if (!Objects.requireNonNull(response).isOk()) {
+            throw new HodorClientException("getSchedulers failure, " + response.body());
+        }
+        log.debug("Get SchedulerNodeResult : {}", response.body());
+        final HodorResult<List<SchedulerNodeResult>> hodorResult = Jsons.toBean(response.body(),
+            new TypeReference<HodorResult<List<SchedulerNodeResult>>>() {
+            }, false);
+        if (!hodorResult.isSuccess()) {
+            throw new HodorClientException(hodorResult.getMsg());
+        }
+        return hodorResult.getData();
+    }
+
+    public HodorMetadata getMetadata(String endpoint) throws Exception {
+        ConnectStringParser parser = connectStringParser;
+        boolean localed = false;
+        if (StringUtils.isNotBlank(endpoint)) {
+            parser = new ConnectStringParser("http://" + endpoint + "/" + connectStringParser.getRootName());
+            localed = true;
+        }
+        final String path = "/scheduler/metadata?located=" + localed;
+        final HttpResponse response = TrySender.send(parser, (url) -> Https.createGet(url + path)
+            .header("appName", appName)
+            .header("appKey", appKey)
+            .execute());
+        if (!Objects.requireNonNull(response).isOk()) {
+            throw new HodorClientException("getMetadata failure, " + response.body());
+        }
+        log.debug("Get HodorMetadata : {}", response.body());
+        final HodorResult<HodorMetadata> hodorResult = Jsons.toBean(response.body(),
+            new TypeReference<HodorResult<HodorMetadata>>() {
+            }, false);
+        if (!hodorResult.isSuccess()) {
+            throw new HodorClientException(hodorResult.getMsg());
+        }
+        return hodorResult.getData();
+    }
+
 }
