@@ -15,32 +15,74 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.admin.service;
+package org.dromara.hodor.admin.domain;
 
-import java.util.List;
-import org.dromara.hodor.admin.domain.SchedulerNodeInfo;
-import org.dromara.hodor.model.scheduler.HodorMetadata;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
- * ScheduleOperatorService
+ * SchedulerNodeInfo
  *
  * @author tomgs
  * @since 1.0
  */
-public interface ScheduleOperatorService {
+@Data
+@Accessors(chain = true)
+public class SchedulerNodeInfo {
 
     /**
-     * 获取调度节点列表
-     *
-     * @return 调度节点列表信息
+     * 集群名称
      */
-    List<SchedulerNodeInfo> getSchedulers() throws Exception;
+    private String name;
 
     /**
-     * 获取节点元数据
-     *
-     * @param endpoint 节点
-     * @return 元数据
+     * 节点角色
      */
-    HodorMetadata getMetadata(String endpoint) throws Exception;
+    private String role;
+
+    /**
+     * 上报时间戳
+     */
+    private Long reportTime;
+
+    /**
+     * 执行端机器ip
+     */
+    private String ip;
+
+    /**
+     * 执行端端口
+     */
+    private Integer port;
+
+    /**
+     * 执行端进程pid
+     */
+    private Long pid;
+
+    /**
+     * 版本号
+     */
+    private String version;
+
+    /**
+     * 执行端节点hostname
+     */
+    private String hostname;
+
+    /**
+     * cpu使用
+     */
+    private Double cpuUsage;
+
+    /**
+     * 内存使用
+     */
+    private Double memoryUsage;
+
+    /**
+     * 机器负载
+     */
+    private Double loadAverage;
+
 }
