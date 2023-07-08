@@ -2,6 +2,7 @@ package org.dromara.hodor.model.scheduler;
 
 import java.util.List;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 /**
@@ -12,6 +13,7 @@ import lombok.Getter;
  */
 @Getter
 @Builder
+@EqualsAndHashCode
 public class HodorMetadata {
 
     private final List<Long> intervalOffsets;

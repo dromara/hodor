@@ -32,7 +32,7 @@ public class NodeInfo {
     /**
      * 执行端进程pid
      */
-    private String pid;
+    private Long pid;
 
     /**
      * 版本号
@@ -47,17 +47,17 @@ public class NodeInfo {
     /**
      * cpu使用占比
      */
-    private Double cpuRatio;
+    private Double cpuUsage;
 
     /**
      * 内存使用占比
      */
-    private Double memoryRatio;
+    private Double memoryUsage;
 
     /**
      * 机器负载占比
      */
-    private Double loadAverageRatio;
+    private Double loadAverage;
 
     /**
      * 任务队列大小
