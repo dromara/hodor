@@ -19,6 +19,8 @@ public class HodorHttpRequest implements Serializable {
 
     private String uri;
 
+    private String path;
+
     private String method;
 
     private byte[] content = new byte[0];

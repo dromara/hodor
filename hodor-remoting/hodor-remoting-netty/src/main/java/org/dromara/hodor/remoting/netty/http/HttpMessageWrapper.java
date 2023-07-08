@@ -39,10 +39,11 @@ public final class HttpMessageWrapper {
         ByteBuf content = httpRequest.content();
         String uri = httpRequest.uri();
         QueryStringDecoder queryStringDecoder = new QueryStringDecoder(uri);
+        String path = queryStringDecoder.path();
         Map<String, List<String>> queryParameters = queryStringDecoder.parameters();
-
         HodorHttpRequest hodorHttpRequest = new HodorHttpRequest();
         hodorHttpRequest.setUri(uri);
+        hodorHttpRequest.setPath(path);
         hodorHttpRequest.setMethod(method.name());
         hodorHttpRequest.setQueryParameters(queryParameters);
         hodorHttpRequest.setProtocolVersion(httpVersion.toString());
