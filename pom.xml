@@ -96,6 +96,8 @@
         <rocksdb.version>7.0.3</rocksdb.version>
         <affinity.version>3.1.7</affinity.version>
         <knife4j.version>4.1.0</knife4j.version>
+        <oshi-core.version>6.1.1</oshi-core.version>
+        <jna.version>5.10.0</jna.version>
         <!-- test -->
         <junit.version>4.13.2</junit.version>
         <mockito.version>4.11.0</mockito.version>
@@ -466,6 +468,35 @@
                 <groupId>com.github.xiaoymin</groupId>
                 <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
                 <version>${knife4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.oshi</groupId>
+                <artifactId>oshi-core</artifactId>
+                <version>${oshi-core.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-simple</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.hamcrest</groupId>
+                        <artifactId>hamcrest</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>net.java.dev.jna</groupId>
+                <artifactId>jna</artifactId>
+                <version>${jna.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.java.dev.jna</groupId>
+                <artifactId>jna-platform</artifactId>
+                <version>${jna.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

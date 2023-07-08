@@ -4,7 +4,7 @@ import org.dromara.hodor.actuator.api.config.HodorProperties;
 import org.dromara.hodor.actuator.api.executor.ExecutorManager;
 import org.dromara.hodor.common.executor.ExecutorInfo;
 import org.dromara.hodor.common.utils.HostUtils;
-import org.dromara.hodor.common.utils.MachineUtils;
+import org.dromara.hodor.common.utils.Utils;
 import org.dromara.hodor.model.node.NodeInfo;
 
 /**
@@ -28,10 +28,10 @@ public class NodeManager {
         String ip = HostUtils.getLocalIp();
         String hostName = HostUtils.getLocalHostName();
         Integer port = hodorProperties.getPort();
-        String pid = MachineUtils.getPID();
-        Double cpuUsage = MachineUtils.getCpuUsage();
-        Double memUsage = MachineUtils.getMemUsage();
-        //Double loadAverage = MachineUtils.getLoadAverage();
+        long pid = Utils.Systems.getCurrentPID();
+        Double cpuUsage = Utils.Systems.getCpuUsage();
+        Double memUsage = Utils.Systems.getMemUsage();
+        Double loadAverage = Utils.Systems.getLoadAverage();
         ExecutorInfo executorInfo = executorManager.getHodorExecutor().getExecutorInfo();
 
         return NodeInfo.builder()
@@ -39,9 +39,9 @@ public class NodeManager {
             .port(port)
             .hostname(hostName)
             .pid(pid)
-            .cpuRatio(cpuUsage)
-            .memoryRatio(memUsage)
-            //.loadAverageRatio()
+            .cpuUsage(cpuUsage)
+            .memoryUsage(memUsage)
+            .loadAverage(loadAverage)
             .executeCount(executorInfo.getCompleteTaskCount())
             .queueSize(executorInfo.getQueueSize())
             .waitingQueueSize(executorInfo.getWaitTaskCount())

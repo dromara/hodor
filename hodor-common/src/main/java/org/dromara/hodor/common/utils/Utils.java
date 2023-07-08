@@ -22,6 +22,11 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
+import cn.hutool.system.SystemUtil;
+import cn.hutool.system.oshi.OshiUtil;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import oshi.hardware.GlobalMemory;
 
 /**
  * Utils
@@ -55,6 +60,42 @@ public class Utils {
 
     public static class Jsons extends JSONUtil {
 
+        public static String toJson(Object obj) {
+            return toJsonStr(obj);
+        }
+    }
+
+    public static class Systems extends SystemUtil {
+
+        public static Double getCpuUsage() {
+            return OshiUtil.getCpuInfo().getUsed();
+        }
+
+        public static Double getMemUsage() {
+            GlobalMemory memory = OshiUtil.getMemory();
+            double memoryUsage = (memory.getTotal() - memory.getAvailable()) * 1.0 / memory.getTotal();
+
+            return doubleFormat(memoryUsage);
+        }
+
+        public static Double getLoadAverage() {
+            double loadAverage;
+            try {
+                loadAverage = getOperatingSystemMXBean().getSystemLoadAverage();
+            } catch (Exception e) {
+                loadAverage = OshiUtil.getHardware().getProcessor().getSystemLoadAverage(1)[0];
+                if (Double.isNaN(loadAverage)) {
+                    return (double) -1;
+                }
+            }
+            return doubleFormat(loadAverage);
+        }
+
+        private static double doubleFormat(double rawValue) {
+            DecimalFormat df = new DecimalFormat("0.00");
+            df.setRoundingMode(RoundingMode.HALF_UP);
+            return Double.parseDouble(df.format(rawValue));
+        }
     }
 
 }

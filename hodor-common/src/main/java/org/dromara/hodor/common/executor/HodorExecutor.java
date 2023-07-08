@@ -176,8 +176,6 @@ public class HodorExecutor {
             }
             Optional.ofNullable(circleQueue.poll()).ifPresent(runnable -> executor.execute(runnable));
         }
-        // 这里为了严谨起见递归调用改用循环方式避免栈溢出
-        // notifyTaskExecute();
     }
 
     public boolean isShutdown() {
