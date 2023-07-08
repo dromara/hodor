@@ -1,6 +1,7 @@
 package org.dromara.hodor.server.service;
 
 import com.google.common.collect.Lists;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.hodor.common.HodorLifecycle;
@@ -13,18 +14,18 @@ import org.dromara.hodor.core.service.JobInfoService;
 import org.dromara.hodor.model.scheduler.CopySet;
 import org.dromara.hodor.model.scheduler.DataInterval;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
+import org.dromara.hodor.register.api.node.SchedulerNode;
 import org.dromara.hodor.scheduler.api.HodorScheduler;
 import org.dromara.hodor.scheduler.api.SchedulerManager;
 import org.dromara.hodor.server.executor.JobExecutorTypeManager;
 import org.dromara.hodor.server.listener.ActuatorNodeChangeListener;
 import org.dromara.hodor.server.listener.MetadataChangeListener;
+import org.dromara.hodor.server.listener.RegistryConnectionStateListener;
 import org.dromara.hodor.server.listener.SchedulerNodeChangeListener;
 import org.dromara.hodor.server.manager.ActuatorNodeManager;
 import org.dromara.hodor.server.manager.CopySetManager;
 import org.dromara.hodor.server.manager.SchedulerNodeManager;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * hodor service
@@ -50,7 +51,9 @@ public class HodorService implements HodorLifecycle {
 
     private final SchedulerManager schedulerManager;
 
-    public HodorService(final LeaderService leaderService, final RegistryService registryService, final JobInfoService jobInfoService) {
+    public HodorService(final LeaderService leaderService,
+                        final RegistryService registryService,
+                        final JobInfoService jobInfoService) {
         this.leaderService = leaderService;
         this.registryService = registryService;
         this.jobInfoService = jobInfoService;
@@ -61,22 +64,28 @@ public class HodorService implements HodorLifecycle {
     }
 
     @Override
+    public void init() {
+        initServerNode();
+    }
+
+    @Override
     public void start() {
-        registryService.initNode();
         // waiting node ready
         registryService.waitServerStarted();
         // register listener
         registryService.registryActuatorNodeListener(new ActuatorNodeChangeListener(actuatorNodeManager));
         registryService.registryMetadataListener(new MetadataChangeListener(this));
-        //registryService.registryElectLeaderListener(new LeaderElectChangeListener(this));
-        //registerService.registryJobEventListener(new JobEventDispatchListener(this));
-
+        registryService.registryConnectionStateListener(new RegistryConnectionStateListener(this));
         // select leader
         electLeader();
     }
 
+    public void initServerNode() {
+        registryService.createServerNode(SchedulerNode.getServerNodePath(getServerEndpoint()), getServerEndpoint());
+    }
+
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         registryService.removeServerNode();
         copySetManager.clearCopySet();
         schedulerNodeManager.clearNodeServer();

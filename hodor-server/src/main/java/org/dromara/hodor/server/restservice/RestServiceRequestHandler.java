@@ -1,6 +1,8 @@
 package org.dromara.hodor.server.restservice;
 
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.text.StrSplitter;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
@@ -41,10 +43,10 @@ public class RestServiceRequestHandler implements HodorChannelHandler {
         try {
             HodorHttpRequest httpRequest = (HodorHttpRequest) message;
             // /hodor/{serviceName}/{methodName}
-            String uri = httpRequest.getUri();
-            List<String> requestPath = StrSplitter.splitPath(uri, 2);
+            String path = httpRequest.getPath();
+            List<String> requestPath = StrSplitter.splitPath(path, 2);
             if (requestPath.size() != 2) {
-                responseError(404, "not found path -> " + uri, channel);
+                responseError(404, "not found path -> " + path, channel);
                 return;
             }
 
@@ -71,9 +73,15 @@ public class RestServiceRequestHandler implements HodorChannelHandler {
                 Map<String, List<String>> queryParameters = httpRequest.getQueryParameters();
                 if (Collections.isNotEmpty(queryParameters)) {
                     for (int i = 0; i < parameters.length; i++) {
-                        String parameterName = parameters[i].getParameterName();
+                        final HandlerMethod.MethodParameter parameter = parameters[i];
+                        String parameterName = parameter.getParameterName();
+                        final Type parameterizedType = parameter.getParameterizedType();
                         List<String> values = queryParameters.get(parameterName);
-                        args[i] =values.size() == 1 ? values.get(0) : values;
+                        if (Collections.isEmpty(values)) {
+                            responseError(400, "Not foud param " + parameterName, channel);
+                            return;
+                        }
+                        args[i] = values.size() == 1 ? Convert.convert(parameterizedType, values.get(0)) : values;
                     }
                 }
                 byte[] content = httpRequest.getContent();
@@ -87,7 +95,7 @@ public class RestServiceRequestHandler implements HodorChannelHandler {
             byte[] responseByteArray = serializer.toJson(result).getBytes(StandardCharsets.UTF_8);
             responseSuccess(responseByteArray, channel);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("RestServiceRequestHandler exception, {}", e.getMessage(), e);
             responseError(500, "Hodor rest server error -> " + e.getMessage(), channel);
         }
 

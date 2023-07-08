@@ -2,6 +2,7 @@ package org.dromara.hodor.server.api;
 
 import cn.hutool.core.lang.TypeReference;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -10,6 +11,7 @@ import org.dromara.hodor.common.cron.CronUtils;
 import org.dromara.hodor.common.utils.HashUtils;
 import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.common.utils.StringUtils;
+import org.dromara.hodor.common.utils.Utils;
 import org.dromara.hodor.common.utils.Utils.Assert;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.core.service.JobInfoService;
@@ -21,6 +23,8 @@ import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.model.scheduler.CopySet;
 import org.dromara.hodor.model.scheduler.DataInterval;
+import org.dromara.hodor.model.scheduler.HodorMetadata;
+import org.dromara.hodor.model.scheduler.SchedulerInfo;
 import org.dromara.hodor.remoting.api.http.HodorHttpRequest;
 import org.dromara.hodor.remoting.api.http.HodorHttpResponse;
 import org.dromara.hodor.remoting.api.http.HodorRestClient;
@@ -29,6 +33,7 @@ import org.dromara.hodor.scheduler.api.SchedulerManager;
 import org.dromara.hodor.scheduler.api.exception.CreateJobException;
 import org.dromara.hodor.server.executor.JobExecutorTypeManager;
 import org.dromara.hodor.server.manager.CopySetManager;
+import org.dromara.hodor.server.manager.MetadataManager;
 import org.dromara.hodor.server.restservice.HodorRestService;
 import org.dromara.hodor.server.restservice.RestMethod;
 import org.dromara.hodor.server.service.RegistryService;
@@ -64,6 +69,41 @@ public class SchedulerResource {
     public HodorResult<String> jobTypeNames(List<String> jobTypeNames) {
         // TODO: create job types
         return HodorResult.success("success");
+    }
+
+    @RestMethod("nodeInfos")
+    public HodorResult<List<SchedulerInfo>> nodeInfos() {
+        List<SchedulerInfo> schedulerInfos = new ArrayList<>();
+        final List<String> runningNodes = registryService.getRunningNodes();
+        for (String runningNode : runningNodes) {
+            Optional.ofNullable(registryService.getServerNodeInfo(runningNode))
+                .ifPresent(e -> {
+                    final SchedulerInfo schedulerInfo = Utils.Jsons.toBean(e, SchedulerInfo.class);
+                    schedulerInfos.add(schedulerInfo);
+                });
+        }
+        return HodorResult.success("success", schedulerInfos);
+    }
+
+    @RestMethod("metadata")
+    public HodorResult<HodorMetadata> metadata(boolean localed) {
+        HodorMetadata metadata;
+        if (localed) {
+            metadata = MetadataManager.getInstance().getMetadata();
+        } else {
+            metadata = registryService.getMetadata();
+        }
+        return HodorResult.success("success", metadata);
+    }
+
+    @RestMethod("updateMetadata")
+    public HodorResult<HodorMetadata> updateMetadata(HodorMetadata metadata) {
+        final HodorMetadata localMetadata = MetadataManager.getInstance().getMetadata();
+        if (MetadataManager.getInstance().isEqual(localMetadata, metadata)) {
+            return HodorResult.failure("metadata unchanged");
+        }
+        registryService.createMetadata(metadata);
+        return HodorResult.success("success", metadata);
     }
 
     @RestMethod("createJob")
@@ -194,7 +234,8 @@ public class SchedulerResource {
         if (hodorHttpResponse.getStatusCode() != 200) {
             throw new CreateJobException(new String(hodorHttpResponse.getBody(), StandardCharsets.UTF_8));
         }
-        TypeReference<HodorResult<String>> typeReference = new TypeReference<HodorResult<String>>() {};
+        TypeReference<HodorResult<String>> typeReference = new TypeReference<HodorResult<String>>() {
+        };
         HodorResult<String> result = SerializeUtils.deserialize(hodorHttpResponse.getBody(), typeReference.getType());
         if (!result.isSuccess()) {
             throw new CreateJobException(result.getData());

@@ -1,5 +1,7 @@
 package org.dromara.hodor.server.service;
 
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.HodorLifecycle;
 import org.dromara.hodor.common.utils.GsonUtils;
@@ -14,11 +16,7 @@ import org.dromara.hodor.register.api.RegistryConfig;
 import org.dromara.hodor.register.api.node.ActuatorNode;
 import org.dromara.hodor.register.api.node.SchedulerNode;
 import org.dromara.hodor.server.config.HodorServerProperties;
-import org.dromara.hodor.server.listener.RegistryConnectionStateListener;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * register service
@@ -54,7 +52,6 @@ public class RegistryService implements HodorLifecycle {
             .dataPath(properties.getRegistryDataPath())
             .build();
         registryCenter.init(config);
-        this.registryConnectionStateListener(new RegistryConnectionStateListener(this));
     }
 
     @Override
@@ -64,12 +61,6 @@ public class RegistryService implements HodorLifecycle {
 
     public RegistryCenter getRegistryCenter() {
         return registryCenter;
-    }
-
-    public void initNode() {
-        // init path
-        // init data
-        createServerNode(SchedulerNode.getServerNodePath(getServerEndpoint()), getServerEndpoint());
     }
 
     public void removeServerNode() {
@@ -172,4 +163,7 @@ public class RegistryService implements HodorLifecycle {
         registryCenter.remove(ActuatorNode.createBindingPath(clusterName, groupName));
     }
 
+    public String getServerNodeInfo(String runningNode) {
+        return registryCenter.get(SchedulerNode.getServerMetricsNodePath(runningNode));
+    }
 }

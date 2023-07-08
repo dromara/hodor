@@ -2,6 +2,7 @@ package org.dromara.hodor.server;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.server.service.HodorService;
+import org.dromara.hodor.server.service.MetricService;
 import org.dromara.hodor.server.service.RegistryService;
 import org.dromara.hodor.server.service.RestServerService;
 import org.springframework.beans.BeansException;
@@ -28,31 +29,42 @@ public class HodorServerInit implements ApplicationRunner, ApplicationContextAwa
 
     private final HodorService hodorService;
 
+    private final MetricService metricService;
+
     private final ServiceProvider serviceProvider;
 
     public HodorServerInit(final RestServerService restServerService,
                            final RegistryService registryService,
-                           final HodorService hodorService) {
+                           final HodorService hodorService,
+                           final MetricService metricService) {
         this.restServerService = restServerService;
         this.registryService = registryService;
         this.hodorService = hodorService;
+        this.metricService = metricService;
         this.serviceProvider = ServiceProvider.getInstance();
     }
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
         // register service
+        registryService.init();
         registryService.start();
         // start hodor server
+        hodorService.init();
         hodorService.start();
         // start remoting server
+        restServerService.init();
         restServerService.start();
+        // start metric service
+        metricService.init();
+        metricService.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             // log something in here.
             log.info("Hodor server shutting down ...");
             // stop service
             try {
+                metricService.stop();
                 restServerService.stop();
                 hodorService.stop();
                 registryService.stop();

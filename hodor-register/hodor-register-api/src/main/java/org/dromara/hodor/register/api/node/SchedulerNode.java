@@ -18,10 +18,10 @@ public class SchedulerNode {
 
     public static final String MASTER_ACTIVE_PATH = "/scheduler/master/active";
 
-    public static final String JOB_EVENT = "/scheduler/job-event";
+    public static final String METRICS_NODES_PATH = "/scheduler/metrics/nodes";
 
-    public static String getServerNodePath(String serverId) {
-        return String.format("%s/%s", NODES_PATH, serverId);
+    public static String getServerNodePath(String serverEndpoint) {
+        return String.format("%s/%s", NODES_PATH, serverEndpoint);
     }
 
     public static boolean isNodePath(String path) {
@@ -36,4 +36,7 @@ public class SchedulerNode {
         return StringUtils.isNotBlank(path) && path.equals(METADATA_PATH);
     }
 
+    public static String getServerMetricsNodePath(String serverEndpoint) {
+        return String.format("%s/%s", METRICS_NODES_PATH, serverEndpoint);
+    }
 }
