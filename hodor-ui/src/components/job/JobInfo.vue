@@ -118,9 +118,9 @@ export default defineComponent({
                 key: 'filePath',
             },
             {
-                title: 'corn时间表达式',
-                dataIndex: 'cronExpression',
-                key: 'cronExpression',
+                title: '时间表达式',
+                dataIndex: 'timeExpression',
+                key: 'timeExpression',
             },
             {
                 title: '任务参数',
