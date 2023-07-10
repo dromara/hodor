@@ -31,7 +31,7 @@ export default defineComponent({
             key: 'onOff',
         },
         {
-            title: 'rtx报警接收人列表',
+            title: '报警接收人列表',
             dataIndex: 'alarmRtx',
             key: 'alarmRtx',
         },
