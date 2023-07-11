@@ -1,26 +1,4 @@
-<template>
-    <span>执行节点列表</span>
-    <span>
-        <a-input-search class="search-container" placeholder="请输入你要搜索的节点" @search="onSearch" v-model="searchVal" />
-    </span>
-    <br />
-    <div>
-        <!-- 调度结点列表 -->
-        <a-table :columns="columns" :data-source="data">
-            <!-- 表内数据 -->
-            <template #bodyCell="{ column }">
-                <template v-if="column.key === 'actions'">
-                    <a-space>
-                        <a-button type="primary">查看详情</a-button>
-                        <a-button type="primary">监控信息</a-button>
-                    </a-space>
-                </template>
-            </template>
-        </a-table>
-    </div>
-</template>
-
-<script>
+<script setup>
 // 表的列名
 const columns = [{
     title: 'Id',  // 列名
@@ -62,38 +40,35 @@ const data = [{
     host: '127.0.0.1',
     status: 'Offline',
 }];
-export default {
-    setup() {
-        return {
-            data,
-            columns,
-        };
-    },
-    props: {
-        searchval: {
-            type: String,
-            default: () => {
-                return ''
-            }
-        }
-    },
-    data() {
-        return {
-            searchVal: this.searchval,
-        };
-    },
-
-    methods: {
-        onSearch() {
-
-        },
-    }
-};
 </script>
+
+<template>
+    <span>执行节点列表</span>
+    <span>
+        <a-input-search class="search-container" placeholder="请输入你要搜索的节点" @search="onSearch" v-model="searchVal" />
+    </span>
+    <br />
+    <div>
+        <!-- 调度结点列表 -->
+        <a-table :columns="columns" :data-source="data">
+            <!-- 表内数据 -->
+            <template #bodyCell="{ column }">
+                <template v-if="column.key === 'actions'">
+                    <a-space>
+                        <a-button type="primary">查看详情</a-button>
+                        <a-button type="primary">监控信息</a-button>
+                    </a-space>
+                </template>
+            </template>
+        </a-table>
+    </div>
+</template>
 
 <style scoped>
 .search-container {
     width: 200px;
     float: right;
-};
+}
+
+;
 </style>
