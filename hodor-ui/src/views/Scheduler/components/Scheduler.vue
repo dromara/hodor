@@ -1,7 +1,7 @@
 <template>
     <span>调度结点列表</span>
     <span>
-        <a-input-search class="search-container" placeholder="请输入你要搜索的节点" @search="onSearch" v-model="searchVal" />
+        <a-input-search class="search-container" placeholder="请输入你要搜索的节点" />
     </span>
     <br />
     <div>
@@ -69,25 +69,6 @@ export default {
             columns,
         };
     },
-    props: {
-        searchval: {
-            type: String,
-            default: () => {
-                return ''
-            }
-        }
-    },
-    data() {
-        return {
-            searchVal: this.searchval,
-        };
-    },
-
-    methods: {
-        onSearch() {
-
-        },
-    }
 };
 </script>
 

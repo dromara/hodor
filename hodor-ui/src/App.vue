@@ -3,6 +3,6 @@ import { RouterView } from 'vue-router';
 </script>
 
 <template>
-  <!-- 跳转到home -->
+  <!-- 一级路由 -->
   <RouterView />
 </template>
