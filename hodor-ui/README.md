@@ -6,6 +6,7 @@ Hodor后台管理
 拷贝项目后运行：
 
 ```bash
+npm install
 npm run dev
 ```
 
