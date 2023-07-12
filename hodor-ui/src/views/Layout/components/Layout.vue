@@ -1,6 +1,32 @@
 <script setup>
-import { HomeOutlined, BlockOutlined, BuildOutlined, ProfileOutlined, ApartmentOutlined, LogoutOutlined } from '@ant-design/icons-vue';
+import {
+    HomeOutlined,
+    BlockOutlined,
+    BuildOutlined,
+    ProfileOutlined,
+    ApartmentOutlined,
+    LogoutOutlined,
+    UserOutlined,
+} from '@ant-design/icons-vue';
 import { ref } from 'vue';
+import { useUserStore } from '@/stores/user';
+import { useRouter } from 'vue-router'
+
+const userStore = useUserStore()
+const router = useRouter()
+// 退出登录
+const confirm = () => {
+    // 1. 清除用户信息
+    userStore.clearUserInfo()
+    // 2.跳转到登录页
+    router.push('/login')
+}
+// 取消退出登录
+const cancel = () => {
+
+}
+
+// 左侧菜单
 
 const collapsed = ref(false)
 const selectedKeys = ref(['1'])
@@ -105,10 +131,27 @@ const menu = [
         <a-layout>
             <!-- 页头 -->
             <a-layout-header class="header">
-                <span @click="logout" style="cursor: pointer">
-                    <LogoutOutlined />
-                    <span> 退出</span>
-                </span>
+                <ul>
+                    <li>
+                        <a href="#">
+                            <i>
+                                <UserOutlined />
+                            </i>
+                            {{ userStore.userInfo.username }}
+                        </a>
+                    </li>
+
+                    <li>
+                        <a-popconfirm title="确认退出吗？" ok-text="确认" cancel-text="取消" @confirm="confirm" @cancel="cancel">
+                            <a href="#">
+                                <i>
+                                    <LogoutOutlined />
+                                </i>
+                                退出登录
+                            </a>
+                        </a-popconfirm>
+                    </li>
+                </ul>
             </a-layout-header>
             <!-- 内容 -->
             <a-layout-content style="margin: 0 16px">
@@ -124,12 +167,40 @@ const menu = [
     </a-layout>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .header {
     text-align: right;
     font-size: large;
     background: #24292E;
     padding: 0% 2%;
     color: #fff;
+
+    ul {
+        list-style: none;
+        display: flex;
+        height: 35px;
+        justify-content: flex-end;
+        align-items: center;
+
+        li {
+            a {
+                padding: 0 15px;
+                color: #cdcdcd;
+                line-height: 1;
+                display: inline-block;
+
+                i {
+                    font-size: 16px;
+                    margin-right: 2px;
+                }
+            }
+
+            ~li {
+                a {
+                    border-left: 2px solid #666;
+                }
+            }
+        }
+    }
 }
 </style>
