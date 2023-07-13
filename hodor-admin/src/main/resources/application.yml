@@ -6,7 +6,7 @@ spring:
 
 server:
   servlet:
-    context-path: /hodor/app/
+    context-path: /hodor/
   port: 8088
 
 # springdoc-openapi项目配置
