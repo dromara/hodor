@@ -114,8 +114,14 @@ public class EmbeddedRegistryCenter implements RegistryCenter {
             .stream()
             .map(e -> {
                 final String fullKey = BytesUtil.readUtf8(e.getKey());
-                return StringUtils.removeStart(StringUtils.removeStart(fullKey, key), "/");
+                final String childStr = StringUtils.removeStart(fullKey, key);
+                String child = StringUtils.substringBetween(childStr, "/");
+                if (child == null) {
+                    child = StringUtils.removeStart(childStr, "/");
+                }
+                return child;
             })
+            .distinct()
             .collect(Collectors.toList());
     }
 

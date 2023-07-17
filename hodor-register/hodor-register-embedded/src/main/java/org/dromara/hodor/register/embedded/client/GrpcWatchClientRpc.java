@@ -181,7 +181,7 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
                     public void onNext(WatchResponse response) {
                         try {
                             final DataChangeEvent event = response.getEvent();
-                            log.info("watch event received, {}", event);
+                            log.debug("watch event received, {}", event);
 
                             final Optional<byte[]> watchKeyOptional = getWatchKey(event.getKey().toByteArray());
                             watchKeyOptional.ifPresent(watchKey -> {
