@@ -1,16 +1,15 @@
 package org.dromara.hodor.server.listener;
 
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.common.utils.StringUtils;
+import org.dromara.hodor.common.utils.TimeUtil;
+import org.dromara.hodor.common.utils.Utils.Jsons;
 import org.dromara.hodor.model.node.NodeInfo;
 import org.dromara.hodor.register.api.DataChangeEvent;
 import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.register.api.node.ActuatorNode;
 import org.dromara.hodor.server.manager.ActuatorNodeManager;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * actuator node listener
@@ -30,16 +29,6 @@ public class ActuatorNodeChangeListener implements DataChangeListener {
     @Override
     public void dataChanged(DataChangeEvent event) {
         String actuatorPath = event.getPath();
-        if (ActuatorNode.isNodePath(actuatorPath)) {
-            changeActuatorNodeData(event, actuatorPath);
-            return;
-        }
-
-        if (ActuatorNode.isGroupPath(actuatorPath)) {
-            changeActuatorGroupData(event, actuatorPath);
-            return;
-        }
-
         if (ActuatorNode.isClusterPath(actuatorPath)) {
             changeActuatorClusterData(event, actuatorPath);
             return;
@@ -68,61 +57,21 @@ public class ActuatorNodeChangeListener implements DataChangeListener {
 
     private void changeActuatorClusterData(DataChangeEvent event, String actuatorPath) {
         log.debug("ActuatorClusterChange, eventType: {}, path: {}", event.getType(), actuatorPath);
-        // path: /actuator/clusters/${clusterName}/${endpoint}
+        // path: /actuator/clusters/${clusterName}/${endpoint} -> nodeInfo
         List<String> actuatorClusterPath = StringUtils.splitPath(actuatorPath);
         if (actuatorClusterPath.size() != 4) {
             return;
         }
         String clusterName = actuatorClusterPath.get(2);
         String nodeEndpoint = actuatorClusterPath.get(3);
-        Set<String> groupNames = actuatorNodeManager.getGroupByClusterName(clusterName);
+        final NodeInfo nodeInfo = Jsons.toBean(StringUtils.decodeString(event.getData()), NodeInfo.class);
         if (event.getType() == DataChangeEvent.Type.NODE_UPDATED || event.getType() == DataChangeEvent.Type.NODE_ADDED) {
-            long lastHeartbeat = Long.parseLong(StringUtils.decodeString(event.getData()));
-            for (String groupName : groupNames) {
-                actuatorNodeManager.addActuatorNodeInfo(groupName, nodeEndpoint, lastHeartbeat);
-                actuatorNodeManager.addActuatorEndpoint(groupName, nodeEndpoint);
-            }
+            final long lastHeartbeat = TimeUtil.currentTimeMillis();
+            actuatorNodeManager.addActuatorClusterEndpoint(clusterName, nodeEndpoint);
+            actuatorNodeManager.addActuatorClusterNodeInfo(nodeEndpoint, nodeInfo, lastHeartbeat);
         } else if (event.getType() == DataChangeEvent.Type.NODE_REMOVED) {
-            for (String groupName : groupNames) {
-                actuatorNodeManager.removeActuatorGroup(groupName, nodeEndpoint);
-            }
-        }
-    }
-
-    private void changeActuatorGroupData(DataChangeEvent event, String actuatorPath) {
-        log.debug("ActuatorGroupChange, eventType: {}, path: {}", event.getType(), actuatorPath);
-        // path: /actuator/groups/${groupName}/${endpoint}
-        List<String> actuatorGroupPath = StringUtils.splitPath(actuatorPath);
-        if (actuatorGroupPath.size() != 4) {
-            return;
-        }
-
-        String groupName = actuatorGroupPath.get(2);
-        String nodeEndpoint = actuatorGroupPath.get(3);
-        if (event.getType() == DataChangeEvent.Type.NODE_UPDATED || event.getType() == DataChangeEvent.Type.NODE_ADDED) {
-            long lastHeartbeat = Long.parseLong(StringUtils.decodeString(event.getData()));
-            actuatorNodeManager.addActuatorNodeInfo(groupName, nodeEndpoint, lastHeartbeat);
-            actuatorNodeManager.addActuatorEndpoint(groupName, nodeEndpoint);
-        } else if (event.getType() == DataChangeEvent.Type.NODE_REMOVED) {
-            actuatorNodeManager.removeActuatorGroup(groupName, nodeEndpoint);
-        }
-    }
-
-    private void changeActuatorNodeData(DataChangeEvent event, String actuatorPath) {
-        log.debug("ActuatorNodeChange, eventType: {}, path: {}", event.getType(), actuatorPath);
-        // path: /actuator/nodes/${endpoint}
-        List<String> actuatorNodePath = StringUtils.splitPath(actuatorPath);
-        if (actuatorNodePath.size() != 3) {
-            return;
-        }
-
-        String nodeEndpoint = actuatorNodePath.get(2);
-        NodeInfo nodeInfo = event.getData() == null ? new NodeInfo() : SerializeUtils.deserialize(event.getData(), NodeInfo.class);
-
-        if (event.getType() == DataChangeEvent.Type.NODE_UPDATED || event.getType() == DataChangeEvent.Type.NODE_ADDED) {
-            actuatorNodeManager.addActuatorNode(nodeEndpoint, nodeInfo);
-        } else if (event.getType() == DataChangeEvent.Type.NODE_REMOVED) {
-            actuatorNodeManager.removeActuatorNode(nodeEndpoint);
+            actuatorNodeManager.removeActuatorClusterEndpoint(clusterName, nodeEndpoint);
+            actuatorNodeManager.removeActuatorClusterNodeInfo(nodeEndpoint);
         }
     }
 

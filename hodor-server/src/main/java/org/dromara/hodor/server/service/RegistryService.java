@@ -114,8 +114,6 @@ public class RegistryService implements HodorLifecycle {
     }
 
     public void registryActuatorNodeListener(DataChangeListener listener) {
-        registryListener(ActuatorNode.ACTUATOR_NODES_PATH, listener);
-        registryListener(ActuatorNode.ACTUATOR_GROUPS_PATH, listener);
         registryListener(ActuatorNode.ACTUATOR_CLUSTERS_PATH, listener);
         registryListener(ActuatorNode.ACTUATOR_BINDING_PATH, listener);
     }
@@ -134,22 +132,21 @@ public class RegistryService implements HodorLifecycle {
     }
 
     public void createActuator(final ActuatorInfo actuatorInfo) {
+        final String clusterName = actuatorInfo.getName();
         String endpoint = actuatorInfo.getNodeInfo().getEndpoint();
-        // create node
-        registryCenter.createPersistent(ActuatorNode.createNodePath(endpoint), gsonUtils.toJson(actuatorInfo.getNodeInfo()));
-        // create groups
+        // create `cluster -> group` binding path
         actuatorInfo.getGroupNames().forEach(groupName ->
-            registryCenter.createPersistent(ActuatorNode.createGroupPath(groupName, endpoint), String.valueOf(actuatorInfo.getLastHeartbeat())));
-        // create clusters
-        registryCenter.createPersistent(ActuatorNode.createClusterPath(actuatorInfo.getName(), endpoint), String.valueOf(actuatorInfo.getLastHeartbeat()));
+            registryCenter.createPersistent(ActuatorNode.createBindingPath(clusterName, groupName), String.valueOf(actuatorInfo.getLastHeartbeat())));
+        // create clusters `clusterName -> endpoint` path
+        registryCenter.createPersistent(ActuatorNode.createClusterPath(clusterName, endpoint), gsonUtils.toJson(actuatorInfo.getNodeInfo()));
     }
 
     public void removeActuator(final ActuatorInfo actuatorInfo) {
+        final String clusterName = actuatorInfo.getName();
         String endpoint = actuatorInfo.getNodeInfo().getEndpoint();
-        registryCenter.remove(ActuatorNode.createNodePath(endpoint));
         actuatorInfo.getGroupNames().forEach(groupName ->
-            registryCenter.remove(ActuatorNode.createGroupPath(groupName, endpoint)));
-        registryCenter.remove(ActuatorNode.createClusterPath(actuatorInfo.getName(), endpoint));
+            registryCenter.remove(ActuatorNode.createBindingPath(clusterName, groupName)));
+        registryCenter.remove(ActuatorNode.createClusterPath(clusterName, endpoint));
     }
 
     public void createBindingPath(String clusterName, String groupName) {
@@ -165,5 +162,13 @@ public class RegistryService implements HodorLifecycle {
 
     public String getServerNodeInfo(String runningNode) {
         return registryCenter.get(SchedulerNode.getServerMetricsNodePath(runningNode));
+    }
+
+    public List<String> getActuatorClusters() {
+        return registryCenter.getChildren(ActuatorNode.ACTUATOR_CLUSTERS_PATH);
+    }
+
+    public String getActuatorClusterInfo(String clusterName) {
+        return registryCenter.get(ActuatorNode.getClusterPath(clusterName));
     }
 }

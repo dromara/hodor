@@ -1,10 +1,15 @@
 package org.dromara.hodor.server.api;
 
 import com.google.common.base.Preconditions;
-import org.dromara.hodor.core.service.ActuatorBindingService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import org.dromara.hodor.common.utils.Utils.Jsons;
 import org.dromara.hodor.model.actuator.ActuatorInfo;
 import org.dromara.hodor.model.actuator.BindingInfo;
 import org.dromara.hodor.model.common.HodorResult;
+import org.dromara.hodor.model.node.NodeInfo;
+import org.dromara.hodor.server.manager.ActuatorNodeManager;
 import org.dromara.hodor.server.restservice.HodorRestService;
 import org.dromara.hodor.server.restservice.RestMethod;
 import org.dromara.hodor.server.service.RegistryService;
@@ -21,11 +26,11 @@ public class ActuatorResource {
 
     private final RegistryService registryService;
 
-    private final ActuatorBindingService actuatorBindingService;
+    private final ActuatorNodeManager actuatorNodeManager;
 
-    public ActuatorResource(final RegistryService registryService, final ActuatorBindingService actuatorBindingService) {
+    public ActuatorResource(final RegistryService registryService) {
         this.registryService = registryService;
-        this.actuatorBindingService = actuatorBindingService;
+        this.actuatorNodeManager = ActuatorNodeManager.getInstance();
     }
 
     @RestMethod("heartbeat")
@@ -49,7 +54,6 @@ public class ActuatorResource {
         final String clusterName = Preconditions.checkNotNull(bindingInfo.getClusterName(), "clusterName must be not null.");
         final String groupName = Preconditions.checkNotNull(bindingInfo.getGroupName(), "groupName must be not null.");
         registryService.createBindingPath(clusterName, groupName);
-        actuatorBindingService.bind(clusterName, groupName);
         return HodorResult.success("success");
     }
 
@@ -59,8 +63,29 @@ public class ActuatorResource {
         final String clusterName = Preconditions.checkNotNull(bindingInfo.getClusterName(), "clusterName must be not null.");
         final String groupName = Preconditions.checkNotNull(bindingInfo.getGroupName(), "groupName must be not null.");
         registryService.removeBindingPath(clusterName, groupName);
-        actuatorBindingService.unbind(clusterName, groupName);
         return HodorResult.success("success");
+    }
+
+    @RestMethod("listBinding")
+    public HodorResult<List<String>> listBinding() {
+
+        return HodorResult.success("success");
+    }
+
+    @RestMethod("actuatorInfos")
+    public HodorResult<List<ActuatorInfo>> actuatorInfos() {
+        List<ActuatorInfo> actuatorInfos = new ArrayList<>();
+        List<String> clusterNames = registryService.getActuatorClusters();
+        for (String clusterName : clusterNames) {
+            //List<NodeInfo> nodeInfos = actuatorNodeManager.getActuatorNodesByCluster(clusterName);
+            //actuatorNodeManager.getActuatorNode(clusterEndpoint);
+           /* Optional.ofNullable(clusterInfo)
+                .ifPresent(e -> {
+                    final ActuatorInfo actuatorInfo = Jsons.toBean(e, ActuatorInfo.class);
+                    actuatorInfos.add(actuatorInfo);
+                });*/
+        }
+        return HodorResult.success("success", actuatorInfos);
     }
 
     private void checkActuatorInfo(ActuatorInfo actuatorInfo) {

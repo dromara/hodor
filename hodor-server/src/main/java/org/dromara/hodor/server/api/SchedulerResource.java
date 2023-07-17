@@ -11,7 +11,7 @@ import org.dromara.hodor.common.cron.CronUtils;
 import org.dromara.hodor.common.utils.HashUtils;
 import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.common.utils.StringUtils;
-import org.dromara.hodor.common.utils.Utils;
+import org.dromara.hodor.common.utils.Utils.Jsons;
 import org.dromara.hodor.common.utils.Utils.Assert;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.core.service.JobInfoService;
@@ -78,7 +78,7 @@ public class SchedulerResource {
         for (String runningNode : runningNodes) {
             Optional.ofNullable(registryService.getServerNodeInfo(runningNode))
                 .ifPresent(e -> {
-                    final SchedulerInfo schedulerInfo = Utils.Jsons.toBean(e, SchedulerInfo.class);
+                    final SchedulerInfo schedulerInfo = Jsons.toBean(e, SchedulerInfo.class);
                     schedulerInfos.add(schedulerInfo);
                 });
         }
