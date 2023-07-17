@@ -59,7 +59,7 @@
         <mysql.version>8.0.28</mysql.version>
         <druid.version>1.0.29</druid.version>
         <reactor-spring.version>1.0.1.RELEASE</reactor-spring.version>
-        <guava.version>30.1.1-jre</guava.version>
+        <guava.version>32.0.0-jre</guava.version>
         <disruptor.version>3.4.0</disruptor.version>
         <hessian.version>4.0.38</hessian.version>
         <protostuff.version>1.7.2</protostuff.version>
@@ -71,7 +71,7 @@
         <curator.version>2.13.0</curator.version>
         <quartz.version>2.3.2</quartz.version>
         <metrics.version>3.2.5</metrics.version>
-        <h2.version>2.1.214</h2.version>
+        <h2.version>2.2.220</h2.version>
         <commons-dbutils.version>1.7</commons-dbutils.version>
         <commons-text.version>1.10.0</commons-text.version>
         <!-- appache commons components -->
