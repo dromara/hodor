@@ -139,7 +139,10 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
         sendMessage(context, message).operationComplete(future -> {
             if (!future.isSuccess() || future.cause() != null) {
                 log.warn("response failed.", future.cause());
-                addRetrySendMessage(future.channel().remoteAddress(), message);
+                final SocketAddress socketAddress = future.channel().remoteAddress();
+                if (socketAddress != null) {
+                    addRetrySendMessage(socketAddress, message);
+                }
             } else {
                 recordActiveChannel(future.channel());
             }
