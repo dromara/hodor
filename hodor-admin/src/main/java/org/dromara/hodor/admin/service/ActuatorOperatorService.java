@@ -17,6 +17,8 @@
 
 package org.dromara.hodor.admin.service;
 
+import java.util.List;
+import org.dromara.hodor.admin.domain.ActuatorAppInfo;
 import org.dromara.hodor.client.model.LogQueryRequest;
 import org.dromara.hodor.client.model.LogQueryResult;
 
@@ -33,4 +35,6 @@ public interface ActuatorOperatorService {
     void binding(String clusterName, String group) throws Exception;
 
     void unbinding(String clusterName, String group) throws Exception;
+
+    List<ActuatorAppInfo> getActuatorClusterInfos() throws Exception;
 }

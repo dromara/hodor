@@ -17,6 +17,8 @@
 
 package org.dromara.hodor.admin.service.impl;
 
+import java.util.List;
+import org.dromara.hodor.admin.domain.ActuatorAppInfo;
 import org.dromara.hodor.admin.service.ActuatorOperatorService;
 import org.dromara.hodor.client.HodorApiClient;
 import org.dromara.hodor.client.api.ActuatorApi;
@@ -52,6 +54,11 @@ public class ActuatorOperatorServiceImpl implements ActuatorOperatorService {
     @Override
     public void unbinding(String clusterName, String group) throws Exception {
         actuatorApi.unbinding(clusterName, group);
+    }
+
+    @Override
+    public List<ActuatorAppInfo> getActuatorClusterInfos() throws Exception {
+        return null;
     }
 
 }
