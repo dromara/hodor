@@ -1,10 +1,6 @@
 package org.dromara.hodor.server.api;
 
 import com.google.common.base.Preconditions;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import org.dromara.hodor.common.utils.Utils.Jsons;
 import org.dromara.hodor.model.actuator.ActuatorInfo;
 import org.dromara.hodor.model.actuator.BindingInfo;
 import org.dromara.hodor.model.common.HodorResult;
@@ -13,6 +9,10 @@ import org.dromara.hodor.server.manager.ActuatorNodeManager;
 import org.dromara.hodor.server.restservice.HodorRestService;
 import org.dromara.hodor.server.restservice.RestMethod;
 import org.dromara.hodor.server.service.RegistryService;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * actuator service
@@ -67,9 +67,19 @@ public class ActuatorResource {
     }
 
     @RestMethod("listBinding")
-    public HodorResult<List<String>> listBinding() {
-
-        return HodorResult.success("success");
+    public HodorResult<List<BindingInfo>> listBinding() {
+        List<BindingInfo> result = new ArrayList<>();
+        Set<String> clusterNames = actuatorNodeManager.allClusters();
+        for (String clusterName : clusterNames) {
+            Set<String> groupNames = actuatorNodeManager.getGroupByClusterName(clusterName);
+            for (String groupName : groupNames) {
+                BindingInfo bindingInfo = new BindingInfo()
+                    .setClusterName(clusterName)
+                    .setGroupName(groupName);
+                result.add(bindingInfo);
+            }
+        }
+        return HodorResult.success("success", result);
     }
 
     @RestMethod("actuatorInfos")
@@ -77,13 +87,16 @@ public class ActuatorResource {
         List<ActuatorInfo> actuatorInfos = new ArrayList<>();
         List<String> clusterNames = registryService.getActuatorClusters();
         for (String clusterName : clusterNames) {
-            //List<NodeInfo> nodeInfos = actuatorNodeManager.getActuatorNodesByCluster(clusterName);
-            //actuatorNodeManager.getActuatorNode(clusterEndpoint);
-           /* Optional.ofNullable(clusterInfo)
-                .ifPresent(e -> {
-                    final ActuatorInfo actuatorInfo = Jsons.toBean(e, ActuatorInfo.class);
-                    actuatorInfos.add(actuatorInfo);
-                });*/
+            Set<String> actuatorClusterEndpoints = actuatorNodeManager.getActuatorClusterEndpoints(clusterName);
+            for (String actuatorClusterEndpoint : actuatorClusterEndpoints) {
+                NodeInfo actuatorNodeInfo = actuatorNodeManager.getActuatorNodeInfo(actuatorClusterEndpoint);
+                ActuatorInfo actuatorInfo = new ActuatorInfo();
+                actuatorInfo.setNodeInfo(actuatorNodeInfo);
+                actuatorInfo.setName(clusterName);
+                actuatorInfo.setNodeEndpoint(actuatorClusterEndpoint);
+                actuatorInfo.setGroupNames(actuatorNodeManager.getGroupByClusterName(clusterName));
+                actuatorInfos.add(actuatorInfo);
+            }
         }
         return HodorResult.success("success", actuatorInfos);
     }

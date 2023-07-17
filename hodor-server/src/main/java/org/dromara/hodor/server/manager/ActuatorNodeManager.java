@@ -3,15 +3,6 @@ package org.dromara.hodor.server.manager;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.concurrent.HodorThreadFactory;
@@ -20,6 +11,12 @@ import org.dromara.hodor.common.utils.TimeUtil;
 import org.dromara.hodor.common.utils.Utils;
 import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.model.node.NodeInfo;
+
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * actuator node manager
@@ -31,6 +28,8 @@ import org.dromara.hodor.model.node.NodeInfo;
 public class ActuatorNodeManager {
 
     private static volatile ActuatorNodeManager INSTANCE;
+
+    private final Set<String> clusters = Sets.newConcurrentHashSet();
 
     // clusterName -> endpoint set
     private final Map<String, Set<String>> actuatorClusterEndpoints = Maps.newConcurrentMap();
@@ -145,6 +144,7 @@ public class ActuatorNodeManager {
     }
 
     public void addActuatorClusterEndpoint(String clusterName, String nodeEndpoint) {
+        clusters.add(clusterName);
         final Set<String> endpoints = actuatorClusterEndpoints.computeIfAbsent(clusterName, Sets::newHashSet);
         endpoints.add(nodeEndpoint);
     }
@@ -154,12 +154,33 @@ public class ActuatorNodeManager {
     }
 
     public void removeActuatorClusterEndpoint(String clusterName, String nodeEndpoint) {
-        actuatorClusterEndpoints.get(clusterName)
-            .removeIf(e -> e.equals(nodeEndpoint));
+        if (actuatorClusterEndpoints.containsKey(clusterName)) {
+            Set<String> endpoints = actuatorClusterEndpoints.get(clusterName);
+            endpoints.removeIf(e -> e.equals(nodeEndpoint));
+            if (Utils.Collections.isEmpty(endpoints)) {
+                actuatorClusterEndpoints.remove(clusterName);
+            }
+        }
     }
 
     public void removeActuatorClusterNodeInfo(String nodeEndpoint) {
         actuatorNodeInfos.remove(nodeEndpoint);
+    }
+
+    public NodeInfo getActuatorNodeInfo(String endpoint) {
+        Pair<NodeInfo, Long> objects = actuatorNodeInfos.get(endpoint);
+        if (objects != null) {
+            return objects.getFirst();
+        }
+        return null;
+    }
+
+    public Set<String> getActuatorClusterEndpoints(String clusterName) {
+        return actuatorClusterEndpoints.get(clusterName);
+    }
+
+    public Set<String> allClusters() {
+        return clusters;
     }
 
 }
