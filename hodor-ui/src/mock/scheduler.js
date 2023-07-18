@@ -1,4 +1,4 @@
-// 执行器api模拟数据
+// 调度器api模拟数据
 import Mock from "mockjs"
 import { getQuery } from "./getQuery"
 
@@ -19,6 +19,7 @@ for (let i = 0; i < 30; i++) {
     })
 }
 
+// 调度器列表
 const schedulersInfo = {
     "successful": true,
     "code": 200,
@@ -26,11 +27,33 @@ const schedulersInfo = {
     "data": schedulerList
 }
 
+// 单个调度器信息
 const schedulerInfo = {
     "successful": true,
     "code": 200,
     "msg": "success",
     "data": {},
+}
+
+// metadata信息
+const metadataInfo = {
+    "successful": true,
+    "code": 200,
+    "msg": "success",
+    "data": {
+        "intervalOffsets": [0, 1000000000],
+        "copySets": [
+            {
+                "id": 0,
+                "dataInterval": {
+                    "startInterval": 0,
+                    "endInterval": 0
+                },
+                "leader": "127.0.0.1:8081",
+                "servers": ["127.0.0.1:8081", "127.0.0.1:8082", "127.0.0.1:8083"]
+            }
+        ]
+    },
 }
 
 export default [
@@ -53,6 +76,13 @@ export default [
                 schedulerInfo.data = {}
             }
             return schedulerInfo
+        }
+    },
+    {
+        url: "/hodor/app/scheduler/metadata",
+        method: "get",
+        response: () => {
+            return metadataInfo
         }
     }
 ]

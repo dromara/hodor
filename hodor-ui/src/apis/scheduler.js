@@ -14,3 +14,10 @@ export const getActuatorListAPI = () => {
         method: 'GET',
     })
 }
+
+export const getSchedulerMetadataAPI = (endpoint) => {
+    return httpInstance({
+        url: `/hodor/admin/scheduler/metadata/endpoint=${endpoint}`,
+        method: 'GET',
+    })
+}
