@@ -90,12 +90,16 @@ public class HodorExecutor {
      * @param runnable 待执行任务
      */
     public void serialExecute(final HodorRunnable runnable) {
-        offer(runnable);
-        // 从第一个任务触发，后续自动执行
-        if (executable.compareAndSet(false, true) && circleQueue.size() >= 1) {
-            notifyNextTaskExecute();
+        lock.lock();
+        try {
+            offer(runnable);
+            // 从第一个任务触发，后续自动执行
+            if (executable.compareAndSet(false, true) && circleQueue.size() >= 1) {
+                notifyNextTaskExecute();
+            }
+        } finally {
+            lock.unlock();
         }
-
     }
 
     /**
@@ -104,9 +108,14 @@ public class HodorExecutor {
      * @param runnable 待执行任务
      */
     public void parallelExecute(final HodorRunnable runnable) {
-        offer(runnable);
-        if (executable.compareAndSet(false, true) && circleQueue.size() >= 1) {
-            notifyTaskExecute();
+        lock.lock();
+        try {
+            offer(runnable);
+            if (executable.compareAndSet(false, true) && circleQueue.size() >= 1) {
+                notifyTaskExecute();
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
