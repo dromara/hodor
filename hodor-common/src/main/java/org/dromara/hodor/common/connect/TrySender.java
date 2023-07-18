@@ -18,6 +18,10 @@ public class TrySender {
     private static final String URL_FORMAT = "{}://{}/{}";
 
     public static <R> R send(ConnectStringParser parser, Function<String, R> function) throws Exception {
+        return send(parser, function, e -> e);
+    }
+
+    public static <R> R send(ConnectStringParser parser, Function<String, R> function, Function<Exception, Exception> supplier) throws Exception {
         Exception finallyException = null;
         if (lastConnectUrl != null) {
             try {
@@ -38,7 +42,7 @@ public class TrySender {
         }
         lastConnectUrl = null;
         if (finallyException != null) {
-            throw finallyException;
+            throw supplier.apply(finallyException);
         }
         return null;
     }

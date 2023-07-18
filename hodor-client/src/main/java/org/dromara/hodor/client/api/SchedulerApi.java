@@ -55,9 +55,10 @@ public class SchedulerApi {
 
     public List<SchedulerNodeResult> getSchedulers() throws Exception {
         final HttpResponse response = TrySender.send(connectStringParser, (url) -> Https.createGet(url + "/scheduler/nodeInfos")
-            .header("appName", appName)
-            .header("appKey", appKey)
-            .execute());
+                .header("appName", appName)
+                .header("appKey", appKey)
+                .execute(),
+            ex -> new HodorClientException("SchedulerApi getSchedulers execute failure, " + ex.getMessage()));
         if (!Objects.requireNonNull(response).isOk()) {
             throw new HodorClientException("getSchedulers failure, " + response.body());
         }
@@ -80,9 +81,10 @@ public class SchedulerApi {
         }
         final String path = "/scheduler/metadata?localed=" + localed;
         final HttpResponse response = TrySender.send(parser, (url) -> Https.createGet(url + path)
-            .header("appName", appName)
-            .header("appKey", appKey)
-            .execute());
+                .header("appName", appName)
+                .header("appKey", appKey)
+                .execute(),
+            ex -> new HodorClientException("SchedulerApi getMetadata execute failure, " + ex.getMessage()));
         if (!Objects.requireNonNull(response).isOk()) {
             throw new HodorClientException("getMetadata failure, " + response.body());
         }

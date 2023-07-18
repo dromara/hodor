@@ -114,10 +114,11 @@ public class ActuatorApi {
             .setClusterName(clusterName)
             .setGroupName(group);
         final HttpResponse response = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/actuator/binding")
-            .body(Jsons.toJson(bindingInfo))
-            .header("appName", appName)
-            .header("appKey", appKey)
-            .execute());
+                .body(Jsons.toJson(bindingInfo))
+                .header("appName", appName)
+                .header("appKey", appKey)
+                .execute(),
+            ex -> new HodorClientException("ActuatorApi binding execute failure, " + ex.getMessage()));
         if (!Objects.requireNonNull(response).isOk()) {
             throw new HodorClientException("Binding failure, " + response.body());
         }
@@ -129,10 +130,11 @@ public class ActuatorApi {
             .setClusterName(clusterName)
             .setGroupName(group);
         final HttpResponse response = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/actuator/unbinding")
-            .body(Jsons.toJson(bindingInfo))
-            .header("appName", appName)
-            .header("appKey", appKey)
-            .execute());
+                .body(Jsons.toJson(bindingInfo))
+                .header("appName", appName)
+                .header("appKey", appKey)
+                .execute(),
+            ex -> new HodorClientException("ActuatorApi unbinding execute failure, " + ex.getMessage()));
         if (!Objects.requireNonNull(response).isOk()) {
             throw new HodorClientException("Unbinding failure, " + response.body());
         }
@@ -141,9 +143,10 @@ public class ActuatorApi {
 
     public List<BindingInfo> listBinding() throws Exception {
         final HttpResponse response = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/actuator/listBinding")
-            .header("appName", appName)
-            .header("appKey", appKey)
-            .execute());
+                .header("appName", appName)
+                .header("appKey", appKey)
+                .execute(),
+            ex -> new HodorClientException("ActuatorApi listBinding execute failure, " + ex.getMessage()));
         if (!Objects.requireNonNull(response).isOk()) {
             throw new HodorClientException("Unbinding failure, " + response.body());
         }
@@ -159,9 +162,10 @@ public class ActuatorApi {
 
     public List<ActuatorInfo> actuatorInfos() throws Exception {
         final HttpResponse response = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/actuator/actuatorInfos")
-            .header("appName", appName)
-            .header("appKey", appKey)
-            .execute());
+                .header("appName", appName)
+                .header("appKey", appKey)
+                .execute(),
+            ex -> new HodorClientException("ActuatorApi actuatorInfos execute failure, " + ex.getMessage()));
         if (!Objects.requireNonNull(response).isOk()) {
             throw new HodorClientException("Unbinding failure, " + response.body());
         }
@@ -177,9 +181,10 @@ public class ActuatorApi {
 
     public List<String> allClusters() throws Exception {
         final HttpResponse response = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/actuator/allClusters")
-            .header("appName", appName)
-            .header("appKey", appKey)
-            .execute());
+                .header("appName", appName)
+                .header("appKey", appKey)
+                .execute(),
+            ex -> new HodorClientException("ActuatorApi allClusters execute failure, " + ex.getMessage()));
         if (!Objects.requireNonNull(response).isOk()) {
             throw new HodorClientException("ListBinding failure, " + response.body());
         }
