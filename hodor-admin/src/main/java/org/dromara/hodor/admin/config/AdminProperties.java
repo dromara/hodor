@@ -15,33 +15,24 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.admin.service;
+package org.dromara.hodor.admin.config;
 
-import java.util.List;
-import org.dromara.hodor.admin.domain.ActuatorAppInfo;
-import org.dromara.hodor.client.model.LogQueryRequest;
-import org.dromara.hodor.client.model.LogQueryResult;
-import org.dromara.hodor.model.actuator.ActuatorInfo;
-import org.dromara.hodor.model.actuator.BindingInfo;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * ActuatorOperatorService
+ * AdminProperties
  *
  * @author tomgs
  * @since 1.0
  */
-public interface ActuatorOperatorService {
+@Data
+@Configuration
+@ConfigurationProperties(prefix = "hodor.admin")
+public class AdminProperties {
 
-    LogQueryResult queryLog(LogQueryRequest request) throws Exception;
+    private String apiKey;
 
-    void binding(String clusterName, String group) throws Exception;
-
-    void unbinding(String clusterName, String group) throws Exception;
-
-    List<BindingInfo> listBinding() throws Exception;
-
-    List<ActuatorInfo> getActuatorClusterInfos() throws Exception;
-
-    List<String> allClusters() throws Exception;
-
+    private String role;
 }

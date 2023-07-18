@@ -18,12 +18,13 @@
 package org.dromara.hodor.admin.service.impl;
 
 import java.util.List;
-import org.dromara.hodor.admin.domain.ActuatorAppInfo;
 import org.dromara.hodor.admin.service.ActuatorOperatorService;
 import org.dromara.hodor.client.HodorApiClient;
 import org.dromara.hodor.client.api.ActuatorApi;
 import org.dromara.hodor.client.model.LogQueryRequest;
 import org.dromara.hodor.client.model.LogQueryResult;
+import org.dromara.hodor.model.actuator.ActuatorInfo;
+import org.dromara.hodor.model.actuator.BindingInfo;
 import org.springframework.stereotype.Service;
 
 /**
@@ -57,8 +58,18 @@ public class ActuatorOperatorServiceImpl implements ActuatorOperatorService {
     }
 
     @Override
-    public List<ActuatorAppInfo> getActuatorClusterInfos() throws Exception {
-        return null;
+    public List<BindingInfo> listBinding() throws Exception {
+        return actuatorApi.listBinding();
+    }
+
+    @Override
+    public List<ActuatorInfo> getActuatorClusterInfos() throws Exception {
+        return actuatorApi.actuatorInfos();
+    }
+
+    @Override
+    public List<String> allClusters() throws Exception {
+        return actuatorApi.allClusters();
     }
 
 }

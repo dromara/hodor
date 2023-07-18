@@ -6,8 +6,8 @@ spring:
 
 server:
   servlet:
-    context-path: /hodor/
-  port: 8088
+    context-path: /hodor/admin/
+  port: 8089
 
 # springdoc-openapi项目配置
 springdoc:
@@ -28,8 +28,11 @@ knife4j:
     language: zh_cn
 
 hodor:
+  admin:
+    apiKey: b50fd4d4d71935b7c2a001b87f068c4f
+    role: admin
   client:
-    registryAddress: http://localhost:8080/hodor
+    registryAddress: http://localhost:8081/hodor
     appName: hodor-admin
     appKey: hodor-admin
   database:

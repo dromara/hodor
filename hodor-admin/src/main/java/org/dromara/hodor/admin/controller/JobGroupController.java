@@ -2,6 +2,7 @@ package org.dromara.hodor.admin.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dromara.hodor.admin.core.MsgCode;
 import org.dromara.hodor.admin.core.Result;
@@ -12,6 +13,7 @@ import org.dromara.hodor.admin.service.ActuatorOperatorService;
 import org.dromara.hodor.admin.service.JobGroupService;
 import org.dromara.hodor.core.PageInfo;
 import org.dromara.hodor.core.entity.JobGroup;
+import org.dromara.hodor.model.actuator.BindingInfo;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -92,5 +94,13 @@ public class JobGroupController {
         final UserInfo user = UserContext.getUser();
         actuatorOperatorService.unbinding(clusterName, group);
         return ResultUtil.success();
+    }
+
+    @Operation(summary = "获取所有绑定的分组信息")
+    @GetMapping("/listBinding")
+    public Result<List<BindingInfo>> listBinding() throws Exception {
+        final UserInfo user = UserContext.getUser();
+        final List<BindingInfo> bindingInfos = actuatorOperatorService.listBinding();
+        return ResultUtil.success(bindingInfos);
     }
 }

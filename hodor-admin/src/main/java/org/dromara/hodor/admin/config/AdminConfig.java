@@ -34,9 +34,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class AdminConfig implements WebMvcConfigurer {
 
+    private final AdminProperties adminProperties;
+
     @Bean
     public LoginInterceptor loginInterceptor() {
-        return new LoginInterceptor();
+        return new LoginInterceptor(adminProperties);
     }
 
     @Override
