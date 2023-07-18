@@ -1,0 +1,6 @@
+### 获取actuator allClusters
+GET http://localhost:8081/hodor/scheduler/nodeInfos
+
+### 获取元数据
+GET http://localhost:8081/hodor/scheduler/metadata?localed=false
+

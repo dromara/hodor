@@ -1,0 +1,9 @@
+### 获取actuatorInfos
+GET http://localhost:8081/hodor/actuator/actuatorInfos
+
+### 获取actuator绑定信息
+GET http://localhost:8081/hodor/actuator/listBinding
+
+### 获取actuator allClusters
+GET http://localhost:8081/hodor/actuator/allClusters
+
