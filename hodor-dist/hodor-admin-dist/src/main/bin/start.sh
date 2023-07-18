@@ -30,5 +30,5 @@ if [[ "$DOCKER" == "true" ]]; then
 fi
 
 java $JAVA_OPTS \
-  -cp "$HODOR_ACTUATOR_HOME/conf":"$HODOR_ACTUATOR_HOME/lib/*" \
+  -cp "$HODOR_HOME/conf":"$HODOR_HOME/lib/*" \
   org.dromara.hodor.admin.HodorAdminApplication

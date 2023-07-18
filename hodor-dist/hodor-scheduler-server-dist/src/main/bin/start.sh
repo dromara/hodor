@@ -17,7 +17,7 @@
 #
 
 BIN_DIR=$(dirname $0)
-HODOR_ACTUATOR_HOME=${HODOR_HOME:-$(cd $BIN_DIR/..; pwd)}
+HODOR_HOME=${HODOR_HOME:-$(cd $BIN_DIR/..; pwd)}
 
 echo "Starting HODOR_HOME: $HODOR_HOME"
 
@@ -30,5 +30,5 @@ if [[ "$DOCKER" == "true" ]]; then
 fi
 
 java $JAVA_OPTS \
-  -cp "$HODOR_ACTUATOR_HOME/conf":"$HODOR_ACTUATOR_HOME/lib/*" \
+  -cp "$HODOR_HOME/conf":"$HODOR_HOME/lib/*" \
   org.dromara.hodor.server.HodorServer
