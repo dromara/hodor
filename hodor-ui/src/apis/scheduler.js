@@ -1,16 +1,16 @@
-// 执行器接口函数
+// 调度器接口函数
 import httpInstance from "@/utils/http"
 
-export const getActuatorInfoAPI = (name) => {
+export const getSchedulerInfoAPI = (name) => {
     return httpInstance({
-        url: `/hodor/app/actuator/info?name=${name}`,
+        url: `/hodor/app/scheduler/info?name=${name}`,
         method: 'GET',
     })
 }
 
 export const getActuatorListAPI = () => {
     return httpInstance({
-        url: `/hodor/app/actuator/list`,
+        url: `/hodor/app/scheduler/list`,
         method: 'GET',
     })
 }

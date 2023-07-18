@@ -6,13 +6,9 @@ import { Modal } from 'ant-design-vue';
 // ############ 列表查询 #############
 // 表的列名
 const columns = [{
-    title: 'AppKey',  // 列名
-    dataIndex: 'appKey',  // 数据名
-    key: 'appKey',  // 列的key
-}, {
-    title: 'AppName',
-    dataIndex: 'appName',
-    key: 'appName',
+    title: 'Name',  // 列名
+    dataIndex: 'name',  // 数据名
+    key: 'name',  // 列的key
 }, {
     title: 'IP',
     dataIndex: 'ip',
@@ -21,6 +17,14 @@ const columns = [{
     title: 'Port',
     dataIndex: 'port',
     key: 'port',
+}, {
+    title: 'GroupNames',
+    dataIndex: 'groupNames',
+    key: 'groupNames',
+}, {
+    title: 'LastHeartbeat',
+    dataIndex: 'lastHeartbeat',
+    key: 'lastHeartbeat',
 }, {
     title: 'Actions',
     key: 'actions',
@@ -33,27 +37,27 @@ const getActuatorList = async () => {
     actuatorList.value = getActuatorNodes(res.data)
 }
 
-// 提取响应数据中的节点，一个执行器有多个节点
+// 处理响应数据中执行器节点信息
 const getActuatorNodes = (data) => {
     const res = []
     data.forEach(actuator => {
-        actuator.nodes.forEach(node => {
-            res.push({
-                "appName": actuator.appName,
-                "appKey": actuator.appKey,
-                "ip": node.ip,
-                "port": node.port,
-                "pid": node.pid,
-                "version": node.version,
-                "hostname": node.hostname,
-                "cpuRatio": node.cpuRatio,
-                "memoryRatio": node.memoryRatio,
-                "loadAverageRatio": node.loadAverageRatio,
-                "queueSize": node.queueSize,
-                "waitingQueueSize": node.waitingQueueSize,
-                "executeCount": node.executeCount,
-                "endpoint": node.endpoint,
-            })
+        res.push({
+            "name": actuator.name,
+            "ip": actuator.nodeInfo.ip,
+            "port": actuator.nodeInfo.port,
+            "pid": actuator.nodeInfo.pid,
+            "version": actuator.nodeInfo.version,
+            "hostname": actuator.nodeInfo.hostname,
+            "cpuUsage": actuator.nodeInfo.cpuUsage,
+            "memoryUsage": actuator.nodeInfo.memoryUsage,
+            "loadAverage": actuator.nodeInfo.loadAverage,
+            "queueSize": actuator.nodeInfo.queueSize,
+            "waitingQueueSize": actuator.nodeInfo.waitingQueueSize,
+            "executeCount": actuator.nodeInfo.executeCount,
+            "endpoint": actuator.nodeInfo.endpoint,
+            "nodeEndpoint": actuator.nodeEndpoint,
+            "groupNames": actuator.groupNames.toString(),
+            "lastHeartbeat": actuator.lastHeartbeat,
         })
     })
     return res
@@ -97,9 +101,9 @@ const onMonitor = (actuator) => {
     Modal.info({
         title: 'Actuator Monitor Information',
         content: h('div', {}, [
-            h('p', 'cpuRatio: ' + actuator.cpuRatio),
-            h('p', 'memoryRatio: ' + actuator.memoryRatio),
-            h('p', 'loadAverageRatio: ' + actuator.loadAverageRatio),
+            h('p', 'cpuUsage: ' + actuator.cpuUsage),
+            h('p', 'memoryUsage: ' + actuator.memoryUsage),
+            h('p', 'loadAverage: ' + actuator.loadAverage),
             h('p', 'queueSize: ' + actuator.queueSize),
             h('p', 'waitingQueueSize: ' + actuator.waitingQueueSize),
             h('p', 'executeCount: ' + actuator.executeCount),
