@@ -132,20 +132,22 @@ public class ActuatorNodeManager {
     }
 
     public void addClusterGroupEntry(String clusterName, String groupName) {
-        Set<String> groupSet = clusterGroupMap.computeIfAbsent(clusterName, Sets::newHashSet);
+        Set<String> groupSet = clusterGroupMap.computeIfAbsent(clusterName, k -> Sets.newHashSet());
         groupSet.add(groupName);
         groupClusterMap.put(groupName, clusterName);
     }
 
     public void removeClusterGroupEntry(String clusterName, String groupName) {
-        Set<String> groupSet = clusterGroupMap.computeIfAbsent(clusterName, Sets::newHashSet);
-        groupSet.remove(groupName);
+        Set<String> groupSet = clusterGroupMap.get(clusterName);
+        if (groupSet != null) {
+            groupSet.remove(groupName);
+        }
         groupClusterMap.remove(groupName);
     }
 
     public void addActuatorClusterEndpoint(String clusterName, String nodeEndpoint) {
         clusters.add(clusterName);
-        final Set<String> endpoints = actuatorClusterEndpoints.computeIfAbsent(clusterName, Sets::newHashSet);
+        final Set<String> endpoints = actuatorClusterEndpoints.computeIfAbsent(clusterName, k -> Sets.newHashSet());
         endpoints.add(nodeEndpoint);
     }
 
@@ -167,12 +169,8 @@ public class ActuatorNodeManager {
         actuatorNodeInfos.remove(nodeEndpoint);
     }
 
-    public NodeInfo getActuatorNodeInfo(String endpoint) {
-        Pair<NodeInfo, Long> objects = actuatorNodeInfos.get(endpoint);
-        if (objects != null) {
-            return objects.getFirst();
-        }
-        return null;
+    public Pair<NodeInfo, Long> getActuatorNodeInfo(String endpoint) {
+        return actuatorNodeInfos.get(endpoint);
     }
 
     public Set<String> getActuatorClusterEndpoints(String clusterName) {

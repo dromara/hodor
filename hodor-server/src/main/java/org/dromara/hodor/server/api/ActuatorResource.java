@@ -1,6 +1,7 @@
 package org.dromara.hodor.server.api;
 
 import com.google.common.base.Preconditions;
+import org.dromara.hodor.common.utils.Pair;
 import org.dromara.hodor.model.actuator.ActuatorInfo;
 import org.dromara.hodor.model.actuator.BindingInfo;
 import org.dromara.hodor.model.common.HodorResult;
@@ -89,16 +90,25 @@ public class ActuatorResource {
         for (String clusterName : clusterNames) {
             Set<String> actuatorClusterEndpoints = actuatorNodeManager.getActuatorClusterEndpoints(clusterName);
             for (String actuatorClusterEndpoint : actuatorClusterEndpoints) {
-                NodeInfo actuatorNodeInfo = actuatorNodeManager.getActuatorNodeInfo(actuatorClusterEndpoint);
+                final Pair<NodeInfo, Long> actuatorNodeInfo = actuatorNodeManager.getActuatorNodeInfo(actuatorClusterEndpoint);
                 ActuatorInfo actuatorInfo = new ActuatorInfo();
-                actuatorInfo.setNodeInfo(actuatorNodeInfo);
                 actuatorInfo.setName(clusterName);
                 actuatorInfo.setNodeEndpoint(actuatorClusterEndpoint);
                 actuatorInfo.setGroupNames(actuatorNodeManager.getGroupByClusterName(clusterName));
+                if (actuatorNodeInfo != null) {
+                    actuatorInfo.setNodeInfo(actuatorNodeInfo.getFirst());
+                    actuatorInfo.setLastHeartbeat(actuatorNodeInfo.getSecond());
+                }
                 actuatorInfos.add(actuatorInfo);
             }
         }
         return HodorResult.success("success", actuatorInfos);
+    }
+
+    @RestMethod("allClusters")
+    public HodorResult<List<String>> allClusters() {
+        List<String> clusterNames = registryService.getActuatorClusters();
+        return HodorResult.success("success", clusterNames);
     }
 
     private void checkActuatorInfo(ActuatorInfo actuatorInfo) {

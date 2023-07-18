@@ -78,7 +78,7 @@ public class SchedulerApi {
             parser = new ConnectStringParser("http://" + endpoint + "/" + connectStringParser.getRootName());
             localed = true;
         }
-        final String path = "/scheduler/metadata?located=" + localed;
+        final String path = "/scheduler/metadata?localed=" + localed;
         final HttpResponse response = TrySender.send(parser, (url) -> Https.createGet(url + path)
             .header("appName", appName)
             .header("appKey", appKey)

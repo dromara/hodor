@@ -17,7 +17,9 @@
 
 package org.dromara.hodor.client.api;
 
+import cn.hutool.core.lang.TypeReference;
 import cn.hutool.http.HttpResponse;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -31,7 +33,9 @@ import org.dromara.hodor.common.connect.TrySender;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.utils.Utils.Https;
 import org.dromara.hodor.common.utils.Utils.Jsons;
+import org.dromara.hodor.model.actuator.ActuatorInfo;
 import org.dromara.hodor.model.actuator.BindingInfo;
+import org.dromara.hodor.model.common.HodorResult;
 import org.dromara.hodor.remoting.api.RemotingClient;
 import org.dromara.hodor.remoting.api.RemotingConst;
 import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
@@ -133,5 +137,59 @@ public class ActuatorApi {
             throw new HodorClientException("Unbinding failure, " + response.body());
         }
         log.debug("Unbinding result: {}", response.body());
+    }
+
+    public List<BindingInfo> listBinding() throws Exception {
+        final HttpResponse response = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/actuator/listBinding")
+            .header("appName", appName)
+            .header("appKey", appKey)
+            .execute());
+        if (!Objects.requireNonNull(response).isOk()) {
+            throw new HodorClientException("Unbinding failure, " + response.body());
+        }
+        log.debug("ListBinding result: {}", response.body());
+        final HodorResult<List<BindingInfo>> hodorResult = Jsons.toBean(response.body(),
+            new TypeReference<HodorResult<List<BindingInfo>>>() {
+            }, false);
+        if (!hodorResult.isSuccess()) {
+            throw new HodorClientException(hodorResult.getMsg());
+        }
+        return hodorResult.getData();
+    }
+
+    public List<ActuatorInfo> actuatorInfos() throws Exception {
+        final HttpResponse response = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/actuator/actuatorInfos")
+            .header("appName", appName)
+            .header("appKey", appKey)
+            .execute());
+        if (!Objects.requireNonNull(response).isOk()) {
+            throw new HodorClientException("Unbinding failure, " + response.body());
+        }
+        log.debug("ListBinding result: {}", response.body());
+        final HodorResult<List<ActuatorInfo>> hodorResult = Jsons.toBean(response.body(),
+            new TypeReference<HodorResult<List<ActuatorInfo>>>() {
+            }, false);
+        if (!hodorResult.isSuccess()) {
+            throw new HodorClientException(hodorResult.getMsg());
+        }
+        return hodorResult.getData();
+    }
+
+    public List<String> allClusters() throws Exception {
+        final HttpResponse response = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/actuator/allClusters")
+            .header("appName", appName)
+            .header("appKey", appKey)
+            .execute());
+        if (!Objects.requireNonNull(response).isOk()) {
+            throw new HodorClientException("ListBinding failure, " + response.body());
+        }
+        log.debug("ListBinding result: {}", response.body());
+        final HodorResult<List<String>> hodorResult = Jsons.toBean(response.body(),
+            new TypeReference<HodorResult<List<String>>>() {
+            }, false);
+        if (!hodorResult.isSuccess()) {
+            throw new HodorClientException(hodorResult.getMsg());
+        }
+        return hodorResult.getData();
     }
 }
