@@ -66,4 +66,13 @@ public class UserServiceImpl implements UserService {
             .eq(User::getUsername, username)
             .eq(User::getPassword, password));
     }
+
+    @Override
+    public User findUser(String username) {
+        if (StringUtils.isEmpty(username)) {
+            return null;
+        }
+        return userMapper.selectOne(Wrappers.<User>lambdaQuery()
+            .eq(User::getUsername, username));
+    }
 }
