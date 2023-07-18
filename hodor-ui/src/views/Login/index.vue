@@ -88,7 +88,7 @@ const rules = {
                     Login
                 </a-button>
                 Or
-                <a href="">register now!</a>
+                <a href="#">register now!</a>
             </a-form-item>
         </a-form>
     </div>

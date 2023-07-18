@@ -7,6 +7,7 @@ import {
     ApartmentOutlined,
     LogoutOutlined,
     UserOutlined,
+    LoginOutlined
 } from '@ant-design/icons-vue';
 import { ref } from 'vue';
 import { useUserStore } from '@/stores/user';
@@ -19,11 +20,15 @@ const confirm = () => {
     // 1. 清除用户信息
     userStore.clearUserInfo()
     // 2.跳转到登录页
-    router.push('/login')
+    router.replace('/login')
 }
 // 取消退出登录
 const cancel = () => {
 
+}
+// 登录
+const doLogin = () => {
+    router.replace('/login')
 }
 
 // 左侧菜单
@@ -141,7 +146,7 @@ const menu = [
                         </a>
                     </li>
 
-                    <li>
+                    <li v-if="userStore.userInfo && JSON.stringify(userStore.userInfo) !== '{}'">
                         <a-popconfirm title="确认退出吗？" ok-text="确认" cancel-text="取消" @confirm="confirm" @cancel="cancel">
                             <a href="#">
                                 <i>
@@ -151,16 +156,24 @@ const menu = [
                             </a>
                         </a-popconfirm>
                     </li>
+                    <li v-else>
+                        <a href="#" @click="doLogin">
+                            <i>
+                                <LoginOutlined />
+                            </i>
+                            点击登录
+                        </a>
+                    </li>
                 </ul>
             </a-layout-header>
             <!-- 内容 -->
-            <a-layout-content style="margin: 0 16px">
+            <a-layout-content :style="{ margin: '24px 16px 0', overflow: 'initial' }">
                 <div :style="{ padding: '24px', background: '#fff', minHeight: '360px' }">
                     <router-view />
                 </div>
             </a-layout-content>
             <!-- 页尾 -->
-            <a-layout-footer style="text-align: center">
+            <a-layout-footer :style="{ textAlign: 'center' }">
                 HodorScheduler v1.0.0
             </a-layout-footer>
         </a-layout>
