@@ -111,7 +111,6 @@ const onMonitor = (actuator) => {
         ]),
     })
 }
-
 </script>
 
 <template>
@@ -141,6 +140,4 @@ const onMonitor = (actuator) => {
     width: 200px;
     float: right;
 }
-
-;
 </style>
