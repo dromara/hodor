@@ -3,14 +3,14 @@ import httpInstance from "@/utils/http"
 
 export const getActuatorInfoAPI = (name) => {
     return httpInstance({
-        url: `/hodor/app/actuator/info?name=${name}`,
+        url: `/actuator/info?name=${name}`,
         method: 'GET',
     })
 }
 
 export const getActuatorListAPI = () => {
     return httpInstance({
-        url: `/hodor/app/actuator/list`,
+        url: `/actuator/list`,
         method: 'GET',
     })
 }

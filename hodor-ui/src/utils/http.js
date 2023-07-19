@@ -3,7 +3,7 @@ import { message } from 'ant-design-vue';
 
 // 创建axios实例
 const httpInstance = axios.create({
-  baseURL: '',  // 根地址
+  baseURL: window.location.origin + '/hodor/admin',  // 根地址
   timeout: 5000  // 超时时间
 })
 
