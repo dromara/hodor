@@ -2,13 +2,15 @@
 import Mock from "mockjs"
 import { getQuery } from "./getQuery"
 
+const preUrlPath = "/hodor/admin/actuator"
+
 const actuatorList = []
 for (let i = 0; i < 30; i++) {
     actuatorList.push({
         "name": `Actuator${i}`,
         "nodeInfo": {
             "ip": Mock.mock("@ip"),
-            "port": Mock.mock("@natural"),
+            "port": Mock.mock("@natural(1, 65535)"),
             "pid": Mock.mock("@natural"),
             "version": "1",
             "hostname": Mock.mock("@string(5)"),
@@ -42,14 +44,14 @@ const actuatorInfo = {
 
 export default [
     {
-        url: "/hodor/app/actuator/list",
+        url: `${preUrlPath}/list`,
         method: "get",
         response: () => {
             return actuatorsInfo
         }
     },
     {
-        url: "/hodor/app/actuator/info",
+        url: `${preUrlPath}/info`,
         method: "get",
         response: (req) => {
             const name = getQuery(req.url, 'name')

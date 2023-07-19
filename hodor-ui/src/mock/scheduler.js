@@ -2,14 +2,16 @@
 import Mock from "mockjs"
 import { getQuery } from "./getQuery"
 
+const preUrlPath = "/hodor/admin/scheduler"
+
 const schedulerList = []
 for (let i = 0; i < 30; i++) {
     schedulerList.push({
-        "name": `scheduler${i}`,
+        "name": `Scheduler${i}`,
         "role": Mock.mock("@name"),
-        "reportTime": 0,
+        "reportTime": Mock.mock("@time"),
         "ip": Mock.mock("@ip"),
-        "port": Mock.mock("@natural"),
+        "port": Mock.mock("@natural(1, 65535)"),
         "pid": Mock.mock("@natural"),
         "version": 1,
         "hostname": Mock.mock("@string(5)"),
@@ -58,14 +60,14 @@ const metadataInfo = {
 
 export default [
     {
-        url: "/hodor/app/scheduler/list",
+        url: `${preUrlPath}/list`,
         method: "get",
         response: () => {
             return schedulersInfo
         }
     },
     {
-        url: "/hodor/app/scheduler/info",
+        url: `${preUrlPath}/info`,
         method: "get",
         response: (req) => {
             const name = getQuery(req.url, 'name')
@@ -79,7 +81,7 @@ export default [
         }
     },
     {
-        url: "/hodor/app/scheduler/metadata",
+        url: `${preUrlPath}/metadata`,
         method: "get",
         response: () => {
             return metadataInfo

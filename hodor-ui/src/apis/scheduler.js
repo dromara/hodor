@@ -8,7 +8,7 @@ export const getSchedulerInfoAPI = (name) => {
     })
 }
 
-export const getActuatorListAPI = () => {
+export const getSchedulerListAPI = () => {
     return httpInstance({
         url: `/scheduler/list`,
         method: 'GET',

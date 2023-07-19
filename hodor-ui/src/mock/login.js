@@ -16,7 +16,7 @@ const userInfo = {
 
 export default [
     {
-        url: "/hodor/app/login/",
+        url: "/hodor/admin/login/",
         method: "post",
         response: () => {
             return userInfo
