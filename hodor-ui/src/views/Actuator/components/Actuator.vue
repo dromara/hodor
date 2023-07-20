@@ -40,6 +40,9 @@ const getActuatorList = async () => {
 // 处理响应数据中执行器节点信息
 const getActuatorNodes = (data) => {
     const res = []
+    if (data === null) {
+        return res;
+    }
     data.forEach(actuator => {
         res.push({
             "name": actuator.name,

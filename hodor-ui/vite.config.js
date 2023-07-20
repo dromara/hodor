@@ -14,9 +14,24 @@ export default defineConfig({
       localEnabled: true,
     }),
   ],
+  // 路径映射
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
-  }
+  },
+  // 代理配置
+  server: {
+    open: false,  // 自动弹出浏览器
+    https: false,  // 是否是https请求
+    proxy: {
+      '/hodor/admin': {
+        target: 'http://106.55.104.216:8089',  // 代理目标地址
+        changeOrigin: true,  // 允许跨域
+        pathRewrite: {
+          '^/hodor/admin': '/hodor/admin' //路径的替换规则
+        }
+      }
+    },
+  },
 })

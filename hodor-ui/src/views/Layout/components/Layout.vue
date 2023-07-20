@@ -142,7 +142,7 @@ const menu = [
                             <i>
                                 <UserOutlined />
                             </i>
-                            {{ userStore.userInfo.username }}
+                            {{ userStore.userInfo ? userStore.userInfo.username : '' }}
                         </a>
                     </li>
 
