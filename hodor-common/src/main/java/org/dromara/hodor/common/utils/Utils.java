@@ -19,11 +19,15 @@ package org.dromara.hodor.common.utils;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.system.SystemUtil;
 import cn.hutool.system.oshi.OshiUtil;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import oshi.hardware.GlobalMemory;
@@ -60,8 +64,22 @@ public class Utils {
 
     public static class Jsons extends JSONUtil {
 
+        private static final Gson gson = GsonUtils.getGson();
+
         public static String toJson(Object obj) {
             return toJsonStr(obj);
+        }
+
+        public static <T> T toBean(String jsonStr, TypeReference<T> typeReference) {
+            return toBean(jsonStr, typeReference.getType());
+        }
+
+        public static <T> T toBean(String jsonStr, TypeToken<T> typeToken) {
+            return toBean(jsonStr, typeToken.getType());
+        }
+
+        public static <T> T toBean(String jsonStr, Type type) {
+            return gson.fromJson(jsonStr, type);
         }
     }
 
