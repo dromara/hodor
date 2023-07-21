@@ -40,7 +40,7 @@ public class UserController {
             @Parameter(name = "pageSize", description = "分页大小")
         })
     @GetMapping
-    public Result<PageInfo<User>> queryByPage(@RequestBody User user,
+    public Result<PageInfo<User>> queryByPage(User user,
                                               @RequestParam(value = "pageNo") Integer pageNo,
                                               @RequestParam(value = "pageSize") Integer pageSize) {
         PageInfo<User> pageInfo = userService.queryByPage(user, pageNo, pageSize);

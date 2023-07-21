@@ -38,7 +38,7 @@ public class JobExecDetailReporterController {
 
     @Operation(summary = "分页查询任务执行明细")
     @GetMapping
-    public Result<PageInfo<JobExecDetail>> queryByPage(@RequestBody JobExecDetail jobExecDetail,
+    public Result<PageInfo<JobExecDetail>> queryByPage(JobExecDetail jobExecDetail,
                                                  @RequestParam(value = "pageNo") Integer pageNo,
                                                  @RequestParam(value = "pageSize") Integer pageSize) {
         PageInfo<JobExecDetail> pageInfo = jobExecDetailService.queryByPage(jobExecDetail, pageNo, pageSize);

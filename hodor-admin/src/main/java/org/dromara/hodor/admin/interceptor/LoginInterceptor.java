@@ -61,15 +61,15 @@ public class LoginInterceptor implements HandlerInterceptor {
         }
 
         // check session
-        Object userSession = request.getSession().getAttribute(ServerConfigKeys.USER_SESSION);
+        User userSession = (User)request.getSession().getAttribute(ServerConfigKeys.USER_SESSION);
         if (userSession == null) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.getWriter()
                 .print("API Unauthorized");
             return false;
         }
-
-        UserContext.setUser((UserInfo) userSession);
+        final UserInfo userInfo = Beans.copyProperties(userSession, UserInfo.class);
+        UserContext.setUser(userInfo);
         return true;
     }
 

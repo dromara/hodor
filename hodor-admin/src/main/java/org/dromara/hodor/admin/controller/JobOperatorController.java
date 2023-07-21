@@ -40,7 +40,7 @@ public class JobOperatorController {
             @Parameter(name = "pageSize", description = "分页大小")
         })
     @GetMapping
-    public Result<PageInfo<JobInfo>> queryByPage(@RequestBody JobInfo jobInfo,
+    public Result<PageInfo<JobInfo>> queryByPage(JobInfo jobInfo,
                                                  @RequestParam(value = "pageNo") Integer pageNo,
                                                  @RequestParam(value = "pageSize") Integer pageSize) {
         PageInfo<JobInfo> pageInfo = jobOperatorService.queryByPage(jobInfo, pageNo, pageSize);

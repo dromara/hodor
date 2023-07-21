@@ -24,17 +24,17 @@ public class TenantController {
     /**
      * 分页查询
      *
-     * @param tenant 筛选条件
-     * @param pageNo      第几页
-     * @param pageSize    分页大小
+     * @param tenant   筛选条件
+     * @param pageNo   第几页
+     * @param pageSize 分页大小
      * @return 查询结果
      */
     @GetMapping
-    public Result<PageInfo<Tenant>> queryByPage(@RequestBody Tenant tenant,
-                                                    @RequestParam(value = "pageNo") Integer pageNo,
-                                                    @RequestParam(value = "pageSize") Integer pageSize) {
-		PageInfo<Tenant> pageInfo = tenantService.queryByPage(tenant, pageNo, pageSize);
-		return ResultUtil.success(pageInfo);
+    public Result<PageInfo<Tenant>> queryByPage(Tenant tenant,
+                                                @RequestParam(value = "pageNo") Integer pageNo,
+                                                @RequestParam(value = "pageSize") Integer pageSize) {
+        PageInfo<Tenant> pageInfo = tenantService.queryByPage(tenant, pageNo, pageSize);
+        return ResultUtil.success(pageInfo);
     }
 
     /**
@@ -45,7 +45,7 @@ public class TenantController {
      */
     @GetMapping("{id}")
     public Result<Tenant> queryById(@PathVariable("id") Long id) {
-		return ResultUtil.success(tenantService.queryById(id));
+        return ResultUtil.success(tenantService.queryById(id));
     }
 
     /**
