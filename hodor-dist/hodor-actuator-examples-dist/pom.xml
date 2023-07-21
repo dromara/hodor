@@ -1,0 +1,85 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.dromara</groupId>
+        <artifactId>hodor-dist</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>hodor-actuator-examples-dist</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.dromara</groupId>
+            <artifactId>hodor-actuator-java-example</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>rocksdbjni</artifactId>
+                    <groupId>org.rocksdb</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>ratis-common</artifactId>
+                    <groupId>org.apache.ratis</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>ratis-grpc</artifactId>
+                    <groupId>org.apache.ratis</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>ratis-netty</artifactId>
+                    <groupId>org.apache.ratis</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>ratis-server</artifactId>
+                    <groupId>org.apache.ratis</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>ratis-tools</artifactId>
+                    <groupId>org.apache.ratis</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>*.yml</exclude>
+                        <exclude>*.xml</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>hodor-actuator-java-example-bin</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <finalName>hodor-actuator-java-example</finalName>
+                            <descriptors>
+                                <descriptor>src/main/assembly/bin.xml</descriptor>
+                            </descriptors>
+                            <appendAssemblyId>false</appendAssemblyId>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
