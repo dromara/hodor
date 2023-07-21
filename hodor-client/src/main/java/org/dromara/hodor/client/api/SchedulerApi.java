@@ -64,8 +64,7 @@ public class SchedulerApi {
         }
         log.debug("Get SchedulerNodeResult : {}", response.body());
         final HodorResult<List<SchedulerNodeResult>> hodorResult = Jsons.toBean(response.body(),
-            new TypeReference<HodorResult<List<SchedulerNodeResult>>>() {
-            }, false);
+            new TypeReference<HodorResult<List<SchedulerNodeResult>>>() {});
         if (!hodorResult.isSuccess()) {
             throw new HodorClientException(hodorResult.getMsg());
         }
@@ -90,8 +89,7 @@ public class SchedulerApi {
         }
         log.debug("Get HodorMetadata : {}", response.body());
         final HodorResult<HodorMetadata> hodorResult = Jsons.toBean(response.body(),
-            new TypeReference<HodorResult<HodorMetadata>>() {
-            }, false);
+            new TypeReference<HodorResult<HodorMetadata>>() {});
         if (!hodorResult.isSuccess()) {
             throw new HodorClientException(hodorResult.getMsg());
         }

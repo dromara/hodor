@@ -152,8 +152,7 @@ public class ActuatorApi {
         }
         log.debug("ListBinding result: {}", response.body());
         final HodorResult<List<BindingInfo>> hodorResult = Jsons.toBean(response.body(),
-            new TypeReference<HodorResult<List<BindingInfo>>>() {
-            }, false);
+            new TypeReference<HodorResult<List<BindingInfo>>>() {});
         if (!hodorResult.isSuccess()) {
             throw new HodorClientException(hodorResult.getMsg());
         }
@@ -171,8 +170,7 @@ public class ActuatorApi {
         }
         log.debug("ListBinding result: {}", response.body());
         final HodorResult<List<ActuatorInfo>> hodorResult = Jsons.toBean(response.body(),
-            new TypeReference<HodorResult<List<ActuatorInfo>>>() {
-            }, false);
+            new TypeReference<HodorResult<List<ActuatorInfo>>>() {});
         if (!hodorResult.isSuccess()) {
             throw new HodorClientException(hodorResult.getMsg());
         }
@@ -190,8 +188,7 @@ public class ActuatorApi {
         }
         log.debug("ListBinding result: {}", response.body());
         final HodorResult<List<String>> hodorResult = Jsons.toBean(response.body(),
-            new TypeReference<HodorResult<List<String>>>() {
-            }, false);
+            new TypeReference<HodorResult<List<String>>>() {});
         if (!hodorResult.isSuccess()) {
             throw new HodorClientException(hodorResult.getMsg());
         }
