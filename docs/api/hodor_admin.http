@@ -8,3 +8,6 @@ username=admin&password=123
 GET http://localhost:8089/hodor/admin/actuator/clusterNames
 API-KEY: b50fd4d4d71935b7c2a001b87f068c4f
 
+### scheduler/metadata
+GET http://localhost:8089/hodor/admin/scheduler/metadata
+API-KEY: b50fd4d4d71935b7c2a001b87f068c4f
