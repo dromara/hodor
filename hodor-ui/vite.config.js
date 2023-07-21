@@ -9,10 +9,10 @@ export default defineConfig({
   plugins: [
     vue(),
     // mock插件配置
-    viteMockServe({
-      mockPath: "./src/mock",
-      localEnabled: true,
-    }),
+    // viteMockServe({
+    //   mockPath: "./src/mock",
+    //   localEnabled: true,
+    // }),
   ],
   // 路径映射
   resolve: {
