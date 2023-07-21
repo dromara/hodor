@@ -42,6 +42,7 @@ import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
 import org.dromara.hodor.remoting.api.message.Header;
 import org.dromara.hodor.remoting.api.message.MessageType;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
+import org.dromara.hodor.remoting.api.message.RemotingResponse;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteLogRequest;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteLogResponse;
 
@@ -64,16 +65,19 @@ public class ActuatorApi {
 
     private final RemotingClient remotingClient;
 
+    private final TypeReference<RemotingResponse<JobExecuteLogResponse>> responseTypeReference;
+
     public ActuatorApi(ConnectStringParser connectStringParser, String appName, String appKey) {
         this.connectStringParser = connectStringParser;
         this.appName = appName;
         this.appKey = appKey;
         this.serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
         this.remotingClient = RemotingClient.getInstance();
+        this.responseTypeReference = new TypeReference<RemotingResponse<JobExecuteLogResponse>>() {};
     }
 
     public LogQueryResult queryLog(LogQueryRequest request) throws ExecutionException, InterruptedException, TimeoutException {
-        final int timeout = request.getTimeout() > 0 ? request.getTimeout() : 3;
+        final int timeout = request.getTimeout() > 0 ? request.getTimeout() : 3000;
         Host host = Host.of(request.getActuatorEndpoint());
         JobExecuteLogRequest executeLogRequest = new JobExecuteLogRequest();
         executeLogRequest.setRequestId(request.getRequestId());
@@ -82,22 +86,26 @@ public class ActuatorApi {
         executeLogRequest.setOffset(request.getOffset());
         executeLogRequest.setLength(request.getLength());
 
-        final JobExecuteLogResponse jobExecuteLogResponse = getJobExecuteLogResponse(host, executeLogRequest, timeout);
+        final RemotingResponse<JobExecuteLogResponse> jobExecuteLogResponse = getJobExecuteLogResponse(host, executeLogRequest, timeout);
+        if (!jobExecuteLogResponse.isSuccess()) {
+            throw new HodorClientException("QueryLog failure, " + jobExecuteLogResponse.getMsg());
+        }
+        final JobExecuteLogResponse logResponseData = jobExecuteLogResponse.getData();
         LogQueryResult queryResult = new LogQueryResult();
-        queryResult.setOffset(jobExecuteLogResponse.getOffset());
-        queryResult.setLength(jobExecuteLogResponse.getLength());
-        queryResult.setLogData(jobExecuteLogResponse.getData());
+        queryResult.setOffset(logResponseData.getOffset());
+        queryResult.setLength(logResponseData.getLength());
+        queryResult.setLogData(logResponseData.getData());
         return queryResult;
     }
 
-    private JobExecuteLogResponse getJobExecuteLogResponse(Host host, JobExecuteLogRequest executeLogRequest, int timeout) throws InterruptedException, ExecutionException, TimeoutException {
+    private RemotingResponse<JobExecuteLogResponse> getJobExecuteLogResponse(Host host, JobExecuteLogRequest executeLogRequest, int timeout) throws InterruptedException, ExecutionException, TimeoutException {
         final byte[] bodyBytes = serializer.serialize(executeLogRequest);
         RemotingMessage requestMessage = RemotingMessage.builder()
             .header(buildJobLogHeader(bodyBytes.length, executeLogRequest))
             .body(bodyBytes)
             .build();
         final RemotingMessage remotingMessage = remotingClient.sendSyncRequest(host, requestMessage, timeout);
-        return serializer.deserialize(remotingMessage.getBody(), JobExecuteLogResponse.class);
+        return serializer.deserialize(remotingMessage.getBody(), responseTypeReference.getType());
     }
 
     private Header buildJobLogHeader(int bodyLength, JobExecuteLogRequest request) {

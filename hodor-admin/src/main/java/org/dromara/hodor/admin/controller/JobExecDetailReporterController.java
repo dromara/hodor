@@ -11,6 +11,7 @@ import org.dromara.hodor.client.model.LogQueryResult;
 import org.dromara.hodor.core.PageInfo;
 import org.dromara.hodor.core.entity.JobExecDetail;
 import org.dromara.hodor.core.service.JobExecDetailService;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -66,7 +67,7 @@ public class JobExecDetailReporterController {
 
     @Operation(summary = "任务执行日志查看")
     @GetMapping("/logs")
-    public Result<LogQueryResult> queryLog(@RequestParam LogQueryRequest request) throws Exception {
+    public Result<LogQueryResult> queryLog(LogQueryRequest request) throws Exception {
         return ResultUtil.success(logService.queryLog(request));
     }
 

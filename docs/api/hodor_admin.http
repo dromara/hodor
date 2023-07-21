@@ -11,3 +11,8 @@ API-KEY: b50fd4d4d71935b7c2a001b87f068c4f
 ### scheduler/metadata
 GET http://localhost:8089/hodor/admin/scheduler/metadata
 API-KEY: b50fd4d4d71935b7c2a001b87f068c4f
+
+### jobExecDetail/logs
+GET http://localhost:8089/hodor/admin/jobExecDetail/logs?
+    requestId=1682302767068704768&groupName=testGroup&jobName=test1&actuatorEndpoint=169.254.0.9:46367&offset=0&length=1000&timeout=10000
+API-KEY: b50fd4d4d71935b7c2a001b87f068c4f

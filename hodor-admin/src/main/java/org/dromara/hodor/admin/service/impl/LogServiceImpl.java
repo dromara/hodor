@@ -22,6 +22,7 @@ import org.dromara.hodor.admin.service.ActuatorOperatorService;
 import org.dromara.hodor.admin.service.LogService;
 import org.dromara.hodor.client.model.LogQueryRequest;
 import org.dromara.hodor.client.model.LogQueryResult;
+import org.dromara.hodor.common.utils.Utils.Assert;
 import org.springframework.stereotype.Service;
 
 /**
@@ -38,6 +39,13 @@ public class LogServiceImpl implements LogService {
 
     @Override
     public LogQueryResult queryLog(LogQueryRequest request) throws Exception {
+        Assert.notNull(request.getRequestId(), "requestId must be not null");
+        Assert.notNull(request.getGroupName(), "groupName must be not null");
+        Assert.notNull(request.getJobName(), "jobName must be not null");
+        Assert.notNull(request.getActuatorEndpoint(), "actuator endpoint must be not null");
+        Assert.notNull(request.getOffset(), "offset must be not null");
+        Assert.notNull(request.getLength(), "length must be not null");
+        Assert.notNull(request.getTimeout(), "timeout must be not null");
         return actuatorOperatorService.queryLog(request);
     }
 
