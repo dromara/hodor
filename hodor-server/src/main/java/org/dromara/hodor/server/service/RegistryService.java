@@ -171,4 +171,8 @@ public class RegistryService implements HodorLifecycle {
     public String getActuatorClusterInfo(String clusterName) {
         return registryCenter.get(ActuatorNode.getClusterPath(clusterName));
     }
+
+    public void put(String path, String data) {
+        registryCenter.createPersistent(path, data);
+    }
 }

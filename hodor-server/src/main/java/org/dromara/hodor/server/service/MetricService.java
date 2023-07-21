@@ -69,8 +69,8 @@ public class MetricService implements HodorLifecycle {
             try {
                 final SchedulerInfo serverInfo = getServerInfo();
                 final String reportInfo = Utils.Jsons.toJson(serverInfo);
-                log.info("Report server node info, {}", reportInfo);
-                registryService.createServerNode(SchedulerNode.getServerMetricsNodePath(registryService.getServerEndpoint()), reportInfo);
+                log.debug("Report server node info, {}", reportInfo);
+                registryService.put(SchedulerNode.getServerMetricsNodePath(registryService.getServerEndpoint()), reportInfo);
             } catch (Throwable e) {
                 log.warn("Get server info error, {}", e.getMessage());
             }

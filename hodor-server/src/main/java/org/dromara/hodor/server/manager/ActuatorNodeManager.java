@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * actuator node manager
  *
  * @author tomgs
- * @version 2021/8/1 1.0
+ * @version 1.0
  */
 @Slf4j
 public class ActuatorNodeManager {
@@ -68,12 +68,12 @@ public class ActuatorNodeManager {
     }
 
     public void offlineActuatorClean() {
-        log.info("offline actuator clean ...");
         actuatorNodeInfos.entrySet().removeIf(entry -> {
             final Pair<NodeInfo, Long> nodePair = entry.getValue();
             if (heartbeatThresholdExceedCheck(nodePair.getSecond())) {
                 String endpoint = entry.getKey();
                 removeNode(endpoint);
+                log.info("Actuator [{}] offline", endpoint);
                 return true;
             }
             return false;
