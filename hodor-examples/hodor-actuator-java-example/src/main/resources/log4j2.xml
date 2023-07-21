@@ -3,8 +3,8 @@
 
     <!-- Logging Properties -->
     <Properties>
-        <Property name="APP_NAME">hodor-java-actuator</Property>
-        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss} %-5level [%X{requestId}] [%thread] %logger{40} [%L] %msg%n</Property>
+        <Property name="APP_NAME">hodor-java-actuator-example</Property>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger{40} [%L] %msg%n</Property>
         <Property name="APP_LOG_ROOT">./logs</Property>
     </Properties>
 
@@ -29,7 +29,7 @@
     <Loggers>
         <Root level="INFO">
             <AppenderRef ref="console"/>
-            <AppenderRef ref="appLog"/>
+            <!--<AppenderRef ref="appLog"/>-->
         </Root>
     </Loggers>
 </Configuration>
