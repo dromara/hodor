@@ -47,11 +47,13 @@ public class MetadataChangeListener extends AbstractAsyncEventPublisher<List<Cop
 
     @Override
     public void dataChanged(DataChangeEvent event) {
-        log.info("Metadata changed, event: {}", event);
         if (!SchedulerNode.isMetadataPath(event.getPath())) {
             return;
         }
         final String metadata = new String(event.getData());
+
+        log.info("Metadata changed, eventType: {}, eventPath: {}, eventData: {}", event.getType(), event.getPath(), metadata);
+
         final HodorMetadata hodorMetadata = gsonUtils.fromJson(metadata, HodorMetadata.class);
         if (event.getType() == DataChangeEvent.Type.NODE_ADDED
             || event.getType() == DataChangeEvent.Type.NODE_UPDATED) {
@@ -75,7 +77,7 @@ public class MetadataChangeListener extends AbstractAsyncEventPublisher<List<Cop
                 notifyPurgeHistoryScheduler(getPurgeCopySets(historyCopySets, changedCopySets));
             }
         } else if (event.getType() == DataChangeEvent.Type.NODE_REMOVED) {
-            log.warn("metadata path {} removed.", event.getPath());
+            log.warn("Metadata path {} removed.", event.getPath());
         }
     }
 
