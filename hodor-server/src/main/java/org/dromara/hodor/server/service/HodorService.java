@@ -157,7 +157,7 @@ public class HodorService implements HodorLifecycle {
         final DataInterval schedulerDataInterval = schedulerManager.getSchedulerDataInterval(scheduler.getSchedulerName());
         if (dataInterval.equals(schedulerDataInterval)) { // 如果区间不相等表示数据有交叉，会产生重复
             List<JobInfo> jobInfoList = jobInfoService.queryRunningJobInfoByDataInterval(dataInterval);
-            jobInfoList.forEach(job -> scheduler.addJob(job, JobExecutorTypeManager.getInstance().getJobExecutor(job.getJobType())));
+            jobInfoList.forEach(job -> scheduler.putJob(job, JobExecutorTypeManager.getInstance().getJobExecutor(job.getJobType())));
         }
     }
 

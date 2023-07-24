@@ -1,12 +1,6 @@
 package org.dromara.hodor.server.listener;
 
-import java.util.List;
 import org.dromara.hodor.common.event.AbstractAsyncEventPublisher;
-import org.dromara.hodor.common.event.Event;
-import org.dromara.hodor.common.utils.SerializeUtils;
-import org.dromara.hodor.common.utils.StringUtils;
-import org.dromara.hodor.register.api.DataChangeEvent;
-import org.dromara.hodor.register.api.DataChangeListener;
 import org.dromara.hodor.server.common.EventType;
 import org.dromara.hodor.server.service.HodorService;
 
@@ -16,7 +10,7 @@ import org.dromara.hodor.server.service.HodorService;
  * @author tomgs
  * @since 1.0
  */
-public class JobEventDispatchListener extends AbstractAsyncEventPublisher<String> implements DataChangeListener {
+public class JobEventDispatchListener extends AbstractAsyncEventPublisher<Object> {
 
     private final HodorService hodorService;
 
@@ -28,6 +22,8 @@ public class JobEventDispatchListener extends AbstractAsyncEventPublisher<String
     public void registryListener() {
         registerJobCreateListener();
         registerJobUpdateListener();
+        registerJobDeleteListener();
+        registerJobExecuteListener();
     }
 
     private void registerJobCreateListener() {
@@ -42,18 +38,16 @@ public class JobEventDispatchListener extends AbstractAsyncEventPublisher<String
         }, EventType.JOB_UPDATE_DISTRIBUTE);
     }
 
-    @Override
-    public void dataChanged(DataChangeEvent event) {
-        String eventPath = event.getPath();
-        // /scheduler/job-event/{eventType}
-        List<String> paths = StringUtils.splitPath(eventPath);
-        if (paths.size() != 3) {
-            return;
-        }
-        String eventType = paths.get(2);
-        if (event.getType() == DataChangeEvent.Type.NODE_ADDED || event.getType() == DataChangeEvent.Type.NODE_UPDATED) {
-            publish(Event.create(SerializeUtils.deserialize(event.getData(), String.class), eventType));
-        }
+    private void registerJobDeleteListener() {
+        this.addListener(event -> {
+
+        }, EventType.JOB_DELETE_DISTRIBUTE);
+    }
+
+    private void registerJobExecuteListener() {
+        this.addListener(event -> {
+
+        }, EventType.JOB_DELETE_DISTRIBUTE);
     }
 
 }

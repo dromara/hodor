@@ -2,6 +2,8 @@ package org.dromara.hodor.server.restservice;
 
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.text.StrSplitter;
+
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -95,8 +97,12 @@ public class RestServiceRequestHandler implements HodorChannelHandler {
             byte[] responseByteArray = serializer.toJson(result).getBytes(StandardCharsets.UTF_8);
             responseSuccess(responseByteArray, channel);
         } catch (Exception e) {
-            log.error("RestServiceRequestHandler exception, {}", e.getMessage(), e);
-            responseError(500, "Hodor rest server error -> " + e.getMessage(), channel);
+            String errMsg = e.getMessage();
+            if (e instanceof InvocationTargetException) {
+                errMsg = e.getCause().getMessage();
+            }
+            log.error("RestServiceRequestHandler exception, {}", errMsg, e);
+            responseError(500, errMsg, channel);
         }
 
     }
