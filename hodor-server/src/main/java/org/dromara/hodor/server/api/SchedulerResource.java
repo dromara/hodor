@@ -317,7 +317,7 @@ public class SchedulerResource {
         HodorRestClient hodorRestClient = HodorRestClient.getInstance();
         HodorHttpRequest request = new HodorHttpRequest();
 
-        request.setUri("/hodor/scheduler/doScheduleJobCommand");
+        request.setUri("/hodor/scheduler/doJobCommand");
         request.setMethod("POST");
         request.setContent(SerializeUtils.serialize(jobCommand));
         CompletableFuture<HodorHttpResponse> future = hodorRestClient.sendHttpRequest(Host.of(server), request);
