@@ -64,14 +64,17 @@ public class JobOperatorServiceImpl implements JobOperatorService {
     @Override
     @Transactional
     public JobInfo addJob(JobInfo jobInfo) {
-        final JobInfo result = jobInfoService.addJob(jobInfo);
+        //final JobInfo result = jobInfoService.addJob(jobInfo);
+        if (jobInfoService.isExists(jobInfo)) {
+            throw new ServiceException(MsgCode.CREATE_JOB_ERROR, "Job already exists");
+        }
         try {
-            jobApi.registerJob(result);
+            jobApi.registerJob(jobInfo);
         } catch (Exception e) {
             log.error("Create job error", e);
             throw new ServiceException(MsgCode.CREATE_JOB_ERROR, e.getMessage());
         }
-        return result;
+        return jobInfo;
     }
 
     @Override

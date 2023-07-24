@@ -1,12 +1,17 @@
 package org.dromara.hodor.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import java.util.List;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.cron.CronUtils;
+import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.core.PageInfo;
+import org.dromara.hodor.core.entity.JobExecDetail;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.core.mapper.JobInfoMapper;
 import org.dromara.hodor.core.service.JobInfoService;
@@ -140,7 +145,22 @@ public class JobInfoServiceImpl implements JobInfoService {
 
     @Override
     public PageInfo<JobInfo> queryByPage(JobInfo jobInfo, Integer pageNo, Integer pageSize) {
-        return null;
+        IPage<JobInfo> page = new Page<>(pageNo, pageSize);
+        jobInfoMapper.selectPage(page, Wrappers.<JobInfo>lambdaQuery()
+            .eq(StringUtils.isNotBlank(jobInfo.getGroupName()), JobInfo::getGroupName, jobInfo.getGroupName())
+            .eq(StringUtils.isNotBlank(jobInfo.getJobName()), JobInfo::getJobName, jobInfo.getJobName())
+            .eq(jobInfo.getJobStatus() != null, JobInfo::getJobStatus, jobInfo.getJobStatus())
+            .eq(jobInfo.getJobType() != null, JobInfo::getJobType, jobInfo.getJobType())
+            .eq(jobInfo.getJobCommandType() != null, JobInfo::getJobCommandType, jobInfo.getJobCommandType())
+            .eq(jobInfo.getJobCategory() != null, JobInfo::getJobCategory, jobInfo.getJobCategory())
+        );
+        PageInfo<JobInfo> pageInfo = new PageInfo<>();
+        return pageInfo.setRows(page.getRecords())
+            .setTotal(page.getTotal())
+            .setTotalPage((int) page.getPages())
+            .setCurrentPage((int) page.getCurrent())
+            .setPageNo(pageNo)
+            .setPageSize(pageSize);
     }
 
 }

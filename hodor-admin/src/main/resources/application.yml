@@ -3,6 +3,9 @@ spring:
     name: hodor-admin
   profiles:
     include: core
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: UTC
 
 server:
   servlet:

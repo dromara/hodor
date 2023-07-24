@@ -60,6 +60,7 @@ public class JobGroupServiceImpl implements JobGroupService {
     @Override
     public JobGroup createGroup(UserInfo user, JobGroup group) {
         setGroupInfo(user, group);
+        group.setCreatedAt(DateUtils.nowDate());
         jobGroupMapper.insert(group);
         return group;
     }

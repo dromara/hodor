@@ -58,7 +58,7 @@ public enum MsgCode {
     PAUSE_JOB_ERROR(20011, "pause job error, msg {0}", "暂停任务失败，信息 {0}"),
     STOP_JOB_ERROR(20012, "stop job error, msg {0}", "停止任务失败，信息 {0}"),
     RESUME_JOB_ERROR(20013, "resume job error, msg {0}", "恢复任务失败，信息 {0}"),
-    EXECUTE_JOB_ERROR(20013, "execute job error, msg {0}", "执行任务失败，信息 {0}"),
+    EXECUTE_JOB_ERROR(20014, "execute job error, msg {0}", "执行任务失败，信息 {0}"),
 
     // openapi
     INVALID_SIGN(30001, "the signature is invalid", "非法签名"),
