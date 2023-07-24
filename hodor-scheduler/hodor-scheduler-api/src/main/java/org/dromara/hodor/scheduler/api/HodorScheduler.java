@@ -29,7 +29,7 @@ public interface HodorScheduler {
 
     void startDelayed(int seconds);
 
-    void addJob(JobDesc jobInfo, JobExecutor jobExecutor);
+    void putJob(JobDesc jobInfo, JobExecutor jobExecutor);
 
     void resumeJob(JobDesc jobInfo);
 

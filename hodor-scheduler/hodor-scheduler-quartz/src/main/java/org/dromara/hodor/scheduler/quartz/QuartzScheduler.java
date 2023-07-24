@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 import org.dromara.hodor.common.extension.Join;
+import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.scheduler.api.HodorScheduler;
 import org.dromara.hodor.scheduler.api.JobExecutor;
@@ -114,10 +115,31 @@ public class QuartzScheduler implements HodorScheduler {
     }
 
     @Override
-    public void addJob(JobDesc jobDesc, JobExecutor jobExecutor) {
+    public void putJob(JobDesc jobDesc, JobExecutor jobExecutor) {
         if (checkExists(jobDesc)) {
+            JobKey jobKey = JobKey.jobKey(jobDesc.getJobName(), jobDesc.getGroupName());
+            try {
+                TriggerKey triggerKey = new TriggerKey(jobDesc.getJobName(), jobDesc.getGroupName());
+                JobDetail jobDetail = scheduler.getJobDetail(jobKey);
+                JobDesc oldJobDesc = (JobDesc)jobDetail.getJobDataMap().get("jobDesc");
+                jobDetail.getJobDataMap().put("jobExecutor", jobExecutor);
+                jobDetail.getJobDataMap().put("jobDesc", jobDesc);
+                if (scheduler.checkExists(triggerKey)) {
+                    if (!StringUtils.equalsIgnoreCase(jobDesc.getCron(), oldJobDesc.getCron())) {
+                        Trigger trigger = buildTrigger(jobDesc, jobDetail);
+                        scheduler.rescheduleJob(triggerKey, trigger);
+                    }
+                } else {
+                    Trigger trigger = buildTrigger(jobDesc, jobDetail);
+                    scheduler.scheduleJob(trigger);
+                }
+
+            } catch (SchedulerException e) {
+                throw new HodorSchedulerException(e);
+            }
             return;
         }
+
         JobDetail jobDetail = JobBuilder.newJob(HodorJob.class)
                 .withIdentity(jobDesc.getJobName(), jobDesc.getGroupName())
                 .requestRecovery(true)
@@ -127,6 +149,19 @@ public class QuartzScheduler implements HodorScheduler {
         jobDetail.getJobDataMap().put("jobExecutor", jobExecutor);
         jobDetail.getJobDataMap().put("jobDesc", jobDesc);
 
+        Trigger trigger = buildTrigger(jobDesc, jobDetail);
+
+        try {
+            scheduler.scheduleJob(jobDetail, trigger);
+            if (jobDesc.getFireNow()) {
+                scheduler.triggerJob(jobDetail.getKey());
+            }
+        } catch (SchedulerException e) {
+            throw new HodorSchedulerException(e);
+        }
+    }
+
+    private static Trigger buildTrigger(JobDesc jobDesc, JobDetail jobDetail) {
         TriggerBuilder<CronTrigger> triggerBuilder = TriggerBuilder.newTrigger()
             .withIdentity(jobDesc.getJobName(), jobDesc.getGroupName())
             .withSchedule(CronScheduleBuilder.cronSchedule(jobDesc.getCron()).withMisfireHandlingInstructionDoNothing())
@@ -138,16 +173,7 @@ public class QuartzScheduler implements HodorScheduler {
         if (jobDesc.getEndTime() != null) {
             triggerBuilder = triggerBuilder.endAt(jobDesc.getEndTime());
         }
-        Trigger trigger = triggerBuilder.build();
-
-        try {
-            scheduler.scheduleJob(jobDetail, trigger);
-            if (jobDesc.getFireNow()) {
-                scheduler.triggerJob(jobDetail.getKey());
-            }
-        } catch (SchedulerException e) {
-            throw new HodorSchedulerException(e);
-        }
+        return triggerBuilder.build();
     }
 
     @Override
