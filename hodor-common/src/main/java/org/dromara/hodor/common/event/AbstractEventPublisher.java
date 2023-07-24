@@ -15,11 +15,11 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public abstract class AbstractEventPublisher<V> implements EventPublisher<V> {
 
-    private final Map<Object, Set<HodorEventListener<V>>> listeners = Maps.newConcurrentMap();
-
     private final ReentrantLock lock = new ReentrantLock();
 
-    private final Set<HodorEventListener<V>> EMPTY_LISTENERS = Sets.newHashSet();
+    private final Map<Object, Set<HodorEventListener<V>>> listeners = Maps.newConcurrentMap();
+
+    private final Set<HodorEventListener<V>> EMPTY_LISTENERS = Sets.newConcurrentHashSet();
 
     public AbstractEventPublisher() {
         this.registryListener();
