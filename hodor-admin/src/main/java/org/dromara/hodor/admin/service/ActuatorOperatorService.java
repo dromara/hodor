@@ -44,4 +44,5 @@ public interface ActuatorOperatorService {
 
     List<String> allClusters() throws Exception;
 
+    List<ActuatorInfo> getActuatorByName(String name) throws Exception;
 }

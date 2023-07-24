@@ -12,6 +12,7 @@ import org.dromara.hodor.admin.service.ActuatorOperatorService;
 import org.dromara.hodor.model.actuator.ActuatorInfo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -41,6 +42,13 @@ public class ActuatorController {
         final UserInfo user = UserContext.getUser();
         final List<ActuatorInfo> actuatorClusterInfos = actuatorOperatorService.getActuatorClusterInfos();
         return ResultUtil.success(actuatorClusterInfos);
+    }
+
+    @Operation(summary = "获取根据指定name的执行器详细信息")
+    @GetMapping("/info")
+    public Result<List<ActuatorInfo>> getActuatorByName(@RequestParam String name) throws Exception {
+        final List<ActuatorInfo> actuatorInfos = actuatorOperatorService.getActuatorByName(name);
+        return ResultUtil.success(actuatorInfos);
     }
 
 }

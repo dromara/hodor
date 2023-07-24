@@ -17,6 +17,7 @@
 
 package org.dromara.hodor.admin.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.dromara.hodor.admin.service.ActuatorOperatorService;
 import org.dromara.hodor.client.HodorApiClient;
@@ -70,6 +71,21 @@ public class ActuatorOperatorServiceImpl implements ActuatorOperatorService {
     @Override
     public List<String> allClusters() throws Exception {
         return actuatorApi.allClusters();
+    }
+
+    @Override
+    public List<ActuatorInfo> getActuatorByName(String name) throws Exception {
+        // TODO: 可以考虑增加ActuatorApi相应接口进行优化
+        List<ActuatorInfo> res = new ArrayList<>();
+        // 1. 获取所有执行节点
+        List<ActuatorInfo> actuatorInfos = actuatorApi.actuatorInfos();
+        // 2. 根据name匹配
+        for (ActuatorInfo actuatorInfo : actuatorInfos) {
+            if (actuatorInfo.getName().indexOf(name) != -1) {
+                res.add(actuatorInfo);
+            }
+        }
+        return res;
     }
 
 }
