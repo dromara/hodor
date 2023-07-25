@@ -28,7 +28,6 @@ import org.dromara.hodor.common.connect.TrySender;
 import org.dromara.hodor.common.utils.Utils.Https;
 import org.dromara.hodor.common.utils.Utils.Jsons;
 import org.dromara.hodor.model.job.JobDesc;
-import org.dromara.hodor.model.job.JobKey;
 
 /**
  * JobApi
@@ -83,9 +82,9 @@ public class JobApi {
         log.debug("Update job result: {}", response.body());
     }
 
-    public void deleteJob(JobKey jobKey) throws Exception {
+    public void deleteJob(JobDesc job) throws Exception {
         String result = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/scheduler/deleteJob")
-                .body(Jsons.toJson(jobKey))
+                .body(Jsons.toJson(job))
                 .header("appName", appName)
                 .header("appKey", appKey)
                 .execute()
@@ -94,9 +93,9 @@ public class JobApi {
         log.debug("Register jobs result: {}", result);
     }
 
-    public void executeJob(JobKey jobKey) throws Exception {
+    public void executeJob(JobDesc job) throws Exception {
         String result = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/scheduler/executeJob")
-                .body(Jsons.toJson(jobKey))
+                .body(Jsons.toJson(job))
                 .header("appName", appName)
                 .header("appKey", appKey)
                 .execute()
@@ -105,9 +104,9 @@ public class JobApi {
         log.debug("Register jobs result: {}", result);
     }
 
-    public void stopJob(JobKey jobKey) throws Exception {
+    public void stopJob(JobDesc job) throws Exception {
         String result = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/scheduler/stopJob")
-                .body(Jsons.toJson(jobKey))
+                .body(Jsons.toJson(job))
                 .header("appName", appName)
                 .header("appKey", appKey)
                 .execute()

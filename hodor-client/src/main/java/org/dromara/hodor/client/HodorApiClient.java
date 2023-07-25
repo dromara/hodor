@@ -1,5 +1,6 @@
 package org.dromara.hodor.client;
 
+import cn.hutool.http.HttpGlobalConfig;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import org.dromara.hodor.common.connect.ConnectStringParser;
@@ -28,6 +29,8 @@ public class HodorApiClient {
         this.connectStringParser = new ConnectStringParser(config.getRegistryAddress());
         this.appKey = config.getAppKey();
         this.appName = config.getAppName();
+        // set http timeout
+        HttpGlobalConfig.setTimeout(config.getTimeout());
     }
 
     public <API> API createApi(Class<API> apiClass) {

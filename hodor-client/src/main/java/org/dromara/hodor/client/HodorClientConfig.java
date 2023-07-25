@@ -26,4 +26,9 @@ public class HodorClientConfig {
      */
     private String registryAddress;
 
+    /**
+     * 请求超时时间
+     */
+    private int timeout;
+
 }

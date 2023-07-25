@@ -95,15 +95,15 @@ public class JobOperatorServiceImpl implements JobOperatorService {
     }
 
     @Override
-    @Transactional
     public Boolean deleteById(Long id) {
         final JobInfo jobInfo = jobInfoService.queryById(id);
         if (jobInfo == null) {
             throw new ServiceException(MsgCode.INVALID_JOB_ID, id);
         }
         try {
-            if (jobInfoService.deleteById(id)) {
-                jobApi.deleteJob(JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName()));
+            final boolean deleted = jobInfoService.deleteById(id);
+            if (deleted) {
+                jobApi.deleteJob(jobInfo);
             }
         } catch (Exception e) {
             throw new ServiceException(MsgCode.DELETE_JOB_ERROR, e.getMessage());
@@ -112,7 +112,6 @@ public class JobOperatorServiceImpl implements JobOperatorService {
     }
 
     @Override
-    @Transactional
     public Boolean stopById(Long id) {
         final JobInfo jobInfo = jobInfoService.queryById(id);
         if (jobInfo == null) {
@@ -127,7 +126,7 @@ public class JobOperatorServiceImpl implements JobOperatorService {
         }
 
         try {
-            jobApi.stopJob(jobKey);
+            jobApi.stopJob(jobInfo);
         } catch (Exception e) {
             throw new ServiceException(MsgCode.STOP_JOB_ERROR, e.getMessage());
         }
@@ -135,7 +134,6 @@ public class JobOperatorServiceImpl implements JobOperatorService {
     }
 
     @Override
-    @Transactional
     public Boolean resumeById(Long id) {
         final JobInfo jobInfo = jobInfoService.queryById(id);
         if (jobInfo == null) {
@@ -164,9 +162,8 @@ public class JobOperatorServiceImpl implements JobOperatorService {
             throw new ServiceException(MsgCode.INVALID_JOB_ID, id);
         }
 
-        final JobKey jobKey = JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName());
         try {
-            jobApi.executeJob(jobKey);
+            jobApi.executeJob(jobInfo);
         } catch (Exception e) {
             throw new ServiceException(MsgCode.EXECUTE_JOB_ERROR, e.getMessage());
         }

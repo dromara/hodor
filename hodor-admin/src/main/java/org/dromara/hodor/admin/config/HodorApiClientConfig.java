@@ -41,12 +41,16 @@ public class HodorApiClientConfig {
     @Value("${hodor.client.appKey}")
     private String appKey;
 
+    @Value("${hodor.client.timeout:3000}")
+    private int timeout;
+
     @Bean
     public HodorApiClient hodorApiClient() {
         HodorClientConfig config = new HodorClientConfig();
         config.setRegistryAddress(registryAddress);
         config.setAppName(appName);
         config.setAppKey(appKey);
+        config.setTimeout(timeout);
         return new HodorApiClient(config);
     }
 }

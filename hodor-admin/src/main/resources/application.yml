@@ -38,6 +38,7 @@ hodor:
     registryAddress: http://localhost:8081/hodor
     appName: hodor-admin
     appKey: hodor-admin
+    timeout: 3000
   database:
     type: mysql
     driverClass: com.mysql.cj.jdbc.Driver
