@@ -26,7 +26,12 @@ public enum JobCommandType {
     /**
      * 执行任务
      */
-    JOB_EXECUTE_CMD("jobDelete");
+    JOB_EXECUTE_CMD("jobExecute"),
+
+    /**
+     * 恢复任务
+     */
+    JOB_RESUME_CMD("jobResume");
 
     private final String name;
 
