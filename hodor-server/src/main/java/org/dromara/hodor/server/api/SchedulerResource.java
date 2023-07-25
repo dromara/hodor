@@ -173,6 +173,7 @@ public class SchedulerResource {
 
     @RestMethod("deleteJob")
     public HodorResult<String> deleteJob(JobInfo jobInfo) {
+        checkJobInfo(jobInfo);
         Optional<CopySet> copySetOptional = CopySetManager.getInstance().getCopySetByInterval(jobInfo.getHashId());
         if (!copySetOptional.isPresent()) {
             throw new CreateJobException("not found active copy set by hash id " + jobInfo.getHashId());
@@ -186,11 +187,13 @@ public class SchedulerResource {
 
     @RestMethod("stopJob")
     public HodorResult<String> stopJob(JobInfo jobInfo) {
+        checkJobInfo(jobInfo);
         return deleteJob(jobInfo);
     }
 
     @RestMethod("executeJob")
     public HodorResult<String> executeJob(JobInfo jobInfo) {
+        checkJobInfo(jobInfo);
         // 1、判断是 common_job 还是 cron = "-"，这种任务直接通过hashId定位到主节点去执行
         // 2、如果是定时任务需要找到任务在某一个节点上再去执行
         Optional<CopySet> copySetOptional = CopySetManager.getInstance().getCopySetByInterval(jobInfo.getHashId());
@@ -252,14 +255,14 @@ public class SchedulerResource {
                     HodorScheduler activeScheduler = schedulerManager.getActiveScheduler(schedulerName);
                     activeScheduler.deleteJob(jobInfo);
                     return HodorResult.success(StringUtils.format("delete job {} from active scheduler {} success",
-                        JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName()), activeScheduler.getSchedulerName()));
+                        JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName()), schedulerName));
                 }
                 if (copySet.getServers().contains(serverEndpoint)) {
                     DataInterval standbyDataInterval = copySet.getDataInterval();
                     HodorScheduler standbyScheduler = schedulerManager.getStandbyScheduler(schedulerName);
                     standbyScheduler.deleteJob(jobInfo);
                     return HodorResult.success(StringUtils.format("delete job {} from standby scheduler {} success",
-                        JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName()), standbyScheduler.getSchedulerName()));
+                        JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName()), schedulerName));
                 }
             case JOB_EXECUTE_CMD:
                 if (!serverEndpoint.equals(copySet.getLeader())) {
@@ -296,6 +299,9 @@ public class SchedulerResource {
     private void resetJobInfo(JobInfo jobInfo) {
         jobInfo.setHashId(HashUtils.hash(jobInfo.getGroupName() + jobInfo.getJobName()));
         jobInfo.setJobStatus(JobStatus.READY);
+        jobInfo.setFireNow(jobInfo.getFireNow() != null && jobInfo.getFireNow());
+        jobInfo.setPriority(jobInfo.getPriority() == null ? Priority.DEFAULT : jobInfo.getPriority());
+        jobInfo.setFailover(jobInfo.getFailover() != null && jobInfo.getFailover());
     }
 
     private void checkJobInfo(JobInfo jobInfo) {

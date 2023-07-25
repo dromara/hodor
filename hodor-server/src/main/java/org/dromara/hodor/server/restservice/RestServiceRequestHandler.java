@@ -101,6 +101,9 @@ public class RestServiceRequestHandler implements HodorChannelHandler {
             if (e instanceof InvocationTargetException) {
                 errMsg = e.getCause().getMessage();
             }
+            if (errMsg == null) {
+                errMsg = "null pointer exception";
+            }
             log.error("RestServiceRequestHandler exception, {}", errMsg, e);
             responseError(500, errMsg, channel);
         }
