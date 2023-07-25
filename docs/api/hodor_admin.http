@@ -1,18 +1,62 @@
 ### 登录
-POST http://localhost:8089/hodor/admin/login
+POST {{host}}/hodor/admin/login
 Content-Type: application/x-www-form-urlencoded
 
 username=admin&password=123
 
 ### get clusterNames
-GET http://localhost:8089/hodor/admin/actuator/clusterNames
+GET {{host}}/hodor/admin/actuator/clusterNames
 API-KEY: b50fd4d4d71935b7c2a001b87f068c4f
 
 ### scheduler/metadata
-GET http://localhost:8089/hodor/admin/scheduler/metadata
+GET {{host}}/hodor/admin/scheduler/metadata
 API-KEY: b50fd4d4d71935b7c2a001b87f068c4f
 
 ### jobExecDetail/logs
-GET http://localhost:8089/hodor/admin/jobExecDetail/logs?
+GET {{host}}/hodor/admin/jobExecDetail/logs?
     requestId=1682302767068704768&groupName=testGroup&jobName=test1&actuatorEndpoint=169.254.0.9:46367&offset=0&length=1000&timeout=10000
 API-KEY: b50fd4d4d71935b7c2a001b87f068c4f
+
+### get jobExecDetail
+GET {{host}}/hodor/admin/jobExecDetail?
+    pageNo=1&pageSize=5&groupName=testGroup&jobName=test1&executeStatus=SUCCEEDED
+API-KEY: b50fd4d4d71935b7c2a001b87f068c4f
+
+### get job list
+GET {{host}}/hodor/admin/jobOperator?pageNo=1&pageSize=5
+API-KEY: b50fd4d4d71935b7c2a001b87f068c4f
+
+### delete job
+DELETE {{host}}/hodor/admin/jobOperator/delete/1683696227201916929
+API-KEY: b50fd4d4d71935b7c2a001b87f068c4f
+
+### create job
+POST {{host}}/hodor/admin/jobOperator
+API-KEY: b50fd4d4d71935b7c2a001b87f068c4f
+Content-Type: application/json
+
+{
+  "jobCategory": "test",
+  "groupName": "testGroup",
+  "jobName": "test5",
+  "jobType": "COMMON_JOB",
+  "jobCommandType": "java",
+  "priority": "DEFAULT",
+  "cron": "0/30 * * * * ?",
+  "timeout": 30,
+  "version": 1.0,
+  "jobDesc": "test create job"
+}
+
+### update job
+PUT {{host}}/hodor/admin/jobOperator
+API-KEY: b50fd4d4d71935b7c2a001b87f068c4f
+Content-Type: application/json
+
+{
+  "id": "1683715524846493698",
+  "jobCategory": "test",
+  "cron": "0/40 * * * * ?",
+  "version": 1.1,
+  "jobDesc": "update create job"
+}
