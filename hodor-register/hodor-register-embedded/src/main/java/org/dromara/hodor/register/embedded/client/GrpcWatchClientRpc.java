@@ -195,7 +195,6 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
                     }
 
                     @Override
-                    @SuppressWarnings("UnstableApiUsage")
                     public void onError(Throwable t) {
                         if (channel != null) {
                             GrpcUtil.shutdownManagedChannel(channel);
