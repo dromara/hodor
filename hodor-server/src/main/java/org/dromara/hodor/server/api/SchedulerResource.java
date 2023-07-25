@@ -120,10 +120,9 @@ public class SchedulerResource {
         // check arguments
         resetJobInfo(jobInfo);
         checkJobInfo(jobInfo);
-        if (jobInfoService.isExists(jobInfo)) {
-            return HodorResult.success(StringUtils.format("job {} has exists in scheduler.", JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName())));
+        if (!jobInfoService.isExists(jobInfo)) {
+            jobInfoService.addJob(jobInfo);
         }
-        jobInfoService.addJob(jobInfo);
         if (CronUtils.isDisabledCron(jobInfo.getCron())) {
             jobInfoService.updateJobStatus(jobInfo, JobStatus.RUNNING);
             return HodorResult.success("createJob success");
