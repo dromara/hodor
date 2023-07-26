@@ -3,6 +3,15 @@ package org.dromara.hodor.server.manager;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.concurrent.HodorThreadFactory;
@@ -11,12 +20,6 @@ import org.dromara.hodor.common.utils.TimeUtil;
 import org.dromara.hodor.common.utils.Utils;
 import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.model.node.NodeInfo;
-
-import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * actuator node manager
@@ -174,7 +177,7 @@ public class ActuatorNodeManager {
     }
 
     public Set<String> getActuatorClusterEndpoints(String clusterName) {
-        return actuatorClusterEndpoints.get(clusterName);
+        return actuatorClusterEndpoints.getOrDefault(clusterName, new HashSet<>());
     }
 
     public Set<String> allClusters() {
