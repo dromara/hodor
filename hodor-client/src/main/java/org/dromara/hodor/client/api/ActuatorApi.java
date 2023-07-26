@@ -174,7 +174,7 @@ public class ActuatorApi {
                 .execute(),
             ex -> new HodorClientException("ActuatorApi actuatorInfos execute failure, " + ex.getMessage()));
         if (!Objects.requireNonNull(response).isOk()) {
-            throw new HodorClientException("Unbinding failure, " + response.body());
+            throw new HodorClientException("Get actuatorInfos failure, " + response.body());
         }
         log.debug("ListBinding result: {}", response.body());
         final HodorResult<List<ActuatorInfo>> hodorResult = Jsons.toBean(response.body(),
