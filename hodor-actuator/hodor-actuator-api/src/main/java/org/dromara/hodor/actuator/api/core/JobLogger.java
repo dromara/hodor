@@ -57,8 +57,16 @@ public class JobLogger {
         logger.info(msg);
     }
 
+    public void info(String message, Object... params) {
+        logger.info(message, params);
+    }
+
     public void error(String msg) {
         logger.error(msg);
+    }
+
+    public void error(String message, Object... params) {
+        logger.error(message, params);
     }
 
     public void error(String msg, Throwable t) {
@@ -69,6 +77,5 @@ public class JobLogger {
         Category category = Category.getInstance(logger.getName());
         return (org.apache.log4j.Logger) category;
     }*/
-
 
 }

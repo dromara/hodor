@@ -1,12 +1,16 @@
 package org.dromara.hodor.actuator.api.action;
 
 import cn.hutool.core.date.DateUtil;
+import java.io.File;
+import java.util.Date;
+import java.util.Map;
 import org.dromara.hodor.actuator.api.config.HodorProperties;
 import org.dromara.hodor.actuator.api.core.HodorJobExecution;
 import org.dromara.hodor.actuator.api.core.JobLogger;
 import org.dromara.hodor.actuator.api.core.JobLoggerManager;
 import org.dromara.hodor.actuator.api.executor.JobExecutionPersistence;
 import org.dromara.hodor.actuator.api.executor.RequestHandleManager;
+import org.dromara.hodor.actuator.api.utils.JobPathUtils;
 import org.dromara.hodor.common.utils.Stopwatch;
 import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
@@ -16,10 +20,6 @@ import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
 
-import java.io.File;
-import java.util.Date;
-import java.util.Map;
-
 /**
  * abstract execute action
  *
@@ -27,8 +27,6 @@ import java.util.Map;
  * @since 1.0
  */
 public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteRequest, JobExecuteResponse> {
-
-    private String loggerName;
 
     private JobLogger jobLogger;
 
@@ -40,9 +38,9 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
 
     private final JobExecutionPersistence jobExecutionPersistence;
 
-    private final JobLoggerManager jobLoggerManager;
-
     private final Stopwatch stopwatch;
+
+    private JobLoggerManager jobLoggerManager;
 
     public AbstractExecuteAction(final RequestContext context,
                                  final HodorProperties properties,
@@ -51,7 +49,6 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
         super(context, requestHandleManager);
         this.properties = properties;
         this.jobExecutionPersistence = jobExecutionPersistence;
-        this.jobLoggerManager = JobLoggerManager.getInstance();
         this.stopwatch = Stopwatch.create();
     }
 
@@ -62,22 +59,23 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
         requestId = request.getRequestId();
         jobKey = JobKey.of(request.getGroupName(), request.getJobName());
         // create job logger
-        File jobLoggerFile = jobLoggerManager.buildJobLoggerFile(properties.getDataPath(), request.getGroupName(), request.getJobName(), requestId);
-        this.loggerName = jobLoggerManager.createLoggerName(request.getGroupName(), request.getJobName(), requestId);
-        this.jobLogger = jobLoggerManager.createJobLogger(this.loggerName, jobLoggerFile);
+        final String loggerName = JobPathUtils.createLoggerName(request.getGroupName(), request.getJobName(), requestId);
+        final File loggerFile = JobPathUtils.buildJobLoggerFile(properties.getDataPath(), request.getGroupName(), request.getJobName(), requestId);
+        this.jobLoggerManager = new JobLoggerManager(loggerName, null, loggerFile.toPath());
+        this.jobLogger = jobLoggerManager.createJobLogger();
 
-        jobLogger.getLogger().info("job ready.");
+        jobLogger.info("job ready.");
         // send start execute response
         sendStartExecuteResponse(request);
 
         // executing job
-        jobLogger.getLogger().info("job start executing.");
+        jobLogger.info("job start executing.");
 
         stopwatch.start();
         JobExecuteResponse remotingResponse = executeRequest0(request);
         stopwatch.stop();
 
-        jobLogger.getLogger().info("job execution completed.");
+        jobLogger.info("job execution completed.");
 
         HodorJobExecution successJobExecution = HodorJobExecution.createSuccessJobExecution(requestId, remotingResponse.getResult());
         jobExecutionPersistence.fireJobExecutionEvent(successJobExecution);
@@ -87,7 +85,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
 
     @Override
     public void exceptionCaught(Exception e) {
-        jobLogger.getLogger().error("execute exception: {}", e.getMessage(), e);
+        jobLogger.error("execute exception: {}", e.getMessage(), e);
 
         String exceptionStack = ThreadUtils.getStackTraceInfo(e);
         HodorJobExecution failureJobExecution = HodorJobExecution.createFailureJobExecution(requestId, exceptionStack);
@@ -130,9 +128,9 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
 
     @Override
     public void afterProcess() {
-        jobLogger.getLogger().info("job execution finished.");
+        jobLogger.info("job execution finished.");
         getRequestHandleManager().removeExecutableJobContext(requestId);
-        jobLoggerManager.stopJobLogger(loggerName);
+        jobLoggerManager.stopJobLogger();
     }
 
 }

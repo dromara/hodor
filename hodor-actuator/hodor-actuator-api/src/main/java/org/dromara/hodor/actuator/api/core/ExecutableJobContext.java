@@ -64,7 +64,7 @@ public class ExecutableJobContext {
     }
 
     public Path getExecutionsPath() {
-        return JobPathUtils.getExecutionsPath(dataPath, requestId);
+        return JobPathUtils.getExecutionsPath(dataPath, jobKey.getGroupName(), jobKey.getJobName());
     }
 
     public Path getAbsoluteLogPath() {

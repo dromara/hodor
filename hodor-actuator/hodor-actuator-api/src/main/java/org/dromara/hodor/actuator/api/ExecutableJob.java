@@ -20,8 +20,8 @@ package org.dromara.hodor.actuator.api;
 import java.io.File;
 import java.io.IOException;
 import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
-import org.dromara.hodor.actuator.api.core.JobLoggerManager;
 import org.dromara.hodor.actuator.api.exceptions.JobExecutionException;
+import org.dromara.hodor.actuator.api.utils.JobPathUtils;
 import org.dromara.hodor.common.utils.FileIOUtils;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.model.job.JobKey;
@@ -76,7 +76,7 @@ public interface ExecutableJob {
      */
     default FileIOUtils.LogData getLog(ExecutableJobContext executableJobContext, int offset, int length) throws Exception {
         JobKey jobKey = executableJobContext.getJobKey();
-        File jobLoggerFile = JobLoggerManager.getInstance()
+        File jobLoggerFile = JobPathUtils
             .buildJobLoggerFile(executableJobContext.getDataPath(), jobKey.getGroupName(), jobKey.getJobName(), executableJobContext.getRequestId());
         return FileIOUtils.readUtf8File(jobLoggerFile, offset, length);
     }

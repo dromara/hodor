@@ -2,7 +2,7 @@ package org.dromara.hodor.actuator.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.logging.log4j.Logger;
+import org.dromara.hodor.actuator.api.core.JobLogger;
 
 /**
  * job execution context
@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 @AllArgsConstructor
 public class JobExecutionContext {
 
-    private final Logger jobLogger;
+    private final JobLogger jobLogger;
 
     private final JobParameter jobParameter;
 

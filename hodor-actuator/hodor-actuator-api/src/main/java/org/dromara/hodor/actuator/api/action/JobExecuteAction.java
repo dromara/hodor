@@ -2,11 +2,12 @@ package org.dromara.hodor.actuator.api.action;
 
 import cn.hutool.core.date.DateUtil;
 import java.util.Date;
-import org.apache.logging.log4j.Logger;
-import org.dromara.hodor.actuator.api.JobRegister;
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.actuator.api.ExecutableJob;
+import org.dromara.hodor.actuator.api.JobRegister;
 import org.dromara.hodor.actuator.api.config.HodorProperties;
 import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
+import org.dromara.hodor.actuator.api.core.JobLogger;
 import org.dromara.hodor.actuator.api.exceptions.JobExecutionException;
 import org.dromara.hodor.actuator.api.executor.JobExecutionPersistence;
 import org.dromara.hodor.actuator.api.executor.RequestHandleManager;
@@ -23,6 +24,7 @@ import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
  * @author tomgs
  * @since 1.0
  */
+@Slf4j
 public class JobExecuteAction extends AbstractExecuteAction {
 
     private final JobRegister jobRegister;
@@ -41,11 +43,11 @@ public class JobExecuteAction extends AbstractExecuteAction {
         final JobKey jobKey = JobKey.of(request.getGroupName(), request.getJobName());
         final ExecutableJobContext executableJobContext = buildExecutableJobContext(request, jobKey);
         final ExecutableJob runnableJob = buildJobRunnable(executableJobContext);
-        final Logger log = getJobLogger().getLogger();
+        final JobLogger jobLogger = getJobLogger();
 
         Object result;
         for (int i = 0; ; i++) {
-            log.info("execute job, attempts: {}", i);
+            jobLogger.info("execute job, attempts: {}", i);
             try {
                 executableJobContext.setExecuteStatus(JobExecuteStatus.RUNNING);
                 result = runnableJob.execute(executableJobContext);
@@ -53,6 +55,7 @@ public class JobExecuteAction extends AbstractExecuteAction {
                 break;
             } catch (Exception e) {
                 log.error("execute job exception, attempts:{} , msg: {}", i, e.getMessage(), e);
+                jobLogger.error("execute job exception, attempts:{} , msg: {}", i, e.getMessage(), e);
                 if (i == request.getRetryCount()) {
                     executableJobContext.setExecuteStatus(JobExecuteStatus.FAILED);
                     throw e;

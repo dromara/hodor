@@ -1,12 +1,17 @@
 package org.dromara.hodor.actuator.api.core;
 
-import java.io.File;
 import java.nio.file.Path;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
-import org.dromara.hodor.actuator.api.utils.JobPathUtils;
-import org.dromara.hodor.common.log.LogUtil;
-import org.dromara.hodor.common.utils.StringUtils;
-import org.dromara.hodor.common.utils.Utils.Assert;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.builder.api.AppenderComponentBuilder;
+import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilder;
+import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFactory;
+import org.apache.logging.log4j.core.config.builder.api.LayoutComponentBuilder;
+import org.apache.logging.log4j.core.config.builder.api.RootLoggerComponentBuilder;
+import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
 
 /**
  * job logger manager
@@ -16,55 +21,53 @@ import org.dromara.hodor.common.utils.Utils.Assert;
  */
 public class JobLoggerManager {
 
-    private static final JobLoggerManager INSTANCE = new JobLoggerManager();
+    private static final String DEFAULT_LAYOUT = "%d{yyyy-MM-dd HH:mm:ss} %p %msg%n";
 
-    private JobLoggerManager() {
+    private final String loggerName;
+
+    private final String layout;
+
+    private final Path logPath;
+
+    private LoggerContext context;
+
+    public JobLoggerManager(String loggerName, String layout, Path logPath) {
+        this.loggerName = loggerName;
+        this.layout = layout;
+        this.logPath = logPath;
     }
 
-    public static JobLoggerManager getInstance() {
-        return INSTANCE;
+    public JobLogger createJobLogger() {
+        this.context = createLogContext(loggerName, logPath.toAbsolutePath().toString(), layout == null ? DEFAULT_LAYOUT : layout);
+        // Get logger and log messages
+        Logger logger = context.getLogger(loggerName);
+        //Logger logger = LogUtil.getInstance().createLogger(loggerName, logFile);
+        return new JobLogger(loggerName, logPath, logger);
     }
 
-    public String getJobLoggerDir(String rootJobLogPath) {
-        Assert.notBlank(rootJobLogPath, "rootJobLogPath must be not null.");
-        return rootJobLogPath;
+    private LoggerContext createLogContext(String loggerName, String logPath, String layout) {
+        System.setProperty("log4j2.disable.jmx", "true");
+        ConfigurationBuilder<BuiltConfiguration> builder = ConfigurationBuilderFactory.newConfigurationBuilder();
+        LayoutComponentBuilder layoutBuilder = builder.newLayout("PatternLayout")
+            .addAttribute("pattern", layout);
+        final AppenderComponentBuilder appenderComponentBuilder = builder.newAppender("jobLogFile", "RandomAccessFile")
+            .addAttribute("fileName", logPath)
+            .add(layoutBuilder);
+        final RootLoggerComponentBuilder loggerComponentBuilder = builder.newRootLogger(Level.INFO)
+            .add(builder.newAppenderRef("jobLogFile"));
+        builder.add(appenderComponentBuilder);
+        builder.add(loggerComponentBuilder);
+        // Build configuration and start logger context
+        Configuration config = builder.build();
+        //return Configurator.initialize(config);
+        LoggerContext context = new LoggerContext(loggerName);
+        context.setConfiguration(config);
+        return context;
     }
 
-    public String createLoggerName(String groupName, String jobName, Long requestId) {
-        return StringUtils.format("{}_{}_{}_{}", System.currentTimeMillis(),
-            groupName,
-            jobName,
-            requestId);
-    }
-
-    public String createLogFileName(String groupName, String jobName, Long requestId) {
-        return StringUtils.format("_job.{}.{}.{}.log",
-            groupName,
-            jobName,
-            requestId);
-    }
-
-    private File buildJobLoggerFile(String rootJobLogPath, String logFileName) {
-        return new File(getJobLoggerDir(rootJobLogPath), logFileName);
-    }
-
-    public File buildJobLoggerFile(String rootJobLogPath, String groupName, String jobName, Long requestId) {
-        Path executions = JobPathUtils.getExecutionsPath(rootJobLogPath, requestId);
-        return buildJobLoggerFile(executions.toString(), createLogFileName(groupName, jobName, requestId));
-    }
-
-    public JobLogger createJobLogger(String rootJobLogPath, String groupName, String jobName, Long requestId) {
-        File jobLoggerFile = buildJobLoggerFile(rootJobLogPath, groupName, jobName, requestId);
-        return createJobLogger(createLoggerName(groupName, jobName, requestId), jobLoggerFile);
-    }
-
-    public JobLogger createJobLogger(String loggerName, File logFile) {
-        Logger logger = LogUtil.getInstance().createLogger(loggerName, logFile);
-        return new JobLogger(loggerName, logFile.toPath(), logger);
-    }
-
-    public void stopJobLogger(String loggerName) {
-        LogUtil.getInstance().stopLogger(loggerName);
+    public void stopJobLogger() {
+        //LogUtil.getInstance().stopLogger(loggerName);
+        Configurator.shutdown(context);
     }
 
 }

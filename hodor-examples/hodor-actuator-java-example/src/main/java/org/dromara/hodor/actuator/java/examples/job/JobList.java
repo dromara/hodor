@@ -1,8 +1,8 @@
 package org.dromara.hodor.actuator.java.examples.job;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.api.JobExecutionContext;
+import org.dromara.hodor.actuator.api.core.JobLogger;
 import org.dromara.hodor.actuator.java.annotation.Job;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +19,7 @@ public class JobList {
     @Job(group = "testGroup", jobName = "test1", cron = "0/30 * * * * ?")
     public String test1(JobExecutionContext context) {
         log.info("Job [testGroup#test1] execute, context: {}", context);
-        Logger logger = context.getJobLogger();
+        JobLogger logger = context.getJobLogger();
         logger.info("start executor job test1");
         logger.info("job argument: {}", context.getJobParameter());
         logger.info("executing......");
