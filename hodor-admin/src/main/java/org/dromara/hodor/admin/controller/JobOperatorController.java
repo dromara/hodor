@@ -8,6 +8,7 @@ import org.dromara.hodor.admin.core.Result;
 import org.dromara.hodor.admin.core.ResultUtil;
 import org.dromara.hodor.admin.service.JobOperatorService;
 import org.dromara.hodor.core.PageInfo;
+import org.dromara.hodor.core.dag.FlowData;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -87,6 +88,12 @@ public class JobOperatorController {
     @PostMapping("/resume/{id}")
     public Result<Boolean> resumeById(@PathVariable("id") Long id) {
         return ResultUtil.success(jobOperatorService.resumeById(id));
+    }
+
+    @Operation(summary = "任务上传")
+    @PostMapping("/upload")
+    public Result<Boolean> uploadJobs(@RequestBody FlowData flowData) {
+        return ResultUtil.success(jobOperatorService.uploadJobs(flowData));
     }
 
 }

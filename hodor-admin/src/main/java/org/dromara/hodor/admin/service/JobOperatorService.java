@@ -18,6 +18,7 @@
 package org.dromara.hodor.admin.service;
 
 import org.dromara.hodor.core.PageInfo;
+import org.dromara.hodor.core.dag.FlowData;
 import org.dromara.hodor.core.entity.JobInfo;
 
 /**
@@ -86,4 +87,11 @@ public interface JobOperatorService {
      * @return 操作结果
      */
     Boolean executeById(Long id);
+
+    /**
+     * 上传任务，根据json文件批量创建任务
+     * @param flowData 上传任务的流文件
+     * @return 上传是否成功
+     */
+    Boolean uploadJobs(FlowData flowData);
 }
