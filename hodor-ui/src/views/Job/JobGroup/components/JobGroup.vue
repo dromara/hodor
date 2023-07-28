@@ -1,24 +1,61 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue';
 import { cloneDeep } from 'lodash-es';
-import { queryGroupListPaging, createGroup, updateGroup, deleteGroup, queryGroupListById } from '@/apis/jobGroup'
+import { queryGroupListPagingAPI, createGroupAPI, updateGroupAPI, deleteGroupAPI, queryGroupListByIdAPI, bindGroupActuatorAPI, getBindListAPI } from '@/apis/jobGroup'
+import { useActuatorStore } from '@/stores/actuator'
+import { storeToRefs } from 'pinia'
 
-// 新增表单
+// 新增任务分组表单
 const formRef = ref();
 const visible = ref(false);
 const formState = reactive({
     groupName: '',
     notes: '',
-    actuator: '',
+    clusterName: undefined,
 });
+// modal布局
+const fomLayout = {
+    labelCol: {
+        span: 4,
+    },
+    wrapperCol: {
+        span: 16,
+    },
+};
+// 选择器
+const actuatorStore = useActuatorStore();
+const { actuatorClusterList } = storeToRefs(actuatorStore);
+const { getAllClusters } = actuatorStore;
+// 选择器选项列表
+const options = ref([]);
+const getClusterOptions = () => {
+    // 获取执行节点列表
+    getAllClusters();
+    options.value = actuatorClusterList.value.map(element => {
+        return {
+            value: element,
+            label: element,
+        }
+    });
+}
+
+
 // 新建任务分组
 const createJobGroup = async (groupInfo) => {
-    await createGroup(groupInfo);
+    const res = await createGroupAPI(groupInfo);
+    return res
+}
+// 绑定执行集群
+const bindGroupActuator = async ({ clusterName, groupName }) => {
+    const res = await bindGroupActuatorAPI({ clusterName, groupName });
+    return res;
 }
 // 创建分组事件
 const onOk = () => {
     formRef.value.validateFields().then(values => {
-        const { groupName } = values;
+        console.log("values", values)
+        // console.log("formState",formState)
+        const { groupName, clusterName } = values;
         const groupInfo = {
             id: 0,
             groupName: groupName,
@@ -29,24 +66,56 @@ const onOk = () => {
             createdAt: "",
             updatedAt: ""
         }
+        // 发送请求创建分组
         createJobGroup(groupInfo);
+        // 绑定执行集群
+        bindGroupActuator({ groupName, clusterName })
+        // 隐藏modal
         visible.value = false;
+        // 重置文本
         formRef.value.resetFields();
+        // 重新分页查询
         const { defaultCurrent, defaultPageSize } = paginationOpt
         queryJobGroupListPaging({ pageNo: defaultCurrent, pageSize: defaultPageSize });
     }).catch(info => {
         console.log('Validate Failed:', info);
     });
 };
+//
+const onSelectChange = (value) => {
+    // console.log(value)
+}
 
 // 搜索框
 const searchInfo = ref('');
-const onSearch = searchValue => {
-    queryJobGroupListById(Number(searchValue));
+const onSearch = (searchValue) => {
+    // 如果搜索内容为空，则分页查询
+    if (searchValue === "") {
+        const { defaultCurrent, defaultPageSize } = paginationOpt
+        queryJobGroupListPaging({ pageNo: defaultCurrent, pageSize: defaultPageSize });
+    }
+    // 如果搜索内容不为空，则搜索所有信息中包含searchValue的任务分组
+    else {
+        // 搜索id
+        handleQueryJobGroupListById(Number(searchValue));
+        // 搜索groupName
+        // 搜索createUser
+        // 搜索userId
+        // 搜索tenantId
+        // remark
+        // createdAt
+        // updatedAt
+    }
 };
+const onSearchChange = (searchValue) => {
+    if (searchValue === "") {
+        const { defaultCurrent, defaultPageSize } = paginationOpt
+        queryJobGroupListPaging({ pageNo: defaultCurrent, pageSize: defaultPageSize });
+    }
+}
 // 按id搜索任务信息
-const queryJobGroupListById = async (id) => {
-    await queryGroupListById(id).then((res) => {
+const handleQueryJobGroupListById = async (id) => {
+    await queryGroupListByIdAPI(id).then((res) => {
         if (res.data === null) {
             groupList.value = null;
             paginationOpt.total = 0;
@@ -81,6 +150,11 @@ const columns = [
         key: 'createdAt',
     },
     {
+        title: '执行集群',
+        dataIndex: 'clusterName',
+        key: 'clusterName',
+    },
+    {
         title: '操作',
         dataIndex: 'action',
         key: 'action',
@@ -103,16 +177,29 @@ const paginationOpt = reactive({
 const groupList = ref([]);
 // 分页查询分组信息
 const queryJobGroupListPaging = async ({ pageNo, pageSize }) => {
-    await queryGroupListPaging({ pageNo, pageSize }).then((res) => {
+    await queryGroupListPagingAPI({ pageNo, pageSize }).then((res) => {
         const data = res.data;
         groupList.value = data.rows;
         const { total, pageNo, pageSize } = data;
         Object.assign(paginationOpt, { total, defaultCurrent: pageNo, defaultPageSize: pageSize });
     })
+    getBindList();
+
+}
+//获取执行集群与任务分组的绑定关系
+const getBindList = async () => {
+    const res = await getBindListAPI();
+    return res;
 }
 
 // 编辑行
 const editableData = reactive({});
+const handleUpdateGroupInfo = async (updateInfo) => {
+    await updateGroupAPI(updateInfo).then((res) => {
+        console.log("更新" + res.msg);
+        // 接口测试数据库并没有修改
+    })
+}
 const editGroupInfo = name => {
     editableData[name] = cloneDeep(...groupList.value.filter(item => name === item.groupName));
 }
@@ -123,40 +210,29 @@ const saveGroupInfo = name => {
     delete editableData[name];
 };
 
-const handleUpdateGroupInfo = async (updateInfo) => {
-    await updateGroup(updateInfo).then((res) => {
-        console.log("更新" + res.msg);
-        // 接口测试数据库并没有修改
+// 删除行
+const handleDeleteGroupInfo = async (groupName) => {
+    await deleteGroupAPI(groupName).then((res) => {
+        console.log(res.msg);
     })
 }
-// 删除行
-const onDelete = name => {
-    console.log(name)
-    groupList.value = groupList.value.filter(item => item.groupName !== name);
+const onDelete = groupName => {
+    console.log(groupName)
+    groupList.value = groupList.value.filter(item => item.groupName !== groupName);
     // 发送请求删除
     // 接口测试："服务端异常: group暂不支持删除"
+    handleDeleteGroupInfo(groupName);
 };
 
-// 级联选择器
-const options = [
-    {
-        value: 'actuator1',
-        label: '执行器集群1',
-    },
-    {
-        value: 'actuator2',
-        label: '执行器集群2',
-    },
-    {
-        value: 'actuator3',
-        label: '执行器集群3',
-    }
-];
+
 
 
 onMounted(() => {
+    // 分页查询任务分组信息
     const { defaultCurrent, defaultPageSize } = paginationOpt
     queryJobGroupListPaging({ pageNo: defaultCurrent, pageSize: defaultPageSize });
+    // 获取执行集群选择器选项
+    getClusterOptions();
 })
 
 </script>
@@ -167,27 +243,29 @@ onMounted(() => {
             <a-col :span="2">
                 <a-button type="primary" @click="visible = true">新增</a-button>
                 <a-modal v-model:visible="visible" title="Create a new collection" ok-text="Create" cancel-text="Cancel"
-                    @ok="onOk">
-                    <a-form ref="formRef" :model="formState" layout="vertical" name="form_in_modal">
+                    width="400px" @ok="onOk">
+                    <a-form ref="formRef" :model="formState" name="form_in_modal" layout="horizontal" v-bind="fomLayout">
                         <a-form-item name="groupName" label="分组名：">
                             <a-input v-model:value="formState.groupName" />
                         </a-form-item>
                         <a-form-item name="notes" label="备注：">
                             <a-input v-model:value="formState.notes" />
                         </a-form-item>
-                        <a-form-item name="actuator" label="执行器：">
-                            <a-cascader v-model:value="actuatorSelect" :options="options" placeholder="执行器选择" />
+                        <a-form-item name="clusterName" label="执行器：">
+                            <a-select ref="select" v-model:value="formState.clusterName" :options="options"
+                                placeholder="执行器选择" @change="onSelectChange"></a-select>
                         </a-form-item>
                     </a-form>
                 </a-modal>
             </a-col>
             <a-col :span="6">
-                <a-input-search v-model:value="searchInfo" placeholder="请输入你需要搜索的节点" @search="onSearch" />
+                <a-input-search v-model:value="searchInfo" placeholder="请输入你需要搜索的节点" @search="onSearch"
+                    @change="onSearchChange(searchInfo)" />
             </a-col>
         </a-row>
         <a-table :columns="columns" :data-source="groupList" bordered :pagination="paginationOpt">
             <template #bodyCell="{ column, text, record }">
-                <template v-if="['id', 'groupName', 'createUser', 'createdAt'].includes(column.dataIndex)">
+                <template v-if="['createdAt'].includes(column.dataIndex)">
                     <div>
                         <a-input v-if="editableData[record.groupName]"
                             v-model:value="editableData[record.groupName][column.dataIndex]" style="margin: -5px 0" />

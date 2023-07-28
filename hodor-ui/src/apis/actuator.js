@@ -14,3 +14,10 @@ export const getActuatorListAPI = () => {
         method: 'GET',
     })
 }
+
+export const getAllClustersAPI = () => {
+    return httpInstance({
+        url: `/actuator/clusterNames`,
+        method: 'GET',
+    })
+}
