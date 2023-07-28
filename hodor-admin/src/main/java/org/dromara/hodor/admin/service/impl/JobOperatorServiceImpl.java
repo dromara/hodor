@@ -181,7 +181,6 @@ public class JobOperatorServiceImpl implements JobOperatorService {
 
     @Override
     public Boolean uploadJobs(FlowData flowData) {
-        log.info("flowData: ", flowData);
         List<JobDesc> jobDescList = new ArrayList<>();
         for (FlowData f : flowData.getNodes()) {
             // 1. 创建JobInfo

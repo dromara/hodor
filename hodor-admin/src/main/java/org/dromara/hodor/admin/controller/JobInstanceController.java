@@ -5,13 +5,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.dromara.hodor.admin.core.Result;
 import org.dromara.hodor.admin.core.ResultUtil;
+import org.dromara.hodor.admin.service.ActuatorOperatorService;
 import org.dromara.hodor.admin.service.LogService;
+import org.dromara.hodor.client.model.KillJobResult;
 import org.dromara.hodor.client.model.LogQueryRequest;
 import org.dromara.hodor.client.model.LogQueryResult;
 import org.dromara.hodor.core.PageInfo;
 import org.dromara.hodor.core.entity.JobExecDetail;
 import org.dromara.hodor.core.service.JobExecDetailService;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,11 +32,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("jobExecDetail")
 @RequiredArgsConstructor
-public class JobExecDetailReporterController {
+public class JobInstanceController {
 
     private final JobExecDetailService jobExecDetailService;
 
     private final LogService logService;
+
+    private final ActuatorOperatorService actuatorOperatorService;
 
     @Operation(summary = "分页查询任务执行明细")
     @GetMapping
@@ -69,6 +72,12 @@ public class JobExecDetailReporterController {
     @GetMapping("/logs")
     public Result<LogQueryResult> queryLog(LogQueryRequest request) throws Exception {
         return ResultUtil.success(logService.queryLog(request));
+    }
+
+    @Operation(summary = "杀死正在执行的任务")
+    @PutMapping("/kill")
+    public Result<KillJobResult> killRunningJob(@RequestBody JobExecDetail jobExecDetail) throws Exception {
+        return ResultUtil.success(actuatorOperatorService.killRunningJob(jobExecDetail));
     }
 
 }

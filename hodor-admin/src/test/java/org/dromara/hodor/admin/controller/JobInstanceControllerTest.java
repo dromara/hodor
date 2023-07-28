@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
-class JobExecDetailReporterControllerTest extends BaseWebTest {
+class JobInstanceControllerTest extends BaseWebTest {
 
     @Test
     void queryByPage() throws Exception {

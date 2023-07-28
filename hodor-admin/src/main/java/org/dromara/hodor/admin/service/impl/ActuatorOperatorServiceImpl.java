@@ -19,11 +19,18 @@ package org.dromara.hodor.admin.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
 import org.dromara.hodor.admin.service.ActuatorOperatorService;
 import org.dromara.hodor.client.HodorApiClient;
 import org.dromara.hodor.client.api.ActuatorApi;
+import org.dromara.hodor.client.model.KillJobRequest;
+import org.dromara.hodor.client.model.KillJobResult;
 import org.dromara.hodor.client.model.LogQueryRequest;
 import org.dromara.hodor.client.model.LogQueryResult;
+import org.dromara.hodor.common.utils.Utils;
+import org.dromara.hodor.core.entity.JobExecDetail;
 import org.dromara.hodor.model.actuator.ActuatorInfo;
 import org.dromara.hodor.model.actuator.BindingInfo;
 import org.springframework.stereotype.Service;
@@ -88,4 +95,15 @@ public class ActuatorOperatorServiceImpl implements ActuatorOperatorService {
         return res;
     }
 
+    @Override
+    public KillJobResult killRunningJob(JobExecDetail jobExecDetail) throws Exception {
+        // TODO: 将JobExecDetail转化为KillJobRequest，调用ActuatorApi接口即可
+        KillJobRequest killJobRequest = new KillJobRequest();
+        killJobRequest.setRequestId(jobExecDetail.getId());
+        killJobRequest.setGroupName(jobExecDetail.getGroupName());
+        killJobRequest.setJobName(jobExecDetail.getJobName());
+        killJobRequest.setTimeout(3000);
+        killJobRequest.setActuatorEndpoint(jobExecDetail.getActuatorEndpoint());
+        return actuatorApi.killRunningJob(killJobRequest);
+    }
 }
