@@ -23,7 +23,7 @@ echo "Starting HODOR_ACTUATOR_HOME: $HODOR_ACTUATOR_HOMEE"
 
 source "$HODOR_ACTUATOR_HOMEE/conf/hodor_env.sh"
 
-JAVA_OPTS=${JAVA_OPTS:-"-server -Duser.timezone=${SPRING_JACKSON_TIME_ZONE} -Xms64m -Xmn128m -Xmx256m -XX:+PrintGCDetails -Xloggc:gc.log -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=dump.hprof"}
+JAVA_OPTS=${JAVA_OPTS:-"-server -Duser.timezone=${TIME_ZONE} -Xms64m -Xmn128m -Xmx256m -XX:+PrintGCDetails -Xloggc:gc.log -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=dump.hprof"}
 
 if [[ "$DOCKER" == "true" ]]; then
   JAVA_OPTS="${JAVA_OPTS} -XX:-UseContainerSupport"

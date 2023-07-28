@@ -17,11 +17,11 @@
 #
 
 BIN_DIR=$(dirname $0)
-HODOR_HOME=${HODOR_HOME:-$(cd $BIN_DIR/..; pwd)}
+HODOR_ACTUATOR_HOME=${HODOR_ACTUATOR_HOME:-$(cd $BIN_DIR/..; pwd)}
 
-echo "Starting HODOR_HOME: $HODOR_HOME"
+echo "Starting HODOR_ACTUATOR_HOME: $HODOR_ACTUATOR_HOMEE"
 
-source "$HODOR_HOME/conf/hodor_env.sh"
+source "$HODOR_ACTUATOR_HOMEE/conf/hodor_env.sh"
 
 JAVA_OPTS=${JAVA_OPTS:-"-server -Duser.timezone=${TIME_ZONE} -Xms128m -Xmn128m -Xmx512m -XX:+PrintGCDetails -Xloggc:gc.log -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=dump.hprof"}
 
@@ -30,5 +30,5 @@ if [[ "$DOCKER" == "true" ]]; then
 fi
 
 java $JAVA_OPTS \
-  -cp "$HODOR_HOME/conf":"$HODOR_HOME/lib/*" \
-  org.dromara.hodor.admin.HodorAdminApplication
+  -cp "$HODOR_ACTUATOR_HOME/conf":"$HODOR_ACTUATOR_HOME/lib/*" \
+  org.dromara.hodor.actuator.agent.HodorAgentActuatorApplication

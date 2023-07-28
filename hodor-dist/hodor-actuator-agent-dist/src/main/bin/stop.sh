@@ -15,20 +15,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+APP_NAME=${APP_NAME:-'HodorAgentActuatorApplication'}
+PID=$(ps -ef | grep $APP_NAME | grep -v grep | awk '{print $2}')
 
-BIN_DIR=$(dirname $0)
-HODOR_HOME=${HODOR_HOME:-$(cd $BIN_DIR/..; pwd)}
-
-echo "Starting HODOR_HOME: $HODOR_HOME"
-
-source "$HODOR_HOME/conf/hodor_env.sh"
-
-JAVA_OPTS=${JAVA_OPTS:-"-server -Duser.timezone=${TIME_ZONE} -Xms128m -Xmn128m -Xmx512m -XX:+PrintGCDetails -Xloggc:gc.log -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=dump.hprof"}
-
-if [[ "$DOCKER" == "true" ]]; then
-  JAVA_OPTS="${JAVA_OPTS} -XX:-UseContainerSupport"
+if [ -z $PID ]; then
+    echo "App $APP_NAME not exist"
+    exit
+else
+    echo "Killing process id: $PID"
+    kill ${PID}
+    echo "App $APP_NAME killed"
 fi
-
-java $JAVA_OPTS \
-  -cp "$HODOR_HOME/conf":"$HODOR_HOME/lib/*" \
-  org.dromara.hodor.admin.HodorAdminApplication
