@@ -27,10 +27,6 @@ public class NoopJob implements Job {
 
   private final String jobId;
 
-  public NoopJob(final String jobid) {
-    jobId = jobid;
-  }
-
   public NoopJob(final String jobid, final Props props, final Props jobProps, final Logger log) {
     this.jobId = jobid;
   }

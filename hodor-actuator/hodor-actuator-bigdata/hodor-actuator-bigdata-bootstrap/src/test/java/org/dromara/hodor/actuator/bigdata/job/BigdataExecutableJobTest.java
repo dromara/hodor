@@ -43,7 +43,7 @@ public class BigdataExecutableJobTest {
 
     @Test
     public void testJobExecute() throws Exception {
-        String dataPath = "E:\\data\\hodor-actuator";
+        String dataPath = "./hodor-actuator";
         Long requestId = 123L;
         JobKey jobKey = JobKey.of("testGroup", "testJob");
         final String loggerName = JobPathUtils.createLoggerName(jobKey.getGroupName(), jobKey.getJobName(), requestId);

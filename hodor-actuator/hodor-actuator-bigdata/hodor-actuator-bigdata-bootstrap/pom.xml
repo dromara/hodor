@@ -15,6 +15,12 @@
         <dependency>
             <groupId>org.dromara</groupId>
             <artifactId>hodor-actuator-bigdata-jobtype</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>xercesImpl</artifactId>
+                    <groupId>xerces</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

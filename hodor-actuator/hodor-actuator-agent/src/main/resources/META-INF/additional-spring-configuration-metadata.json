@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "hodor.bigdata",
+      "type": "java.util.Map",
+      "description": "bigdata type job configurations."
+    },
+    {
+      "name": "hodor.bigdata.supportType",
+      "type": "java.util.List",
+      "description": "supported bigdata type."
+    }
+  ]
+}

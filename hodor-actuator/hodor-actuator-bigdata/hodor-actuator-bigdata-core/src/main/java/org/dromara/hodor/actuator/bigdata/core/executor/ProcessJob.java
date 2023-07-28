@@ -38,7 +38,7 @@ import org.joda.time.Duration;
 public class ProcessJob extends AbstractProcessJob {
 
   public static final String COMMAND = "command";
-  public static final String AZKABAN_MEMORY_CHECK = "azkaban.memory.check";
+  public static final String MEMORY_CHECK = "actuator.memory.check";
   // Use azkaban.Constants.ConfigurationKeys.AZKABAN_SERVER_NATIVE_LIB_FOLDER instead
   @Deprecated
   public static final String NATIVE_LIB_FOLDER = "actuator.native.lib";
@@ -130,7 +130,7 @@ public class ProcessJob extends AbstractProcessJob {
     }
 
     if (this.sysProps.getBoolean(MEMCHECK_ENABLED, true)
-        && this.jobProps.getBoolean(AZKABAN_MEMORY_CHECK, true)) {
+        && this.jobProps.getBoolean(MEMORY_CHECK, true)) {
       final Pair<Long, Long> memPair = getProcMemoryRequirement();
       final long xms = memPair.getFirst();
       final long xmx = memPair.getSecond();

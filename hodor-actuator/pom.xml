@@ -15,6 +15,8 @@
         <module>hodor-actuator-api</module>
         <module>hodor-actuator-java</module>
         <module>hodor-actuator-bigdata</module>
+        <module>hodor-actuator-agent</module>
+        <module>hodor-actuator-jobtype</module>
     </modules>
 
     <properties>
@@ -27,6 +29,16 @@
             <dependency>
                 <groupId>org.dromara</groupId>
                 <artifactId>hodor-actuator-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>hodor-actuator-jobtype-all</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>hodor-actuator-jobtype-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

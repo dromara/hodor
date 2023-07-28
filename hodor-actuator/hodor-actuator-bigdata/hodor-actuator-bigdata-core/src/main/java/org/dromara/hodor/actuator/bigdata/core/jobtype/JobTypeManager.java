@@ -24,7 +24,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import org.apache.logging.log4j.LogManager;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.api.core.JobLogger;
 import org.dromara.hodor.actuator.api.utils.Props;
@@ -37,9 +37,8 @@ import org.dromara.hodor.actuator.bigdata.core.executor.NoopJob;
 import org.dromara.hodor.actuator.bigdata.core.executor.ProcessJob;
 import org.dromara.hodor.actuator.bigdata.core.utils.Utils;
 
+@Slf4j
 public class JobTypeManager {
-
-    private static final Logger log = LogManager.getLogger(JobTypeManager.class);
 
     public static final String DEFAULT_JOBTYPEPLUGINDIR = "jobtypes";
 
@@ -54,6 +53,8 @@ public class JobTypeManager {
 
     // common private properties for multiple plugins
     private static final String COMMONSYSCONFFILE = "commonprivate.properties";
+
+    private static final Class<?>[] ARG_TYPES = {String.class, Props.class, Props.class, Logger.class};
 
     private final String jobTypePluginDir; // the dir for jobtype plugins
 
@@ -319,11 +320,12 @@ public class JobTypeManager {
         }
     }
 
-    public Job buildJobExecutor(final String jobKey, Props jobProps, final JobLogger log)
+    public Job buildJobExecutor(final String jobKey, Props jobProps, final JobLogger jobLog)
         throws JobTypeManagerException {
         // This is final because during build phase, you should never need to swap
         // the pluginSet for safety reasons
         final JobTypePluginSet pluginSet = getJobTypePluginSet();
+        final Logger log = jobLog.getLogger();
 
         Job job = null;
         try {
@@ -334,7 +336,7 @@ public class JobTypeManager {
                     "The 'type' parameter for job[%s] is null or empty", jobProps));
             }
 
-            log.info("Building " + jobType + " job executor. ");
+            JobTypeManager.log.info("Building " + jobType + " job executor. ");
 
             final Class<?> executorClass = pluginSet.getPluginClass(jobType);
             if (executorClass == null) {
@@ -369,21 +371,16 @@ public class JobTypeManager {
                 }
             }
 
-            job =
-                (Job) Utils.callConstructor(executorClass, jobKey, pluginLoadProps,
-                    jobProps, log);
+            job = (Job) Utils.callConstructor(executorClass, ARG_TYPES, new Object[] {jobKey, pluginLoadProps, jobProps, log});
         } catch (final Exception e) {
             log.error("Failed to build job executor for job " + jobKey
                 + e.getMessage());
             throw new JobTypeManagerException("Failed to build job executor for job "
                 + jobKey, e);
         } catch (final Throwable t) {
-            log.error(
-                "Failed to build job executor for job " + jobKey + t.getMessage(), t);
-            throw new JobTypeManagerException("Failed to build job executor for job "
-                + jobKey, t);
+            log.error("Failed to build job executor for job " + jobKey + t.getMessage(), t);
+            throw new JobTypeManagerException("Failed to build job executor for job " + jobKey, t);
         }
-
         return job;
     }
 
