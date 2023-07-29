@@ -1,19 +1,19 @@
 package org.dromara.hodor.server.executor;
 
+import org.dromara.hodor.common.executor.HodorExecutor;
+import org.dromara.hodor.common.executor.HodorExecutorFactory;
+import org.dromara.hodor.common.executor.HodorRunnable;
+import org.dromara.hodor.common.queue.DiscardOldestElementPolicy;
+import org.dromara.hodor.model.job.JobKey;
+import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
+import org.dromara.hodor.server.executor.handler.RequestHandler;
+
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import org.dromara.hodor.common.executor.HodorExecutor;
-import org.dromara.hodor.common.executor.HodorExecutorFactory;
-import org.dromara.hodor.common.executor.HodorRunnable;
-import org.dromara.hodor.common.queue.CircleQueue;
-import org.dromara.hodor.common.queue.DiscardOldestElementPolicy;
-import org.dromara.hodor.model.job.JobKey;
-import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
-import org.dromara.hodor.server.executor.handler.RequestHandler;
 
 /**
  * 任务分发器
@@ -59,9 +59,7 @@ public class JobDispatcher {
     }
 
     private HodorExecutor createHodorExecutor(final JobKey key) {
-        final HodorExecutor hodorExecutor = new HodorExecutor();
-        hodorExecutor.setCircleQueue(new CircleQueue<>());
-        hodorExecutor.setExecutor(threadPoolExecutor);
+        final HodorExecutor hodorExecutor = new HodorExecutor(64, threadPoolExecutor);
         hodorExecutor.setRejectEnqueuePolicy(new DiscardOldestElementPolicy<>());
         return hodorExecutor;
     }

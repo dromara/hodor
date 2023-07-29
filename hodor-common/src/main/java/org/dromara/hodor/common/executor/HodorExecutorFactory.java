@@ -1,17 +1,13 @@
 package org.dromara.hodor.common.executor;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import org.dromara.hodor.common.concurrent.HodorThreadFactory;
 import org.dromara.hodor.common.queue.AbortEnqueuePolicy;
 import org.dromara.hodor.common.queue.AdjustThreadSizePolicy;
-import org.dromara.hodor.common.queue.CircleQueue;
 import org.dromara.hodor.common.queue.DiscardOldestElementPolicy;
 import org.dromara.hodor.common.queue.ResizeQueuePolicy;
+
+import java.util.Map;
+import java.util.concurrent.*;
 
 /**
  * hodor executor factory
@@ -39,9 +35,8 @@ public class HodorExecutorFactory {
 
     public static HodorExecutor createExecutor(final String executorName, final int threadSize, final int poolSize,
                                                final boolean coreThreadTimeOut, final int taskStackingStrategy) {
-        CircleQueue<HodorRunnable> hodorQueue = new CircleQueue<>(128);
         ThreadPoolExecutor threadPoolExecutor = createThreadPoolExecutor(executorName, threadSize, poolSize, coreThreadTimeOut);
-        HodorExecutor executor = new HodorExecutor(hodorQueue, threadPoolExecutor);
+        HodorExecutor executor = new HodorExecutor(threadPoolExecutor);
         setHodorExecutorStackingStrategy(taskStackingStrategy, executor);
         return executor;
     }
