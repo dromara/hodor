@@ -52,7 +52,7 @@ public class AsyncJobStateTask extends AbstractAsyncTask {
         logger.info(StringUtils.format("AsyncJobStateTask ## report: {}", report));
 
         if (report != null && isFinished(report)) {
-            RequestContext context = (RequestContext) props.get(CommonJobProperties.JOB_CONTEXT);
+            RequestContext context = (RequestContext) props.get(CommonJobProperties.REQUEST_CONTEXT);
             JobExecuteResponse response = new JobExecuteResponse();
             response.setRequestId(requestId);
             response.setStatus(changeStatusCode(report));

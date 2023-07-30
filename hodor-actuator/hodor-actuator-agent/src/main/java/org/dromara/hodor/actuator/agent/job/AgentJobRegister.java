@@ -134,8 +134,10 @@ public class AgentJobRegister implements JobRegister {
     }
 
     private void resetJobProps(ExecutableJobContext executableJobContext, Props jobProps) {
+        jobProps.put(CommonJobProperties.JOB_CONTEXT, executableJobContext);
+        jobProps.put(CommonJobProperties.JOB_KEY, executableJobContext.getJobKey());
         jobProps.put(CommonJobProperties.JOB_TYPE, executableJobContext.getJobCommandType());
-        jobProps.put(CommonJobProperties.JOB_CONTEXT, executableJobContext.getRequestContext());
+        jobProps.put(CommonJobProperties.REQUEST_CONTEXT, executableJobContext.getRequestContext());
         jobProps.put(Constants.JobProperties.JOB_LOG_PATH, executableJobContext.getAbsoluteLogPath().toString());
         jobProps.put(AbstractProcessJob.WORKING_DIR, executableJobContext.getExecutionsPath().toString());
         // get all field map

@@ -17,145 +17,155 @@
 package org.dromara.hodor.actuator.jobtype.api.executor;
 
 public class CommonJobProperties {
-  /*
-   * The following are Common properties that can be set in a job file
-   */
+    /*
+     * The following are Common properties that can be set in a job file
+     */
 
-  /**
-   * The type of job that will be executed. Examples: command, java, etc.
-   */
-  public static final String JOB_TYPE = "job.type";
+    /**
+     * The type of job that will be executed. Examples: command, java, etc.
+     */
+    public static final String JOB_TYPE = "job.type";
 
-  /**
-   * The scheduler remote ip.
-   */
-  public static final String JOB_CONTEXT = "job.context";
+    /**
+     * The request context.
+     */
+    public static final String REQUEST_CONTEXT = "request.context";
 
-  /**
-   * Force a node to be a root node in a flow, even if there are other jobs dependent on it.
-   */
-  public static final String ROOT_NODE = "root.node";
+    /**
+     * The job context
+     */
+    public static final String JOB_CONTEXT = "job.context";
 
-  /**
-   * Comma delimited list of job names which are dependencies
-   */
-  public static final String DEPENDENCIES = "dependencies";
+    /**
+     * Job key
+     */
+    public static final String JOB_KEY = "job.key";
 
-  /**
-   * The number of retries when this job has failed.
-   */
-  public static final String RETRIES = "retries";
+    /**
+     * Force a node to be a root node in a flow, even if there are other jobs dependent on it.
+     */
+    public static final String ROOT_NODE = "root.node";
 
-  /**
-   * The time in millisec to back off after every retry
-   */
-  public static final String RETRY_BACKOFF = "retry.backoff";
+    /**
+     * Comma delimited list of job names which are dependencies
+     */
+    public static final String DEPENDENCIES = "dependencies";
 
-  /**
-   * Comma delimited list of email addresses for both failure and success messages
-   */
-  public static final String NOTIFY_EMAILS = "notify.emails";
+    /**
+     * The number of retries when this job has failed.
+     */
+    public static final String RETRIES = "retries";
 
-  /**
-   * Comma delimited list of email addresses for success messages
-   */
-  public static final String SUCCESS_EMAILS = "success.emails";
+    /**
+     * The time in millisec to back off after every retry
+     */
+    public static final String RETRY_BACKOFF = "retry.backoff";
 
-  /**
-   * Comma delimited list of email addresses for failure messages
-   */
-  public static final String FAILURE_EMAILS = "failure.emails";
+    /**
+     * Comma delimited list of email addresses for both failure and success messages
+     */
+    public static final String NOTIFY_EMAILS = "notify.emails";
 
-  /*
-   * The following are the common props that will be added to the job by actuator
-   */
+    /**
+     * Comma delimited list of email addresses for success messages
+     */
+    public static final String SUCCESS_EMAILS = "success.emails";
 
-  /**
-   * Url to access hodor actuator on a given host
-   */
-  public static final String ACTUATOR_URL = "hodor.actuator.url";
+    /**
+     * Comma delimited list of email addresses for failure messages
+     */
+    public static final String FAILURE_EMAILS = "failure.emails";
 
-  /**
-   * The attempt number of the executing job.
-   */
-  public static final String JOB_ATTEMPT = "hodor.actuator.job.attempt";
+    /*
+     * The following are the common props that will be added to the job by actuator
+     */
 
-  /**
-   * The attempt number of the executing job.
-   */
-  public static final String JOB_METADATA_FILE = "hodor.actuator.job.metadata.file";
+    /**
+     * Url to access hodor actuator on a given host
+     */
+    public static final String ACTUATOR_URL = "hodor.actuator.url";
 
-  /**
-   * The attempt number of the executing job.
-   */
-  public static final String JOB_ATTACHMENT_FILE =
-      "hodor.actuator.job.attachment.file";
+    /**
+     * The attempt number of the executing job.
+     */
+    public static final String JOB_ATTEMPT = "hodor.actuator.job.attempt";
 
-  /**
-   * The executing flow id
-   */
-  public static final String FLOW_ID = "hodor.actuator.flow.flowid";
+    /**
+     * The attempt number of the executing job.
+     */
+    public static final String JOB_METADATA_FILE = "hodor.actuator.job.metadata.file";
 
-  /**
-   * The nested flow id path
-   */
-  public static final String NESTED_FLOW_PATH = "hodor.actuator.flow.nested.path";
+    /**
+     * The attempt number of the executing job.
+     */
+    public static final String JOB_ATTACHMENT_FILE =
+        "hodor.actuator.job.attachment.file";
 
-  /**
-   * The executing job id
-   */
-  public static final String JOB_ID = "job.id";
+    /**
+     * The executing flow id
+     */
+    public static final String FLOW_ID = "hodor.actuator.flow.flowid";
 
-  /**
-   * The execution id. This should be unique per flow, but may not be due to restarts.
-   */
-  public static final String EXEC_ID = "job.execid";
+    /**
+     * The nested flow id path
+     */
+    public static final String NESTED_FLOW_PATH = "hodor.actuator.flow.nested.path";
 
-  public static final String APP_ID = "job.appid";
+    /**
+     * The executing job id
+     */
+    public static final String JOB_ID = "job.id";
 
-  /**
-   * The numerical project id identifier.
-   */
-  public static final String PROJECT_ID = "flow.projectid";
+    /**
+     * The execution id. This should be unique per flow, but may not be due to restarts.
+     */
+    public static final String EXEC_ID = "job.execid";
 
-  /**
-   * The project name.
-   */
-  public static final String PROJECT_NAME = "flow.projectname";
+    public static final String APP_ID = "job.appid";
 
-  /**
-   * The project last modified by user.
-   */
-  public static final String PROJECT_LAST_CHANGED_BY = "flow.projectlastchangedby";
+    /**
+     * The numerical project id identifier.
+     */
+    public static final String PROJECT_ID = "flow.projectid";
 
-  /**
-   * The project last modified on date.
-   */
-  public static final String PROJECT_LAST_CHANGED_DATE = "flow.projectlastchangeddate";
+    /**
+     * The project name.
+     */
+    public static final String PROJECT_NAME = "flow.projectname";
 
-  /**
-   * The version of the project the flow is running. This may change if a forced hotspot occurs.
-   */
-  public static final String PROJECT_VERSION = "flow.projectversion";
+    /**
+     * The project last modified by user.
+     */
+    public static final String PROJECT_LAST_CHANGED_BY = "flow.projectlastchangedby";
 
-  /**
-   * Find out who is the submit user, in addition to the user.to.proxy (they may be different)
-   */
-  public static final String SUBMIT_USER = "flow.submituser";
+    /**
+     * The project last modified on date.
+     */
+    public static final String PROJECT_LAST_CHANGED_DATE = "flow.projectlastchangeddate";
 
-  /**
-   * A uuid assigned to every execution
-   */
-  public static final String FLOW_UUID = "flow.uuid";
+    /**
+     * The version of the project the flow is running. This may change if a forced hotspot occurs.
+     */
+    public static final String PROJECT_VERSION = "flow.projectversion";
 
-  public static final String JOB_LINK = "hodor.actuator.link.job.url";
-  public static final String WORKFLOW_LINK = "hodor.actuator.link.workflow.url";
-  public static final String EXECUTION_LINK = "hodor.actuator.link.execution.url";
-  public static final String JOBEXEC_LINK = "hodor.actuator.link.jobexec.url";
-  public static final String ATTEMPT_LINK = "hodor.actuator.link.attempt.url";
-  public static final String OUT_NODES = "hodor.actuator.job.outnodes";
-  public static final String IN_NODES = "hodor.actuator.job.innodes";
+    /**
+     * Find out who is the submit user, in addition to the user.to.proxy (they may be different)
+     */
+    public static final String SUBMIT_USER = "flow.submituser";
 
-  public static final String JOB_CUR_STATUS = "hodor.actuator.cur.status";
-  public static final String JOB_COMPLETE_TIME = "hodor.actuator.complete.time";
+    /**
+     * A uuid assigned to every execution
+     */
+    public static final String FLOW_UUID = "flow.uuid";
+
+    public static final String JOB_LINK = "hodor.actuator.link.job.url";
+    public static final String WORKFLOW_LINK = "hodor.actuator.link.workflow.url";
+    public static final String EXECUTION_LINK = "hodor.actuator.link.execution.url";
+    public static final String JOBEXEC_LINK = "hodor.actuator.link.jobexec.url";
+    public static final String ATTEMPT_LINK = "hodor.actuator.link.attempt.url";
+    public static final String OUT_NODES = "hodor.actuator.job.outnodes";
+    public static final String IN_NODES = "hodor.actuator.job.innodes";
+
+    public static final String JOB_CUR_STATUS = "hodor.actuator.cur.status";
+    public static final String JOB_COMPLETE_TIME = "hodor.actuator.complete.time";
 }

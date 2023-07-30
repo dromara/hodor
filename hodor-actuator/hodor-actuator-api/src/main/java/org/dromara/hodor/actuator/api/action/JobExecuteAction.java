@@ -3,6 +3,7 @@ package org.dromara.hodor.actuator.api.action;
 import cn.hutool.core.date.DateUtil;
 import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.api.ExecutableJob;
 import org.dromara.hodor.actuator.api.JobRegister;
 import org.dromara.hodor.actuator.api.config.HodorProperties;
@@ -43,7 +44,7 @@ public class JobExecuteAction extends AbstractExecuteAction {
         final JobKey jobKey = JobKey.of(request.getGroupName(), request.getJobName());
         final ExecutableJobContext executableJobContext = buildExecutableJobContext(request, jobKey);
         final ExecutableJob runnableJob = buildJobRunnable(executableJobContext);
-        final JobLogger jobLogger = getJobLogger();
+        final Logger jobLogger = getJobLogger().getLogger();
 
         Object result;
         for (int i = 0; ; i++) {

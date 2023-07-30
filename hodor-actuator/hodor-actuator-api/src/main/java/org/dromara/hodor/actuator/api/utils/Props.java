@@ -16,32 +16,16 @@
 
 package org.dromara.hodor.actuator.api.utils;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeMap;
 import org.apache.commons.io.input.CharSequenceReader;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.common.exception.UndefinedPropertyException;
+
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.util.*;
 
 /**
  * Hashmap implementation of a hierarchical properties with helpful converter functions and
@@ -245,6 +229,14 @@ public class Props {
         } else {
             return null;
         }
+    }
+
+    public <T> T getObj(final Object key) {
+        Object result = get(key);
+        if (result == null) {
+            return null;
+        }
+        return (T) result;
     }
 
     /**
@@ -548,9 +540,9 @@ public class Props {
             return defaultValue;
         }
         try {
-            if(obj instanceof Boolean)
+            if (obj instanceof Boolean)
                 return (Boolean) obj;
-            return Boolean.parseBoolean((String)obj);
+            return Boolean.parseBoolean((String) obj);
         } catch (Exception e) {
             throw new ClassCastException("Identified object is not a Boolean.");
         }
@@ -589,9 +581,9 @@ public class Props {
     public long getLong(final String name) {
         Object obj = get(name);
         try {
-            if(obj instanceof Long)
+            if (obj instanceof Long)
                 return (Long) obj;
-            return Long.parseLong((String)obj);
+            return Long.parseLong((String) obj);
         } catch (Exception e) {
             throw new ClassCastException("Identified object is not a Long.");
         }
@@ -607,9 +599,9 @@ public class Props {
             return defaultValue;
         }
         try {
-            if(obj instanceof Integer)
+            if (obj instanceof Integer)
                 return (Integer) obj;
-            return Integer.parseInt((String)obj);
+            return Integer.parseInt((String) obj);
         } catch (Exception e) {
             throw new ClassCastException("Identified object is not an Integer.");
         }
@@ -623,9 +615,9 @@ public class Props {
     public int getInt(final String name) {
         Object obj = get(name);
         try {
-            if(obj instanceof Integer)
+            if (obj instanceof Integer)
                 return (Integer) obj;
-            return Integer.parseInt((String)obj);
+            return Integer.parseInt((String) obj);
         } catch (Exception e) {
             throw new ClassCastException("Identified object is not an Integer.");
         }
@@ -641,9 +633,9 @@ public class Props {
             return defaultValue;
         }
         try {
-            if(obj instanceof Double)
+            if (obj instanceof Double)
                 return (Double) obj;
-            return Double.parseDouble((String)obj);
+            return Double.parseDouble((String) obj);
         } catch (Exception e) {
             throw new ClassCastException("Identified object is not a Double.");
         }
@@ -657,9 +649,9 @@ public class Props {
     public double getDouble(final String name) {
         Object obj = get(name);
         try {
-            if(obj instanceof Double)
+            if (obj instanceof Double)
                 return (Double) obj;
-            return Double.parseDouble((String)obj);
+            return Double.parseDouble((String) obj);
         } catch (Exception e) {
             throw new ClassCastException("Identified object is not a Double.");
         }
