@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.nio.file.Path;
+import org.springframework.lang.NonNull;
 
 import static org.dromara.hodor.actuator.jobtype.api.executor.CommonJobProperties.JOB_CONTEXT;
 
@@ -24,8 +25,47 @@ public class KettleJobTest {
 
     @Test
     public void testJobExecute() throws Exception {
+        RequestWrapper requestWrapper = getRequest(123L);
+        Props jobProps = new Props();
+        Props sysProps = new Props();
+
+        String jobPath = this.getClass().getResource("/test_kettle_job.kjb").getPath();
+
+        jobProps.put(JOB_CONTEXT, requestWrapper.context);
+        jobProps.put(KettleConstant.REPOSITORY_PATH, "");
+        jobProps.put(KettleConstant.PATH, jobPath);
+        jobProps.put(KettleConstant.PLUGINS, "E:\\app\\data-integration\\plugins");
+        jobProps.put(KettleConstant.LOG_LEVEL, "Detailed");
+
+        Job job = new KettleJob(requestWrapper.jobKey.getKeyName(), sysProps, jobProps, requestWrapper.jobLogger.getLogger());
+        job.run();
+
+        requestWrapper.jobLoggerManager.stopJobLogger();
+    }
+
+    @Test
+    public void testTransExecute() throws Exception {
+        RequestWrapper requestWrapper = getRequest(125L);
+        Props jobProps = new Props();
+        Props sysProps = new Props();
+
+        String jobPath = this.getClass().getResource("/test_kettle_trans.ktr").getPath();
+
+        jobProps.put(JOB_CONTEXT, requestWrapper.context);
+        jobProps.put(KettleConstant.REPOSITORY_PATH, "");
+        jobProps.put(KettleConstant.PATH, jobPath);
+        jobProps.put(KettleConstant.PLUGINS, "E:\\app\\data-integration\\plugins");
+        jobProps.put(KettleConstant.LOG_LEVEL, "Detailed");
+
+        Job job = new KettleTrans(requestWrapper.jobKey.getKeyName(), sysProps, jobProps, requestWrapper.jobLogger.getLogger());
+        job.run();
+
+        requestWrapper.jobLoggerManager.stopJobLogger();
+    }
+
+    @NonNull
+    private static RequestWrapper getRequest(Long requestId) {
         String dataPath = "./hodor-actuator";
-        Long requestId = 123L;
         JobKey jobKey = JobKey.of("testGroup", "testJob");
         final String loggerName = JobPathUtils.createLoggerName(jobKey.getGroupName(), jobKey.getJobName(), requestId);
         final Path jobLogPath = JobPathUtils.getJobLogPath(dataPath, jobKey, requestId);
@@ -49,19 +89,24 @@ public class KettleJobTest {
             .executeRequest(jobExecuteRequest)
             .jobLogger(jobLogger)
             .build();
-        Props jobProps = new Props();
-        Props sysProps = new Props();
+        return new RequestWrapper(jobKey, jobLoggerManager, jobLogger, context);
+    }
 
-        jobProps.put(JOB_CONTEXT, context);
-        jobProps.put(KettleConstant.REPOSITORY_PATH, "");
-        jobProps.put(KettleConstant.PATH, "F:\\workspace_exer\\source_code\\hodor\\hodor-actuator\\hodor-actuator-jobtype\\hodor-actuator-jobtype-kettle\\src\\test\\resources\\testJob.kjb");
-        jobProps.put(KettleConstant.PLUGINS, "");
-        jobProps.put(KettleConstant.LOG_LEVEL, "Detailed");
+    private static class RequestWrapper {
+        public final JobKey jobKey;
 
-        Job job = new KettleJob(jobKey.getKeyName(), sysProps, jobProps, jobLogger.getLogger());
-        job.run();
+        public final JobLoggerManager jobLoggerManager;
 
-        jobLoggerManager.stopJobLogger();
+        public final JobLogger jobLogger;
+
+        public final ExecutableJobContext context;
+
+        public RequestWrapper(JobKey jobKey, JobLoggerManager jobLoggerManager, JobLogger jobLogger, ExecutableJobContext context) {
+            this.jobKey = jobKey;
+            this.jobLoggerManager = jobLoggerManager;
+            this.jobLogger = jobLogger;
+            this.context = context;
+        }
     }
 
 }

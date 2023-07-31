@@ -17,8 +17,14 @@
 
 package org.dromara.hodor.actuator.jobtype.kettle;
 
+import java.util.Map;
+import org.dromara.hodor.actuator.api.utils.Props;
 import org.dromara.hodor.common.utils.StringUtils;
+import org.dromara.hodor.common.utils.Utils;
+import org.pentaho.di.base.AbstractMeta;
 import org.pentaho.di.core.KettleEnvironment;
+import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.logging.KettleLogStore;
 import org.pentaho.di.core.logging.LogLevel;
 import org.pentaho.di.core.plugins.PluginFolder;
@@ -29,8 +35,13 @@ import org.pentaho.di.repository.Repository;
 import org.pentaho.di.repository.RepositoryDirectory;
 import org.pentaho.di.repository.filerep.KettleFileRepository;
 import org.pentaho.di.repository.filerep.KettleFileRepositoryMeta;
+import org.pentaho.di.repository.kdr.KettleDatabaseRepository;
+import org.pentaho.di.repository.kdr.KettleDatabaseRepositoryMeta;
+import org.pentaho.di.trans.Trans;
+import org.pentaho.di.trans.TransMeta;
 
-import java.util.Map;
+import static org.dromara.hodor.actuator.jobtype.kettle.KettleConstant.JOB_TYPE;
+import static org.dromara.hodor.actuator.jobtype.kettle.KettleConstant.TRANS_TYPE;
 
 /**
  * KettleProcess
@@ -60,29 +71,23 @@ public class KettleProcess {
     /**
      * 执行作业
      *
-     * @param repository     资源库
-     * @param path           路径
-     * @param name           作业名
-     * @param params         命名参数
-     * @param variables      环境变量
+     * @param repository 资源库
+     * @param path       路径
+     * @param name       作业名
+     * @param params     命名参数
+     * @param variables  环境变量
      * @throws Exception create job exception
      */
-    public static Job createKettleJob(KettleFileRepository repository, String path, String name,
+    public static Job createKettleJob(Repository repository, String path, String name,
                                       Map<String, String> params, Map<String, String> variables) throws Exception {
-        JobMeta meta = getJobMeta(repository, path, name);
-        if (params != null && !params.isEmpty()) {
-            for (Map.Entry<String, String> item : params.entrySet()) {
-                meta.setParameterValue(item.getKey(), item.getValue());
-            }
-        }
-
-        if (variables != null && !variables.isEmpty()) {
-            for (Map.Entry<String, String> item : variables.entrySet()) {
-                meta.setVariable(item.getKey(), item.getValue());
-            }
-        }
-
+        JobMeta meta = (JobMeta) getKettleMeta(repository, path, name, JOB_TYPE, params, variables);
         return new Job(repository, meta);
+    }
+
+    public static Trans createKettleTrans(Repository repository, String path, String jobName,
+                                          Map<String, String> params, Map<String, String> variables) throws Exception {
+        TransMeta meta = (TransMeta) getKettleMeta(repository, path, jobName, TRANS_TYPE, params, variables);
+        return new Trans(meta);
     }
 
     public static LogLevel bulidLogLevel(String loglevel) {
@@ -95,41 +100,72 @@ public class KettleProcess {
     }
 
     /**
-     * 根据资源库元数据获取资源库
-     *
-     * @param repositoryMeta
-     * @return
-     * @throws Exception
-     */
-    public static KettleFileRepository getFileRepository(KettleFileRepositoryMeta repositoryMeta) throws Exception {
-        KettleFileRepository repository = null;
-        if (repositoryMeta != null) {
-            // 指定资源库
-            repository = new KettleFileRepository();
-            repository.init(repositoryMeta);
-            repository.connect(null, null);
-        }
-        return repository;
-    }
-
-    /**
      * 获取作业元数据
      *
      * @param repository job repository
-     * @param path job path
-     * @param name job name
+     * @param path       job path
+     * @param name       job name
+     * @param metaType   meta Type
+     * @param params     params
+     * @param variables  variables
      * @return job meta
      * @throws Exception get job meta exception
      */
-    public static JobMeta getJobMeta(Repository repository, String path, String name) throws Exception {
-        JobMeta meta;
-        if (repository == null) {
+    public static AbstractMeta getKettleMeta(Repository repository, String path, String name, String metaType,
+                                             Map<String, String> params, Map<String, String> variables) throws Exception {
+        AbstractMeta meta;
+        if (repository == null && JOB_TYPE.equals(metaType)) {
             meta = new JobMeta(path, null);
+        } else if (repository == null && TRANS_TYPE.equals(metaType)) {
+            meta = new TransMeta(path);
         } else {
             // 加载资源库中的文件
+            Utils.Assert.notNull(repository, "repository must be not null");
             meta = repository.loadJob(name, new StringDirectory(path), null, null);
         }
+
+        if (params != null && !params.isEmpty()) {
+            for (Map.Entry<String, String> item : params.entrySet()) {
+                meta.setParameterValue(item.getKey(), item.getValue());
+            }
+        }
+        if (variables != null && !variables.isEmpty()) {
+            for (Map.Entry<String, String> item : variables.entrySet()) {
+                meta.setVariable(item.getKey(), item.getValue());
+            }
+        }
         return meta;
+    }
+
+    public static Repository getRepository(String repositoryType, String repositoryPath, String jobName, Props sysProps) throws KettleException {
+        if (KettleConstant.FILE_TYPE.equals(repositoryType)) {
+            if (StringUtils.isEmpty(repositoryPath)) {
+                return null;
+            }
+            KettleFileRepositoryMeta repositoryMeta = new KettleFileRepositoryMeta(null, jobName, null, repositoryPath);
+            KettleFileRepository repository = new KettleFileRepository();
+            repository.init(repositoryMeta);
+            repository.connect(null, null);
+            return repository;
+        }
+
+        if (KettleConstant.DATABASE_TYPE.equals(repositoryType)) {
+            final String databaseType = sysProps.getString("database.type", "MYSQL");
+            final String host = sysProps.getString("database.host");
+            final String port = sysProps.getString("database.port", "3306");
+            final String username = sysProps.getString("database.username");
+            final String pwd = sysProps.getString("database.password");
+            final String dbName = sysProps.getString("database.dbName");
+            final String repoUsername = sysProps.getString("repository.username");
+            final String repoPwd = sysProps.getString("repository.password");
+            DatabaseMeta databaseMeta = new DatabaseMeta("kettle", databaseType, "Native", host, dbName, port, username, pwd);
+            KettleDatabaseRepositoryMeta repositoryMeta = new KettleDatabaseRepositoryMeta(null, jobName, null, databaseMeta);
+            KettleDatabaseRepository repository = new KettleDatabaseRepository();
+            repository.init(repositoryMeta);
+            repository.connect(repoUsername, repoPwd);
+            return repository;
+        }
+        return null;
     }
 
     /**

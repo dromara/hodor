@@ -48,33 +48,13 @@
             <version>${kettle.version}</version>
         </dependency>
         <dependency>
-            <groupId>pentaho-kettle</groupId>
-            <artifactId>kettle-ui-swt</artifactId>
-            <version>${kettle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>pentaho-kettle</groupId>
-            <artifactId>kettle-dbdialog</artifactId>
-            <version>${kettle.version}</version>
-        </dependency>
-        <dependency>
             <groupId>pentaho</groupId>
             <artifactId>metastore</artifactId>
             <version>${kettle.version}</version>
         </dependency>
         <dependency>
             <groupId>pentaho</groupId>
-            <artifactId>pdi-osgi-bridge-core</artifactId>
-            <version>${kettle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>pentaho</groupId>
             <artifactId>pentaho-metaverse-api</artifactId>
-            <version>${kettle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>pentaho-kettle</groupId>
-            <artifactId>kettle-engine</artifactId>
             <version>${kettle.version}</version>
         </dependency>
         <dependency>
