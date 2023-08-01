@@ -64,6 +64,10 @@ public class HodorProperties {
     private String dataPath;
 
     /**
+     * 任务类型插件路径
+     */
+    private String jobtypePlugins;
+    /**
      * 数据库配置
      */
     private DataSourceConfig dataSourceConfig;

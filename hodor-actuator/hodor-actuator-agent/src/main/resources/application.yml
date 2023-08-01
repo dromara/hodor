@@ -5,7 +5,8 @@ hodor:
     registryAddress: http://localhost:8081,localhost:8082,localhost:8083/hodor
     queueSize: 5000
     poolSize: 500
-    dataPath: E:\\data\\hodor-actuator\\agent\\logs
+    dataPath: E:\\data\\hodor-actuator\\agent
+    jobtypePlugins: .\\plugins
     dataSourceConfig:
       type: h2
       dataSourceClassName: org.h2.jdbcx.JdbcDataSource

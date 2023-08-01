@@ -41,6 +41,7 @@ import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.storage.filesystem.FileStorage;
 import org.dromara.hodor.common.utils.FileIOUtils;
 import org.dromara.hodor.common.utils.StringUtils;
+import org.dromara.hodor.common.utils.Utils;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 
@@ -63,7 +64,9 @@ public class AgentJobRegister implements JobRegister {
 
     public AgentJobRegister(HodorActuatorAgentProperties properties) {
         this.properties = properties;
-        String jobTypePluginDir = StringUtils.join(properties.getCommonProperties().getDataPath(), File.separator, JobTypeManager.DEFAULT_JOBTYPEPLUGINDIR);
+        final String jobtypePath = properties.getCommonProperties().getJobtypePlugins();
+        Utils.Assert.isNull("jobtype plugins path must be not null", jobtypePath);
+        String jobTypePluginDir = StringUtils.join(jobtypePath, File.separator, JobTypeManager.DEFAULT_JOBTYPEPLUGINDIR);
         Props globalProps = new Props();
         globalProps.putAll(properties.getBigdata());
         this.jobTypeManager = new JobTypeManager(jobTypePluginDir, globalProps, getClass().getClassLoader());
@@ -99,8 +102,8 @@ public class AgentJobRegister implements JobRegister {
         resetJobProps(executableJobContext, jobProps);
 
         Job job = jobTypeManager.buildJobExecutor(executableJobContext.getJobKey().toString(),
-                jobProps,
-                logger);
+            jobProps,
+            logger);
         return new AgentExecutableJob(job, logger);
     }
 
