@@ -19,6 +19,36 @@
             <groupId>org.dromara</groupId>
             <artifactId>hodor-actuator-agent</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>rocksdbjni</artifactId>
+                    <groupId>org.rocksdb</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>ratis-common</artifactId>
+                    <groupId>org.apache.ratis</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>ratis-grpc</artifactId>
+                    <groupId>org.apache.ratis</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>ratis-netty</artifactId>
+                    <groupId>org.apache.ratis</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>ratis-server</artifactId>
+                    <groupId>org.apache.ratis</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>ratis-tools</artifactId>
+                    <groupId>org.apache.ratis</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>ratis-thirdparty-misc</artifactId>
+                    <groupId>org.apache.ratis</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

@@ -34,6 +34,13 @@
             <outputDirectory>conf</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>${basedir}/src/main/resources</directory>
+            <includes>
+                <include>plugins/jobtype/*</include>
+            </includes>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>${project.basedir}/../../hodor-actuator/hodor-actuator-agent/src/main/resources</directory>
             <includes>
                 <include>**/*</include>
