@@ -65,7 +65,7 @@ public class AgentJobRegister implements JobRegister {
     public AgentJobRegister(HodorActuatorAgentProperties properties) {
         this.properties = properties;
         final String jobtypePath = properties.getCommonProperties().getJobtypePlugins();
-        Utils.Assert.isNull("jobtype plugins path must be not null", jobtypePath);
+        Utils.Assert.notNull("jobtype plugins path must be not null", jobtypePath);
         String jobTypePluginDir = StringUtils.join(jobtypePath, File.separator, JobTypeManager.DEFAULT_JOBTYPEPLUGINDIR);
         Props globalProps = new Props();
         globalProps.putAll(properties.getBigdata());
