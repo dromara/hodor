@@ -2,6 +2,7 @@ hodor:
   commons:
     appName: hodor-actuator-agent
     appKey: 1234567
+    port: 46367
     registryAddress: http://localhost:8081,localhost:8082,localhost:8083/hodor
     queueSize: 5000
     poolSize: 500
