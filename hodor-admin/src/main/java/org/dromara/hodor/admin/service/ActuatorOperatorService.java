@@ -18,14 +18,11 @@
 package org.dromara.hodor.admin.service;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
-import org.dromara.hodor.admin.domain.ActuatorAppInfo;
+import org.dromara.hodor.client.model.KillJobRequest;
 import org.dromara.hodor.client.model.KillJobResult;
 import org.dromara.hodor.client.model.LogQueryRequest;
 import org.dromara.hodor.client.model.LogQueryResult;
-import org.dromara.hodor.core.entity.JobExecDetail;
 import org.dromara.hodor.model.actuator.ActuatorInfo;
 import org.dromara.hodor.model.actuator.BindingInfo;
 
@@ -53,10 +50,10 @@ public interface ActuatorOperatorService {
 
     /**
      * 杀死正在执行的任务
-     * @param jobExecDetail 任务执行明细
-     * @return 是否执行成功
+     * @param killJobRequest 终止任务请求
+     * @return 终止任务响应结果
      */
-    KillJobResult killRunningJob(JobExecDetail jobExecDetail) throws Exception;
+    KillJobResult killRunningJob(KillJobRequest killJobRequest) throws Exception;
 
 
 }

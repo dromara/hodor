@@ -1,9 +1,6 @@
 package org.dromara.hodor.client.model;
 
 import lombok.Data;
-import org.dromara.hodor.model.enums.JobExecuteStatus;
-
-import java.util.Date;
 
 /**
  * 杀死任务的请求
@@ -19,8 +16,6 @@ public class KillJobRequest {
     private String jobName;
 
     private Integer timeout;
-
-    private String logStorageType;
 
     private String actuatorEndpoint;
 }

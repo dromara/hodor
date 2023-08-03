@@ -7,6 +7,7 @@ import org.dromara.hodor.admin.core.Result;
 import org.dromara.hodor.admin.core.ResultUtil;
 import org.dromara.hodor.admin.service.ActuatorOperatorService;
 import org.dromara.hodor.admin.service.LogService;
+import org.dromara.hodor.client.model.KillJobRequest;
 import org.dromara.hodor.client.model.KillJobResult;
 import org.dromara.hodor.client.model.LogQueryRequest;
 import org.dromara.hodor.client.model.LogQueryResult;
@@ -76,8 +77,8 @@ public class JobInstanceController {
 
     @Operation(summary = "杀死正在执行的任务")
     @PutMapping("/kill")
-    public Result<KillJobResult> killRunningJob(@RequestBody JobExecDetail jobExecDetail) throws Exception {
-        return ResultUtil.success(actuatorOperatorService.killRunningJob(jobExecDetail));
+    public Result<KillJobResult> killRunningJob(@RequestBody KillJobRequest killJobRequest) throws Exception {
+        return ResultUtil.success(actuatorOperatorService.killRunningJob(killJobRequest));
     }
 
 }
