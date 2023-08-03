@@ -26,7 +26,7 @@ public class JobLoggerManagerTest {
 
     @Test
     public void testJobLogger() {
-        String dataPath = "E:\\data\\hodor-actuator\\test";
+        String dataPath = "./test1.log";
         Long requestId = 123L;
         JobKey jobKey = JobKey.of("testGroup", "testJob");
         final String loggerName = JobPathUtils.createLoggerName(jobKey.getGroupName(), jobKey.getJobName(), requestId);

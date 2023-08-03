@@ -53,7 +53,7 @@ public class JobLoggerManager {
         final AppenderComponentBuilder appenderComponentBuilder = builder.newAppender("jobLogFile", "RandomAccessFile")
             .addAttribute("fileName", logPath)
             .add(layoutBuilder);
-        final RootLoggerComponentBuilder loggerComponentBuilder = builder.newRootLogger(Level.INFO)
+        final RootLoggerComponentBuilder loggerComponentBuilder = builder.newAsyncRootLogger(Level.INFO)
             .add(builder.newAppenderRef("jobLogFile"));
         builder.add(appenderComponentBuilder);
         builder.add(loggerComponentBuilder);
