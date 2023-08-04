@@ -1,9 +1,9 @@
 import httpInstance from "@/utils/http"
 
 
-export const queryGroupListPagingAPI = ({ groupName = '', pageNo, pageSize }) => {
+export const queryGroupListPagingAPI = ({ pageNo, pageSize },groupName="") => {
     return httpInstance({
-        url: `/group?groupName=${groupName}&pageNo=${pageNo}&pageSize=${pageSize}`,
+        url: `/group?pageNo=${pageNo}&pageSize=${pageSize}&groupName=${groupName}`,
         method: 'GET',
     })
 };

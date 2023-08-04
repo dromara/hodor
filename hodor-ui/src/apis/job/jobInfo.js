@@ -1,8 +1,8 @@
 import httpInstance from "@/utils/http"
 
-export const queryJobInfoListPagingAPI = ({ pageNo, pageSize }) => {
+export const queryJobInfoListPagingAPI = ({ pageNo, pageSize},jobInfoStr) => {
     return httpInstance({
-        url: `/jobOperator?pageNo=${pageNo}&pageSize=${pageSize}`,
+        url: `/jobOperator?pageNo=${pageNo}&pageSize=${pageSize}${jobInfoStr}`,
         method: 'GET',
     })
 };

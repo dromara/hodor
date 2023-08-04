@@ -1,9 +1,10 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue';
+import { createApp, onMounted, reactive, ref } from 'vue';
 import { cloneDeep } from 'lodash-es';
-import { queryGroupListPagingAPI, createGroupAPI, updateGroupAPI, deleteGroupAPI, queryGroupListByIdAPI, bindGroupActuatorAPI, getBindListAPI } from '@/apis/jobGroup'
+import { queryGroupListPagingAPI, createGroupAPI, updateGroupAPI, deleteGroupAPI, queryGroupListByIdAPI, bindGroupActuatorAPI, getBindListAPI } from '@/apis/job/jobGroup'
 import { useActuatorStore } from '@/stores/actuator'
 import { storeToRefs } from 'pinia'
+import {timeTransfer} from '@/utils/timeTransfer'
 
 // 新增任务分组表单
 const formRef = ref();
@@ -28,104 +29,8 @@ const { actuatorClusterList } = storeToRefs(actuatorStore);
 const { getAllClusters } = actuatorStore;
 // 选择器选项列表
 const options = ref([]);
-const getClusterOptions = () => {
-    // 获取执行节点列表
-    getAllClusters();
-    options.value = actuatorClusterList.value.map(element => {
-        return {
-            value: element,
-            label: element,
-        }
-    });
-}
-
-
-// 新建任务分组
-const createJobGroup = async (groupInfo) => {
-    const res = await createGroupAPI(groupInfo);
-    return res
-}
-// 绑定执行集群
-const bindGroupActuator = async ({ clusterName, groupName }) => {
-    const res = await bindGroupActuatorAPI({ clusterName, groupName });
-    return res;
-}
-// 创建分组事件
-const onOk = () => {
-    formRef.value.validateFields().then(values => {
-        console.log("values", values)
-        // console.log("formState",formState)
-        const { groupName, clusterName } = values;
-        const groupInfo = {
-            id: 0,
-            groupName: groupName,
-            createUser: "",
-            userId: 0,
-            tenantId: 0,
-            remark: "",
-            createdAt: "",
-            updatedAt: ""
-        }
-        // 发送请求创建分组
-        createJobGroup(groupInfo);
-        // 绑定执行集群
-        bindGroupActuator({ groupName, clusterName })
-        // 隐藏modal
-        visible.value = false;
-        // 重置文本
-        formRef.value.resetFields();
-        // 重新分页查询
-        const { defaultCurrent, defaultPageSize } = paginationOpt
-        queryJobGroupListPaging({ pageNo: defaultCurrent, pageSize: defaultPageSize });
-    }).catch(info => {
-        console.log('Validate Failed:', info);
-    });
-};
-//
-const onSelectChange = (value) => {
-    // console.log(value)
-}
-
 // 搜索框
 const searchInfo = ref('');
-const onSearch = (searchValue) => {
-    // 如果搜索内容为空，则分页查询
-    if (searchValue === "") {
-        const { defaultCurrent, defaultPageSize } = paginationOpt
-        queryJobGroupListPaging({ pageNo: defaultCurrent, pageSize: defaultPageSize });
-    }
-    // 如果搜索内容不为空，则搜索所有信息中包含searchValue的任务分组
-    else {
-        // 搜索id
-        handleQueryJobGroupListById(Number(searchValue));
-        // 搜索groupName
-        // 搜索createUser
-        // 搜索userId
-        // 搜索tenantId
-        // remark
-        // createdAt
-        // updatedAt
-    }
-};
-const onSearchChange = (searchValue) => {
-    if (searchValue === "") {
-        const { defaultCurrent, defaultPageSize } = paginationOpt
-        queryJobGroupListPaging({ pageNo: defaultCurrent, pageSize: defaultPageSize });
-    }
-}
-// 按id搜索任务信息
-const handleQueryJobGroupListById = async (id) => {
-    await queryGroupListByIdAPI(id).then((res) => {
-        if (res.data === null) {
-            groupList.value = null;
-            paginationOpt.total = 0;
-        }
-        else {
-            groupList.value = [res.data];
-            paginationOpt.total = groupList.value.length;
-        }
-    })
-}
 
 // 表格
 const columns = [
@@ -175,11 +80,124 @@ const paginationOpt = reactive({
     },
 });
 const groupList = ref([]);
+
+
+const getClusterOptions = () => {
+    // 获取执行节点列表
+    getAllClusters();
+    options.value = actuatorClusterList.value.map(element => {
+        return {
+            value: element,
+            label: element,
+        }
+    });
+}
+
+
+// 新建任务分组
+const createJobGroup = async (groupInfo) => {
+    const res = await createGroupAPI(groupInfo);
+    return res
+}
+// 绑定执行集群
+const bindGroupActuator = async ({ clusterName, groupName }) => {
+    const res = await bindGroupActuatorAPI({ clusterName, groupName });
+    return res;
+}
+// 创建分组事件
+const onOk = () => {
+    formRef.value.validateFields().then(values => {
+        const { groupName, clusterName } = values;
+        const groupInfo = {
+            id: 0,
+            groupName: groupName,
+            createUser: "",
+            userId: 0,
+            tenantId: 0,
+            remark: "",
+            createdAt: "",
+            updatedAt: ""
+        }
+        // 发送请求创建分组
+        createJobGroup(groupInfo);
+        // 绑定执行集群
+        bindGroupActuator({ groupName, clusterName })
+        // 隐藏modal
+        visible.value = false;
+        // 重置文本
+        formRef.value.resetFields();
+        // 重新分页查询
+        const { defaultCurrent, defaultPageSize } = paginationOpt
+        queryJobGroupListPaging({ pageNo: defaultCurrent, pageSize: defaultPageSize });
+    }).catch(info => {
+        console.log('Validate Failed:', info);
+    });
+};
+//
+const onSelectChange = (value) => {
+    // console.log(value)
+}
+
+// 搜索事件
+const onSearch = (searchValue) => {
+    // 如果搜索内容为空，则分页查询
+    if (searchValue === "") {
+        const { defaultCurrent, defaultPageSize } = paginationOpt
+        queryJobGroupListPaging({ pageNo: defaultCurrent, pageSize: defaultPageSize });
+    }
+    // 如果搜索内容不为空，则搜索所有信息中包含searchValue的任务分组
+    else {
+        // 搜索id
+        handleQueryJobGroupListById(Number(searchValue));
+        // 搜索groupName
+        const { defaultCurrent, defaultPageSize } = paginationOpt
+        queryJobGroupListPaging({ pageNo: defaultCurrent, pageSize: defaultPageSize }, searchValue);
+        // 搜索createUser
+        // 搜索userId
+        // 搜索tenantId
+        // remark
+        // createdAt
+        // updatedAt
+    }
+};
+const onSearchChange = (searchValue) => {
+    if (searchValue === "") {
+        const { defaultCurrent, defaultPageSize } = paginationOpt
+        queryJobGroupListPaging({ pageNo: defaultCurrent, pageSize: defaultPageSize });
+    }
+}
+// 按id搜索任务信息
+const handleQueryJobGroupListById = async (id) => {
+    await queryGroupListByIdAPI(id).then((res) => {
+        if (res.data === null) {
+            groupList.value = null;
+            paginationOpt.total = 0;
+        }
+        else {
+            groupList.value = [res.data];
+            paginationOpt.total = groupList.value.length;
+        }
+    })
+}
+
+
 // 分页查询分组信息
-const queryJobGroupListPaging = async ({ pageNo, pageSize }) => {
-    await queryGroupListPagingAPI({ pageNo, pageSize }).then((res) => {
+const queryJobGroupListPaging = async ({ pageNo, pageSize }, groupName = "") => {
+    await queryGroupListPagingAPI({ pageNo, pageSize }, groupName).then((res) => {
         const data = res.data;
         groupList.value = data.rows;
+        groupList.value = groupList.value.map((item) => {
+            const { createdAt } = item;
+            // console.log("createdAt", createdAt)
+            if (createdAt) {
+                const localTimeString=timeTransfer(createdAt);
+                // console.log("localTimeString", typeof localTimeString)
+                return Object.assign(item, {
+                    ...item,
+                    createdAt: localTimeString,
+                })
+            }
+        })
         const { total, pageNo, pageSize } = data;
         Object.assign(paginationOpt, { total, defaultCurrent: pageNo, defaultPageSize: pageSize });
     })
@@ -223,8 +241,6 @@ const onDelete = groupName => {
     // 接口测试："服务端异常: group暂不支持删除"
     handleDeleteGroupInfo(groupName);
 };
-
-
 
 
 onMounted(() => {
@@ -290,3 +306,4 @@ onMounted(() => {
 
     </a-space>
 </template>
+@/apis/job/jobGroup

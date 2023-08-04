@@ -1,60 +1,103 @@
+<script setup>
+import { onMounted, reactive, ref } from 'vue';
+import { useJobStatusStore } from "@/stores/job/jobStatus";
+import { storeToRefs } from "pinia";
+
+const jobStatusStore = useJobStatusStore();
+const { jobStatusList,paginationOpt} = storeToRefs(jobStatusStore);
+const { getJobStatusList } = jobStatusStore;
+
+// 搜索框
+const searchInfo = ref('');
+const onSearch = searchValue => {
+    console.log('use value', searchValue);
+    console.log('or use this.value', searchInfo.value);
+};
+// 表格
+const jobStatusColumns = ref([
+    {
+        title: 'id',
+        dataIndex: 'id',
+        key: 'id',
+    },
+    {
+        title: '任务组名称',
+        dataIndex: 'groupName',
+        key: 'groupName',
+    },
+    {
+        title: '任务名称',
+        dataIndex: 'jobName',
+        key: 'jobName',
+    },
+    {
+        title: 'executeStatus',
+        dataIndex: 'executeStatus',
+        key: 'executeStatus',
+    },
+    {
+        title: 'scheduleStart',
+        dataIndex: 'scheduleStart',
+        key: 'scheduleStart',
+    },
+    {
+        title: 'scheduleEnd',
+        dataIndex: 'scheduleEnd',
+        key: 'scheduleEnd',
+    },
+    {
+        title: 'executeStart',
+        dataIndex: 'executeStart',
+        key: 'executeStart',
+    },
+    {
+        title: 'executeEnd',
+        dataIndex: 'executeEnd',
+        key: 'executeEnd',
+    },
+    {
+        title: 'elapsedTime',
+        dataIndex: 'elapsedTime',
+        key: 'elapsedTime',
+    },
+    {
+        title: 'isTimeout',
+        dataIndex: 'isTimeout',
+        key: 'isTimeout',
+    },
+    {
+        title: '备注',
+        dataIndex: 'comment',
+        key: 'comment',
+    },
+]);
+const jobStatus = ref();
+
+// 分页查询任务列表
+const queryJobStatusListPaging = (paginationOpt, jobStatus = {}) => {
+    const { defaultCurrent, defaultPageSize } = paginationOpt.value;
+    getJobStatusList({ pageNo: defaultCurrent, pageSize: defaultPageSize }, jobStatus);
+};
+
+onMounted(()=>{
+    queryJobStatusListPaging(paginationOpt);
+})
+
+</script>
+
 <template>
     <a-space direction="vertical" style="width: 100%;">
-        <a-row>
-            <a-input-search v-model:value="searchInfo" placeholder="请输入内容" enter-button @search="onSearch" />
+        <a-row :gutter="24">
+            <a-col :span="4">
+                <a-button type="primary" @click="visible = true">新增</a-button>
+            </a-col>
+            <a-col :span="16">
+                <a-input-search v-model:value="searchInfo" placeholder="请输入内容" enter-button @search="onSearch" />
+            </a-col>
         </a-row>
         <a-row>
-            <a-button type="primary" @click="visible = true">新增</a-button>
-        </a-row>
-        <a-row>
-            <a-table :columns="jobStatusColumns" :data-source="jobStatus" bordered style="width: 100%;">
+            <a-table :columns="jobStatusColumns" :data-source="jobStatusList" bordered style="width: 100%;" :pagination="paginationOpt">
             </a-table>
         </a-row>
     </a-space>
 </template>
-
-<script>
-import { defineComponent, reactive, ref } from 'vue';
-export default defineComponent({
-    setup() {
-        // 搜索框
-        const searchInfo = ref('');
-        const onSearch = searchValue => {
-            console.log('use value', searchValue);
-            console.log('or use this.value', searchInfo.value);
-        };
-        // 表格
-        const jobStatusColumns = ref([{
-            title: '任务组',
-            dataIndex:'groupName',
-            key: 'groupName',
-        },
-        {
-            title: '阀值（%）',
-            dataIndex:'threshold',
-            key: 'threshold',
-        },
-        {
-            title: '是否开启报警',
-            dataIndex:'enabled',
-            key: 'enabled',
-        },
-        {
-            title: '备注',
-            dataIndex:'comment',
-            key: 'comment',
-        },
-        ]);
-        const jobStatus=ref();
-
-        return {
-            // 搜索框
-            searchInfo,
-            onSearch,
-            // 表格
-            jobStatusColumns,
-            jobStatus,
-        };
-    },
-});
-</script>
