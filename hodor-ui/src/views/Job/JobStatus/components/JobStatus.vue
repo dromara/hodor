@@ -1,11 +1,14 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive, ref, onUpdated, watch } from 'vue';
 import { useJobStatusStore } from "@/stores/job/jobStatus";
 import { storeToRefs } from "pinia";
+import { onBeforeRouteUpdate,useRoute } from 'vue-router';
 
 const jobStatusStore = useJobStatusStore();
-const { jobStatusList,paginationOpt} = storeToRefs(jobStatusStore);
-const { getJobStatusList } = jobStatusStore;
+const { jobStatusList, paginationOpt } = storeToRefs(jobStatusStore);
+const { getJobStatusList, getQueryParams } = jobStatusStore;
+
+const route = useRoute();
 
 // 搜索框
 const searchInfo = ref('');
@@ -74,13 +77,20 @@ const jobStatusColumns = ref([
 const jobStatus = ref();
 
 // 分页查询任务列表
-const queryJobStatusListPaging = (paginationOpt, jobStatus = {}) => {
+const queryJobStatusListPaging = (paginationOpt, jobStatus) => {
     const { defaultCurrent, defaultPageSize } = paginationOpt.value;
     getJobStatusList({ pageNo: defaultCurrent, pageSize: defaultPageSize }, jobStatus);
 };
 
-onMounted(()=>{
-    queryJobStatusListPaging(paginationOpt);
+// 监听路由参数变化
+onBeforeRouteUpdate(to => {
+    queryJobStatusListPaging(paginationOpt, to.query)
+})
+
+onMounted(() => {
+    const queryParam = route.query;
+    getQueryParams(queryParam);
+    queryJobStatusListPaging(paginationOpt, queryParam);
 })
 
 </script>
@@ -96,7 +106,8 @@ onMounted(()=>{
             </a-col>
         </a-row>
         <a-row>
-            <a-table :columns="jobStatusColumns" :data-source="jobStatusList" bordered style="width: 100%;" :pagination="paginationOpt">
+            <a-table :columns="jobStatusColumns" :data-source="jobStatusList" bordered style="width: 100%;"
+                :pagination="paginationOpt">
             </a-table>
         </a-row>
     </a-space>

@@ -4,7 +4,8 @@ import { cloneDeep } from 'lodash-es';
 import { queryGroupListPagingAPI, createGroupAPI, updateGroupAPI, deleteGroupAPI, queryGroupListByIdAPI, bindGroupActuatorAPI, getBindListAPI } from '@/apis/job/jobGroup'
 import { useActuatorStore } from '@/stores/actuator'
 import { storeToRefs } from 'pinia'
-import {timeTransfer} from '@/utils/timeTransfer'
+import { timeTransfer } from '@/utils/timeTransfer'
+import { message } from 'ant-design-vue';
 
 // 新增任务分组表单
 const formRef = ref();
@@ -190,7 +191,7 @@ const queryJobGroupListPaging = async ({ pageNo, pageSize }, groupName = "") => 
             const { createdAt } = item;
             // console.log("createdAt", createdAt)
             if (createdAt) {
-                const localTimeString=timeTransfer(createdAt);
+                const localTimeString = timeTransfer(createdAt);
                 // console.log("localTimeString", typeof localTimeString)
                 return Object.assign(item, {
                     ...item,
@@ -231,15 +232,21 @@ const saveGroupInfo = name => {
 // 删除行
 const handleDeleteGroupInfo = async (groupName) => {
     await deleteGroupAPI(groupName).then((res) => {
-        console.log(res.msg);
+        if (res.success === true) {
+            groupList.value = groupList.value.filter(item => item.groupName !== groupName);
+            message.success(res.msg)
+        }
+        else {
+            message.error(res.msg)
+        }
+    }).catch(error => {
+        message.error(error.msg)
     })
 }
-const onDelete = groupName => {
-    console.log(groupName)
-    groupList.value = groupList.value.filter(item => item.groupName !== groupName);
+const onDelete = async groupName => {
+    await handleDeleteGroupInfo(groupName);
     // 发送请求删除
     // 接口测试："服务端异常: group暂不支持删除"
-    handleDeleteGroupInfo(groupName);
 };
 
 

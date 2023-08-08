@@ -138,8 +138,8 @@ const jobInfoColumns = ref([
     },
     {
         title: "超时时间（秒）",
-        dataIndex: "timeOut",
-        key: "timeOut",
+        dataIndex: "timeout",
+        key: "timeout",
     },
     {
         title: "创建时间",
@@ -244,8 +244,8 @@ const getGroupOptions = async () => {
     })
 }
 // 查看任务执行明细
-const getJobStatusDetail=(jobName)=>{
-    getJobStatusList({pageNo:1,pageSize:100},{jobName});
+const getJobStatusDetail=({groupName,jobName})=>{
+    getJobStatusList({pageNo:1,pageSize:100},{groupName,jobName});
 }
 
 // 暂停、恢复、删除点击事件
@@ -305,7 +305,7 @@ const onClickSearch = () => {
 }
 
 // 操作选择器
-const handleChangeAction = (value, jobId,jobName) => {
+const handleChangeAction = (value, jobId,jobName,groupName) => {
     switch (value) {
         case 'stopJob':
             stopJob(jobId);
@@ -322,8 +322,7 @@ const handleChangeAction = (value, jobId,jobName) => {
         case 'jobInstance':
             break;
         case 'jobDetail':
-            router.push('/job-status');
-            getJobStatusDetail(jobName);
+            router.push({ path: 'job-status', query: { groupName,jobName }});
             break;
         case 'saveJob':
             saveJobInfo(jobId);
@@ -557,7 +556,6 @@ onMounted(() => {
                 </a-space>
             </a-form>
         </a-row>
-
         <a-row>
             <a-table :columns="jobInfoColumns" :data-source="jobInfoList" bordered :scroll="{ x: 1500 }"
                 :row-selection="rowSelection" :rowKey="row => row.id" :pagination="paginationOpt">
@@ -599,15 +597,13 @@ onMounted(() => {
                         </div>
                     </template>
                     <template v-if="column.dataIndex === 'action'">
-                        <a-select ref="select" v-model="record.action" @change="handleChangeAction($event, record.id,record.jobName)"
+                        <a-select ref="select" v-model="record.action" @change="handleChangeAction($event, record.id,record.jobName,record.groupName)" style="width: 100%;"
                             placeholder="操作">
-                            <a-select-option value="jobInstance">任务实例</a-select-option>
                             <a-select-option value="jobDetail">任务详情</a-select-option>
                             <a-select-option value="stopJob">停止</a-select-option>
                             <a-select-option value="resumeJob">恢复</a-select-option>
                             <a-select-option value="editJob">编辑</a-select-option>
                             <a-select-option value="saveJob">保存</a-select-option>
-                            <a-select-option value="deleteJob">删除</a-select-option>
                         </a-select>
                     </template>
                 </template>

@@ -6,8 +6,8 @@ import { useUserStore } from "@/stores/user";
 import { useRouter } from 'vue-router'
 
 const formState = ref({
-    username: 'admin',
-    password: 'admin',
+    username: '',
+    password: '',
 });
 const userStore = useUserStore()
 const router = useRouter()
@@ -18,7 +18,7 @@ const onFinish = async values => {
     const {username, password} = formState.value
     await userStore.getUserInfo({username, password})
     message.success('登录成功')
-    router.push({ path: '/' })
+    router.push({ path: '/home' })
 };
 const onFinishFailed = errorInfo => {
     // 提交表单且数据验证失败后回调事件
@@ -68,7 +68,7 @@ const rules = {
         <div class="logo"></div>
         <a-form :model="formState" name="normal_login" class="form" @finish="onFinish" @finishFailed="onFinishFailed">
             <a-form-item label="Username" name="username" :rules="rules.username">
-                <a-input v-model:value="formState.username">
+                <a-input v-model:value="formState.username" placeholder="admin">
                     <template #prefix>
                         <UserOutlined class="site-form-item-icon" />
                     </template>
@@ -76,7 +76,7 @@ const rules = {
             </a-form-item>
 
             <a-form-item label="Password" name="password" :rules="rules.password">
-                <a-input-password v-model:value="formState.password">
+                <a-input-password v-model:value="formState.password" placeholder="admin">
                     <template #prefix>
                         <LockOutlined class="site-form-item-icon" />
                     </template>
@@ -107,7 +107,7 @@ const rules = {
 .logo {
     padding: 65px;
     width: 164px;
-    background-image: url('@/assets/images/logo.png');
+    background-image: url('@/assets/images/logo_blue.png');
     background-color: #ffffff;
     background-repeat: no-repeat;
 }
@@ -121,7 +121,6 @@ const rules = {
 }
 
 .login-button {
-    background: rgba(79, 195, 160, 1);
     border-radius: 2px;
     color: white;
     width: 100%;
