@@ -153,6 +153,7 @@ public class JobInfoServiceImpl implements JobInfoService {
             .eq(jobInfo.getJobType() != null, JobInfo::getJobType, jobInfo.getJobType())
             .eq(jobInfo.getJobCommandType() != null, JobInfo::getJobCommandType, jobInfo.getJobCommandType())
             .eq(jobInfo.getJobCategory() != null, JobInfo::getJobCategory, jobInfo.getJobCategory())
+            .orderByDesc(JobInfo::getCreateTime)
         );
         PageInfo<JobInfo> pageInfo = new PageInfo<>();
         return pageInfo.setRows(page.getRecords())

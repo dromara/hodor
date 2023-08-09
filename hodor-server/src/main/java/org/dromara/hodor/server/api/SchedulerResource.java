@@ -301,6 +301,7 @@ public class SchedulerResource {
         jobInfo.setFireNow(jobInfo.getFireNow() != null && jobInfo.getFireNow());
         jobInfo.setPriority(jobInfo.getPriority() == null ? Priority.DEFAULT : jobInfo.getPriority());
         jobInfo.setFailover(jobInfo.getFailover() != null && jobInfo.getFailover());
+        jobInfo.setCreateTime(DateUtils.nowDate());
     }
 
     private void checkJobInfo(JobInfo jobInfo) {

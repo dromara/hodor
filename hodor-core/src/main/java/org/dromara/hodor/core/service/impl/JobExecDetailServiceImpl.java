@@ -54,7 +54,8 @@ public class JobExecDetailServiceImpl implements JobExecDetailService {
             .eq(jobExecDetail.getScheduleStart() != null, JobExecDetail::getScheduleStart, jobExecDetail.getScheduleStart())
             .eq(jobExecDetail.getScheduleEnd() != null, JobExecDetail::getScheduleEnd, jobExecDetail.getScheduleEnd())
             .eq(StringUtils.isNotBlank(jobExecDetail.getActuatorEndpoint()), JobExecDetail::getActuatorEndpoint, jobExecDetail.getActuatorEndpoint())
-            .eq(StringUtils.isNotBlank(jobExecDetail.getSchedulerEndpoint()), JobExecDetail::getSchedulerEndpoint, jobExecDetail.getSchedulerEndpoint()));
+            .eq(StringUtils.isNotBlank(jobExecDetail.getSchedulerEndpoint()), JobExecDetail::getSchedulerEndpoint, jobExecDetail.getSchedulerEndpoint())
+            .orderByDesc(JobExecDetail::getScheduleStart));
         PageInfo<JobExecDetail> pageInfo = new PageInfo<>();
         return pageInfo.setRows(page.getRecords())
             .setTotal(page.getTotal())
