@@ -46,7 +46,7 @@ public class RetryableMessage {
            .createTime(currentDate)
            .updateTime(currentDate)
            .status(false)
-           .retryCount(0)
+           .retryCount(3)
            .build();
    }
 

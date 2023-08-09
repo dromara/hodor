@@ -118,7 +118,8 @@ public class FailureRequestHandleManager extends AbstractAsyncEventPublisher<Ret
                     HodorChannel activeChannel = clientChannelManager.getActiveOrBackupChannel(remoteIp);
                     activeChannel.send(remotingMessage)
                         .operationComplete(e -> {
-                            if (e.cause() == null && e.isSuccess()) {
+                            if ((e.cause() == null && e.isSuccess())
+                                || retryableMessage.getRetryCount() >= 3) {
                                 publish(Event.create(retryableMessage, MESSAGE_DELETE_EVENT));
                             } else {
                                 retryableMessage.setStatus(false);
@@ -138,7 +139,10 @@ public class FailureRequestHandleManager extends AbstractAsyncEventPublisher<Ret
     }
 
     private final String insertSql = "INSERT INTO hodor_retryable_message (request_id, remote_ip, raw_message, create_time, status) VALUES (?, ?, ?, ?, ?)";
+
     private final String updateSql = "UPDATE hodor_retryable_message SET status = ?, update_time = ?, retry_count = retry_count + 1 WHERE id = ?";
+
     private final String querySql = "SELECT * FROM hodor_retryable_message";
+
     private final String deleteSql = "DELETE FROM hodor_retryable_message WHERE id = ?";
 }
