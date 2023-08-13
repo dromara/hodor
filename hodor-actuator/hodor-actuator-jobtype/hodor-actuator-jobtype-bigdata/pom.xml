@@ -10,7 +10,7 @@
 
     <properties>
         <hadoop.version>2.10.0</hadoop.version>
-        <hive.version>1.2.2</hive.version>
+        <hive.version>2.3.4</hive.version>
         <hive-shims.version>0.12.0</hive-shims.version>
         <spark-core_2.10.version>2.2.3</spark-core_2.10.version>
     </properties>
