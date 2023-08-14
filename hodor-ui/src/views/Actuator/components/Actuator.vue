@@ -116,12 +116,14 @@ const onMonitor = (actuator) => {
 </script>
 
 <template>
-    <span>执行节点列表</span>
-    <span>
-        <a-input-search class="search-container" placeholder="请输入你要搜索的节点" v-model:value="name" @search="onSearch" />
-    </span>
+    <a-card>
+        <span>执行节点列表</span>
+        <span>
+            <a-input-search class="search-container" placeholder="请输入你要搜索的节点" v-model:value="name" @search="onSearch" />
+        </span>
+    </a-card>
     <br />
-    <div>
+        <a-card>
         <!-- 调度结点列表 -->
         <a-table :columns="columns" :data-source="actuatorList">
             <!-- 行数据 -->
@@ -134,7 +136,7 @@ const onMonitor = (actuator) => {
                 </template>
             </template>
         </a-table>
-    </div>
+    </a-card>
 </template>
 
 <style scoped>

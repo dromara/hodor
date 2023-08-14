@@ -6,3 +6,18 @@ export const queryJobStatusListPagingAPI=({ pageNo, pageSize},jobStatusStr)=>{
         method: 'GET',
     })
 }
+
+export const killRunningJobAPI=(params)=>{
+    return httpInstance({
+        url: `/jobExecDetail/kill`,
+        method: 'POST',
+        data:params,
+    })
+}
+
+export const queryExecuteLogAPI=(paramsStr)=>{
+    return httpInstance({
+        url: `/jobExecDetail/logs?${paramsStr}`,
+        method: 'GET',
+    })
+}

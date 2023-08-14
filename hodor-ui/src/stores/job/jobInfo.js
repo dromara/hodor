@@ -85,8 +85,10 @@ export const useJobInfoStore = defineStore('jobInfo', () => {
     const updateJob=async (jobInfo)=>{
         const res=await updateJobAPI(jobInfo);
         if(res.successful===true){
-            let job = jobInfoList.value.find((jobInfo) => jobInfo.id === id)
-            Object.assign(job,jobInfo);
+            // let job = jobInfoList.value.find((job) => job.id === id)
+            // Object.assign(job,jobInfo);
+            const { defaultCurrent, defaultPageSize } = paginationOpt
+            getJobInfoList({ pageNo: defaultCurrent, pageSize: defaultPageSize });
         }
         else{
             message.error(res.msg);

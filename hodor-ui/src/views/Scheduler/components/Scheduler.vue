@@ -78,12 +78,14 @@ const onMonitor = (scheduler) => {
 </script>
 
 <template>
-    <span>调度结点列表</span>
-    <span>
-        <a-input-search class="search-container" placeholder="请输入你要搜索的节点" v-model:value="name" @search="onSearch" />
-    </span>
+    <a-card>
+        <span>调度结点列表</span>
+        <span>
+            <a-input-search class="search-container" placeholder="请输入你要搜索的节点" v-model:value="name" @search="onSearch" />
+        </span>
+    </a-card>
     <br />
-    <div>
+    <a-card>
         <!-- 调度结点列表 -->
         <a-table :columns="columns" :data-source="schedulerList">
             <!-- 表内数据 -->
@@ -96,12 +98,12 @@ const onMonitor = (scheduler) => {
                 </template>
             </template>
         </a-table>
-    </div>
+    </a-card>
 </template>
 
 <style scoped>
 .search-container {
     width: 200px;
     float: right;
-};
+}
 </style>

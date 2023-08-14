@@ -249,6 +249,10 @@ const onDelete = async groupName => {
     // 接口测试："服务端异常: group暂不支持删除"
 };
 
+const onClickCreate=()=>{
+    visible.value = true;
+}
+
 
 onMounted(() => {
     // 分页查询任务分组信息
@@ -261,10 +265,10 @@ onMounted(() => {
 </script>
 
 <template>
-    <a-space direction="vertical" style="width: 100%;">
+    <a-card>
         <a-row>
             <a-col :span="2">
-                <a-button type="primary" @click="visible = true">新增</a-button>
+                <a-button type="primary" @click="onClickCreate">新增</a-button>
                 <a-modal v-model:visible="visible" title="Create a new collection" ok-text="Create" cancel-text="Cancel"
                     width="400px" @ok="onOk">
                     <a-form ref="formRef" :model="formState" name="form_in_modal" layout="horizontal" v-bind="fomLayout">
@@ -286,12 +290,24 @@ onMounted(() => {
                     @change="onSearchChange(searchInfo)" />
             </a-col>
         </a-row>
+    </a-card>
+    <br />
+    <a-card>
         <a-table :columns="columns" :data-source="groupList" bordered :pagination="paginationOpt">
             <template #bodyCell="{ column, text, record }">
                 <template v-if="['createdAt'].includes(column.dataIndex)">
                     <div>
                         <a-input v-if="editableData[record.groupName]"
                             v-model:value="editableData[record.groupName][column.dataIndex]" style="margin: -5px 0" />
+                        <template v-else>
+                            {{ text }}
+                        </template>
+                    </div>
+                </template>
+                <template v-else-if="['clusterName'].includes(column.dataIndex)">
+                    <div>
+                        <a-select v-if="editableData[record.groupName]" ref="select" v-model:value="editableData[record.groupName][column.dataIndex]"
+                            :options="options" placeholder="执行器选择" @change="onSelectChange"></a-select>
                         <template v-else>
                             {{ text }}
                         </template>
@@ -310,7 +326,5 @@ onMounted(() => {
                 </template>
             </template>
         </a-table>
-
-    </a-space>
+    </a-card>
 </template>
-@/apis/job/jobGroup
