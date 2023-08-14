@@ -16,8 +16,10 @@ export const useJobStatusStore = defineStore('jobStatus', () => {
     });
     const paginationOpt = reactive({
         defaultCurrent: 1, // 默认当前页数
-        defaultPageSize: 50, // 默认当前页显示数据的大小
+        defaultPageSize: 10, // 默认当前页显示数据的大小
         total: 0, // 总数
+        //显示数据总量和当前数据顺序
+        showTotal:(total, range)=>`${range[0]}-${range[1]} of ${total} items`,
         // 改变每页数量时更新显示
         onChange: (current, size) => {
             paginationOpt.defaultCurrent = current;
