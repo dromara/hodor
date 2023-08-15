@@ -223,7 +223,7 @@ onBeforeUnmount(() => {
     </a-card>
     <br />
     <a-card>
-        <a-table :columns="jobStatusColumns" :data-source="jobStatusList" bordered :scroll="{ x: 2000 }"
+        <a-table :columns="jobStatusColumns" :data-source="jobStatusList" bordered :scroll="{ x: true }"
             :row-selection="rowSelection" :rowKey="row => row.id" :pagination="paginationOpt">
             <template #bodyCell="{ column, text, record }">
                 <template v-if="column.dataIndex === 'action'">
@@ -240,8 +240,7 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-/* .space{
-    background-color: transparent;
-    height: 1rem;
-} */
+:deep(.ant-table) {
+    white-space: nowrap;
+}
 </style>

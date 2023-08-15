@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, reactive } from 'vue'
-import { queryJobInfoListPagingAPI, createJobAPI, deleteGroupAPI, stopJobAPI, resumeJobAPI,updateJobAPI } from '@/apis/job/jobInfo'
+import { queryJobInfoListPagingAPI, createJobAPI, deleteGroupAPI, stopJobAPI, resumeJobAPI,updateJobAPI,executeJobAPI } from '@/apis/job/jobInfo'
 import { message } from 'ant-design-vue';
 
 export const useJobInfoStore = defineStore('jobInfo', () => {
@@ -94,6 +94,10 @@ export const useJobInfoStore = defineStore('jobInfo', () => {
             message.error(res.msg);
         }
     }
+    const executeJob=async (jobId)=>{
+        const res=await executeJobAPI(jobId);
+        console.log("execute",res);
+    }
 
     return {
         jobInfoList,
@@ -104,5 +108,6 @@ export const useJobInfoStore = defineStore('jobInfo', () => {
         stopJob,
         resumeJob,
         updateJob,
+        executeJob,
     }
 })

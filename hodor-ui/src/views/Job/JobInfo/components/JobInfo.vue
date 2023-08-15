@@ -9,9 +9,11 @@ import { message } from 'ant-design-vue';
 import yaml from 'js-yaml';
 import { cloneDeep } from 'lodash-es';
 import router from "@/router/router";
+// 代码编辑器
 import { Codemirror } from 'vue-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
+import { createFromIconfontCN,EditOutlined,HistoryOutlined } from '@ant-design/icons-vue';
 
 // store
 const jobInfoStore = useJobInfoStore();
@@ -231,6 +233,11 @@ const formStateUpdateJob = reactive({
     retryCount: '',
     checkValue: [],
     executeTime: [],
+});
+
+// 图标
+const stopIcon = createFromIconfontCN({
+  scriptUrl: '//at.alicdn.com/t/font_8d5l8fzk5b87iudi.js',
 });
 
 
@@ -745,7 +752,7 @@ onMounted(() => {
     </a-card>
     <br />
     <a-card>
-        <a-table :columns="jobInfoColumns" :data-source="jobInfoList" bordered :scroll="{ x: 1500 }"
+        <a-table :columns="jobInfoColumns" :data-source="jobInfoList" bordered :scroll="{ x: true }"
             :row-selection="rowSelection" :rowKey="row => row.id" :pagination="paginationOpt">
             <template #bodyCell="{ column, text, record }">
                 <!-- <template
@@ -785,7 +792,7 @@ onMounted(() => {
                     </div>
                 </template> -->
                 <template v-if="column.dataIndex === 'action'">
-                    <a-select ref="select" v-model="record.action"
+                    <!-- <a-select ref="select" v-model="record.action"
                         @change="handleChangeAction($event, record.id, record.jobName, record.groupName)"
                         style="width: 100%;" placeholder="操作">
                         <a-select-option value="jobDetail">任务详情</a-select-option>
@@ -793,7 +800,24 @@ onMounted(() => {
                         <a-select-option value="resumeJob">恢复</a-select-option>
                         <a-select-option value="editJob">编辑</a-select-option>
                         <a-select-option value="saveJob">保存</a-select-option>
-                    </a-select>
+                    </a-select> -->
+                    <a-space>
+                        <a-tooltip title="编辑">
+                            <a-button type="text"><edit-outlined /></a-button>
+                        </a-tooltip>
+                        <a-tooltip title="立即执行">
+                            <a-button type="text"><edit-outlined /></a-button>
+                        </a-tooltip>
+                        <a-tooltip title="恢复">
+                            <a-button type="text"><history-outlined /></a-button>
+                        </a-tooltip>
+                        <a-tooltip title="停止">
+                            <a-button type="text"><edit-outlined /></a-button>
+                        </a-tooltip>
+                        <a-tooltip title="任务详情">
+                            <a-button type="text"><edit-outlined /></a-button>
+                        </a-tooltip>
+                    </a-space>
                 </template>
             </template>
         </a-table>
@@ -921,37 +945,8 @@ onMounted(() => {
 </template>
 
 <style scoped lang="less">
-.editor-drawer {
-    display: flex;
-    flex-direction: column;
-}
-
-.editor-content {
-    flex: 1;
-}
-
-.editor-container {
-    display: flex;
-}
-
-.line-number {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-right: 8px;
-    color: #999;
-}
-
-.line-number-item {
-    min-width: 24px;
-}
-
-.editor {
-    flex: 1;
-    resize: none;
-    padding: 4px;
-    font-size: 14px;
-    line-height: 1.5;
+:deep(.ant-table) {
+    white-space: nowrap;
 }
 
 .timeExpression {

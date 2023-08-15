@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ant-design/icons-vue": "^6.1.0",
     "@codemirror/lang-javascript": "^6.1.9",
     "@codemirror/theme-one-dark": "^6.1.2",
     "ant-design-vue": "^4.0.0-rc.5",

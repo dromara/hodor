@@ -228,6 +228,9 @@ const saveGroupInfo = name => {
     handleUpdateGroupInfo(updateInfo);
     delete editableData[name];
 };
+const cancelEditGroup = name => {
+    delete editableData[name];
+}
 
 // 删除行
 const handleDeleteGroupInfo = async (groupName) => {
@@ -249,7 +252,7 @@ const onDelete = async groupName => {
     // 接口测试："服务端异常: group暂不支持删除"
 };
 
-const onClickCreate=()=>{
+const onClickCreate = () => {
     visible.value = true;
 }
 
@@ -293,38 +296,43 @@ onMounted(() => {
     </a-card>
     <br />
     <a-card>
-        <a-table :columns="columns" :data-source="groupList" bordered :pagination="paginationOpt">
+        <a-table :columns="columns" :data-source="groupList" bordered :pagination="paginationOpt" :scroll="{ x: true }">
             <template #bodyCell="{ column, text, record }">
-                <template v-if="['createdAt'].includes(column.dataIndex)">
+                <template v-if="['clusterName'].includes(column.dataIndex)">
                     <div>
-                        <a-input v-if="editableData[record.groupName]"
-                            v-model:value="editableData[record.groupName][column.dataIndex]" style="margin: -5px 0" />
-                        <template v-else>
-                            {{ text }}
-                        </template>
-                    </div>
-                </template>
-                <template v-else-if="['clusterName'].includes(column.dataIndex)">
-                    <div>
-                        <a-select v-if="editableData[record.groupName]" ref="select" v-model:value="editableData[record.groupName][column.dataIndex]"
-                            :options="options" placeholder="执行器选择" @change="onSelectChange"></a-select>
+                        <a-select v-if="editableData[record.groupName]" ref="select"
+                            v-model:value="editableData[record.groupName][column.dataIndex]" :options="options"
+                            placeholder="执行器选择" @change="onSelectChange"></a-select>
                         <template v-else>
                             {{ text }}
                         </template>
                     </div>
                 </template>
                 <template v-if="column.dataIndex === 'action'">
-                    <a-space>
-                        <a-button type="primary" :size="size" style="background-color: #F26161;"
-                            @click="onDelete(record.groupName)">删除</a-button>
-                        <a-button v-if="editableData[record.groupName]" type="primary" :size="size"
-                            style="background-color: #3894FF;" @click="saveGroupInfo(record.groupName)">保存</a-button>
-                        <a-button v-else type="primary" :size="size" style="background-color: #3894FF;"
-                            @click="editGroupInfo(record.groupName)">编辑</a-button>
-                        <a-button type="primary" :size="size" style="background-color: #7AC756;">查看节点</a-button>
-                    </a-space>
+                    <div v-show="!editableData[record.groupName]">
+                        <a-space>
+                            <a-button type="primary" style="background-color: #F26161;"
+                                @click="onDelete(record.groupName)">删除</a-button>
+                            <a-button type="primary" style="background-color: #3894FF;"
+                                @click="editGroupInfo(record.groupName)">编辑</a-button>
+                            <a-button type="primary" style="background-color: #7AC756;">查看节点</a-button>
+                        </a-space>
+                    </div>
+                    <div v-show="editableData[record.groupName]">
+                        <a-space>
+                            <a-button @click="cancelEditGroup(record.groupName)">取消</a-button>
+                            <a-button type="primary" style="background-color: #3894FF;"
+                                @click="saveGroupInfo(record.groupName)">保存</a-button>
+                        </a-space>
+                    </div>
                 </template>
             </template>
         </a-table>
     </a-card>
 </template>
+
+<style scoped>
+:deep(.ant-table) {
+    white-space: nowrap;
+}
+</style>
