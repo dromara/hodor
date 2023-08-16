@@ -13,7 +13,12 @@ import router from "@/router/router";
 import { Codemirror } from 'vue-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
-import { createFromIconfontCN,EditOutlined,HistoryOutlined } from '@ant-design/icons-vue';
+// iconfont
+// import * as iconfontJS from '@/assets/iconfont/iconfont.js'
+// import { Icon } from 'ant-design-vue';
+// const IconFont = Icon.createFromIconfontCN({
+//    scriptUrl: iconfontJS
+//  })
 
 // store
 const jobInfoStore = useJobInfoStore();
@@ -237,7 +242,7 @@ const formStateUpdateJob = reactive({
 
 // 图标
 const stopIcon = createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/font_8d5l8fzk5b87iudi.js',
+    scriptUrl: '//at.alicdn.com/t/font_8d5l8fzk5b87iudi.js',
 });
 
 
@@ -278,16 +283,16 @@ const copy = async (msg) => {
         message.error('文字复制失败！');
     }
 }
-const openUpdateModal=ref(false)
+const openUpdateModal = ref(false)
 // 编辑行
 const editJobInfo = id => {
-    openUpdateModal.value=true;
+    openUpdateModal.value = true;
     editableData.value = cloneDeep(...jobInfoList.value.filter(item => id === item.id));
-    Object.assign(formStateUpdateJob,editableData.value);
+    Object.assign(formStateUpdateJob, editableData.value);
 }
 // 保存编辑后的任务信息
 const saveJobInfo = () => {
-    const {id} = editableData.value;
+    const { id } = editableData.value;
     formUpdateRef.value.validateFields().then(values => {
         const {
             groupName,
@@ -306,15 +311,15 @@ const saveJobInfo = () => {
             retryCount,
             checkValue,
             executeTime } = formStateUpdateJob;
-            const misfire = checkValue.includes('misfire');
+        const misfire = checkValue.includes('misfire');
         const fireNow = checkValue.includes('fireNow');
         const isBroadcast = checkValue.includes('isBroadcast');
         const prevExecuteTime = executeTime[0];
         const nextExecuteTime = executeTime[1];
-        updateJob({ id,groupName, jobName, jobType, jobStatus, cron, priority, jobCategory, jobDesc, jobCommandType, jobDataType, jobDataPath, jobParameters, timeOut, retryCount, misfire, fireNow, isBroadcast,/* prevExecuteTime,nextExecuteTime */ });
+        updateJob({ id, groupName, jobName, jobType, jobStatus, cron, priority, jobCategory, jobDesc, jobCommandType, jobDataType, jobDataPath, jobParameters, timeOut, retryCount, misfire, fireNow, isBroadcast,/* prevExecuteTime,nextExecuteTime */ });
     })
-    editableData.value={};
-    openUpdateModal.value=false;
+    editableData.value = {};
+    openUpdateModal.value = false;
 };
 // 获取所有分组名称
 const getGroupOptions = async () => {
@@ -468,7 +473,7 @@ watch(
     () => {
         if (editorMode.value === 'YAML') {
             formEditor.content =
-                `groupName: ''
+`groupName: ''
 jobName: ''
 config: {}
 dependsOn: []
@@ -481,7 +486,7 @@ nodes:
         }
         else {
             formEditor.content =
-                `{
+`{
     "groupName": "",
     "jobName": "",
     "config": {},
@@ -801,23 +806,36 @@ onMounted(() => {
                         <a-select-option value="editJob">编辑</a-select-option>
                         <a-select-option value="saveJob">保存</a-select-option>
                     </a-select> -->
-                    <a-space>
-                        <a-tooltip title="编辑">
-                            <a-button type="text"><edit-outlined /></a-button>
-                        </a-tooltip>
-                        <a-tooltip title="立即执行">
-                            <a-button type="text"><edit-outlined /></a-button>
-                        </a-tooltip>
-                        <a-tooltip title="恢复">
-                            <a-button type="text"><history-outlined /></a-button>
-                        </a-tooltip>
-                        <a-tooltip title="停止">
-                            <a-button type="text"><edit-outlined /></a-button>
-                        </a-tooltip>
-                        <a-tooltip title="任务详情">
-                            <a-button type="text"><edit-outlined /></a-button>
-                        </a-tooltip>
-                    </a-space>
+                    <div>
+                        <a-space>
+                            <a-tooltip title="编辑">
+                                <a-button type="text"></a-button>
+                            </a-tooltip>
+                            <a-tooltip title="立即执行">
+                                <a-button type="text"></a-button>
+                            </a-tooltip>
+                            <a-tooltip title="恢复">
+                                <a-button type="text"></a-button>
+                            </a-tooltip>
+                            <a-tooltip title="停止">
+                                <a-button type="text"></a-button>
+                            </a-tooltip>
+                            <a-tooltip title="任务详情">
+                                <a-button type="text"></a-button>
+                            </a-tooltip>
+                        </a-space>
+                    </div>
+                    <div>
+                        <a-space>
+                            <a-tooltip title="保存">
+                                <a-button type="text"></a-button>
+                            </a-tooltip>
+                            <a-tooltip title="取消">
+                                <a-button type="text"></a-button>
+                            </a-tooltip>
+                        </a-space>
+                    </div>
+
                 </template>
             </template>
         </a-table>
@@ -948,7 +966,6 @@ onMounted(() => {
 :deep(.ant-table) {
     white-space: nowrap;
 }
-
 .timeExpression {
     display: flex;
 }
