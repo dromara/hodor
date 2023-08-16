@@ -83,9 +83,9 @@ const paginationOpt = reactive({
 const groupList = ref([]);
 
 
-const getClusterOptions = () => {
+const getClusterOptions = async() => {
     // 获取执行节点列表
-    getAllClusters();
+    await getAllClusters();
     options.value = actuatorClusterList.value.map(element => {
         return {
             value: element,
