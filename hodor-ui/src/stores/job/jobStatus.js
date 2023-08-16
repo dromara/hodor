@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, reactive } from 'vue'
 import { queryJobStatusListPagingAPI,killRunningJobAPI,queryExecuteLogAPI } from '@/apis/job/jobStatus'
 import { message } from 'ant-design-vue';
+import { timeTransfer } from '@/utils/timeTransfer';
 
 export const useJobStatusStore = defineStore('jobStatus', () => {
     const jobStatusList=ref([]);
@@ -19,7 +20,7 @@ export const useJobStatusStore = defineStore('jobStatus', () => {
         defaultPageSize: 10, // 默认当前页显示数据的大小
         total: 0, // 总数
         //显示数据总量和当前数据顺序
-        showTotal:(total, range)=>`${range[0]}-${range[1]} of ${total} items`,
+        showTotal:(total)=>`共有 ${total} 条数据`,
         // 改变每页数量时更新显示
         onChange: (current, size) => {
             paginationOpt.defaultCurrent = current;
@@ -43,6 +44,10 @@ export const useJobStatusStore = defineStore('jobStatus', () => {
         jobStatusList.value=jobStatusList.value.map(item=>{
             return {
                 ...item,
+                scheduleStart:timeTransfer(item.scheduleStart),
+                scheduleEnd:timeTransfer(item.scheduleEnd),
+                executeStart:timeTransfer(item.executeStart),
+                executeEnd:timeTransfer(item.executeEnd),
                 isTimeout:item.isTimeout.toString(),
             }
         })

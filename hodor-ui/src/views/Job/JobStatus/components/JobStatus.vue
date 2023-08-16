@@ -4,7 +4,7 @@ import { useJobStatusStore } from "@/stores/job/jobStatus";
 import { useJobInfoStore } from "@/stores/job/jobInfo";
 import { storeToRefs } from "pinia";
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
-import { EditorState } from '@codemirror/state'
+// 代码编辑器
 import { Codemirror } from 'vue-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
@@ -121,13 +121,10 @@ const getLogData = async (jobStatusInfo) => {
     // console.log("调用了getLogData", params)
     await getExecuteLog(params);
     const {executeStatus}=jobStatusInfo;
-    console.log(executeStatus,logOpt.value.logData,timer)
     // 每次发送查看日志请求时,如果任务未处于执行状态且日志后面无内容且存在定时器,则停止定时器
     if(executeStatus!=='RUNNING'&&logOpt.value.logData===(''||null)&&timer){
-        console.log("停止定时器")
         clearInterval(timer)
     }
-    // console.log("logOpt.logData",logOpt.value.logData)
     if (logOpt.value.logData !== null) {
         logData.value += logOpt.value.logData;
     }
@@ -170,7 +167,6 @@ const handleClickGetExecuteLog = (jobStatusInfo) => {
     logOpt.value.length = 1000;
     if (timer) clearInterval(timer);
     timer = setInterval(() => {
-        console.log("定时器")
         getLogData(jobStatusInfo);
     }, 1000);
 }

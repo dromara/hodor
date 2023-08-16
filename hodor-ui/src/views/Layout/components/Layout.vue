@@ -75,29 +75,29 @@ const menu = [
                 router: "/job-status",
                 text: "任务执行状态",
             },
-            {
-                key: "7",
-                router: "/job-alarm-search",
-                text: "任务报警查询",
-            },
-            {
-                key: "8",
-                router: "/job-alarm-filter",
-                text: "任务报警过滤管理",
-            },
-            {
-                key: "9",
-                router: "/one-time-job",
-                text: "一次性任务查询",
-            },
+            // {
+            //     key: "7",
+            //     router: "/job-alarm-search",
+            //     text: "任务报警查询",
+            // },
+            // {
+            //     key: "8",
+            //     router: "/job-alarm-filter",
+            //     text: "任务报警过滤管理",
+            // },
+            // {
+            //     key: "9",
+            //     router: "/one-time-job",
+            //     text: "一次性任务查询",
+            // },
         ]
     },
-    {
-        key: "10",
-        router: "/workflow",
-        text: "DAG任务流",
-        icon: ApartmentOutlined,
-    },
+    // {
+    //     key: "10",
+    //     router: "/workflow",
+    //     text: "DAG任务流",
+    //     icon: ApartmentOutlined,
+    // },
 ]
 </script>
 

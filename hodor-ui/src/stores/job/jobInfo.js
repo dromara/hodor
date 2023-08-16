@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, reactive } from 'vue'
 import { queryJobInfoListPagingAPI, createJobAPI, deleteGroupAPI, stopJobAPI, resumeJobAPI,updateJobAPI,executeJobAPI } from '@/apis/job/jobInfo'
 import { message } from 'ant-design-vue';
+import { timeTransfer } from '@/utils/timeTransfer';
 
 export const useJobInfoStore = defineStore('jobInfo', () => {
     // state
@@ -33,6 +34,14 @@ export const useJobInfoStore = defineStore('jobInfo', () => {
         }
         const res = await queryJobInfoListPagingAPI({ pageNo, pageSize }, queryString)
         jobInfoList.value = res.data.rows
+        jobInfoList.value.map((item,index)=>{
+            return {
+                ...item,
+                createTime:timeTransfer(item.createTime),
+                activeTime:timeTransfer(item.activeTime),
+                endTime:timeTransfer(item.endTime),
+            }
+        })
         const { total,totalPage } = res.data;
         Object.assign(paginationOpt, {
             defaultCurrent: pageNo,
@@ -51,6 +60,7 @@ export const useJobInfoStore = defineStore('jobInfo', () => {
                 const {defaultCurrent,defaultPageSize}=paginationOpt;
                 getJobInfoList({ pageNo:defaultCurrent, pageSize:defaultPageSize });
             }
+            message.success("创建任务成功")
         }
         else{
             message.error(res.msg);
@@ -61,12 +71,16 @@ export const useJobInfoStore = defineStore('jobInfo', () => {
         if(res.successful!==true){
             message.error(res.msg);
         }
+        else{
+            message.success("删除成功")
+        }
     }
     const stopJob = async (id) => {
         const res = await stopJobAPI(id)
         if (res.successful === true) {
             let job = jobInfoList.value.find((jobInfo) => jobInfo.id === id)
             job.jobStatus = "STOP";
+            message.success("停止任务成功")
         }
         else{
             message.error(res.msg);
@@ -77,6 +91,7 @@ export const useJobInfoStore = defineStore('jobInfo', () => {
         if (res.successful === true) {
             let job = jobInfoList.value.find((jobInfo) => jobInfo.id === id)
             job.jobStatus = "RUNNING";
+            message.success("恢复任务成功")
         }
         else{
             message.error(res.msg);
@@ -89,6 +104,7 @@ export const useJobInfoStore = defineStore('jobInfo', () => {
             // Object.assign(job,jobInfo);
             const { defaultCurrent, defaultPageSize } = paginationOpt
             getJobInfoList({ pageNo: defaultCurrent, pageSize: defaultPageSize });
+            message.success("编辑任务成功")
         }
         else{
             message.error(res.msg);
@@ -97,6 +113,9 @@ export const useJobInfoStore = defineStore('jobInfo', () => {
     const executeJob=async (jobId)=>{
         const res=await executeJobAPI(jobId);
         console.log("execute",res);
+        if(res.successful===true){
+            message.success("执行任务成功")
+        }
     }
 
     return {

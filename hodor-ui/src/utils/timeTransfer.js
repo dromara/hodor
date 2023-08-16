@@ -1,3 +1,5 @@
+import dayjs, { Dayjs } from "dayjs";
+
 function getLocalTime(time, timezone) {
     if (typeof timezone !== "number") {
         return new Date(time);
@@ -9,10 +11,8 @@ function getLocalTime(time, timezone) {
     return new Date(utcTime + 3600000 * timezone);
 }
 
-export const timeTransfer = (createdAt) => {
+export const timeTransfer = (time) => {
     const timezone = new Date().getTimezoneOffset() / 60;
-    const utcDate=getLocalTime(createdAt, timezone);
-    var options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
-    var formatterEn = new Intl.DateTimeFormat('en-US', options);
-    return formatterEn.format(utcDate);
+    const utcDate=getLocalTime(time, timezone);
+    return dayjs(utcDate).format('YYYY-MM-DD HH:mm:ss')
 }

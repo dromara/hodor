@@ -13,26 +13,16 @@ import router from "@/router/router";
 import { Codemirror } from 'vue-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
-// iconfont
-// import * as iconfontJS from '@/assets/iconfont/iconfont.js'
-// import { Icon } from 'ant-design-vue';
-// const IconFont = Icon.createFromIconfontCN({
-//    scriptUrl: iconfontJS
-//  })
+import '@/assets/iconfont/iconfont.css'
 
 // store
 const jobInfoStore = useJobInfoStore();
 const { jobInfoList, paginationOpt } = storeToRefs(jobInfoStore);
-const { getJobInfoList, createJob, deleteJob, stopJob, resumeJob, updateJob } = jobInfoStore;
+const { getJobInfoList, createJob, deleteJob, stopJob, resumeJob, updateJob, executeJob } = jobInfoStore;
 
 const jobGroupStore = useJobGroupStore();
 const { allGroupList } = storeToRefs(jobGroupStore);
 const { getAllGroupList } = jobGroupStore;
-
-import { useJobStatusStore } from "@/stores/job/jobStatus";
-const jobStatusStore = useJobStatusStore();
-const { jobStatusList } = storeToRefs(jobStatusStore);
-const { getJobStatusList } = jobStatusStore;
 
 const { toClipboard } = useClipboard()
 
@@ -170,6 +160,21 @@ const jobInfoColumns = ref([
         key: "activeTime",
     },
     {
+        title: "结束时间",
+        dataIndex: "endTime",
+        key: "endTime",
+    },
+    {
+        title: "重试次数",
+        dataIndex: "retryCount",
+        key: "retryCount",
+    },
+    {
+        title: "版本",
+        dataIndex: "version",
+        key: "version",
+    },
+    {
         title: "自定义分类",
         dataIndex: "jobCategory",
         key: "jobCategory",
@@ -238,11 +243,6 @@ const formStateUpdateJob = reactive({
     retryCount: '',
     checkValue: [],
     executeTime: [],
-});
-
-// 图标
-const stopIcon = createFromIconfontCN({
-    scriptUrl: '//at.alicdn.com/t/font_8d5l8fzk5b87iudi.js',
 });
 
 
@@ -321,6 +321,10 @@ const saveJobInfo = () => {
     editableData.value = {};
     openUpdateModal.value = false;
 };
+// 取消编辑
+const cancelEdit = (jobId) => {
+    delete editableData[jobId]
+}
 // 获取所有分组名称
 const getGroupOptions = async () => {
     await getAllGroupList();
@@ -333,8 +337,9 @@ const getGroupOptions = async () => {
     })
 }
 // 查看任务执行明细
-const getJobStatusDetail = ({ groupName, jobName }) => {
-    getJobStatusList({ pageNo: 1, pageSize: 100 }, { groupName, jobName });
+const getJobStatusDetail = (groupName, jobName) => {
+    // getJobStatusList({ pageNo: 1, pageSize: 100 }, { groupName, jobName });
+    router.push({ path: 'job-status', query: { groupName, jobName } });
 }
 
 // 暂停、恢复、删除点击事件
@@ -415,31 +420,6 @@ const onClickSearch = () => {
     })
 }
 
-// 操作选择器
-const handleChangeAction = (value, jobId, jobName, groupName) => {
-    switch (value) {
-        case 'stopJob':
-            stopJob(jobId);
-            break;
-        case 'resumeJob':
-            resumeJob(jobId);
-            break;
-        case 'deleteJob':
-            deleteJob(jobId);
-            break;
-        case 'editJob':
-            editJobInfo(jobId);
-            break;
-        case 'jobInstance':
-            break;
-        case 'jobDetail':
-            router.push({ path: 'job-status', query: { groupName, jobName } });
-            break;
-        case 'saveJob':
-            saveJobInfo(jobId);
-            break;
-    }
-};
 // 关闭数字编辑器
 const onCloseEditor = () => {
     visibleEditor.value = false;
@@ -449,13 +429,6 @@ const copyText = (value) => {
     copy(value);
 }
 
-// 监听文本内容的变化，更新总行数
-const handleInput = () => {
-    const lines = formEditor.content.split('\n');
-    if (lines.length > totalLines.value) {
-        totalLines.value = lines.length;
-    }
-};
 const handleClickDrawer = () => {
     visibleEditor.value = true;
 }
@@ -465,7 +438,6 @@ const onSubmit = () => {
     if (editorMode.value === 'YAML') {
         jsonData = yaml.load(jsonData);
     }
-
 }
 
 watch(
@@ -473,7 +445,7 @@ watch(
     () => {
         if (editorMode.value === 'YAML') {
             formEditor.content =
-`groupName: ''
+                `groupName: ''
 jobName: ''
 config: {}
 dependsOn: []
@@ -486,7 +458,7 @@ nodes:
         }
         else {
             formEditor.content =
-`{
+                `{
     "groupName": "",
     "jobName": "",
     "config": {},
@@ -760,82 +732,26 @@ onMounted(() => {
         <a-table :columns="jobInfoColumns" :data-source="jobInfoList" bordered :scroll="{ x: true }"
             :row-selection="rowSelection" :rowKey="row => row.id" :pagination="paginationOpt">
             <template #bodyCell="{ column, text, record }">
-                <!-- <template
-                    v-if="['groupName', 'jobName', 'cron', 'timeOut', 'jobCategory', 'createTime', 'activeTime'].includes(column.dataIndex)">
-                    <div>
-                        <a-input v-if="editableData[record.id]" v-model:value="editableData[record.id][column.dataIndex]"
-                            style="margin: -5px 0" />
-                        <template v-else>
-                            {{ text }}
-                        </template>
-                    </div>
-                </template>
-                <template v-if="column.dataIndex === 'jobStatus'">
-                    <div>
-                        <a-select v-if="editableData[record.id]" ref="select"
-                            v-model:value="editableData[record.id][column.dataIndex]" placeholder="任务状态">
-                            <a-select-option value="READY"></a-select-option>
-                            <a-select-option value="RUNNING"></a-select-option>
-                            <a-select-option value="STOP"></a-select-option>
-                        </a-select>
-                        <template v-else>
-                            {{ text }}
-                        </template>
-                    </div>
-                </template>
-                <template v-if="column.dataIndex === 'jobType'">
-                    <div>
-                        <a-select v-if="editableData[record.id]" ref="select"
-                            v-model:value="editableData[record.id][column.dataIndex]" placeholder="任务状态">
-                            <a-select-option value="COMMON_JOB"></a-select-option>
-                            <a-select-option value="TIME_JOB"></a-select-option>
-                            <a-select-option value="WORKFLOW_JOB"></a-select-option>
-                        </a-select>
-                        <template v-else>
-                            {{ text }}
-                        </template>
-                    </div>
-                </template> -->
                 <template v-if="column.dataIndex === 'action'">
-                    <!-- <a-select ref="select" v-model="record.action"
-                        @change="handleChangeAction($event, record.id, record.jobName, record.groupName)"
-                        style="width: 100%;" placeholder="操作">
-                        <a-select-option value="jobDetail">任务详情</a-select-option>
-                        <a-select-option value="stopJob">停止</a-select-option>
-                        <a-select-option value="resumeJob">恢复</a-select-option>
-                        <a-select-option value="editJob">编辑</a-select-option>
-                        <a-select-option value="saveJob">保存</a-select-option>
-                    </a-select> -->
-                    <div>
-                        <a-space>
-                            <a-tooltip title="编辑">
-                                <a-button type="text"></a-button>
-                            </a-tooltip>
-                            <a-tooltip title="立即执行">
-                                <a-button type="text"></a-button>
-                            </a-tooltip>
-                            <a-tooltip title="恢复">
-                                <a-button type="text"></a-button>
-                            </a-tooltip>
-                            <a-tooltip title="停止">
-                                <a-button type="text"></a-button>
-                            </a-tooltip>
-                            <a-tooltip title="任务详情">
-                                <a-button type="text"></a-button>
-                            </a-tooltip>
-                        </a-space>
-                    </div>
-                    <div>
-                        <a-space>
-                            <a-tooltip title="保存">
-                                <a-button type="text"></a-button>
-                            </a-tooltip>
-                            <a-tooltip title="取消">
-                                <a-button type="text"></a-button>
-                            </a-tooltip>
-                        </a-space>
-                    </div>
-
+                    <a-space>
+                        <a-tooltip title="编辑">
+                            <a-button type="text" class="iconfont icon-edit-square"
+                                @click="editJobInfo(record.id)"></a-button>
+                        </a-tooltip>
+                        <a-tooltip title="立即执行">
+                            <a-button type="text" class="iconfont icon-play" @click="executeJob(record.id)"></a-button>
+                        </a-tooltip>
+                        <a-tooltip title="恢复">
+                            <a-button type="text" class="iconfont icon-Restart" @click="resumeJob(record.id)"></a-button>
+                        </a-tooltip>
+                        <a-tooltip title="停止">
+                            <a-button type="text" class="iconfont icon-stop" @click="stopJob(record.id)"></a-button>
+                        </a-tooltip>
+                        <a-tooltip title="任务详情">
+                            <a-button type="text" class="iconfont icon-detail"
+                                @click="getJobStatusDetail(record.groupName, record.jobName)"></a-button>
+                        </a-tooltip>
+                    </a-space>
                 </template>
             </template>
         </a-table>
@@ -914,8 +830,6 @@ onMounted(() => {
             <a-row :gutter="24">
                 <a-col :span="24">
                     <a-form-item label="任务参数:" name="jobParameters">
-                        <!-- <a-textarea v-model:value="formStateCreateJob.jobParameters"
-                                                    placeholder="请输入任务参数" :rows="3" /> -->
                         <codemirror ref="codeMirrorRef" v-model="formStateUpdateJob.jobParameters"
                             :style="{ height: '100px' }" :tab-size="2" @ready="handleReady" />
                     </a-form-item>
@@ -968,5 +882,8 @@ onMounted(() => {
 }
 .timeExpression {
     display: flex;
+}
+button.css-dev-only-do-not-override-j6gjt1.ant-btn.ant-btn-text.iconfont {
+    padding: 4px;
 }
 </style>
