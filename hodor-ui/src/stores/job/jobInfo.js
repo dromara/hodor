@@ -112,9 +112,12 @@ export const useJobInfoStore = defineStore('jobInfo', () => {
     }
     const executeJob=async (jobId)=>{
         const res=await executeJobAPI(jobId);
-        console.log("execute",res);
+        // console.log("execute",res);
         if(res.successful===true){
             message.success("执行任务成功")
+        }
+        else{
+            message.error("执行任务失败")
         }
     }
 

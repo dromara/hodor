@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, ref, onUpdated, watch, shallowRef, nextTick, onBeforeUnmount } from 'vue';
+import { onBeforeMount,onMounted, reactive, ref, onUpdated, watch, shallowRef, nextTick, onBeforeUnmount, computed } from 'vue';
 import { useJobStatusStore } from "@/stores/job/jobStatus";
 import { useJobInfoStore } from "@/stores/job/jobInfo";
 import { storeToRefs } from "pinia";
@@ -10,7 +10,7 @@ import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
 
 const jobStatusStore = useJobStatusStore();
-const { jobStatusList, paginationOpt, logOpt } = storeToRefs(jobStatusStore);
+const { jobStatusList, paginationOpt, logOpt, } = storeToRefs(jobStatusStore);
 const { getJobStatusList, getQueryParams, killRunningJob, getExecuteLog } = jobStatusStore;
 
 const jobInfoStore = useJobInfoStore();
@@ -18,6 +18,16 @@ const { jobInfoList } = storeToRefs(jobInfoStore);
 
 const route = useRoute();
 
+const routes = ref([
+    {
+        path: 'job-info',
+        breadcrumbName: '任务信息管理',
+    },
+    {
+        path: 'job-status',
+        breadcrumbName: '任务执行状态',
+    }
+]);
 // 搜索框
 const searchInfo = ref('');
 const onSearch = searchValue => {
@@ -101,6 +111,10 @@ const visibleLog = ref(false);
 const logData = ref('');
 const extensions = [javascript(), oneDark];
 const codeMirrorRef = ref(null);
+// 面包屑
+const showBread=computed(()=>{
+    return route.query.groupName!==undefined;
+})
 
 
 const getLogData = async (jobStatusInfo) => {
@@ -120,9 +134,9 @@ const getLogData = async (jobStatusInfo) => {
     }
     // console.log("调用了getLogData", params)
     await getExecuteLog(params);
-    const {executeStatus}=jobStatusInfo;
+    const { executeStatus } = jobStatusInfo;
     // 每次发送查看日志请求时,如果任务未处于执行状态且日志后面无内容且存在定时器,则停止定时器
-    if(executeStatus!=='RUNNING'&&logOpt.value.logData===(''||null)&&timer){
+    if (executeStatus !== 'RUNNING' && logOpt.value.logData === ('' || null) && timer) {
         clearInterval(timer)
     }
     if (logOpt.value.logData !== null) {
@@ -193,7 +207,6 @@ watch(
 );
 
 
-
 onMounted(() => {
     const queryParam = route.query;
     getQueryParams(queryParam);
@@ -207,6 +220,19 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
+    <a-card v-show="showBread">
+        <a-breadcrumb :routes="routes">
+            <template #itemRender="{ route, paths }">
+                <span v-if="routes.indexOf(route) === routes.length - 1">
+                    {{ route.breadcrumbName }}
+                </span>
+                <router-link v-else :to="`${paths.join('/')}`">
+                    {{ route.breadcrumbName }}
+                </router-link>
+            </template>
+        </a-breadcrumb>
+    </a-card>
+    <br />
     <a-card>
         <a-row :gutter="24">
             <a-col :span="4">
