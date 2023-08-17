@@ -29,10 +29,19 @@ const { toClipboard } = useClipboard()
 // 暂停、恢复、删除任务modal
 const visibleModal = ref(false);
 const eventType = ref('');
-const typeOpt = {
-    'stop': '暂停',
-    'resume': '恢复',
-    'delete': '删除'
+const actionType = {
+    stop: {
+        name: '暂停',
+    },
+    resume: {
+        name: '恢复',
+    },
+    delete: {
+        name: '删除',
+    },
+    execute: {
+        name: '立即执行',
+    },
 }
 // modal表格
 const selectedJobInfosColumns = ref([
@@ -267,6 +276,12 @@ const deleteSelectedJobs = () => {
         deleteJob(jobId);
     })
 }
+// 立即执行任务
+const executeSelectedJobs = () => {
+    selectedJobIds.value.forEach((jobId) => {
+        executeJob(jobId);
+    })
+}
 // 分页查询任务列表
 const queryJobInfoListPaging = (paginationOpt, jobInfo = {}) => {
     const { defaultCurrent, defaultPageSize } = paginationOpt.value;
@@ -343,22 +358,37 @@ const getJobStatusDetail = (groupName, jobName) => {
 }
 
 // 暂停、恢复、删除点击事件
-const onClickBtn = (type) => {
-    eventType.value = type;
+const onClickBtn = (operation, job = {}) => {
+    console.log("operation", operation)
+    eventType.value = operation.name;
     visibleModal.value = true;
+    if (job) {
+        selectedJobInfos.value.push(job);
+        selectedJobIds.value.push(job.id)
+    }
 }
 const handleOk = () => {
     switch (eventType.value) {
-        case 'stop':
+        case actionType.stop.name:
             stopSelectedJobs();
             break;
-        case 'resume':
+        case actionType.resume.name:
             resumeSelectedJobs();
             break;
-        case 'delete':
+        case actionType.delete.name:
             deleteSelectedJobs();
             break;
+        case actionType.execute.name:
+            executeSelectedJobs();
+            break;
     }
+    selectedJobIds.value.pop();
+    selectedJobInfos.value.pop();
+    visibleModal.value = false;
+}
+const handleCancel=()=>{
+    selectedJobIds.value.pop();
+    selectedJobInfos.value.pop();
     visibleModal.value = false;
 }
 
@@ -571,8 +601,6 @@ onMounted(() => {
                                     <a-row :gutter="24">
                                         <a-col :span="24">
                                             <a-form-item label="任务参数:" name="jobParameters">
-                                                <!-- <a-textarea v-model:value="formStateCreateJob.jobParameters"
-                                                    placeholder="请输入任务参数" :rows="3" /> -->
                                                 <codemirror ref="codeMirrorRef" v-model="formStateCreateJob.jobParameters"
                                                     :style="{ height: '100px' }" :tab-size="2" @ready="handleReady" />
                                             </a-form-item>
@@ -680,14 +708,9 @@ onMounted(() => {
                         </a-space>
                     </a-drawer>
                     <a-button type="primary">导出任务</a-button>
-                    <a-button type="primary" danger @click="onClickBtn('stop')">暂停任务</a-button>
-                    <a-button type="primary" danger @click="onClickBtn('resume')">恢复任务</a-button>
-                    <a-button type="primary" danger @click="onClickBtn('delete')">删除任务</a-button>
-                    <a-modal v-model:visible="visibleModal" :title="`${typeOpt[eventType]}任务`" @ok="handleOk">
-                        <p>确认{{ typeOpt[eventType] }}下列任务吗？</p>
-                        <a-table v-show="selectedJobInfos.length > 0" :columns="selectedJobInfosColumns"
-                            :data-source="selectedJobInfos" :pagination="false"></a-table>
-                    </a-modal>
+                    <a-button type="primary" danger @click="onClickBtn(actionType.stop)">暂停任务</a-button>
+                    <a-button type="primary" danger @click="onClickBtn(actionType.resume)">恢复任务</a-button>
+                    <a-button type="primary" danger @click="onClickBtn(actionType.delete)">删除任务</a-button>
                 </a-space>
             </a-row>
             <a-row>
@@ -739,13 +762,16 @@ onMounted(() => {
                                 @click="editJobInfo(record.id)"></a-button>
                         </a-tooltip>
                         <a-tooltip title="立即执行">
-                            <a-button type="text" class="iconfont icon-play" @click="executeJob(record.id)"></a-button>
+                            <a-button type="text" class="iconfont icon-play"
+                                @click="onClickBtn(actionType.execute, record)"></a-button>
                         </a-tooltip>
                         <a-tooltip title="恢复">
-                            <a-button type="text" class="iconfont icon-Restart" @click="resumeJob(record.id)"></a-button>
+                            <a-button type="text" class="iconfont icon-Restart"
+                                @click="onClickBtn(actionType.resume, record)"></a-button>
                         </a-tooltip>
                         <a-tooltip title="停止">
-                            <a-button type="text" class="iconfont icon-stop" @click="stopJob(record.id)"></a-button>
+                            <a-button type="text" class="iconfont icon-stop"
+                                @click="onClickBtn(actionType.stop, record)"></a-button>
                         </a-tooltip>
                         <a-tooltip title="任务详情">
                             <a-button type="text" class="iconfont icon-detail"
@@ -874,16 +900,22 @@ onMounted(() => {
             </a-row>
         </a-form>
     </a-modal>
+    <a-modal v-model:visible="visibleModal" :title="`${eventType.value}任务`" @ok="handleOk" @cancel="handleCancel">
+        <p>确认{{ eventType }}下列任务吗？</p>
+        <a-table v-show="selectedJobInfos.length > 0" :columns="selectedJobInfosColumns" :data-source="selectedJobInfos"
+            :pagination="false"></a-table>
+    </a-modal>
 </template>
 
 <style scoped lang="less">
 :deep(.ant-table) {
     white-space: nowrap;
 }
+
 .timeExpression {
     display: flex;
 }
+
 button.css-dev-only-do-not-override-j6gjt1.ant-btn.ant-btn-text.iconfont {
     padding: 4px;
-}
-</style>
+}</style>

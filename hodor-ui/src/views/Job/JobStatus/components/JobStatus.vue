@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeMount,onMounted, reactive, ref, onUpdated, watch, shallowRef, nextTick, onBeforeUnmount, computed } from 'vue';
+import { onBeforeMount, onMounted, reactive, ref, onUpdated, watch, shallowRef, nextTick, onBeforeUnmount, computed } from 'vue';
 import { useJobStatusStore } from "@/stores/job/jobStatus";
 import { useJobInfoStore } from "@/stores/job/jobInfo";
 import { storeToRefs } from "pinia";
@@ -112,8 +112,8 @@ const logData = ref('');
 const extensions = [javascript(), oneDark];
 const codeMirrorRef = ref(null);
 // 面包屑
-const showBread=computed(()=>{
-    return route.query.groupName!==undefined;
+const showBread = computed(() => {
+    return route.query.groupName !== undefined;
 })
 
 
@@ -158,19 +158,16 @@ const queryJobStatusListPaging = (paginationOpt, jobStatus) => {
 const killJob = async (jobInfo) => {
     await killRunningJob(jobInfo);
 }
-const handleClickKillRunningJob = async () => {
-    selectedJobInfos.value.forEach((job) => {
-        const { id, groupName, jobName, actuatorEndpoint } = job;
-        const jobInfo = {
-            requestId: id,
-            groupName,
-            jobName,
-            actuatorEndpoint,
-            timeout: 3000,
-        }
-        killJob(jobInfo);
-    })
-
+const handleClickKillRunningJob = (job) => {
+    const { id, groupName, jobName, actuatorEndpoint } = job;
+    const jobInfo = {
+        requestId: id,
+        groupName,
+        jobName,
+        actuatorEndpoint,
+        timeout: 3000,
+    }
+    killJob(jobInfo);
 }
 // 查看执行日志
 let timer = null;
@@ -233,23 +230,30 @@ onBeforeUnmount(() => {
         </a-breadcrumb>
     </a-card>
     <br />
-    <a-card>
+    <!-- <a-card>
         <a-row :gutter="24">
             <a-col :span="4">
                 <a-button type="primary" @click="handleClickKillRunningJob">杀死正在执行的任务</a-button>
             </a-col>
-            <!-- <a-col :span="16">
+            <a-col :span="16">
                 <a-input-search v-model:value="searchInfo" placeholder="请输入内容" enter-button @search="onSearch" />
-            </a-col> -->
+            </a-col>
         </a-row>
     </a-card>
-    <br />
+    <br /> -->
     <a-card>
         <a-table :columns="jobStatusColumns" :data-source="jobStatusList" bordered :scroll="{ x: true }"
             :row-selection="rowSelection" :rowKey="row => row.id" :pagination="paginationOpt">
             <template #bodyCell="{ column, text, record }">
                 <template v-if="column.dataIndex === 'action'">
-                    <a-button type="primary" @click="handleClickGetExecuteLog(record)">查看执行日志</a-button>
+                    <a-tooltip title="查看执行日志">
+                        <a-button type="text" @click="handleClickGetExecuteLog(record)"
+                            class="iconfont icon-rizhi"></a-button>
+                    </a-tooltip>
+                    <a-tooltip title="杀死正在执行的任务">
+                        <a-button type="text" @click="handleClickKillRunningJob(record)"
+                            class="iconfont icon-kill"></a-button>
+                    </a-tooltip>
                 </template>
             </template>
         </a-table>

@@ -11,7 +11,7 @@ import {
 } from '@ant-design/icons-vue';
 import { ref } from 'vue';
 import { useUserStore } from '@/stores/user';
-import { useRouter } from 'vue-router'
+import { useRouter,onBeforeRouteUpdate } from 'vue-router'
 
 const userStore = useUserStore()
 const router = useRouter()
@@ -104,7 +104,7 @@ const menu = [
 <template>
     <a-layout style="min-height: 97vh">
         <!-- 侧边栏 -->
-        <a-layout-sider v-model:collapsed="collapsed" collapsible>
+        <a-layout-sider v-model:collapsed="collapsed" collapsible class="sider">
             <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
                 <template v-for="item in menu">
                     <template v-if="item.children">
@@ -133,15 +133,13 @@ const menu = [
                 </template>
             </a-menu>
         </a-layout-sider>
-        <a-layout>
+        <a-layout :style="{ marginLeft: '200px' }">
             <!-- 页头 -->
             <a-layout-header class="header">
                 <ul>
                     <li>
                         <a href="#">
-                            <i>
-                                <UserOutlined />
-                            </i>
+                            <i><UserOutlined /></i>
                             {{ userStore.userInfo ? userStore.userInfo.username : '' }}
                         </a>
                     </li>
@@ -149,26 +147,22 @@ const menu = [
                     <li v-if="userStore.userInfo && JSON.stringify(userStore.userInfo) !== '{}'">
                         <a-popconfirm title="确认退出吗？" ok-text="确认" cancel-text="取消" @confirm="confirm" @cancel="cancel">
                             <a href="#">
-                                <i>
-                                    <LogoutOutlined />
-                                </i>
+                                <i><LogoutOutlined /></i>
                                 退出登录
                             </a>
                         </a-popconfirm>
                     </li>
                     <li v-else>
                         <a href="#" @click="doLogin">
-                            <i>
-                                <LoginOutlined />
-                            </i>
+                            <i><LoginOutlined /></i>
                             点击登录
                         </a>
                     </li>
                 </ul>
             </a-layout-header>
             <!-- 内容 -->
-            <a-layout-content :style="{ margin: '24px 16px 0', overflow: 'initial' }">
-                <div :style="{ padding: '24px', minHeight: '360px' }">
+            <a-layout-content :style="{ margin: '54px 0px 0', overflow: 'initial' }">
+                <div :style="{ padding: '24px 20px 24px 15px', minHeight: '360px' }">
                     <router-view />
                 </div>
             </a-layout-content>
@@ -181,12 +175,29 @@ const menu = [
 </template>
 
 <style scoped lang="scss">
+.sider{
+    overflow: auto;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 4;
+}
+:deep(:where(.css-dev-only-do-not-override-j6gjt1).ant-menu){
+    font-size: 1rem;
+}
 .header {
     text-align: right;
     font-size: large;
     background: #24292E;
     padding: 0% 2%;
     color: #fff;
+    width: 100%;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 3;
 
     ul {
         list-style: none;
