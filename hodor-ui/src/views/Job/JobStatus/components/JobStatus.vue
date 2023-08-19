@@ -250,10 +250,12 @@ onBeforeUnmount(() => {
                         <a-button type="text" @click="handleClickGetExecuteLog(record)"
                             class="iconfont icon-rizhi"></a-button>
                     </a-tooltip>
-                    <a-tooltip title="杀死正在执行的任务">
-                        <a-button type="text" @click="handleClickKillRunningJob(record)"
-                            class="iconfont icon-kill"></a-button>
-                    </a-tooltip>
+                    <a-popconfirm title="确定杀死当前任务?" ok-text="确定" cancel-text="取消" placement="bottom"
+                        @confirm="handleClickKillRunningJob(record)" @cancel="cancel">
+                        <a-tooltip title="杀死正在执行的任务">
+                            <a-button type="text" class="iconfont icon-kill"></a-button>
+                        </a-tooltip>
+                    </a-popconfirm>
                 </template>
             </template>
         </a-table>
