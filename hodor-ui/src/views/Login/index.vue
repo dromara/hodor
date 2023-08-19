@@ -15,8 +15,8 @@ const onFinish = async values => {
     // 提交表单且数据验证成功后回调事件
     // values为返回的表单数据
     // 登录请求和校验
-    const {username, password} = formState.value
-    await userStore.getUserInfo({username, password})
+    const { username, password } = formState.value
+    await userStore.getUserInfo({ username, password })
     message.success('登录成功')
     router.push({ path: '/home' })
 };
@@ -66,9 +66,10 @@ const rules = {
 <template>
     <div class="bg">
         <div class="logo"></div>
-        <a-form :model="formState" name="normal_login" class="form" @finish="onFinish" @finishFailed="onFinishFailed">
+        <a-form :model="formState" name="normal_login" class="form" @finish="onFinish" @finishFailed="onFinishFailed"
+            :label-col="{ span: 5 }" :wrapper-col="{ span: 16 }">
             <a-form-item label="Username" name="username" :rules="rules.username">
-                <a-input v-model:value="formState.username" placeholder="admin">
+                <a-input v-model:value="formState.username" placeholder="admin" size="large">
                     <template #prefix>
                         <UserOutlined class="site-form-item-icon" />
                     </template>
@@ -76,7 +77,7 @@ const rules = {
             </a-form-item>
 
             <a-form-item label="Password" name="password" :rules="rules.password">
-                <a-input-password v-model:value="formState.password" placeholder="admin">
+                <a-input-password v-model:value="formState.password" placeholder="admin" size="large">
                     <template #prefix>
                         <LockOutlined class="site-form-item-icon" />
                     </template>
@@ -87,14 +88,14 @@ const rules = {
                 <a-button :disabled="disabled" type="primary" html-type="submit" class="login-button">
                     Login
                 </a-button>
-                Or
-                <a href="#">register now!</a>
+                <!-- Or
+                <a href="#">register now!</a> -->
             </a-form-item>
         </a-form>
     </div>
 </template>
 
-<style scoped>
+<style scoped lang="less">
 .bg {
     height: 100vh;
     display: flex;
@@ -115,14 +116,25 @@ const rules = {
 .form {
     /* background-color: #1d7fcc; */
     padding: 50px;
-    width: 370px;
+    width: 550px;
     /* border-bottom: 8px solid #8ceece; */
     border-radius: 30px 30px 50px 50px;
+
+    :deep(label.ant-form-item-required) {
+        font-size: 1rem;
+    }
 }
 
 .login-button {
     border-radius: 2px;
     color: white;
     width: 100%;
+    height: 40px;
+    margin-top: 10px;
+    font-size: 1rem;
+}
+
+:deep(.ant-col.ant-col-16.ant-form-item-control.css-dev-only-do-not-override-j6gjt1) {
+    max-width: 100%;
 }
 </style>
