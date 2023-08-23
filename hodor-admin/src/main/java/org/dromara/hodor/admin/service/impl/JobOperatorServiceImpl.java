@@ -104,6 +104,7 @@ public class JobOperatorServiceImpl implements JobOperatorService {
     }
 
     @Override
+    @Transactional
     public Boolean deleteById(Long id) {
         final JobInfo jobInfo = jobInfoService.queryById(id);
         if (jobInfo == null) {
@@ -121,6 +122,7 @@ public class JobOperatorServiceImpl implements JobOperatorService {
     }
 
     @Override
+    @Transactional
     public Boolean stopById(Long id) {
         final JobInfo jobInfo = jobInfoService.queryById(id);
         if (jobInfo == null) {
@@ -143,6 +145,7 @@ public class JobOperatorServiceImpl implements JobOperatorService {
     }
 
     @Override
+    @Transactional
     public Boolean resumeById(Long id) {
         final JobInfo jobInfo = jobInfoService.queryById(id);
         if (jobInfo == null) {

@@ -18,15 +18,16 @@
 
 package org.dromara.hodor.admin;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * The type Hodor admin application.
  *
  * @author xiaoyu
  */
+@EnableTransactionManagement
 @SpringBootApplication(scanBasePackages = {"org.dromara.hodor.core", "org.dromara.hodor.admin"})
 public class HodorAdminApplication {
 
