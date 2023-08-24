@@ -27,6 +27,7 @@ export default defineConfig({
     proxy: {
       '/hodor/admin': {
         target: 'http://106.55.104.216:8089',  // 代理目标地址
+        // target: 'http://127.0.0.1:8089',
         changeOrigin: true,  // 允许跨域
         pathRewrite: {
           '^/hodor/admin': '/hodor/admin' //路径的替换规则

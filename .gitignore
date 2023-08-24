@@ -26,6 +26,7 @@ disconf
 
 # maven ignore
 target
+dependency-reduced-pom.xml
 
 # other ignore
 logs/

@@ -362,7 +362,7 @@ const onClickBtn = (operation, job = {}) => {
     console.log("operation", operation)
     eventType.value = operation.name;
     visibleModal.value = true;
-    if (job) {
+    if (JSON.stringify(job) !== '{}') {
         selectedJobInfos.value.push(job);
         selectedJobIds.value.push(job.id)
     }
@@ -382,13 +382,13 @@ const handleOk = () => {
             executeSelectedJobs();
             break;
     }
-    selectedJobIds.value.pop();
-    selectedJobInfos.value.pop();
+    selectedJobIds.value = [];
+    selectedJobInfos.value = [];
     visibleModal.value = false;
 }
 const handleCancel=()=>{
-    selectedJobIds.value.pop();
-    selectedJobInfos.value.pop();
+    selectedJobIds.value = [];
+    selectedJobInfos.value = [];
     visibleModal.value = false;
 }
 
@@ -400,7 +400,6 @@ const onOk = () => {
             groupName,
             jobName,
             jobType,
-            jobStatus,
             cron,
             priority,
             jobCategory,
@@ -413,6 +412,7 @@ const onOk = () => {
             retryCount,
             checkValue,
             executeTime } = formStateCreateJob;
+        const jobStatus = 'READY';  // 默认状态
         const misfire = checkValue.includes('misfire');
         const fireNow = checkValue.includes('fireNow');
         const isBroadcast = checkValue.includes('isBroadcast');

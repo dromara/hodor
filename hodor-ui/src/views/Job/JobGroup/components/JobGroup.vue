@@ -233,10 +233,10 @@ const cancelEditGroup = name => {
 }
 
 // 删除行
-const handleDeleteGroupInfo = async (groupName) => {
-    await deleteGroupAPI(groupName).then((res) => {
+const handleDeleteGroupInfo = async (id) => {
+    await deleteGroupAPI(id).then((res) => {
         if (res.success === true) {
-            groupList.value = groupList.value.filter(item => item.groupName !== groupName);
+            groupList.value = groupList.value.filter(item => item.id !== id);
             message.success(res.msg)
         }
         else {
@@ -246,8 +246,8 @@ const handleDeleteGroupInfo = async (groupName) => {
         message.error(error.msg)
     })
 }
-const onDelete = async groupName => {
-    await handleDeleteGroupInfo(groupName);
+const onDelete = async id => {
+    await handleDeleteGroupInfo(id);
     // 发送请求删除
     // 接口测试："服务端异常: group暂不支持删除"
 };
@@ -312,7 +312,7 @@ onMounted(() => {
                     <div v-show="!editableData[record.groupName]">
                         <a-space>
                             <a-button type="primary" style="background-color: #F26161;"
-                                @click="onDelete(record.groupName)">删除</a-button>
+                                @click="onDelete(record.id)">删除</a-button>
                             <a-button type="primary" style="background-color: #3894FF;"
                                 @click="editGroupInfo(record.groupName)">编辑</a-button>
                             <a-button type="primary" style="background-color: #7AC756;">查看节点</a-button>
