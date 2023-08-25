@@ -235,15 +235,15 @@ const cancelEditGroup = name => {
 // 删除行
 const handleDeleteGroupInfo = async (id) => {
     await deleteGroupAPI(id).then((res) => {
-        if (res.success === true) {
+        if (res.successful === true) {
             groupList.value = groupList.value.filter(item => item.id !== id);
             message.success(res.msg)
         }
         else {
-            message.error(res.msg)
+            // message.error(res.msg)
         }
     }).catch(error => {
-        message.error(error.msg)
+        // message.error(error.msg)
     })
 }
 const onDelete = async id => {
