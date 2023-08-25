@@ -295,7 +295,7 @@ const rowSelection = {
 const visibleEditor = ref(false);
 const formEditor = reactive({
   content:
-`groupName: ''
+    `groupName: ''
 jobName: ''
 config: {}
 dependsOn: []
@@ -501,11 +501,11 @@ const refreshTable = () => {
 }
 
 watch(
-    () => editorMode.value,
-    () => {
-      if (editorMode.value === 'YAML') {
-        formEditor.content =
-            `groupName: ''
+  () => editorMode.value,
+  () => {
+    if (editorMode.value === 'YAML') {
+      formEditor.content =
+        `groupName: ''
             jobName: ''
             config: {}
             dependsOn: []
@@ -515,9 +515,9 @@ watch(
                 config: {}
                 dependsOn: []
                 nodes: []`
-                  } else {
-                    formEditor.content =
-                        `{
+    } else {
+      formEditor.content =
+        `{
                 "groupName": "",
                 "jobName": "",
                 "config": {},
@@ -532,8 +532,8 @@ watch(
                     }
                 ]
             }`;
-      }
     }
+  }
 );
 
 // 获取集群对应支持的任务类型
@@ -1034,11 +1034,11 @@ onMounted(() => {
 <style scoped lang="less">
 :deep(.ant-table) {
   white-space: nowrap;
-    tr:not(:first-child){
-      td:nth-child(8),td:nth-child(7){
-        white-space:pre;
-      }
+  tr:not(:first-child){
+    td:nth-child(8),td:nth-child(7){
+      white-space:pre;
     }
+  }
 }
 
 .flexDisplay {

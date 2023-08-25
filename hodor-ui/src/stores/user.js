@@ -8,21 +8,21 @@ export const useUserStore = defineStore('user', () => {
     const userInfo = ref({})
     // 定义获取接口数据的action函数
     const getUserInfo = async ({ username, password }) => {
-        const res = await loginAPI({ username, password })
-        // console.log(res)
-        // userInfo.value={username,password}
-        userInfo.value = res.data
+      const res = await loginAPI({ username, password })
+      // console.log(res)
+      // userInfo.value={username,password}
+      userInfo.value = res.data
     }
     // 清除用户数据
     const clearUserInfo = () => {
-        userInfo.value = {}
+      userInfo.value = {}
     }
     return {
-        userInfo,
-        getUserInfo,
-        clearUserInfo
+      userInfo,
+      getUserInfo,
+      clearUserInfo
     }
-},
-{
+  },
+  {
     persist: true,
-})
+  })
