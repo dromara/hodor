@@ -77,7 +77,7 @@ const rules = {
             </a-form-item>
 
             <a-form-item label="Password" name="password" :rules="rules.password">
-                <a-input-password v-model:value="formState.password" placeholder="admin" size="large">
+                <a-input-password v-model:value="formState.password" placeholder="hodor@2023" size="large">
                     <template #prefix>
                         <LockOutlined class="site-form-item-icon" />
                     </template>
