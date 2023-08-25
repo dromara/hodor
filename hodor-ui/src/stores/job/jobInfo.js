@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, reactive } from 'vue'
 import { queryJobInfoListPagingAPI, createJobAPI, deleteGroupAPI, stopJobAPI, resumeJobAPI,updateJobAPI,executeJobAPI } from '@/apis/job/jobInfo'
 import { message } from 'ant-design-vue';
-import { timeTransfer } from '@/utils/timeTransfer';
+import { timeTransfer } from '@/utils/timeUtil';
 
 export const useJobInfoStore = defineStore('jobInfo', () => {
     // state

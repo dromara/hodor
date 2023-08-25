@@ -2,6 +2,7 @@
 import { getSchedulerListAPI, getSchedulerInfoAPI } from '@/apis/scheduler';
 import { onMounted, ref, h } from 'vue';
 import { Modal } from 'ant-design-vue';
+import { timestampToTime } from '@/utils/timeUtil';
 // ############ 列表查询 #############
 // 表的列名
 const columns = [{
@@ -31,7 +32,13 @@ const columns = [{
 const schedulerList = ref([])
 const getSchedulerList = async () => {
     const res = await getSchedulerListAPI()
-    schedulerList.value = res.data
+    schedulerList.value = res.data.map((item)=>{
+        return {
+            ...item,
+            reportTime:timestampToTime(item.reportTime),
+        }
+    })
+
 }
 onMounted(() => {
     getSchedulerList()
@@ -78,6 +85,11 @@ const onMonitor = (scheduler) => {
 </script>
 
 <template>
+    <a-card>
+        <h3 class="title">调度结点管理</h3>
+        <span>展示调度结点信息，管理所有调度结点，具有查看详情、监控信息等功能</span>
+    </a-card>
+    <br/>
     <a-card>
         <span>调度结点列表</span>
         <span>

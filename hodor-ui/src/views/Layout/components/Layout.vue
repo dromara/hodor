@@ -11,7 +11,7 @@ import {
 } from '@ant-design/icons-vue';
 import { ref } from 'vue';
 import { useUserStore } from '@/stores/user';
-import { useRouter,onBeforeRouteUpdate } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 const userStore = useUserStore()
 const router = useRouter()
@@ -38,7 +38,7 @@ const selectedKeys = ref(['1'])
 const menu = [
     {
         key: "1",
-        router: "/",
+        router: "/home",
         text: "HodorScheduler",
         icon: HomeOutlined,
     },
@@ -99,13 +99,135 @@ const menu = [
     //     icon: ApartmentOutlined,
     // },
 ]
+
+// tabs
+// const panes = ref([
+//     {
+//         title: '主页',
+//         key: '/home',
+//         closable: false,
+//         // content:,
+//     }
+// ]);
+// const activeKey = ref(panes.value[0].key);
+// const add = () => {
+//     activeKey.value = router.currentRoute.value.path;
+//     const menuItem = menu.find(item => {
+//         if (item.children) {
+//             const res = item.children.find(subItem => {
+//                 return subItem.router === activeKey.value
+//             })
+//             return res;
+//         }
+//         else {
+//             return item.router == activeKey.value;
+//         }
+//     });
+//     panes.value.push({
+//         title: (menuItem.children && menuItem.children.find(item => item.router === activeKey.value).text) || menuItem.text,
+//         key: activeKey.value,
+//     });
+// };
+
+// router.afterEach(async (to, from) => {
+//     const toPage = to.path;
+//     // 在tabPanes中寻找，如果已有标签页则显示相应标签页，如果没有则新建标签页
+//     const res = panes.value.find(item => item.key === toPage)
+//     if (res) {
+//         activeKey.value = toPage;
+//     }
+//     else {
+//         add();
+//     }
+// })
+// const remove = targetKey => {
+//     let lastIndex = 0;
+//     panes.value.forEach((pane, i) => {
+//         if (pane.key === targetKey) {
+//             lastIndex = i - 1;
+//         }
+//     });
+//     panes.value = panes.value.filter(pane => pane.key !== targetKey);
+//     if (panes.value.length && activeKey.value === targetKey) {
+//         if (lastIndex >= 0) {
+//             activeKey.value = panes.value[lastIndex].key;
+//         } else {
+//             activeKey.value = panes.value[0].key;
+//         }
+//     }
+//     router.push(activeKey.value)
+// };
+// const onEdit = targetKey => {
+//     remove(targetKey);
+// };
+
+// watch(
+//     () => activeKey.value,
+//     () => {
+//         // tab标签页选择与侧边栏同步
+//         let curMenuItem=menu.find(item=>{
+//             if(item.children){
+//                 return item.children.find(subItem=>subItem.router===activeKey.value)
+//             }
+//             else{
+//                 return item.router===activeKey.value
+//             }
+//         });
+//         if(curMenuItem){
+//             if(curMenuItem.children){
+//                 curMenuItem=curMenuItem.children.find(item=>item.router===activeKey.value)
+//             }
+//             selectedKeys.value.length=0
+//             selectedKeys.value.push(curMenuItem.key)
+//         }
+//         router.push(activeKey.value)
+//     },
+//     {
+//         immediate: true,
+//     }
+// );
+
+const routes = ref([{
+    path: '/home',
+    breadcrumbName: '主页',
+}])
+function findElementRecursive(array, target) {
+  for (let item of array) {
+    if (item.router === target) {
+      return item.text;
+    } else if (Array.isArray(item.children)) {
+      return findElementRecursive(item.children, target)
+    }
+  }
+  return undefined;
+}
+router.beforeEach((to, from, next) => {
+    const toPath = to.path;
+    if (toPath === menu[0].router) {
+        if (routes.value.length > 1) routes.value.pop();
+    }
+    else {
+        const hasCurPath = routes.value.find(item => item.path === toPath)
+        if (!hasCurPath) {
+            const toMenuItem=findElementRecursive(menu,toPath)
+            if (toMenuItem) {
+                if (routes.value.length > 1) routes.value.pop();
+                routes.value.push({
+                    path: toPath,
+                    breadcrumbName: toMenuItem,
+                })
+            }
+        }
+    }
+    next();
+})
 </script>
 
 <template>
     <a-layout style="min-height: 97vh">
         <!-- 侧边栏 -->
         <a-layout-sider v-model:collapsed="collapsed" collapsible class="sider">
-            <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
+            <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline" id="siderMenu">
                 <template v-for="item in menu">
                     <template v-if="item.children">
                         <a-sub-menu :key=item.key>
@@ -163,6 +285,18 @@ const menu = [
             <!-- 内容 -->
             <a-layout-content :style="{ margin: '54px 0px 0', overflow: 'initial' }">
                 <div :style="{ padding: '24px 20px 24px 15px', minHeight: '360px' }">
+                    <!-- <a-tabs v-model:activeKey="activeKey" hide-add type="editable-card" @edit="onEdit">
+                        <a-tab-pane v-for="(pane, index) in panes" :key="pane.key" :tab="pane.title" :closable="pane.closable">
+                            <router-view />
+                        </a-tab-pane>
+                    </a-tabs> -->
+                    <a-breadcrumb :routes="routes" class="bread">
+                        <template #itemRender="{ route, params, routes, paths }">
+                            <span v-if="routes.indexOf(route) === routes.length - 1">{{ route.breadcrumbName }}</span>
+                            <RouterLink v-else :to=route.path>{{ route.breadcrumbName }}</RouterLink>
+                        </template>
+                    </a-breadcrumb>
+                <br/>
                     <router-view />
                 </div>
             </a-layout-content>
@@ -175,7 +309,7 @@ const menu = [
 </template>
 
 <style scoped lang="scss">
-.sider{
+.sider {
     overflow: auto;
     height: 100vh;
     position: fixed;
@@ -183,8 +317,13 @@ const menu = [
     top: 0;
     bottom: 0;
     z-index: 4;
+
+    :deep(li.ant-menu-item.ant-menu-item-only-child) {
+        margin-bottom: 10px;
+    }
 }
-:deep(:where(.css-dev-only-do-not-override-j6gjt1).ant-menu){
+
+:deep(:where(.css-dev-only-do-not-override-j6gjt1).ant-menu) {
     font-size: 1rem;
 }
 .header {
@@ -226,5 +365,8 @@ const menu = [
             }
         }
     }
+}
+.bread {
+    padding: 0 10px;
 }
 </style>

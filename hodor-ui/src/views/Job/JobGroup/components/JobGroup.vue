@@ -4,7 +4,7 @@ import { cloneDeep } from 'lodash-es';
 import { queryGroupListPagingAPI, createGroupAPI, updateGroupAPI, deleteGroupAPI, queryGroupListByIdAPI, bindGroupActuatorAPI, getBindListAPI } from '@/apis/job/jobGroup'
 import { useActuatorStore } from '@/stores/actuator'
 import { storeToRefs } from 'pinia'
-import { timeTransfer } from '@/utils/timeTransfer'
+import { timeTransfer } from '@/utils/timeUtil'
 import { message } from 'ant-design-vue';
 
 // 新增任务分组表单
@@ -268,6 +268,11 @@ onMounted(() => {
 </script>
 
 <template>
+    <a-card>
+        <h3 class="title">任务组管理</h3>
+        <span>展示任务组信息，管理所有任务组，具有新增、编辑、删除、搜索等功能</span>
+    </a-card>
+    <br/>
     <a-card>
         <a-row>
             <a-col :span="2">

@@ -81,5 +81,20 @@ const router = createRouter({
         },
     ]
 });
+// 全局路由守卫
+router.beforeEach((to,from,next)=>{
+    const userInfo=localStorage.getItem('user')
+    if(!userInfo&&to.name==='login'){
+        next();
+    }
+    else{
+        if(userInfo){
+            next();
+        }
+        else{
+            router.replace('/login')
+        }
+    }
+})
 
 export default router;

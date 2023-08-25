@@ -2,6 +2,7 @@
 import { getActuatorListAPI, getActuatorInfoAPI } from '@/apis/actuator';
 import { onMounted, ref, h } from 'vue';
 import { Modal } from 'ant-design-vue';
+import { timestampToTime } from '@/utils/timeUtil'
 
 // ############ 列表查询 #############
 // 表的列名
@@ -60,7 +61,7 @@ const getActuatorNodes = (data) => {
             "endpoint": actuator.nodeInfo.endpoint,
             "nodeEndpoint": actuator.nodeEndpoint,
             "groupNames": actuator.groupNames.toString(),
-            "lastHeartbeat": actuator.lastHeartbeat,
+            "lastHeartbeat": timestampToTime(actuator.lastHeartbeat),
         })
     })
     return res
@@ -117,13 +118,18 @@ const onMonitor = (actuator) => {
 
 <template>
     <a-card>
+        <h3 class="title">执行节点管理</h3>
+        <span>展示执行节点信息，管理所有执行节点，具有查看详情、监控信息等功能</span>
+    </a-card>
+    <br/>
+    <a-card>
         <span>执行节点列表</span>
         <span>
             <a-input-search class="search-container" placeholder="请输入你要搜索的节点" v-model:value="name" @search="onSearch" />
         </span>
     </a-card>
     <br />
-        <a-card>
+    <a-card>
         <!-- 调度结点列表 -->
         <a-table :columns="columns" :data-source="actuatorList">
             <!-- 行数据 -->

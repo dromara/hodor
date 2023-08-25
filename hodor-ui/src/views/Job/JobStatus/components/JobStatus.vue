@@ -217,19 +217,6 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <a-card v-show="showBread">
-        <a-breadcrumb :routes="routes">
-            <template #itemRender="{ route, paths }">
-                <span v-if="routes.indexOf(route) === routes.length - 1">
-                    {{ route.breadcrumbName }}
-                </span>
-                <router-link v-else :to="`${paths.join('/')}`">
-                    {{ route.breadcrumbName }}
-                </router-link>
-            </template>
-        </a-breadcrumb>
-    </a-card>
-    <br />
     <!-- <a-card>
         <a-row :gutter="24">
             <a-col :span="4">
@@ -242,8 +229,24 @@ onBeforeUnmount(() => {
     </a-card>
     <br /> -->
     <a-card>
+        <h3 class="title">任务执行状态管理</h3>
+        <span>展示任务执行状态信息，管理所有任务执行状态，具有查看任务状态的执行日志，杀死正在执行的任务等功能</span>
+    </a-card>
+    <br/>
+    <a-card>
+        <a-breadcrumb :routes="routes" v-show="showBread">
+            <template #itemRender="{ route, paths }">
+                <span v-if="routes.indexOf(route) === routes.length - 1">
+                    {{ route.breadcrumbName }}
+                </span>
+                <router-link v-else :to="`${paths.join('/')}`">
+                    {{ route.breadcrumbName }}
+                </router-link>
+            </template>
+        </a-breadcrumb>
+        <br/>
         <a-table :columns="jobStatusColumns" :data-source="jobStatusList" bordered :scroll="{ x: true }"
-            :row-selection="rowSelection" :rowKey="row => row.id" :pagination="paginationOpt">
+            :pagination="paginationOpt">
             <template #bodyCell="{ column, text, record }">
                 <template v-if="column.dataIndex === 'action'">
                     <a-tooltip title="查看执行日志">

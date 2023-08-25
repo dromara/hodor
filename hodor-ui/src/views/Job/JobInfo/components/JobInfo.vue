@@ -516,6 +516,11 @@ onMounted(() => {
 
 <template>
     <a-card>
+        <h3 class="title">任务信息管理</h3>
+        <span>展示任务信息，管理所有任务，具有创建、编辑、暂停、恢复、停止、搜索、查看任务详情等功能</span>
+    </a-card>
+    <br/>
+    <a-card>
         <a-space direction="vertical">
             <a-row>
                 <a-space>
