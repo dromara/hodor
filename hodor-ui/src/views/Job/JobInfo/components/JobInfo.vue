@@ -87,15 +87,15 @@ const formStateCreateJob = reactive({
     jobType: '',
     jobStatus: '',
     cron: '',
-    priority: '',
+    priority: 'DEFAULT',
     jobCategory: '',
     jobDesc: '',
     jobCommandType: '',
     jobDataType: '',
     jobDataPath: '',
     jobParameters: '',
-    timeOut: '',
-    retryCount: '',
+    timeOut: '180',
+    retryCount: '0',
     checkValue: [],
     executeTime: [],
 });
@@ -614,14 +614,14 @@ onMounted(() => {
                                     <a-row :gutter="24">
                                         <a-col :span="12">
                                             <a-form-item label="超时时间（秒）:" name="timeOut">
-                                                <a-input v-model:value="formStateCreateJob.jobDataPath" />
+                                                <a-input v-model:value="formStateCreateJob.timeOut" />
                                             </a-form-item>
                                         </a-col>
                                         <a-col :span="12">
                                             <a-form-item label="执行时间:" name="executeTime">
                                                 <a-range-picker v-model="formStateCreateJob.executeTime"
-                                                    :show-time="{ format: 'HH:mm:ss.SSSX' }"
-                                                    format="YYYY-MM-DD'T'HH:mm:ss.SSSX" allowClear showNow
+                                                    :show-time="{ format: 'HH:mm:ss' }"
+                                                    format="YYYY-MM-DD HH:mm:ss" allowClear showNow
                                                     :placeholder="['Start Time', 'End Time']" @change="onRangeChange"
                                                     @ok="onRangeOk" />
                                             </a-form-item>
