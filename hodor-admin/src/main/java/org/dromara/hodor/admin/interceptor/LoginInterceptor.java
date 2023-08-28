@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.dromara.hodor.admin.config.AdminProperties;
 import org.dromara.hodor.admin.core.ServerConfigKeys;
 import org.dromara.hodor.admin.core.UserContext;
-import org.dromara.hodor.admin.domain.UserInfo;
+import org.dromara.hodor.admin.dto.user.UserInfo;
 import org.dromara.hodor.admin.entity.User;
 import org.dromara.hodor.admin.service.UserService;
 import org.dromara.hodor.common.utils.StringUtils;

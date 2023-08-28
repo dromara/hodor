@@ -1,4 +1,4 @@
-package org.dromara.hodor.admin.domain;
+package org.dromara.hodor.admin.dto.job;
 
 import lombok.Data;
 

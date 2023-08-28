@@ -9,7 +9,7 @@ import org.dromara.hodor.admin.core.MsgCode;
 import org.dromara.hodor.admin.core.Result;
 import org.dromara.hodor.admin.core.ResultUtil;
 import org.dromara.hodor.admin.core.ServerConfigKeys;
-import org.dromara.hodor.admin.domain.UserInfo;
+import org.dromara.hodor.admin.dto.user.UserInfo;
 import org.dromara.hodor.admin.entity.User;
 import org.dromara.hodor.admin.service.UserService;
 import org.dromara.hodor.common.utils.Utils.Beans;

@@ -4,11 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.dromara.hodor.admin.core.MsgCode;
 import org.dromara.hodor.admin.core.Result;
 import org.dromara.hodor.admin.core.ResultUtil;
 import org.dromara.hodor.admin.core.UserContext;
-import org.dromara.hodor.admin.domain.UserInfo;
+import org.dromara.hodor.admin.dto.user.UserInfo;
 import org.dromara.hodor.admin.service.ActuatorOperatorService;
 import org.dromara.hodor.admin.service.JobGroupService;
 import org.dromara.hodor.core.PageInfo;
@@ -74,25 +73,25 @@ public class JobGroupController {
 
     @Operation(summary = "删除分组信息")
     @DeleteMapping()
-    public Result<Void> delete(@RequestParam(value = "id") int id) {
+    public Result<Void> delete(@RequestParam(value = "id") long id) {
         final UserInfo user = UserContext.getUser();
         jobGroupService.deleteJobGroup(user, id);
-        return ResultUtil.errorWithArgs(MsgCode.INTERNAL_SERVER_ERROR, "group暂不支持删除");
+        return ResultUtil.success();
     }
 
     @Operation(summary = "绑定执行集群")
     @PostMapping("/bindActuator")
-    public Result<Void> bindActuatorCluster(@RequestParam String clusterName, @RequestParam String group) throws Exception {
+    public Result<Void> bindActuatorCluster(@RequestBody BindingInfo bindingInfo) throws Exception {
         final UserInfo user = UserContext.getUser();
-        actuatorOperatorService.binding(clusterName, group);
+        actuatorOperatorService.binding(bindingInfo.getClusterName(), bindingInfo.getGroupName());
         return ResultUtil.success();
     }
 
     @Operation(summary = "解绑执行集群")
     @PostMapping("/unbindActuator")
-    public Result<Void> unbindActuatorCluster(@RequestParam String clusterName, @RequestParam String group) throws Exception {
+    public Result<Void> unbindActuatorCluster(@RequestBody BindingInfo bindingInfo) throws Exception {
         final UserInfo user = UserContext.getUser();
-        actuatorOperatorService.unbinding(clusterName, group);
+        actuatorOperatorService.unbinding(bindingInfo.getClusterName(), bindingInfo.getGroupName());
         return ResultUtil.success();
     }
 

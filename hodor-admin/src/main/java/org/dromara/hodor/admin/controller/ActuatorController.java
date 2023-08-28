@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.dromara.hodor.admin.core.Result;
 import org.dromara.hodor.admin.core.ResultUtil;
 import org.dromara.hodor.admin.core.UserContext;
-import org.dromara.hodor.admin.domain.UserInfo;
+import org.dromara.hodor.admin.dto.user.UserInfo;
 import org.dromara.hodor.admin.service.ActuatorOperatorService;
 import org.dromara.hodor.model.actuator.ActuatorInfo;
 import org.springframework.web.bind.annotation.GetMapping;

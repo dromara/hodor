@@ -18,7 +18,7 @@
 package org.dromara.hodor.admin.service;
 
 import java.util.List;
-import org.dromara.hodor.admin.domain.SchedulerNodeInfo;
+import org.dromara.hodor.admin.dto.scheduler.SchedulerNodeInfo;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
 
 /**

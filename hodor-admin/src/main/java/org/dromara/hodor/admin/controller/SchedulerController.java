@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dromara.hodor.admin.core.Result;
 import org.dromara.hodor.admin.core.ResultUtil;
-import org.dromara.hodor.admin.domain.SchedulerNodeInfo;
+import org.dromara.hodor.admin.dto.scheduler.SchedulerNodeInfo;
 import org.dromara.hodor.admin.service.ScheduleOperatorService;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,4 +1,4 @@
-package org.dromara.hodor.admin.domain;
+package org.dromara.hodor.admin.dto;
 
 import java.io.Serializable;
 import lombok.Data;

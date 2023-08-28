@@ -20,7 +20,7 @@ package org.dromara.hodor.admin.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.admin.domain.SchedulerNodeInfo;
+import org.dromara.hodor.admin.dto.scheduler.SchedulerNodeInfo;
 import org.dromara.hodor.admin.service.ScheduleOperatorService;
 import org.dromara.hodor.client.HodorApiClient;
 import org.dromara.hodor.client.api.SchedulerApi;

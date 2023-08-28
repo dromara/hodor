@@ -1,13 +1,13 @@
-package org.dromara.hodor.admin.domain;
+package org.dromara.hodor.admin.dto;
 
 public class RolePermit {
 
 	private String id;
-	
+
 	private String roleId ;
-	
+
 	private String permitItem;
-	
+
 	public RolePermit(String roleId, String permititem) {
 		this.roleId = roleId;
 		this.permitItem = permititem;
@@ -44,5 +44,5 @@ public class RolePermit {
 	public String toString() {
 		return "DBRolePermit [id=" + id + ", roleId=" + roleId + ", permitItem=" + permitItem + "]";
 	}
-	
+
 }
