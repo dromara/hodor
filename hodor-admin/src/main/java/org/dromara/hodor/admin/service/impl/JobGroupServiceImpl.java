@@ -27,6 +27,7 @@ import org.dromara.hodor.admin.dto.user.UserInfo;
 import org.dromara.hodor.admin.exception.ServiceException;
 import org.dromara.hodor.admin.service.JobGroupService;
 import org.dromara.hodor.common.utils.DateUtils;
+import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.core.PageInfo;
 import org.dromara.hodor.core.entity.JobGroup;
 import org.dromara.hodor.core.entity.JobInfo;
@@ -83,7 +84,7 @@ public class JobGroupServiceImpl implements JobGroupService {
         final Long count = jobInfoMapper.selectCount(Wrappers.<JobInfo>lambdaQuery()
             .eq(JobInfo::getGroupName, jobGroup.getGroupName()));
         if (count > 0) {
-            throw new ServiceException(MsgCode.DELETE_GROUP_ERROR, "Current group has {} jobs", count);
+            throw new ServiceException(MsgCode.DELETE_GROUP_ERROR, StringUtils.format("Current group has {} jobs", count));
         }
         jobGroupMapper.deleteById(id);
     }
