@@ -15,51 +15,28 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.admin.domain;
+package org.dromara.hodor.admin.dto.scheduler;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.Date;
+import java.util.List;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.dromara.hodor.model.node.NodeInfo;
+import org.dromara.hodor.model.scheduler.HodorMetadata;
 
 /**
- * UserInfo
+ * SchedulerAppInfo
  *
  * @author tomgs
  * @since 1.0
  */
-@Schema(title = "user info")
 @Data
 @Accessors(chain = true)
-public class UserInfo {
+public class SchedulerAppInfo {
 
-    @Schema(name = "user id")
-    private Long id;
+    private String appName;
 
-    /**
-     * 用户名
-     */
-    @Schema(name = "user name")
-    private String username;
-    /**
-     * 联系邮箱
-     */
-    @Schema(name = "user email")
-    private String email;
-    /**
-     * 联系电话
-     */
-    @Schema(name = "user phone")
-    private String phone;
-    /**
-     * 租户id
-     */
-    @Schema(name = "user tenantId")
-    private Long tenantId;
-    /**
-     * 创建时间
-     */
-    @Schema(name = "user create time")
-    private Date createdAt;
+    private HodorMetadata metadata;
+
+    private List<NodeInfo> nodes;
 
 }

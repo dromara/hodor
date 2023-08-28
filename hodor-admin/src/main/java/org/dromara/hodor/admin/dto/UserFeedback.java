@@ -1,4 +1,4 @@
-package org.dromara.hodor.admin.domain;
+package org.dromara.hodor.admin.dto;
 
 import lombok.Builder;
 import lombok.Data;

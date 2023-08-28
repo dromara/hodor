@@ -1,13 +1,13 @@
 package org.dromara.hodor.admin.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.dromara.hodor.admin.domain.UserRole;
+import org.dromara.hodor.admin.dto.user.UserRole;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 /**
  * @author tomgs
- * 
+ *
  * @since 1.0
  **/
 @Mapper

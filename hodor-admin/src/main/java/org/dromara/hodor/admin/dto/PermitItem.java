@@ -1,21 +1,21 @@
-package org.dromara.hodor.admin.domain;
+package org.dromara.hodor.admin.dto;
 
 public class PermitItem {
 
 	private String id;
-	
+
 	private String url;
-	
+
 	private String description;
 
 	private String itemType;
-	
+
 	private String operateType;
-	
+
 	private boolean enabled;
-	
+
 	private String parentId;
-	
+
 	public String getId() {
 		return id;
 	}
@@ -77,5 +77,5 @@ public class PermitItem {
 		return "DBPermitIterm [id=" + id + ", url=" + url + ", description=" + description + ", itemType=" + itemType
 				+ ", operateType=" + operateType + ", enabled=" + enabled + ", parentId=" + parentId + "]";
 	}
-	
+
 }

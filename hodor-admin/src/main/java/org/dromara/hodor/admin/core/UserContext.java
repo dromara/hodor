@@ -2,7 +2,7 @@ package org.dromara.hodor.admin.core;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.admin.domain.UserInfo;
+import org.dromara.hodor.admin.dto.user.UserInfo;
 import org.dromara.hodor.admin.exception.ServiceException;
 import org.dromara.hodor.common.utils.Utils;
 

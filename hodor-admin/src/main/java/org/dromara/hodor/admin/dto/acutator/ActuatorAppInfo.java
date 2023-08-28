@@ -15,74 +15,26 @@
  * limitations under the License.
  */
 
-package org.dromara.hodor.admin.domain;
+package org.dromara.hodor.admin.dto.acutator;
 
+import java.util.List;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.dromara.hodor.model.node.NodeInfo;
 
 /**
- * SchedulerNodeInfo
+ * ActuatorAppInfo
  *
  * @author tomgs
  * @since 1.0
  */
 @Data
 @Accessors(chain = true)
-public class SchedulerNodeInfo {
+public class ActuatorAppInfo {
 
-    /**
-     * 集群名称
-     */
-    private String name;
+    private String appName;
 
-    /**
-     * 节点角色
-     */
-    private String role;
+    private String appKey;
 
-    /**
-     * 上报时间戳
-     */
-    private Long reportTime;
-
-    /**
-     * 执行端机器ip
-     */
-    private String ip;
-
-    /**
-     * 执行端端口
-     */
-    private Integer port;
-
-    /**
-     * 执行端进程pid
-     */
-    private Long pid;
-
-    /**
-     * 版本号
-     */
-    private String version;
-
-    /**
-     * 执行端节点hostname
-     */
-    private String hostname;
-
-    /**
-     * cpu使用
-     */
-    private Double cpuUsage;
-
-    /**
-     * 内存使用
-     */
-    private Double memoryUsage;
-
-    /**
-     * 机器负载
-     */
-    private Double loadAverage;
-
+    private List<NodeInfo> nodes;
 }

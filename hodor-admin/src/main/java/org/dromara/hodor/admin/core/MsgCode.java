@@ -61,6 +61,8 @@ public enum MsgCode {
     EXECUTE_JOB_ERROR(20014, "execute job error, msg {0}", "执行任务失败，信息 {0}"),
     UPLOAD_JOB_ERROR(20015, "upload job error, msg {0}", "上传任务失败，信息 {0}"),
 
+    DELETE_GROUP_ERROR(20016, "delete group error, msg {0}", "删除分组失败，信息 {0}"),
+
     // openapi
     INVALID_SIGN(30001, "the signature is invalid", "非法签名"),
     REQUEST_TIMEOUT(30002, "request timed out", "请求超时"),

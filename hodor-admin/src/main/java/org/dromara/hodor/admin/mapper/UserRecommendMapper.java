@@ -1,7 +1,7 @@
 package org.dromara.hodor.admin.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.dromara.hodor.admin.domain.UserFeedback;
+import org.dromara.hodor.admin.dto.UserFeedback;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 

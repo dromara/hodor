@@ -17,7 +17,7 @@
 
 package org.dromara.hodor.admin.service;
 
-import org.dromara.hodor.admin.domain.UserInfo;
+import org.dromara.hodor.admin.dto.user.UserInfo;
 import org.dromara.hodor.core.PageInfo;
 import org.dromara.hodor.core.entity.JobGroup;
 
@@ -35,7 +35,7 @@ public interface JobGroupService {
 
     void updateJobGroup(UserInfo user, JobGroup group);
 
-    void deleteJobGroup(UserInfo user, int id);
+    void deleteJobGroup(UserInfo user, Long id);
 
     JobGroup queryById(Long id);
 }

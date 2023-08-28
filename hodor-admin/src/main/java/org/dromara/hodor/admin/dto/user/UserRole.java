@@ -1,4 +1,4 @@
-package org.dromara.hodor.admin.domain;
+package org.dromara.hodor.admin.dto.user;
 
 import java.io.Serializable;
 import java.util.List;
