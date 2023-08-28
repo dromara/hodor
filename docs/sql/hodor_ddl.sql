@@ -133,6 +133,7 @@ CREATE TABLE `hodor_user` (
 CREATE TABLE `hodor_job_group` (
    `id` bigint NOT NULL AUTO_INCREMENT,
    `group_name` varchar(32) NOT NULL COMMENT '分组名称',
+   `cluster_name` varchar(32) NOT NULL COMMENT '执行集群名称',
    `create_user` varchar(32) NOT NULL COMMENT '创建人',
    `user_id` bigint NOT NULL COMMENT '用户id',
    `tenant_id` bigint NOT NULL COMMENT '租户id',
