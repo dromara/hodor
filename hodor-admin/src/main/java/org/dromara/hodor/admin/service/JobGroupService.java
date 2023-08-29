@@ -35,7 +35,7 @@ public interface JobGroupService {
 
     void updateJobGroup(UserInfo user, JobGroup group);
 
-    void deleteJobGroup(UserInfo user, Long id);
+    void deleteJobGroup(UserInfo user, long id);
 
     JobGroup queryById(Long id);
 }

@@ -79,7 +79,7 @@ public class JobGroupServiceImpl implements JobGroupService {
     }
 
     @Override
-    public void deleteJobGroup(UserInfo user, Long id) {
+    public void deleteJobGroup(UserInfo user, long id) {
         final JobGroup jobGroup = jobGroupMapper.selectById(id);
         final Long count = jobInfoMapper.selectCount(Wrappers.<JobInfo>lambdaQuery()
             .eq(JobInfo::getGroupName, jobGroup.getGroupName()));
