@@ -67,7 +67,7 @@ public class Utils {
         private static final Gson gson = GsonUtils.getGson();
 
         public static String toJson(Object obj) {
-            return toJsonStr(obj);
+            return gson.toJson(obj);
         }
 
         public static <T> T toBean(String jsonStr, TypeReference<T> typeReference) {
