@@ -13,7 +13,9 @@ import router from "@/router/router";
 import { Codemirror } from 'vue-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
+
 import '@/assets/iconfont/iconfont.css'
+import RefreshButton from '@/components/RefreshButton.vue';
 
 // store
 const jobInfoStore = useJobInfoStore();
@@ -470,6 +472,10 @@ const onSubmit = () => {
     }
 }
 
+const refreshTable=()=>{
+    queryJobInfoListPaging(paginationOpt);
+}
+
 watch(
     () => editorMode.value,
     () => {
@@ -522,7 +528,7 @@ onMounted(() => {
     <br/>
     <a-card>
         <a-space direction="vertical">
-            <a-row>
+            <a-row type="flex" justify="space-between">
                 <a-space>
                     <a-button type="primary" @click="{ openCreateModal = true; }">创建任务</a-button>
                     <a-modal v-model:open="openCreateModal" ok-text="确定" cancel-text="取消" @ok="onOk" width="80%"
@@ -717,6 +723,7 @@ onMounted(() => {
                     <a-button type="primary" danger @click="onClickBtn(actionType.resume)">恢复任务</a-button>
                     <a-button type="primary" danger @click="onClickBtn(actionType.delete)">删除任务</a-button>
                 </a-space>
+                <RefreshButton :onClick="refreshTable"/>
             </a-row>
             <a-row>
                 <a-form ref="formRefSearch" :model="formStateSearch" name="basic" layout="inline" autocomplete="off"
@@ -874,8 +881,8 @@ onMounted(() => {
                 </a-col>
                 <a-col :span="12">
                     <a-form-item label="执行时间:" name="executeTime">
-                        <a-range-picker v-model="formStateUpdateJob.executeTime" :show-time="{ format: 'HH:mm:ss.SSSX' }"
-                            format="YYYY-MM-DD'T'HH:mm:ss.SSSX" allowClear showNow :placeholder="['Start Time', 'End Time']"
+                        <a-range-picker v-model="formStateUpdateJob.executeTime" :show-time="{ format: 'HH:mm:ss' }"
+                            format="YYYY-MM-DD HH:mm:ss" allowClear showNow :placeholder="['Start Time', 'End Time']"
                             @change="onRangeChange" @ok="onRangeOk" />
                     </a-form-item>
                 </a-col>
@@ -923,4 +930,8 @@ onMounted(() => {
 
 button.css-dev-only-do-not-override-j6gjt1.ant-btn.ant-btn-text.iconfont {
     padding: 4px;
-}</style>
+}
+.ant-space.css-dev-only-do-not-override-j6gjt1.ant-space-vertical {
+    width: 100%;
+}
+</style>

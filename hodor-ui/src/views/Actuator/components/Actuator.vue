@@ -3,6 +3,7 @@ import { getActuatorListAPI, getActuatorInfoAPI } from '@/apis/actuator';
 import { onMounted, ref, h } from 'vue';
 import { Modal } from 'ant-design-vue';
 import { timestampToTime } from '@/utils/timeUtil'
+import RefreshButton from '@/components/RefreshButton.vue';
 
 // ############ 列表查询 #############
 // 表的列名
@@ -114,6 +115,11 @@ const onMonitor = (actuator) => {
         ]),
     })
 }
+
+// 手动刷新
+const refreshTable = () => {
+    getActuatorList()
+}
 </script>
 
 <template>
@@ -121,12 +127,17 @@ const onMonitor = (actuator) => {
         <h3 class="title">执行节点管理</h3>
         <span>展示执行节点信息，管理所有执行节点，具有查看详情、监控信息等功能</span>
     </a-card>
-    <br/>
+    <br />
     <a-card>
-        <span>执行节点列表</span>
-        <span>
-            <a-input-search class="search-container" placeholder="请输入你要搜索的节点" v-model:value="name" @search="onSearch" />
-        </span>
+        <a-row type="flex" justify="space-between">
+            <a-col :span="2">
+                <span>执行节点列表</span>
+            </a-col>
+            <a-col :span="6">
+                <a-input-search placeholder="请输入你要搜索的节点" v-model:value="name" @search="onSearch" />
+            </a-col>
+            <RefreshButton :onClick="getActuatorList" />
+        </a-row>
     </a-card>
     <br />
     <a-card>
@@ -144,10 +155,3 @@ const onMonitor = (actuator) => {
         </a-table>
     </a-card>
 </template>
-
-<style scoped>
-.search-container {
-    width: 200px;
-    float: right;
-}
-</style>

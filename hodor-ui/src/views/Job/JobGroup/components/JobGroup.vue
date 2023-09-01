@@ -6,6 +6,7 @@ import { useActuatorStore } from '@/stores/actuator'
 import { storeToRefs } from 'pinia'
 import { timeTransfer } from '@/utils/timeUtil'
 import { message } from 'ant-design-vue';
+import RefreshButton from '@/components/RefreshButton.vue';
 
 // 新增任务分组表单
 const formRef = ref();
@@ -189,10 +190,8 @@ const queryJobGroupListPaging = async ({ pageNo, pageSize }, groupName = "") => 
         groupList.value = data.rows;
         groupList.value = groupList.value.map((item) => {
             const { createdAt } = item;
-            // console.log("createdAt", createdAt)
             if (createdAt) {
                 const localTimeString = timeTransfer(createdAt);
-                // console.log("localTimeString", typeof localTimeString)
                 return Object.assign(item, {
                     ...item,
                     createdAt: localTimeString,
@@ -216,7 +215,6 @@ const editableData = reactive({});
 const handleUpdateGroupInfo = async (updateInfo) => {
     await updateGroupAPI(updateInfo).then((res) => {
         console.log("更新" + res.msg);
-        // 接口测试数据库并没有修改
     })
 }
 const editGroupInfo = name => {
@@ -239,11 +237,6 @@ const handleDeleteGroupInfo = async (id) => {
             groupList.value = groupList.value.filter(item => item.id !== id);
             message.success(res.msg)
         }
-        else {
-            // message.error(res.msg)
-        }
-    }).catch(error => {
-        // message.error(error.msg)
     })
 }
 const onDelete = async id => {
@@ -256,6 +249,10 @@ const onClickCreate = () => {
     visible.value = true;
 }
 
+const refreshTable=()=>{
+    const { defaultCurrent, defaultPageSize } = paginationOpt
+    queryJobGroupListPaging({ pageNo: defaultCurrent, pageSize: defaultPageSize });
+}
 
 onMounted(() => {
     // 分页查询任务分组信息
@@ -274,7 +271,7 @@ onMounted(() => {
     </a-card>
     <br/>
     <a-card>
-        <a-row>
+        <a-row type="flex" justify="space-between">
             <a-col :span="2">
                 <a-button type="primary" @click="onClickCreate">新增</a-button>
                 <a-modal v-model:visible="visible" title="Create a new collection" ok-text="Create" cancel-text="Cancel"
@@ -296,6 +293,9 @@ onMounted(() => {
             <a-col :span="6">
                 <a-input-search v-model:value="searchInfo" placeholder="请输入你需要搜索的节点" @search="onSearch"
                     @change="onSearchChange(searchInfo)" />
+            </a-col>
+            <a-col :span="1">
+                <RefreshButton :onClick="refreshTable"/>
             </a-col>
         </a-row>
     </a-card>

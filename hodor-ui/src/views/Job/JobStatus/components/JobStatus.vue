@@ -9,6 +9,8 @@ import { Codemirror } from 'vue-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
 
+import RefreshButton from '@/components/RefreshButton.vue';
+
 const jobStatusStore = useJobStatusStore();
 const { jobStatusList, paginationOpt, logOpt, } = storeToRefs(jobStatusStore);
 const { getJobStatusList, getQueryParams, killRunningJob, getExecuteLog } = jobStatusStore;
@@ -189,6 +191,12 @@ const handleCloseLog = () => {
     if (timer) clearInterval(timer)
 }
 
+const refreshTable=()=>{
+    const queryParam = route.query;
+    getQueryParams(queryParam);
+    queryJobStatusListPaging(paginationOpt, queryParam);
+}
+
 // 监听路由参数变化
 onBeforeRouteUpdate(to => {
     queryJobStatusListPaging(paginationOpt, to.query)
@@ -219,9 +227,6 @@ onBeforeUnmount(() => {
 <template>
     <!-- <a-card>
         <a-row :gutter="24">
-            <a-col :span="4">
-                <a-button type="primary" @click="handleClickKillRunningJob">杀死正在执行的任务</a-button>
-            </a-col>
             <a-col :span="16">
                 <a-input-search v-model:value="searchInfo" placeholder="请输入内容" enter-button @search="onSearch" />
             </a-col>
@@ -244,6 +249,10 @@ onBeforeUnmount(() => {
                 </router-link>
             </template>
         </a-breadcrumb>
+        <br/>
+        <a-row type="flex" justify="end">
+            <RefreshButton :onClick="refreshTable"/>
+        </a-row>
         <br/>
         <a-table :columns="jobStatusColumns" :data-source="jobStatusList" bordered :scroll="{ x: true }"
             :pagination="paginationOpt">

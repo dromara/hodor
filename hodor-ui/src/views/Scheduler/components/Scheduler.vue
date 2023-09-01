@@ -32,10 +32,10 @@ const columns = [{
 const schedulerList = ref([])
 const getSchedulerList = async () => {
     const res = await getSchedulerListAPI()
-    schedulerList.value = res.data.map((item)=>{
+    schedulerList.value = res.data.map((item) => {
         return {
             ...item,
-            reportTime:timestampToTime(item.reportTime),
+            reportTime: timestampToTime(item.reportTime),
         }
     })
 
@@ -89,12 +89,15 @@ const onMonitor = (scheduler) => {
         <h3 class="title">调度结点管理</h3>
         <span>展示调度结点信息，管理所有调度结点，具有查看详情、监控信息等功能</span>
     </a-card>
-    <br/>
+    <br />
     <a-card>
-        <span>调度结点列表</span>
-        <span>
-            <a-input-search class="search-container" placeholder="请输入你要搜索的节点" v-model:value="name" @search="onSearch" />
-        </span>
+        <a-row>
+            <span>调度结点列表</span>
+            <span>
+                <a-input-search class="search-container" placeholder="请输入你要搜索的节点" v-model:value="name" @search="onSearch" />
+            </span>
+            <RefreshButton :onClick="getSchedulerList" />
+        </a-row>
     </a-card>
     <br />
     <a-card>

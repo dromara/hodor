@@ -92,12 +92,12 @@ const menu = [
             // },
         ]
     },
-    // {
-    //     key: "10",
-    //     router: "/workflow",
-    //     text: "DAG任务流",
-    //     icon: ApartmentOutlined,
-    // },
+    {
+        key: "10",
+        router: "/workflow",
+        text: "DAG任务流",
+        icon: ApartmentOutlined,
+    },
 ]
 
 // tabs
