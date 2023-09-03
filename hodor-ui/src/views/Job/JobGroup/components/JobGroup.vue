@@ -2,11 +2,20 @@
 import { createApp, onMounted, reactive, ref } from 'vue';
 import { cloneDeep } from 'lodash-es';
 import { queryGroupListPagingAPI, createGroupAPI, updateGroupAPI, deleteGroupAPI, queryGroupListByIdAPI, bindGroupActuatorAPI, getBindListAPI } from '@/apis/job/jobGroup'
+import { useJobGroupStore } from '@/stores/job/jobGroup';
 import { useActuatorStore } from '@/stores/actuator'
 import { storeToRefs } from 'pinia'
 import { timeTransfer } from '@/utils/timeUtil'
 import { message } from 'ant-design-vue';
 import RefreshButton from '@/components/RefreshButton.vue';
+
+const jobGroupStore=useJobGroupStore();
+const {paginationOpt,groupList}=storeToRefs(jobGroupStore);
+const {getGroupListPaging,deleteGroup}=jobGroupStore;
+
+const actuatorStore = useActuatorStore();
+const { actuatorClusterList } = storeToRefs(actuatorStore);
+const { getAllClusters } = actuatorStore;
 
 // 新增任务分组表单
 const formRef = ref();
@@ -25,10 +34,7 @@ const fomLayout = {
         span: 16,
     },
 };
-// 选择器
-const actuatorStore = useActuatorStore();
-const { actuatorClusterList } = storeToRefs(actuatorStore);
-const { getAllClusters } = actuatorStore;
+
 // 选择器选项列表
 const options = ref([]);
 // 搜索框
@@ -67,21 +73,7 @@ const columns = [
         key: 'action',
     }
 ];
-// 分页器配置项
-const paginationOpt = reactive({
-    defaultCurrent: 1, // 默认当前页数
-    defaultPageSize: 5, // 默认当前页显示数据的大小
-    total: 0, // 总数
-    simple: "true",
-    // 改变每页数量时更新显示
-    onChange: (current, size) => {
-        paginationOpt.defaultCurrent = current;
-        paginationOpt.defaultPageSize = size;
-        const { defaultCurrent, defaultPageSize } = paginationOpt
-        queryJobGroupListPaging({ pageNo: defaultCurrent, pageSize: defaultPageSize });
-    },
-});
-const groupList = ref([]);
+
 
 
 const getClusterOptions = async() => {
@@ -129,8 +121,7 @@ const onOk = () => {
         // 重置文本
         formRef.value.resetFields();
         // 重新分页查询
-        const { defaultCurrent, defaultPageSize } = paginationOpt
-        queryJobGroupListPaging({ pageNo: defaultCurrent, pageSize: defaultPageSize });
+        getGroupListPaging();
     }).catch(info => {
         console.log('Validate Failed:', info);
     });
@@ -144,16 +135,14 @@ const onSelectChange = (value) => {
 const onSearch = (searchValue) => {
     // 如果搜索内容为空，则分页查询
     if (searchValue === "") {
-        const { defaultCurrent, defaultPageSize } = paginationOpt
-        queryJobGroupListPaging({ pageNo: defaultCurrent, pageSize: defaultPageSize });
+        getGroupListPaging();
     }
     // 如果搜索内容不为空，则搜索所有信息中包含searchValue的任务分组
     else {
         // 搜索id
         handleQueryJobGroupListById(Number(searchValue));
         // 搜索groupName
-        const { defaultCurrent, defaultPageSize } = paginationOpt
-        queryJobGroupListPaging({ pageNo: defaultCurrent, pageSize: defaultPageSize }, searchValue);
+        getGroupListPaging();
         // 搜索createUser
         // 搜索userId
         // 搜索tenantId
@@ -164,8 +153,7 @@ const onSearch = (searchValue) => {
 };
 const onSearchChange = (searchValue) => {
     if (searchValue === "") {
-        const { defaultCurrent, defaultPageSize } = paginationOpt
-        queryJobGroupListPaging({ pageNo: defaultCurrent, pageSize: defaultPageSize });
+        getGroupListPaging();
     }
 }
 // 按id搜索任务信息
@@ -182,33 +170,6 @@ const handleQueryJobGroupListById = async (id) => {
     })
 }
 
-
-// 分页查询分组信息
-const queryJobGroupListPaging = async ({ pageNo, pageSize }, groupName = "") => {
-    await queryGroupListPagingAPI({ pageNo, pageSize }, groupName).then((res) => {
-        const data = res.data;
-        groupList.value = data.rows;
-        groupList.value = groupList.value.map((item) => {
-            const { createdAt } = item;
-            if (createdAt) {
-                const localTimeString = timeTransfer(createdAt);
-                return Object.assign(item, {
-                    ...item,
-                    createdAt: localTimeString,
-                })
-            }
-        })
-        const { total, pageNo, pageSize } = data;
-        Object.assign(paginationOpt, { total, defaultCurrent: pageNo, defaultPageSize: pageSize });
-    })
-    getBindList();
-
-}
-//获取执行集群与任务分组的绑定关系
-const getBindList = async () => {
-    const res = await getBindListAPI();
-    return res;
-}
 
 // 编辑行
 const editableData = reactive({});
@@ -240,9 +201,7 @@ const handleDeleteGroupInfo = async (id) => {
     })
 }
 const onDelete = async id => {
-    await handleDeleteGroupInfo(id);
-    // 发送请求删除
-    // 接口测试："服务端异常: group暂不支持删除"
+    deleteGroup(id);
 };
 
 const onClickCreate = () => {
@@ -250,14 +209,12 @@ const onClickCreate = () => {
 }
 
 const refreshTable=()=>{
-    const { defaultCurrent, defaultPageSize } = paginationOpt
-    queryJobGroupListPaging({ pageNo: defaultCurrent, pageSize: defaultPageSize });
+    getGroupListPaging();
 }
 
 onMounted(() => {
     // 分页查询任务分组信息
-    const { defaultCurrent, defaultPageSize } = paginationOpt
-    queryJobGroupListPaging({ pageNo: defaultCurrent, pageSize: defaultPageSize });
+    getGroupListPaging();
     // 获取执行集群选择器选项
     getClusterOptions();
 })

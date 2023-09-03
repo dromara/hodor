@@ -7,6 +7,8 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'  // pinia持
 
 import '@/assets/style/global.scss'
 
+import Table from '@/components/Table.vue'
+
 const app = createApp(App)
 // pinia持久化
 const pinia = createPinia()
@@ -15,4 +17,6 @@ app.use(pinia)
 
 app.use(Antd)
 app.use(router)
+// 注册全局组件
+app.component('Table',Table)
 app.mount('#app')

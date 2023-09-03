@@ -1,5 +1,11 @@
 <script setup>
-import { RouterView } from 'vue-router';
+import { RouterView,useRouter } from 'vue-router';
+
+const router=useRouter();
+// 刷新后跳转到首页
+if(router.currentRoute.value.path!=='/home'){
+  router.replace('/home')
+}
 </script>
 
 <template>

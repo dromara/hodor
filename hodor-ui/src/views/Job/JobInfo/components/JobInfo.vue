@@ -388,7 +388,7 @@ const handleOk = () => {
     selectedJobInfos.value = [];
     visibleModal.value = false;
 }
-const handleCancel=()=>{
+const handleCancel = () => {
     selectedJobIds.value = [];
     selectedJobInfos.value = [];
     visibleModal.value = false;
@@ -472,7 +472,7 @@ const onSubmit = () => {
     }
 }
 
-const refreshTable=()=>{
+const refreshTable = () => {
     queryJobInfoListPaging(paginationOpt);
 }
 
@@ -525,7 +525,7 @@ onMounted(() => {
         <h3 class="title">任务信息管理</h3>
         <span>展示任务信息，管理所有任务，具有创建、编辑、暂停、恢复、停止、搜索、查看任务详情等功能</span>
     </a-card>
-    <br/>
+    <br />
     <a-card>
         <a-space direction="vertical">
             <a-row type="flex" justify="space-between">
@@ -626,10 +626,9 @@ onMounted(() => {
                                         <a-col :span="12">
                                             <a-form-item label="执行时间:" name="executeTime">
                                                 <a-range-picker v-model="formStateCreateJob.executeTime"
-                                                    :show-time="{ format: 'HH:mm:ss' }"
-                                                    format="YYYY-MM-DD HH:mm:ss" allowClear showNow
-                                                    :placeholder="['Start Time', 'End Time']" @change="onRangeChange"
-                                                    @ok="onRangeOk" />
+                                                    :show-time="{ format: 'HH:mm:ss' }" format="YYYY-MM-DD HH:mm:ss"
+                                                    allowClear showNow :placeholder="['Start Time', 'End Time']"
+                                                    @change="onRangeChange" @ok="onRangeOk" />
                                             </a-form-item>
                                         </a-col>
                                     </a-row>
@@ -723,7 +722,7 @@ onMounted(() => {
                     <a-button type="primary" danger @click="onClickBtn(actionType.resume)">恢复任务</a-button>
                     <a-button type="primary" danger @click="onClickBtn(actionType.delete)">删除任务</a-button>
                 </a-space>
-                <RefreshButton :onClick="refreshTable"/>
+                <RefreshButton :onClick="refreshTable" />
             </a-row>
             <a-row>
                 <a-form ref="formRefSearch" :model="formStateSearch" name="basic" layout="inline" autocomplete="off"
@@ -764,7 +763,7 @@ onMounted(() => {
     </a-card>
     <br />
     <a-card>
-        <a-table :columns="jobInfoColumns" :data-source="jobInfoList" bordered :scroll="{ x: true }"
+        <!-- <a-table :columns="jobInfoColumns" :data-source="jobInfoList" bordered :scroll="{ x: true }"
             :row-selection="rowSelection" :rowKey="row => row.id" :pagination="paginationOpt">
             <template #bodyCell="{ column, text, record }">
                 <template v-if="column.dataIndex === 'action'">
@@ -792,7 +791,32 @@ onMounted(() => {
                     </a-space>
                 </template>
             </template>
-        </a-table>
+        </a-table> -->
+        <Table :columns="jobInfoColumns" :data-source="jobInfoList" :pagination="paginationOpt" :row-selection="rowSelection">
+            <template v-slot="{ record }">
+                <a-space>
+                    <a-tooltip title="编辑">
+                        <a-button type="text" class="iconfont icon-edit-square" @click="editJobInfo(record.id)"></a-button>
+                    </a-tooltip>
+                    <a-tooltip title="立即执行">
+                        <a-button type="text" class="iconfont icon-play"
+                            @click="onClickBtn(actionType.execute, record)"></a-button>
+                    </a-tooltip>
+                    <a-tooltip title="恢复">
+                        <a-button type="text" class="iconfont icon-Restart"
+                            @click="onClickBtn(actionType.resume, record)"></a-button>
+                    </a-tooltip>
+                    <a-tooltip title="停止">
+                        <a-button type="text" class="iconfont icon-stop"
+                            @click="onClickBtn(actionType.stop, record)"></a-button>
+                    </a-tooltip>
+                    <a-tooltip title="任务详情">
+                        <a-button type="text" class="iconfont icon-detail"
+                            @click="getJobStatusDetail(record.groupName, record.jobName)"></a-button>
+                    </a-tooltip>
+                </a-space>
+            </template>
+        </Table>
     </a-card>
     <a-modal v-model:open="openUpdateModal" ok-text="确定" cancel-text="取消" @ok="saveJobInfo" width="80%">
         <a-form ref="formUpdateRef" :model="formStateUpdateJob" name="form_in_modal" :rules="rulesCreateJob">
@@ -931,6 +955,7 @@ onMounted(() => {
 button.css-dev-only-do-not-override-j6gjt1.ant-btn.ant-btn-text.iconfont {
     padding: 4px;
 }
+
 .ant-space.css-dev-only-do-not-override-j6gjt1.ant-space-vertical {
     width: 100%;
 }

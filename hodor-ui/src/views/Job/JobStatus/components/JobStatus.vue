@@ -254,7 +254,7 @@ onBeforeUnmount(() => {
             <RefreshButton :onClick="refreshTable"/>
         </a-row>
         <br/>
-        <a-table :columns="jobStatusColumns" :data-source="jobStatusList" bordered :scroll="{ x: true }"
+        <!-- <a-table :columns="jobStatusColumns" :data-source="jobStatusList" bordered :scroll="{ x: true }"
             :pagination="paginationOpt">
             <template #bodyCell="{ column, text, record }">
                 <template v-if="column.dataIndex === 'action'">
@@ -270,7 +270,21 @@ onBeforeUnmount(() => {
                     </a-popconfirm>
                 </template>
             </template>
-        </a-table>
+        </a-table> -->
+        <Table :columns="jobStatusColumns" :data-source="jobStatusList" :pagination="paginationOpt">
+            <template v-slot="{record}">
+                <a-tooltip title="查看执行日志">
+                        <a-button type="text" @click="handleClickGetExecuteLog(record)"
+                            class="iconfont icon-rizhi"></a-button>
+                    </a-tooltip>
+                    <a-popconfirm title="确定杀死当前任务?" ok-text="确定" cancel-text="取消" placement="bottom"
+                        @confirm="handleClickKillRunningJob(record)" @cancel="cancel">
+                        <a-tooltip title="杀死正在执行的任务">
+                            <a-button type="text" class="iconfont icon-kill"></a-button>
+                        </a-tooltip>
+                    </a-popconfirm>
+            </template>
+        </Table>
     </a-card>
     <a-drawer v-model:open="visibleLog" class="custom-class" root-class-name="root-class-name" size="large" title="查看执行日志"
         placement="right" closable @close="handleCloseLog">

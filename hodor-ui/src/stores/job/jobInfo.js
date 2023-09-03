@@ -20,6 +20,7 @@ export const useJobInfoStore = defineStore('jobInfo', () => {
         },
     });
     const totalPageOpt=ref();
+
     // action
     const getJobInfoList = async ({ pageNo, pageSize }, jobInfo) => {
         // 动态添加jobInfo参数
