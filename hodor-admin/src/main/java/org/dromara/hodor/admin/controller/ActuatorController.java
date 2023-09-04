@@ -51,4 +51,11 @@ public class ActuatorController {
         return ResultUtil.success(actuatorInfos);
     }
 
+    @Operation(summary = "获取指定cluster任务类型")
+    @GetMapping("/jobTypeNames")
+    public Result<List<String>> getJobTypeNames(@RequestParam String clusterName) throws Exception {
+        List<String> jobTypeNames = actuatorOperatorService.getJobTypeNames(clusterName);
+        return ResultUtil.success(jobTypeNames);
+    }
+
 }

@@ -11,6 +11,7 @@ import org.dromara.hodor.common.utils.Utils.Assert;
 import org.dromara.hodor.common.utils.Utils.Collections;
 import org.dromara.hodor.common.utils.Utils.Https;
 import org.dromara.hodor.model.actuator.ActuatorInfo;
+import org.dromara.hodor.model.actuator.JobTypeInfo;
 import org.dromara.hodor.model.job.JobDesc;
 
 /**
@@ -73,12 +74,12 @@ public class HodorApiClient {
         log.info("Send Offline result: {}", result);
     }
 
-    public void registerJobTypeName(List<String> jobTypeNames) throws Exception {
-        if (Collections.isEmpty(jobTypeNames)) {
+    public void registerJobTypeName(JobTypeInfo jobTypeInfo) throws Exception {
+        if (jobTypeInfo == null || Collections.isEmpty(jobTypeInfo.getJobTypeNames())) {
             return;
         }
         String result = TrySender.send(connectStringParser, (url) -> Https.createPost( url + "/scheduler/jobTypeNames")
-            .body(gsonUtils.toJson(jobTypeNames))
+            .body(gsonUtils.toJson(jobTypeInfo))
             .header("appName", appName)
             .header("appKey", appKey)
             .execute()

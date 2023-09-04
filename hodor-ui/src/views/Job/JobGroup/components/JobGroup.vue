@@ -117,7 +117,8 @@ const onOk = () => {
             tenantId: 0,
             remark: "",
             createdAt: "",
-            updatedAt: ""
+            updatedAt: "",
+            clusterName: clusterName,  // 新增字段
         }
         // 发送请求创建分组
         createJobGroup(groupInfo);

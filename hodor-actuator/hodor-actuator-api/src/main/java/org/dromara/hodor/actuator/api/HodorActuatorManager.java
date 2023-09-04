@@ -19,6 +19,7 @@ import org.dromara.hodor.common.storage.db.DBOperator;
 import org.dromara.hodor.common.storage.db.DataSourceConfig;
 import org.dromara.hodor.common.storage.db.HodorDataSource;
 import org.dromara.hodor.common.utils.Utils.Assert;
+import org.dromara.hodor.model.actuator.JobTypeInfo;
 import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
 
 /**
@@ -103,7 +104,8 @@ public class HodorActuatorManager {
     }
 
     public void registerJobs() throws Exception {
-        hodorApiClient.registerJobTypeName(jobRegister.registerJobType());
+        String clusterName = jobRegister.bindingCluster();
+        hodorApiClient.registerJobTypeName(new JobTypeInfo(clusterName, jobRegister.registerJobType()));
         hodorApiClient.registerJobs(jobRegister.registerJobs());
     }
 
