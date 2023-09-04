@@ -12,6 +12,7 @@ import org.dromara.hodor.common.utils.Utils.Assert;
 import org.dromara.hodor.common.utils.Utils.Jsons;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.core.service.JobInfoService;
+import org.dromara.hodor.model.actuator.JobTypeInfo;
 import org.dromara.hodor.model.common.HodorResult;
 import org.dromara.hodor.model.enums.JobStatus;
 import org.dromara.hodor.model.enums.JobType;
@@ -74,10 +75,23 @@ public class SchedulerResource {
         return HodorResult.success("success");
     }
 
+    /**
+     * 将结果上传到注册中心
+     */
     @RestMethod("jobTypeNames")
-    public HodorResult<String> jobTypeNames(List<String> jobTypeNames) {
-        // TODO: create job types
+    public HodorResult<String> jobTypeNames(JobTypeInfo jobTypeInfo) {
+        registryService.createJobTypeNames(jobTypeInfo);
         return HodorResult.success("success");
+    }
+
+    /**
+     * 读取注册中心的任务类型
+     */
+    @RestMethod("getJobTypeNames")
+    public HodorResult<List<String>> getJobTypeNames(String clusterName) {
+        // TODO: 判断空值
+        List<String> jobTypeNames = registryService.getJobTypeNames(clusterName);
+        return HodorResult.success("success", jobTypeNames);
     }
 
     @RestMethod("nodeInfos")

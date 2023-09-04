@@ -22,6 +22,7 @@ import java.util.List;
 import org.dromara.hodor.admin.service.ActuatorOperatorService;
 import org.dromara.hodor.client.HodorApiClient;
 import org.dromara.hodor.client.api.ActuatorApi;
+import org.dromara.hodor.client.api.SchedulerApi;
 import org.dromara.hodor.client.model.KillJobRequest;
 import org.dromara.hodor.client.model.KillJobResult;
 import org.dromara.hodor.client.model.LogQueryRequest;
@@ -42,8 +43,11 @@ public class ActuatorOperatorServiceImpl implements ActuatorOperatorService {
 
     private final ActuatorApi actuatorApi;
 
+    private final SchedulerApi schedulerApi;
+
     public ActuatorOperatorServiceImpl(final HodorApiClient hodorApiClient) {
         this.actuatorApi = hodorApiClient.createApi(ActuatorApi.class);
+        this.schedulerApi = hodorApiClient.createApi(SchedulerApi.class);
     }
 
     @Override
@@ -99,5 +103,10 @@ public class ActuatorOperatorServiceImpl implements ActuatorOperatorService {
         Utils.Assert.notNull(request.getActuatorEndpoint(), "actuator endpoint must be not null");
         Utils.Assert.notNull(request.getTimeout(), "timeout must be not null");
         return actuatorApi.killRunningJob(request);
+    }
+
+    @Override
+    public List<String> getJobTypeNames(String clusterName) throws Exception {
+        return schedulerApi.getJobTypeNames(clusterName);
     }
 }

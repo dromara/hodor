@@ -8,6 +8,7 @@ import org.dromara.hodor.common.utils.GsonUtils;
 import org.dromara.hodor.common.utils.HostUtils;
 import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.model.actuator.ActuatorInfo;
+import org.dromara.hodor.model.actuator.JobTypeInfo;
 import org.dromara.hodor.model.scheduler.HodorMetadata;
 import org.dromara.hodor.register.api.ConnectionStateChangeListener;
 import org.dromara.hodor.register.api.DataChangeListener;
@@ -174,5 +175,22 @@ public class RegistryService implements HodorLifecycle {
 
     public void put(String path, String data) {
         registryCenter.createPersistent(path, data);
+    }
+
+    /**
+     * 在注册中心创建任务类型
+     */
+    public void createJobTypeNames(JobTypeInfo jobTypeInfo) {
+        registryCenter.createPersistent(jobTypeInfo.getClusterName(), gsonUtils.toJson(jobTypeInfo.getJobTypeNames()));
+    }
+
+    /**
+     * 从注册中心返回任务类型
+     * @param clusterName 执行集群名字
+     * @return 任务类型集合
+     */
+    public List<String> getJobTypeNames(String clusterName) {
+        String jobTypeNamesStr = registryCenter.get(clusterName);
+        return gsonUtils.fromJson(jobTypeNamesStr, List.class);
     }
 }

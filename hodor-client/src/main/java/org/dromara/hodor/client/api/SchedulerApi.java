@@ -96,4 +96,26 @@ public class SchedulerApi {
         return hodorResult.getData();
     }
 
+    /**
+     * 返回任务类型接口
+     */
+    public List<String> getJobTypeNames(String clusterName) throws Exception {
+        final String path = "/scheduler/getJobTypeNames?clusterName=" + clusterName;
+        final HttpResponse response = TrySender.send(connectStringParser, (url) -> Https.createGet(url + path)
+                .header("appName", appName)
+                .header("appKey", appKey)
+                .execute(),
+            ex -> new HodorClientException("SchedulerApi getJobTypeNames execute failure, " + ex.getMessage()));
+        if (!Objects.requireNonNull(response).isOk()) {
+            throw new HodorClientException("getJobTypeNames failure, " + response.body());
+        }
+        log.debug("Get JobTypeNamesResult : {}", response.body());
+        final HodorResult<List<String>> hodorResult = Jsons.toBean(response.body(),
+            new TypeReference<HodorResult<List<String>>>() {});
+        if (!hodorResult.isSuccess()) {
+            throw new HodorClientException(hodorResult.getMsg());
+        }
+        return hodorResult.getData();
+    }
+
 }

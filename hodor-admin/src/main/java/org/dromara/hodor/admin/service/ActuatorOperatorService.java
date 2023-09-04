@@ -56,4 +56,5 @@ public interface ActuatorOperatorService {
     KillJobResult killRunningJob(KillJobRequest killJobRequest) throws Exception;
 
 
+    List<String> getJobTypeNames(String clusterName) throws Exception;
 }
