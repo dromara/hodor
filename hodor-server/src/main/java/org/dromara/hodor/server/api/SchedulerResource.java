@@ -289,6 +289,10 @@ public class SchedulerResource {
                 } else {
                     DataInterval dataInterval = copySet.getDataInterval();
                     HodorScheduler activeScheduler = schedulerManager.getActiveScheduler(schedulerName);
+                    if (!activeScheduler.checkExists(jobInfo)) {
+                        return HodorResult.failure(StringUtils.format("execute job {} failure, not found job",
+                            JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName())));
+                    }
                     activeScheduler.triggerJob(jobInfo);
                 }
                 return HodorResult.success(StringUtils.format("execute job {} from active scheduler {} success",
