@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.api.core.JobLogger;
 import org.dromara.hodor.actuator.api.utils.Props;
@@ -64,11 +65,14 @@ public class JobTypeManager {
 
     private JobTypePluginSet pluginSet;
 
+    private final Logger logger;
+
     public JobTypeManager(final String jobtypePluginDir, final Props globalProperties,
                           final ClassLoader parentClassLoader) {
         this.jobTypePluginDir = jobtypePluginDir;
         this.parentLoader = parentClassLoader;
         this.globalProperties = globalProperties;
+        this.logger = LogManager.getLogger();
 
         loadPlugins();
     }
@@ -240,7 +244,7 @@ public class JobTypeManager {
             final Props fakeSysProps = new Props(pluginLoadProps);
             final Props fakeJobProps = new Props(pluginJobProps);
             Utils.callConstructor(clazz, "dummy", fakeSysProps,
-                fakeJobProps, log);
+                fakeJobProps, logger);
         } catch (final Throwable t) {
             log.info("Jobtype " + jobTypeName + " failed test!", t);
             throw new JobExecutionException(t);
