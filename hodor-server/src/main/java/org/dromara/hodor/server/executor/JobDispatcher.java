@@ -44,7 +44,8 @@ public class JobDispatcher {
      */
     public void dispatch(final HodorJobExecutionContext context) {
         HodorExecutor hodorExecutor = hodorExecutorMap.computeIfAbsent(context.getJobKey(), this::createHodorExecutor);
-        Objects.requireNonNull(hodorExecutor).serialExecute(new HodorRunnable() {
+        Objects.requireNonNull(hodorExecutor, context.getJobKey() + " hodor executor must be not null")
+            .serialExecute(new HodorRunnable() {
             @Override
             public void execute() {
                 try {
