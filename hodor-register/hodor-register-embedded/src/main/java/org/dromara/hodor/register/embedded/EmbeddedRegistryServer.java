@@ -22,6 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ratis.RaftConfigKeys;
 import org.apache.ratis.conf.Parameters;
 import org.apache.ratis.conf.RaftProperties;
+import org.apache.ratis.server.RaftServerConfigKeys;
+import org.apache.ratis.util.SizeInBytes;
 import org.dromara.hodor.common.HodorLifecycle;
 import org.dromara.hodor.common.raft.RaftOptions;
 import org.dromara.hodor.common.raft.kv.core.HodorKVOptions;
@@ -47,6 +49,12 @@ public class EmbeddedRegistryServer implements HodorLifecycle {
     public EmbeddedRegistryServer(final RegistryConfig registryConfig, final WatchManager watchManager) throws Exception {
         RaftProperties raftProperties = new RaftProperties();
         RaftConfigKeys.Rpc.setType(raftProperties, WatchGrpcRpcType.INSTANCE);
+        // log configs
+        RaftServerConfigKeys.Log.setForceSyncNum(raftProperties, 10);
+        RaftServerConfigKeys.Log.setPurgePreservationLogNum(raftProperties, 10L);
+        RaftServerConfigKeys.Log.setSegmentCacheNumMax(raftProperties, 6);
+        RaftServerConfigKeys.Log.setSegmentCacheSizeMax(raftProperties, SizeInBytes.valueOf("64MB"));
+
         RaftOptions raftOptions = RaftOptions.builder()
             .endpoint(registryConfig.getEndpoint())
             .storageDir(new File(registryConfig.getDataPath()))
