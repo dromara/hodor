@@ -2,7 +2,7 @@ package org.dromara.hodor.actuator.api.executor;
 
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.actuator.api.HodorApiClient;
+import org.dromara.hodor.actuator.api.HodorActuatorApiClient;
 import org.dromara.hodor.actuator.api.JobRegister;
 import org.dromara.hodor.actuator.api.core.NodeManager;
 import org.dromara.hodor.model.actuator.ActuatorInfo;
@@ -17,14 +17,14 @@ import org.dromara.hodor.model.node.NodeInfo;
 @Slf4j
 public class MsgSender {
 
-    private final HodorApiClient hodorApiClient;
+    private final HodorActuatorApiClient hodorActuatorApiClient;
 
     private final NodeManager nodeManager;
 
     private final JobRegister jobRegister;
 
-    public MsgSender(final HodorApiClient hodorApiClient, final NodeManager nodeManager, final JobRegister jobRegister) {
-        this.hodorApiClient = hodorApiClient;
+    public MsgSender(final HodorActuatorApiClient hodorActuatorApiClient, final NodeManager nodeManager, final JobRegister jobRegister) {
+        this.hodorActuatorApiClient = hodorActuatorApiClient;
         this.nodeManager = nodeManager;
         this.jobRegister = jobRegister;
     }
@@ -54,7 +54,7 @@ public class MsgSender {
         public void run() {
             try {
                 ActuatorInfo actuatorInfo = getActuatorInfo();
-                hodorApiClient.sendHeartbeat(actuatorInfo);
+                hodorActuatorApiClient.sendHeartbeat(actuatorInfo);
             } catch (Exception e) {
                 log.warn("HeartbeatSender send message has exception, msg: {}", e.getMessage(), e);
             }
@@ -66,7 +66,7 @@ public class MsgSender {
         public void run() {
             try {
                 ActuatorInfo actuatorInfo = getActuatorInfo();
-                hodorApiClient.sendOfflineMsg(actuatorInfo);
+                hodorActuatorApiClient.sendOfflineMsg(actuatorInfo);
             } catch (Exception e) {
                 log.warn("HeartbeatSender send message has exception, msg: {}", e.getMessage(), e);
             }
