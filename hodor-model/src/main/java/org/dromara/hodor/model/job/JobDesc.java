@@ -70,6 +70,8 @@ public class JobDesc {
 
   private Integer timeout;
 
+  private Date startTime;
+
   private Date endTime;
 
   private Integer retryCount;
