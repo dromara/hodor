@@ -1,7 +1,7 @@
 #  HodorScheduler
 ## 介绍
 
-Hodor是一个专注于任务编排和高可用性的分布式任务调度系统。通过提供任务编程API和接口协议，使用户可以使用不同的编程语言自定义任务类型，以支持各种业务场景下的任务执行。
+Hodor是一个专注于任务编排和高可用性的一站式的分布式任务调度系统。通过提供任务编程API和接口协议，使用户可以使用不同的编程语言自定义任务类型，以支持各种业务场景下的任务执行。
 目前已经实现了Java任务执行器和大数据任务执行器。
 
 并且Hodor是弱依赖于第三方中间件的系统，能在运行时不依赖于数据库，从而降低第三方组件对系统高可用性的影响。
@@ -27,8 +27,9 @@ hodor-scheduler
 ├─docs                                          # 文档存放位置
 ├─hodor-actuator                                # hodor任务执行器
 │  ├─hodor-actuator-api                         # 执行器扩展接口
-│  ├─hodor-actuator-java                        # Java任务执行器
-│  └─hodor-actuator-bigdata                     # 大数据任务执行器   
+│  ├─hodor-actuator-java                        # jar包方式任务执行器
+│  ├─hodor-actuator-agent                       # 独立进程方式任务执行器
+│  └─hodor-actuator-schedulerx                  # 支持scheduleX2.0执行器（TODO）
 ├─hodor-admin                                   # hodor管理控制台（TODO）
 ├─hodor-client                                  # 提供与hodor server的交互sdk
 ├─hodor-common                                  # hodor公共依赖
@@ -60,6 +61,35 @@ hodor-scheduler
 2、进入到`hodor-server`，启动调度器。
 
 3、进入到`examples`下面的`hodor-actuator-java-example`，启动java任务执行器程序
+
+## hodor打包部署说明
+
+### hodor-admin打包
+```shell
+mvn package -pl hodor-dist/hodor-admin-dist -am -DskipTests=true
+# 解压运行
+nohup ./bin/start.sh > admin.log 2>&1 &
+```
+
+### hodor-scheduler-server打包
+```shell
+mvn package -pl hodor-dist/hodor-scheduler-server-dist -am -DskipTests=true
+```
+
+### hodor-actuator-agent打包
+```shell
+mvn package -pl hodor-dist/hodor-actuator-agent-dist -am -DskipTests=true
+```
+
+### hodor-actuator-java打包
+```shell
+mvn package -pl hodor-dist/hodor-actuator-java-dist -am -DskipTests=true
+```
+
+### hodor-actuator-java-example打包
+```shell
+mvn package -pl hodor-dist/hodor-actuator-examples-dist -am -DskipTests=true
+```
 
 ## 交流学习
 
