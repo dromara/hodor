@@ -1,7 +1,6 @@
 package org.dromara.hodor.actuator.api;
 
 import java.util.Collection;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.actuator.api.config.HodorProperties;
 import org.dromara.hodor.common.connect.ConnectStringParser;
@@ -21,7 +20,7 @@ import org.dromara.hodor.model.job.JobDesc;
  * @since 1.0
  */
 @Slf4j
-public class HodorApiClient {
+public class HodorActuatorApiClient {
 
     private final String appName;
 
@@ -31,7 +30,7 @@ public class HodorApiClient {
 
     private final GsonUtils gsonUtils = GsonUtils.getInstance();
 
-    public HodorApiClient(final HodorProperties properties) {
+    public HodorActuatorApiClient(final HodorProperties properties) {
         Assert.notBlank(properties.getAppName(), "App name must be not null");
         Assert.notBlank(properties.getAppKey(), "App key must be not null");
         Assert.notBlank(properties.getRegistryAddress(), "Registry address must be not null");

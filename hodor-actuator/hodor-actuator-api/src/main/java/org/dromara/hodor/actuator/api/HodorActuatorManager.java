@@ -39,7 +39,7 @@ public class HodorActuatorManager {
 
     private final DBOperator dbOperator;
 
-    private final HodorApiClient hodorApiClient;
+    private final HodorActuatorApiClient hodorActuatorApiClient;
 
     private final ExecutorManager executorManager;
 
@@ -65,7 +65,7 @@ public class HodorActuatorManager {
         this.jobRegister = jobRegister;
         this.dbOperator = dbOperator();
         this.executorManager = new ExecutorManager(properties);
-        this.hodorApiClient = new HodorApiClient(properties);
+        this.hodorActuatorApiClient = new HodorActuatorApiClient(properties);
         this.requestHandleManager = new RequestHandleManager(properties, jobRegister, executorManager,
             ClientChannelManager.getInstance(), dbOperator);
         this.remotingMessageSerializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
@@ -75,7 +75,7 @@ public class HodorActuatorManager {
     private void init() {
         final NodeManager nodeManager = new NodeManager(properties, executorManager);
         this.executorServer = new ExecutorServer(requestHandleManager, remotingMessageSerializer, properties);
-        this.msgSender = new MsgSender(hodorApiClient, nodeManager, jobRegister);
+        this.msgSender = new MsgSender(hodorActuatorApiClient, nodeManager, jobRegister);
         this.hodorDatabaseSetup = new HodorDatabaseSetup(dbOperator);
         this.heartbeatSenderService = new ScheduledThreadPoolExecutor(2,
             HodorThreadFactory.create("hodor-heartbeat-sender", true),
@@ -105,8 +105,8 @@ public class HodorActuatorManager {
 
     public void registerJobs() throws Exception {
         String clusterName = jobRegister.bindingCluster();
-        hodorApiClient.registerJobTypeName(new JobTypeInfo(clusterName, jobRegister.registerJobType()));
-        hodorApiClient.registerJobs(jobRegister.registerJobs());
+        hodorActuatorApiClient.registerJobTypeName(new JobTypeInfo(clusterName, jobRegister.registerJobType()));
+        hodorActuatorApiClient.registerJobs(jobRegister.registerJobs());
     }
 
     private void initHodorClientData() throws SQLException {
