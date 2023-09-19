@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>hodor-actuator-java-example</module>
+        <module>hodor-actuator-xxljob-example</module>
     </modules>
 
 </project>
