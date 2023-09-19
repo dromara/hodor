@@ -8,7 +8,6 @@ import org.dromara.hodor.actuator.api.ExecutableJob;
 import org.dromara.hodor.actuator.api.JobRegister;
 import org.dromara.hodor.actuator.api.config.HodorProperties;
 import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
-import org.dromara.hodor.actuator.api.core.JobLogger;
 import org.dromara.hodor.actuator.api.exceptions.JobExecutionException;
 import org.dromara.hodor.actuator.api.executor.JobExecutionPersistence;
 import org.dromara.hodor.actuator.api.executor.RequestHandleManager;

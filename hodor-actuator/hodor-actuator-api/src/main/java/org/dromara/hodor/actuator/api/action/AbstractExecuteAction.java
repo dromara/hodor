@@ -117,8 +117,8 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
         JobExecuteResponse response = new JobExecuteResponse();
         response.setRequestId(request.getRequestId());
         response.setJobKey(jobKey);
-        response.setShardId(request.getShardId());
-        response.setShardName(request.getShardName());
+        response.setShardingCount(request.getShardingCount());
+        response.setShardingId(request.getShardingId());
         return response;
     }
 
