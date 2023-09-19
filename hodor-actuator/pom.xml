@@ -17,6 +17,7 @@
         <module>hodor-actuator-bigdata</module>
         <module>hodor-actuator-agent</module>
         <module>hodor-actuator-jobtype</module>
+        <module>hodor-actuator-xxljob</module>
     </modules>
 
     <properties>
