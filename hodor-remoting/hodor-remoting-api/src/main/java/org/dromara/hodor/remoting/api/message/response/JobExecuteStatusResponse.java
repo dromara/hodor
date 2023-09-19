@@ -1,23 +1,24 @@
 package org.dromara.hodor.remoting.api.message.response;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
+import org.dromara.hodor.remoting.api.message.ResponseBody;
 
 /**
  *  job execute status response
  *
  * @author tomgs
- * @version 2021/3/3 1.0 
+ * @version 2021/3/3 1.0
  */
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = true)
-public class JobExecuteStatusResponse extends AbstractResponseBody {
+public class JobExecuteStatusResponse implements ResponseBody {
 
     private static final long serialVersionUID = 8892404430523254103L;
+
+    private Long requestId;
 
     private JobExecuteStatus status;
 

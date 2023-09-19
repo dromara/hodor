@@ -1,11 +1,11 @@
 package org.dromara.hodor.remoting.api.message.response;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.model.job.JobKey;
+import org.dromara.hodor.remoting.api.message.ResponseBody;
 
 /**
  * scheduled response
@@ -15,10 +15,11 @@ import org.dromara.hodor.model.job.JobKey;
  */
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = true)
-public class JobExecuteResponse extends AbstractResponseBody {
+public class JobExecuteResponse implements ResponseBody {
 
     private static final long serialVersionUID = 8889407473710885893L;
+
+    private Long requestId;
 
     private JobKey jobKey;
 
@@ -30,9 +31,9 @@ public class JobExecuteResponse extends AbstractResponseBody {
 
     private Long processTime;
 
-    private Integer shardId;
+    private Integer shardingCount;
 
-    private String shardName;
+    private Integer shardingId;
 
     private String comments;
 
@@ -46,8 +47,8 @@ public class JobExecuteResponse extends AbstractResponseBody {
             ", startTime='" + startTime + '\'' +
             ", completeTime='" + completeTime + '\'' +
             ", processTime=" + processTime +
-            ", shardId=" + shardId +
-            ", shardName='" + shardName + '\'' +
+            ", shardingCount=" + shardingCount +
+            ", shardingId=" + shardingId +
             ", comments='" + comments + '\'' +
             ", result='" + StringUtils.decodeString(result) + '\'' +
             '}';
