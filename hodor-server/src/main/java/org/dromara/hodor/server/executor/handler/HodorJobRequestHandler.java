@@ -160,6 +160,7 @@ public class HodorJobRequestHandler implements RequestHandler {
             .jobCommandType(jobDesc.getJobCommandType())
             .jobParameters(jobDesc.getJobParameters())
             .extensibleParameters(jobDesc.getExtensibleParameters())
+            .shardingCount(jobDesc.getShardingCount())
             .timeout(jobDesc.getTimeout())
             .retryCount(jobDesc.getRetryCount())
             .version(jobDesc.getVersion())

@@ -11,14 +11,14 @@ import java.io.Serializable;
 public interface RequestBody extends Serializable {
 
     /**
-     * 请求id
+     * request id
      * @return request id
      */
     Long getRequestId();
 
     /**
-     * 设置requestId
-     * @param requestId 请求id
+     * set request id
+     * @param requestId request id
      */
     void setRequestId(Long requestId);
 

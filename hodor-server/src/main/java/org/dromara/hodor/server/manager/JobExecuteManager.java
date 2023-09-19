@@ -19,7 +19,7 @@ import org.dromara.hodor.remoting.api.message.Header;
 import org.dromara.hodor.remoting.api.message.MessageType;
 import org.dromara.hodor.remoting.api.message.RemotingMessage;
 import org.dromara.hodor.remoting.api.message.RemotingResponse;
-import org.dromara.hodor.remoting.api.message.request.AbstractRequestBody;
+import org.dromara.hodor.remoting.api.message.RequestBody;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteStatusRequest;
 import org.dromara.hodor.remoting.api.message.request.KillRunningJobRequest;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
@@ -66,10 +66,9 @@ public class JobExecuteManager {
 
     public boolean isRunning(JobKey jobKey) {
         JobExecDetail jobExecDetail = jobExecuteRecorder.getJobExecDetail(jobKey);
-        if (jobExecDetail == null
-            || jobExecDetail.getExecuteStatus() != JobExecuteStatus.READY
-            || jobExecDetail.getExecuteStatus() != JobExecuteStatus.PENDING
-            || jobExecDetail.getExecuteStatus() != JobExecuteStatus.RUNNING) {
+        if (jobExecDetail == null || (jobExecDetail.getExecuteStatus() != JobExecuteStatus.READY
+            && jobExecDetail.getExecuteStatus() != JobExecuteStatus.PENDING
+            && jobExecDetail.getExecuteStatus() != JobExecuteStatus.RUNNING)) {
             return false;
         }
         // 去执行端查询状态，并且更新状态
@@ -167,7 +166,7 @@ public class JobExecuteManager {
         return this.executeRequest(host, killRunningJobRequest, MessageType.KILL_JOB_REQUEST);
     }
 
-    public <R> R executeRequest(Host host, AbstractRequestBody requestBody, MessageType messageType) {
+    public <R> R executeRequest(Host host, RequestBody requestBody, MessageType messageType) {
         byte[] body = serializer.serialize(requestBody);
         Header header = Header.builder()
                 .id(requestBody.getRequestId())
