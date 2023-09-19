@@ -22,6 +22,7 @@ import java.util.Set;
 import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.api.core.JobInstance;
 import org.dromara.hodor.model.job.JobDesc;
+import org.dromara.hodor.model.job.JobKey;
 
 /**
  * JobRegister
@@ -45,6 +46,11 @@ public interface JobRegister {
      */
     String bindingCluster();
 
+    /**
+     * register job type
+     *
+     * @return job type list
+     */
     List<String> registerJobType();
 
     /**
@@ -61,6 +67,10 @@ public interface JobRegister {
      */
     default void registerJob(JobInstance jobInstance) {
 
+    }
+
+    default JobDesc getJobDesc(JobKey jobKey) {
+        return null;
     }
 
     /**

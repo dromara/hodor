@@ -44,7 +44,7 @@ public class JavaJob implements ExecutableJob {
     public Object execute(ExecutableJobContext jobContext) throws JobExecutionException {
         final JobExecuteRequest request = jobContext.getExecuteRequest();
         final JobParameter jobParameter = new JobParameter(request.getGroupName(), request.getJobName(), request.getRequestId(),
-            request.getJobParameters(), request.getShardId(), request.getShardName());
+            request.getJobParameters(), request.getShardingCount(), request.getShardingId());
         final JobExecutionContext context = new JobExecutionContext(jobContext.getJobLogger(), jobParameter);
         if (jobRunnable == null) {
             throw new IllegalArgumentException(String.format("not found job %s_%s.", request.getGroupName(), request.getJobName()));

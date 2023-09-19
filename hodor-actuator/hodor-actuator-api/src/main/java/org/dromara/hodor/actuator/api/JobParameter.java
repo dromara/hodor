@@ -21,17 +21,17 @@ public class JobParameter {
 
     private final String parameters;
 
-    private final Integer shardId;
+    private final Integer shardingCount;
 
-    private final String shardName;
+    private final Integer shardingId;
 
-    public JobParameter(String groupName, String jobName, Long requestId, String parameters, Integer shardId, String shardName) {
+    public JobParameter(String groupName, String jobName, Long requestId, String parameters, Integer shardingCount, Integer shardingId) {
         this.groupName = groupName;
         this.jobName = jobName;
         this.requestId = requestId;
         this.parameters = parameters;
-        this.shardId = shardId;
-        this.shardName = shardName;
+        this.shardingCount = shardingCount;
+        this.shardingId = shardingId;
     }
 
 }
