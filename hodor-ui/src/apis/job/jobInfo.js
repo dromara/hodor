@@ -58,3 +58,10 @@ export const stopJobAPI = (id) => {
         data:id,
     })
 };
+
+export const getJobTypeNamesAPI = (clusterName) => {
+    return httpInstance({
+        url: `/actuator/jobTypeNames?clusterName=${clusterName}`,
+        method: 'GET',
+    })
+}
