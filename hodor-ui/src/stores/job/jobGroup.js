@@ -1,9 +1,10 @@
 import { defineStore } from 'pinia'
 import { ref, reactive } from 'vue'
-import { queryGroupListPagingAPI } from '@/apis/job/jobGroup'
+import { queryGroupListPagingAPI, getBindListAPI } from '@/apis/job/jobGroup'
 
 export const useJobGroupStore = defineStore('jobGroup', () => {
     const allGroupList=ref([]);
+    const bindingList = ref({});
     const paginationOpt=reactive({
         pageNo:1,
         pageSize:10,
@@ -24,8 +25,17 @@ export const useJobGroupStore = defineStore('jobGroup', () => {
         allGroupList.value=res.data.rows;
     }
 
+    const getBindingList = async () => {
+        const res = await getBindListAPI()
+        for (let bind of res.data) {
+            bindingList.value[bind['groupName']] = bind['clusterName']
+        }
+    }
+
     return {
         allGroupList,
+        bindingList,
         getAllGroupList,
+        getBindingList,
     }
 })

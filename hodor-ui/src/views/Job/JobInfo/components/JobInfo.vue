@@ -2,6 +2,7 @@
 import { onMounted, reactive, ref, toRefs, watch, nextTick } from "vue";
 import { useJobInfoStore } from "@/stores/job/jobInfo";
 import { useJobGroupStore } from "@/stores/job/jobGroup";
+import { useActuatorStore } from '@/stores/actuator'
 import { storeToRefs } from "pinia";
 import { SearchOutlined } from "@ant-design/icons-vue";
 import useClipboard from 'vue-clipboard3'
@@ -17,12 +18,16 @@ import '@/assets/iconfont/iconfont.css'
 
 // store
 const jobInfoStore = useJobInfoStore();
-const { jobInfoList, paginationOpt } = storeToRefs(jobInfoStore);
-const { getJobInfoList, createJob, deleteJob, stopJob, resumeJob, updateJob, executeJob } = jobInfoStore;
+const { jobInfoList, paginationOpt, jobTypeNames } = storeToRefs(jobInfoStore);
+const { getJobInfoList, createJob, deleteJob, stopJob, resumeJob, updateJob, executeJob, getJobTypeNames } = jobInfoStore;
 
 const jobGroupStore = useJobGroupStore();
-const { allGroupList } = storeToRefs(jobGroupStore);
-const { getAllGroupList } = jobGroupStore;
+const { allGroupList, bindingList } = storeToRefs(jobGroupStore);
+const { getAllGroupList, getBindingList } = jobGroupStore;
+
+const actuatorStore = useActuatorStore();
+const { actuatorClusterList } = storeToRefs(actuatorStore);
+const { getAllClusters } = actuatorStore;
 
 const { toClipboard } = useClipboard()
 
@@ -507,10 +512,18 @@ nodes:
     }
 );
 
+// 获取集群对应支持的任务类型
+const getClusterTypeNamesList = async () => {
+    await getAllClusters()
+    getJobTypeNames(actuatorClusterList.value);
+}
+
 
 onMounted(() => {
     queryJobInfoListPaging(paginationOpt);
     getGroupOptions();
+    getClusterTypeNamesList();
+    getBindingList();  // 任务组绑定信息
 });
 </script>
 
@@ -586,6 +599,8 @@ onMounted(() => {
                                         <a-col :span="12">
                                             <a-form-item label="任务命令类型:" name="jobCommandType" placeholder="任务命令类型">
                                                 <a-select ref="select" v-model:value="formStateCreateJob.jobCommandType">
+                                                    <!-- TODO：任务类型拉取 -->
+                                                    <!-- <a-select-option v-for="item in jobTypeNames['hodor-actuator-agent']" :value=item></a-select-option> -->
                                                     <a-select-option value="java"></a-select-option>
                                                 </a-select>
                                             </a-form-item>

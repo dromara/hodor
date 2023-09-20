@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, reactive } from 'vue'
-import { queryJobInfoListPagingAPI, createJobAPI, deleteGroupAPI, stopJobAPI, resumeJobAPI,updateJobAPI,executeJobAPI } from '@/apis/job/jobInfo'
+import { queryJobInfoListPagingAPI, createJobAPI, deleteGroupAPI, stopJobAPI, resumeJobAPI,updateJobAPI,executeJobAPI, getJobTypeNamesAPI } from '@/apis/job/jobInfo'
 import { message } from 'ant-design-vue';
 import { timeTransfer } from '@/utils/timeUtil';
 
@@ -121,9 +121,19 @@ export const useJobInfoStore = defineStore('jobInfo', () => {
         }
     }
 
+    // 获取任务类型
+    const jobTypeNames = ref({})
+    const getJobTypeNames = async (clusterNames) => {
+        for (let cn of clusterNames) {
+            let res = await getJobTypeNamesAPI(cn)
+            jobTypeNames.value[cn] = res.data
+        }
+    }
+
     return {
         jobInfoList,
         paginationOpt,
+        jobTypeNames,
         getJobInfoList,
         createJob,
         deleteJob,
@@ -131,5 +141,6 @@ export const useJobInfoStore = defineStore('jobInfo', () => {
         resumeJob,
         updateJob,
         executeJob,
+        getJobTypeNames,
     }
 })
