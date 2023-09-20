@@ -599,9 +599,8 @@ onMounted(() => {
                                         <a-col :span="12">
                                             <a-form-item label="任务命令类型:" name="jobCommandType" placeholder="任务命令类型">
                                                 <a-select ref="select" v-model:value="formStateCreateJob.jobCommandType">
-                                                    <!-- TODO：任务类型拉取 -->
-                                                    <!-- <a-select-option v-for="item in jobTypeNames['hodor-actuator-agent']" :value=item></a-select-option> -->
-                                                    <a-select-option value="java"></a-select-option>
+                                                    <a-select-option v-for="item in jobTypeNames[bindingList[formStateCreateJob.groupName]]" :value=item></a-select-option>
+                                                    <!-- <a-select-option value="java"></a-select-option> -->
                                                 </a-select>
                                             </a-form-item>
                                         </a-col>
