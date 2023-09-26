@@ -29,6 +29,7 @@ hodor-scheduler
 │  ├─hodor-actuator-api                         # 执行器扩展接口
 │  ├─hodor-actuator-java                        # jar包方式任务执行器
 │  ├─hodor-actuator-agent                       # 独立进程方式任务执行器
+│  ├─hodor-actuator-xxljob                      # 支持xxl-job执行器
 │  └─hodor-actuator-schedulerx                  # 支持scheduleX2.0执行器（TODO）
 ├─hodor-admin                                   # hodor管理控制台（TODO）
 ├─hodor-client                                  # 提供与hodor server的交互sdk
