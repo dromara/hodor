@@ -139,4 +139,12 @@ public interface JobInfoService {
      * @return 任务列表
      */
     PageInfo<JobInfo> queryByPage(JobInfo jobInfo, Integer pageNo, Integer pageSize);
+
+    /**
+     * 可运行任务
+     *
+     * @param jobInfo 任务信息
+     * @return true 可运行，false不可运行
+     */
+    boolean runnableJob(JobInfo jobInfo);
 }

@@ -95,7 +95,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
         response.setRequestId(requestId);
         response.setJobKey(jobKey);
         response.setStatus(JobExecuteStatus.FAILED);
-        response.setCompleteTime(DateUtil.formatDateTime(new Date()));
+        response.setCompleteTime(DateUtil.now());
         response.setComments(exceptionStack);
         retryableSendMessage(RemotingResponse.succeeded(response));
     }
@@ -103,7 +103,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
     public void sendStartExecuteResponse(final JobExecuteRequest request) {
         JobExecuteResponse response = buildResponse(request);
         response.setStatus(JobExecuteStatus.RUNNING);
-        response.setStartTime(DateUtil.formatDateTime(new Date()));
+        response.setStartTime(DateUtil.now());
 
         Map<String, Object> attachment = getRequestContext().requestHeader().getAttachment();
         HodorJobExecution runningJobExecution = HodorJobExecution.createRunningJobExecution(request.getRequestId(), request.getGroupName(),

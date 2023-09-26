@@ -150,7 +150,7 @@ public class SchedulerResource {
     public HodorResult<String> batchCreateJob(List<JobDesc> jobs) {
         for (JobDesc jobInstance : jobs) {
             JobInfo jobInfo = convertJobInfo(jobInstance);
-            if (!jobInfoService.isRunningJob(jobInfo)) {
+            if (jobInfoService.runnableJob(jobInfo)) {
                 HodorResult<String> result = createJob(jobInfo);
                 log.info("Create job result: {}", result);
             }

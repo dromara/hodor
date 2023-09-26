@@ -17,8 +17,9 @@
 
 package org.dromara.hodor.admin.service.impl;
 
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.admin.core.MsgCode;
 import org.dromara.hodor.admin.exception.ServiceException;
@@ -36,10 +37,6 @@ import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.model.job.JobKey;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * JobOperatorServiceImpl
