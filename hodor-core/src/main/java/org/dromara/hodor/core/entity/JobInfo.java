@@ -28,6 +28,8 @@ public class JobInfo extends JobDesc {
 
     private Date createTime;
 
+    private Date updateTime;
+
     private String jobDataPath;
 
     private String jobDesc;

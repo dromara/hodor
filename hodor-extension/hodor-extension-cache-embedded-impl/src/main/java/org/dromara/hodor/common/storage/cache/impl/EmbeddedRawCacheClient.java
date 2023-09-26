@@ -47,6 +47,9 @@ public class EmbeddedRawCacheClient<K, V> implements CacheClient<K, V> {
             final Pair<String, K> keyPair = new Pair<>(cacheGroup, key);
             final byte[] valueBytes = hodorKVClient.kvOperator(tableName)
                 .get(ProtostuffUtils.serialize(keyPair));
+            if (valueBytes == null) {
+                return null;
+            }
             final Pair<V, Long> valuePair = ProtostuffUtils.deserialize(valueBytes, Pair.class);
             if (valuePair == null) {
                 return null;

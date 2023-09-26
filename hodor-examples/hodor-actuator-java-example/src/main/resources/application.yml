@@ -8,7 +8,7 @@ hodor:
   commons:
     appName: hodor-client
     appKey: 1234567
-    port: 46367
+    port: 46368
     registryAddress: http://localhost:8081,localhost:8082,localhost:8083/hodor
     queueSize: 5000
     poolSize: 500

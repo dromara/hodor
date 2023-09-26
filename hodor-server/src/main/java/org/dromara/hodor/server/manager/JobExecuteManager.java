@@ -121,7 +121,7 @@ public class JobExecuteManager {
         jobExecDetail.setGroupName(jobDesc.getGroupName());
         jobExecDetail.setJobName(jobDesc.getJobName());
         jobExecDetail.setSchedulerEndpoint(StringUtils.splitToList(context.getSchedulerName(), StringUtils.UNDER_LINE_SEPARATOR).get(1));
-        jobExecDetail.setScheduleStart(DateUtil.date(new Date()));
+        jobExecDetail.setScheduleStart(DateUtil.date());
         jobExecDetail.setExecuteStatus(JobExecuteStatus.READY);
         return jobExecDetail;
     }
@@ -131,7 +131,7 @@ public class JobExecuteManager {
         jobExecDetail.setId(context.getRequestId());
         jobExecDetail.setGroupName(context.getJobKey().getGroupName());
         jobExecDetail.setJobName(context.getJobKey().getJobName());
-        jobExecDetail.setScheduleEnd(DateUtil.date(new Date()));
+        jobExecDetail.setScheduleEnd(DateUtil.date());
         jobExecDetail.setActuatorEndpoint(host.getEndpoint());
         jobExecDetail.setExecuteStatus(JobExecuteStatus.PENDING);
         return jobExecDetail;

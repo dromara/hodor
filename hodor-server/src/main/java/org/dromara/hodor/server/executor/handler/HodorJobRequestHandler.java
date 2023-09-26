@@ -58,12 +58,12 @@ public class HodorJobRequestHandler implements RequestHandler {
     }
 
     public void preHandle(final HodorJobExecutionContext context) {
-        JobExecuteManager.getInstance().addSchedulerStartJob(context);
         // check job is running
         final JobKey jobKey = context.getJobKey();
         if (JobExecuteManager.getInstance().isRunning(jobKey)) {
             throw new IllegalJobExecuteStateException("The job {} is running", jobKey);
         }
+        JobExecuteManager.getInstance().addSchedulerStartJob(context);
         // check available hosts
         final List<Host> hosts = actuatorNodeManager.getAvailableHosts(jobKey);
         if (hosts.isEmpty()) {
