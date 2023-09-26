@@ -35,6 +35,8 @@ CREATE TABLE `hodor_job_info` (
   `next_execute_time` datetime DEFAULT NULL COMMENT '下一次执行时间',
   `prev_execute_time` datetime DEFAULT NULL COMMENT '最近一次执行时间',
   `create_time` datetime DEFAULT NULL COMMENT '任务创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '任务更新时间',
+  `start_time` datetime DEFAULT NULL COMMENT '任务开始时间',
   `end_time` datetime DEFAULT NULL COMMENT '任务结束时间',
   `priority` int(11) NOT NULL DEFAULT 0 COMMENT '任务优先级，0：低，1：中，2：高；默认0',
   `job_data_path` varchar(255) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '任务的jar，sql文件，sh文件信息等',
