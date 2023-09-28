@@ -21,6 +21,7 @@ import org.dromara.hodor.core.mapper.FlowJobInfoMapper;
 import org.dromara.hodor.core.service.FlowJobInfoService;
 import org.dromara.hodor.model.enums.JobStatus;
 import org.dromara.hodor.model.enums.JobType;
+import org.dromara.hodor.model.enums.TimeType;
 import org.dromara.hodor.model.job.JobKey;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,7 +75,8 @@ public class FlowJobInfoServiceImpl implements FlowJobInfoService {
         rootFlowJobInfo.setJobName(jobName);
         rootFlowJobInfo.setJobType(JobType.WORKFLOW_JOB);
         rootFlowJobInfo.setJobCommandType(jobConfigWrapper.getString(Constants.JobConstants.COMMAND_TYPE_KEY));
-        rootFlowJobInfo.setCron(jobConfigWrapper.getString(Constants.JobConstants.CRON_KEY, CronUtils.CRON_DISABLED));
+        rootFlowJobInfo.setTimeType(TimeType.ofName(jobConfigWrapper.getString(Constants.JobConstants.TIME_TYPE_KEY)));
+        rootFlowJobInfo.setTimeExp(jobConfigWrapper.getString(Constants.JobConstants.TIME_EXP_KEY));
         rootFlowJobInfo.setJobStatus(JobStatus.READY);
         rootFlowJobInfo.setHashId(HashUtils.hash(rootFlowJobInfo.getGroupName() + rootFlowJobInfo.getJobName()));
         jobInfoService.addJobIfAbsent(rootFlowJobInfo);

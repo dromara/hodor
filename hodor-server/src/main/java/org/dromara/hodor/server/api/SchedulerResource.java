@@ -3,7 +3,6 @@ package org.dromara.hodor.server.api;
 import cn.hutool.core.lang.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
-import org.dromara.hodor.common.cron.CronUtils;
 import org.dromara.hodor.common.utils.DateUtils;
 import org.dromara.hodor.common.utils.HashUtils;
 import org.dromara.hodor.common.utils.SerializeUtils;
@@ -17,6 +16,7 @@ import org.dromara.hodor.model.common.HodorResult;
 import org.dromara.hodor.model.enums.JobStatus;
 import org.dromara.hodor.model.enums.JobType;
 import org.dromara.hodor.model.enums.Priority;
+import org.dromara.hodor.model.enums.TimeType;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.model.scheduler.CopySet;
@@ -137,7 +137,7 @@ public class SchedulerResource {
         if (!jobInfoService.isExists(jobInfo)) {
             jobInfoService.addJob(jobInfo);
         }
-        if (CronUtils.isDisabledCron(jobInfo.getCron())) {
+        if (TimeType.NONE == jobInfo.getTimeType()) {
             jobInfoService.updateJobStatus(jobInfo, JobStatus.RUNNING);
             return HodorResult.success("createJob success");
         }
@@ -282,7 +282,7 @@ public class SchedulerResource {
                     return HodorResult.failure(StringUtils.format("execute job {} failure, current scheduler server {} is not leader",
                         JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName()), serverEndpoint));
                 }
-                if (jobInfo.getJobType() == JobType.COMMON_JOB) {
+                if (jobInfo.getTimeType() == TimeType.NONE) {
                     HodorJobExecutionContext executionContext = new HodorJobExecutionContext(null, jobInfo, schedulerName, DateUtils.nowDate());
                     JobExecutor jobExecutor = JobExecutorTypeManager.getInstance().getJobExecutor(jobInfo.getJobType());
                     jobExecutor.execute(executionContext);
@@ -325,15 +325,14 @@ public class SchedulerResource {
     private void checkJobInfo(JobInfo jobInfo) {
         String groupName = jobInfo.getGroupName();
         String jobName = jobInfo.getJobName();
-        String cron = jobInfo.getCron();
+        String timeExp = jobInfo.getTimeExp();
         Priority priority = jobInfo.getPriority();
         Long hashId = jobInfo.getHashId();
         Assert.notBlank(groupName, "group name must be not null");
         Assert.notBlank(jobName, "job name must be not null");
-        Assert.notBlank(cron, "cron must be not null");
+        Assert.notBlank(timeExp, "cron must be not null");
         Assert.notNull(priority, "priority must be not null");
         Assert.notNull(hashId, "hashId must be not null");
-        CronUtils.assertValidCron(cron, "cron {} is invalid", cron);
     }
 
     private void forwardDoJobCommand(String server, JobCommand<JobInfo> jobCommand) {
@@ -371,11 +370,11 @@ public class SchedulerResource {
         jobInfo.setJobName(job.getJobName());
         jobInfo.setJobCommandType(job.getJobCommandType());
         jobInfo.setJobStatus(JobStatus.READY);
-        jobInfo.setCron(job.getCron());
+        jobInfo.setTimeType(job.getTimeType());
+        jobInfo.setTimeExp(job.getTimeExp());
         jobInfo.setTimeout(job.getTimeout());
         jobInfo.setFireNow(job.getFireNow());
-        jobInfo.setIsBroadcast(job.getIsBroadcast());
-        jobInfo.setJobType(JobType.TIME_JOB);
+        jobInfo.setJobType(JobType.COMMON_JOB);
         jobInfo.setPriority(Priority.DEFAULT);
         return jobInfo;
     }

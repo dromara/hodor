@@ -33,7 +33,7 @@ public enum JobStatus {
         return value;
     }
 
-    public static JobStatus to(int value) {
+    public static JobStatus of(int value) {
         JobStatus status = null;
         switch (value) {
             case 0:

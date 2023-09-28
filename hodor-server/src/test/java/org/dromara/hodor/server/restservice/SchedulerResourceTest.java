@@ -8,6 +8,7 @@ import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.model.enums.Priority;
+import org.dromara.hodor.model.enums.TimeType;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.remoting.api.http.HodorHttpRequest;
@@ -29,7 +30,8 @@ public class SchedulerResourceTest {
         JobInfo jobInfo = new JobInfo();
         jobInfo.setGroupName("testGroup");
         jobInfo.setJobName("test3");
-        jobInfo.setCron("0/5 * * * * ?");
+        jobInfo.setTimeType(TimeType.CRON);
+        jobInfo.setTimeExp("0/5 * * * * ?");
         jobInfo.setPriority(Priority.DEFAULT);
         String server = "127.0.0.1:8081";
 

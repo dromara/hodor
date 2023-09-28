@@ -27,9 +27,11 @@ public interface Constants {
 
     class JobConstants {
 
-        public static final String CRON_KEY = "cron";
+        public static final String TIME_TYPE_KEY = "timeType";
 
-        public static final String COMMAND_TYPE_KEY = "jobCommandType";
+        public static final String TIME_EXP_KEY = "timeExp";
+
+        public static final String COMMAND_TYPE_KEY = "commandType";
 
     }
 
@@ -67,6 +69,5 @@ public interface Constants {
         public static final String RAW_DATA = "rawData";
 
     }
-
 
 }

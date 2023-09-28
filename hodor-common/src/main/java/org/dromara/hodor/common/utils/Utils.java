@@ -21,6 +21,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.util.ReflectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.system.SystemUtil;
@@ -30,6 +31,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.function.Supplier;
 import oshi.hardware.GlobalMemory;
 
 /**
@@ -44,6 +46,23 @@ public class Utils {
 
     public static class Assert extends cn.hutool.core.lang.Assert {
 
+        public static long validLong(String longStr, String errorMsgTemplate, String... params) {
+            long result;
+            try {
+                result = Long.parseLong(longStr);
+            } catch (Exception e) {
+                throw new IllegalArgumentException(StrUtil.format(errorMsgTemplate, (Object[]) params));
+            }
+            return result;
+        }
+
+        public static <T> T validParse(Supplier<? extends T> supplier, String errorMsgTemplate, String... params) {
+            try {
+                return supplier.get();
+            } catch (Exception e) {
+                throw new IllegalArgumentException(StrUtil.format(errorMsgTemplate, (Object[]) params));
+            }
+        }
     }
 
     public static class Https extends HttpUtil {

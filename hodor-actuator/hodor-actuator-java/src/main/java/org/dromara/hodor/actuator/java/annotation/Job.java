@@ -28,6 +28,12 @@ public @interface Job {
 
     String commandType() default "java";
 
+    String zone() default "";
+
+    int fixedDelay() default -1;
+
+    int fixedRate() default -1;
+
     /**
      * cron 表达式
      */

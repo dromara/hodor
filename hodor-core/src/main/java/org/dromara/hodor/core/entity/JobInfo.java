@@ -20,8 +20,6 @@ public class JobInfo extends JobDesc {
 
     private JobStatus jobStatus;
 
-    private Date activeTime;
-
     private Date nextExecuteTime;
 
     private Date prevExecuteTime;

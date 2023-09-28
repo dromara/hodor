@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.dromara.hodor.model.enums.JobType;
 import org.dromara.hodor.model.enums.Priority;
+import org.dromara.hodor.model.enums.TimeType;
 
 /**
  * job info describe
@@ -20,62 +21,70 @@ import org.dromara.hodor.model.enums.Priority;
 @AllArgsConstructor
 public class JobDesc {
 
-  private Long id;
+    private Long id;
 
-  private Long hashId;
+    private Long hashId;
 
-  private String jobCategory;
+    private String jobCategory;
 
-  private String groupName;
+    private String groupName;
 
-  private String jobName;
+    private String jobName;
 
-  /**
-   * 任务类型：普通任务、定时任务、工作流任务
-   */
-  private JobType jobType;
+    /**
+     * 调度策略
+     */
+    private String scheduleStrategy;
 
-  private String jobPath;
+    /**
+     * 调度策略表达式
+     */
+    private String scheduleExp;
 
-  /**
-   * 任务命令类型：java、shell、python等，根据执行器支持执行的任务
-   */
-  private String jobCommandType;
+    /**
+     * 任务类型：普通任务、定时任务、工作流任务
+     */
+    private JobType jobType;
 
-  private String jobCommand;
+    private String jobPath;
 
-  private Priority priority;
+    /**
+     * 任务命令类型：java、shell、python等，根据执行器支持执行的任务
+     */
+    private String jobCommandType;
 
-  private Boolean isDependence;
+    private String jobCommand;
 
-  private String cron;
+    private Priority priority;
 
-  private Integer shardingCount;
+    private TimeType timeType;
 
-  private String jobParameters;
+    private String timeExp;
 
-  private String extensibleParameters;
+    private String timeZone;
 
-  private Boolean failover;
+    private Integer shardingCount;
 
-  private Boolean misfire;
+    private String jobParameters;
 
-  private Boolean fireNow;
+    private String extensibleParameters;
 
-  private Boolean isOnce;
+    private Boolean failover;
 
-  private Boolean isBroadcast;
+    private Boolean misfire;
 
-  private String slaveIp;
+    private Boolean fireNow;
 
-  private Integer timeout;
+    private String slaveIp;
 
-  private Date startTime;
+    private Integer timeout;
 
-  private Date endTime;
+    private Date startTime;
 
-  private Integer retryCount;
+    private Date endTime;
 
-  private Integer version;
+    private Integer retryCount;
+
+    private Integer version;
 
 }

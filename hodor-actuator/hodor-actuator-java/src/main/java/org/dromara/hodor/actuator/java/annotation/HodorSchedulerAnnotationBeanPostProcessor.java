@@ -13,6 +13,7 @@ import org.dromara.hodor.actuator.api.JobRegister;
 import org.dromara.hodor.actuator.api.core.JobInstance;
 import org.dromara.hodor.actuator.java.core.ScheduledMethodRunnable;
 import org.dromara.hodor.actuator.java.job.JavaJob;
+import org.dromara.hodor.model.enums.TimeType;
 import org.dromara.hodor.model.job.JobDesc;
 import org.springframework.aop.framework.AopInfrastructureBean;
 import org.springframework.aop.framework.AopProxyUtils;
@@ -133,19 +134,32 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
 
         // check cron expresion
         String cron = job.cron();
-        if (StringUtils.hasText(cron)) {
+        if (StringUtils.hasText(cron) && !Scheduled.CRON_DISABLED.equals(cron)) {
             if (this.embeddedValueResolver != null) {
                 cron = this.embeddedValueResolver.resolveStringValue(cron);
                 // TODO: 时区先不考虑
                 //zone = this.embeddedValueResolver.resolveStringValue(zone);
             }
-            if (StringUtils.hasLength(cron) && !Scheduled.CRON_DISABLED.equals(cron)) {
-                Assert.isTrue(CronExpression.isValidExpression(cron), String.format("cron [%s] xpression is invalid.", cron));
+            if (StringUtils.hasLength(cron)) {
+                Assert.isTrue(CronExpression.isValidExpression(cron), String.format("cron [%s] expression is invalid.", cron));
             }
+        }
+        TimeType timeType = TimeType.CRON;
+        String timeExp = cron;
+
+        if (Scheduled.CRON_DISABLED.equals(cron)) {
+            timeType = TimeType.NONE;
+        } else if (job.fixedDelay() > -1) {
+            timeType = TimeType.FIXED_DELAY;
+            timeExp = String.valueOf(job.fixedDelay());
+        } else if (job.fixedRate() > -1) {
+            timeType = TimeType.FIXED_RATE;
+            timeExp = String.valueOf(job.fixedRate());
+        } else {
+            throw new IllegalArgumentException("@Job config is invalid");
         }
 
         boolean fireNow = job.fireNow();
-        boolean broadcast = job.isBroadcast();
         int timeout = job.timeout();
         String commandType = job.commandType();
 
@@ -153,9 +167,9 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
             .groupName(groupName)
             .jobName(jobName)
             .jobCommandType(commandType)
-            .cron(cron)
+            .timeType(timeType)
+            .timeExp(timeExp)
             .fireNow(fireNow)
-            .isBroadcast(broadcast)
             .timeout(timeout)
             .build();
 

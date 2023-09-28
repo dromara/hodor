@@ -15,6 +15,7 @@ import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.core.mapper.JobInfoMapper;
 import org.dromara.hodor.core.service.JobInfoService;
 import org.dromara.hodor.model.enums.JobStatus;
+import org.dromara.hodor.model.enums.TimeType;
 import org.dromara.hodor.model.scheduler.DataInterval;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -91,7 +92,9 @@ public class JobInfoServiceImpl implements JobInfoService {
     public List<JobInfo> queryJobInfoByDataInterval(DataInterval dataInterval, JobStatus jobStatus) {
         return jobInfoMapper.selectList(Wrappers.<JobInfo>lambdaQuery()
             .eq(JobInfo::getJobStatus, jobStatus)
-            .ne(JobInfo::getCron, CronUtils.CRON_DISABLED) // cron expression is not null
+            .ne(JobInfo::getTimeType, TimeType.NONE)
+            //.eq(JobInfo::getTimeType, TimeType.CRON)
+            //.ne(JobInfo::getTimeExp, CronUtils.CRON_DISABLED)// cron expression is not null
             .ge(JobInfo::getHashId, dataInterval.getStartInterval())
             .lt(JobInfo::getHashId, dataInterval.getEndInterval()));
     }

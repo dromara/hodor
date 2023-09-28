@@ -11,15 +11,12 @@ import org.dromara.hodor.scheduler.api.HodorScheduler;
 import org.dromara.hodor.scheduler.api.JobExecutor;
 import org.dromara.hodor.scheduler.api.common.SchedulerConfig;
 import org.dromara.hodor.scheduler.api.exception.HodorSchedulerException;
-import org.quartz.CronScheduleBuilder;
-import org.quartz.CronTrigger;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
 import org.quartz.core.QuartzSchedulerResources;
 import org.quartz.impl.StdSchedulerFactory;
@@ -39,7 +36,10 @@ public class QuartzScheduler implements HodorScheduler {
     private final ReentrantLock lock;
     private final StdSchedulerFactory factory;
 
+    private final QuartzTrigger quartzTrigger;
+
     public QuartzScheduler() {
+        quartzTrigger = new QuartzTrigger();
         factory = new StdSchedulerFactory();
         lock = new ReentrantLock();
     }
@@ -119,18 +119,19 @@ public class QuartzScheduler implements HodorScheduler {
         if (checkExists(jobDesc)) {
             JobKey jobKey = JobKey.jobKey(jobDesc.getJobName(), jobDesc.getGroupName());
             try {
-                TriggerKey triggerKey = new TriggerKey(jobDesc.getJobName(), jobDesc.getGroupName());
                 JobDetail jobDetail = scheduler.getJobDetail(jobKey);
                 JobDesc oldJobDesc = (JobDesc)jobDetail.getJobDataMap().get("jobDesc");
                 jobDetail.getJobDataMap().put("jobExecutor", jobExecutor);
                 jobDetail.getJobDataMap().put("jobDesc", jobDesc);
+
+                TriggerKey triggerKey = new TriggerKey(jobDesc.getJobName(), jobDesc.getGroupName());
                 if (scheduler.checkExists(triggerKey)) {
-                    if (!StringUtils.equalsIgnoreCase(jobDesc.getCron(), oldJobDesc.getCron())) {
-                        Trigger trigger = buildTrigger(jobDesc, jobDetail);
+                    if (!StringUtils.equalsIgnoreCase(jobDesc.getTimeExp(), oldJobDesc.getTimeExp())) {
+                        Trigger trigger = quartzTrigger.buildTrigger(jobDesc, jobDetail);
                         scheduler.rescheduleJob(triggerKey, trigger);
                     }
                 } else {
-                    Trigger trigger = buildTrigger(jobDesc, jobDetail);
+                    Trigger trigger = quartzTrigger.buildTrigger(jobDesc, jobDetail);
                     scheduler.scheduleJob(trigger);
                 }
 
@@ -144,14 +145,12 @@ public class QuartzScheduler implements HodorScheduler {
                 .withIdentity(jobDesc.getJobName(), jobDesc.getGroupName())
                 .requestRecovery(true)
                 .build();
-
         jobDetail.getJobDataMap().put("schedulerName", schedulerName);
         jobDetail.getJobDataMap().put("jobExecutor", jobExecutor);
         jobDetail.getJobDataMap().put("jobDesc", jobDesc);
 
-        Trigger trigger = buildTrigger(jobDesc, jobDetail);
-
         try {
+            Trigger trigger = quartzTrigger.buildTrigger(jobDesc, jobDetail);
             scheduler.scheduleJob(jobDetail, trigger);
             if (jobDesc.getFireNow()) {
                 scheduler.triggerJob(jobDetail.getKey());
@@ -159,21 +158,6 @@ public class QuartzScheduler implements HodorScheduler {
         } catch (SchedulerException e) {
             throw new HodorSchedulerException(e);
         }
-    }
-
-    private static Trigger buildTrigger(JobDesc jobDesc, JobDetail jobDetail) {
-        TriggerBuilder<CronTrigger> triggerBuilder = TriggerBuilder.newTrigger()
-            .withIdentity(jobDesc.getJobName(), jobDesc.getGroupName())
-            .withSchedule(CronScheduleBuilder.cronSchedule(jobDesc.getCron()).withMisfireHandlingInstructionDoNothing())
-            .withPriority(jobDesc.getPriority().getValue())
-            .forJob(jobDetail);
-        if (jobDesc.getFireNow()) {
-            triggerBuilder = triggerBuilder.startNow();
-        }
-        if (jobDesc.getEndTime() != null) {
-            triggerBuilder = triggerBuilder.endAt(jobDesc.getEndTime());
-        }
-        return triggerBuilder.build();
     }
 
     @Override
