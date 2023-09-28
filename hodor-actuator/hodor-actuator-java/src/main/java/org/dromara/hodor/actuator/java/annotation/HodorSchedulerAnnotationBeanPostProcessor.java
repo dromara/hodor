@@ -155,8 +155,6 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
         } else if (job.fixedRate() > -1) {
             timeType = TimeType.FIXED_RATE;
             timeExp = String.valueOf(job.fixedRate());
-        } else {
-            throw new IllegalArgumentException("@Job config is invalid");
         }
 
         boolean fireNow = job.fireNow();
