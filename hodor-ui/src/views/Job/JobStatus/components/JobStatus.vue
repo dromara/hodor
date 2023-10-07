@@ -160,6 +160,7 @@ const getLogData = async (jobStatusInfo) => {
   if (actuatorEndpoint) {
     while (logOpt.value.offset < logOpt.value.length) {
       await getExecuteLog(params);
+      params.offset = logOpt.value.length;
       if (logOpt.value.logData !== null) {
         logData.value += logOpt.value.logData;
       }

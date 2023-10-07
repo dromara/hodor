@@ -81,8 +81,8 @@ export const useJobStatusStore = defineStore('jobStatus', () => {
         const {offset, length, logData} = res.data;
         if (res.successful === true) {
             logOpt.logData = logData;
-            logOpt.offset = offset + params.length;
-            logOpt.length = length
+            logOpt.offset = offset;
+            logOpt.length = length;
         } else {
             message.error("获取执行日志失败")
         }
