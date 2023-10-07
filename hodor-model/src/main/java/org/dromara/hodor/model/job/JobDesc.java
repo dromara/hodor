@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.dromara.hodor.model.enums.JobType;
 import org.dromara.hodor.model.enums.Priority;
+import org.dromara.hodor.model.enums.ScheduleStrategy;
 import org.dromara.hodor.model.enums.TimeType;
 
 /**
@@ -34,7 +35,7 @@ public class JobDesc {
     /**
      * 调度策略
      */
-    private String scheduleStrategy;
+    private ScheduleStrategy scheduleStrategy;
 
     /**
      * 调度策略表达式
@@ -74,8 +75,6 @@ public class JobDesc {
     private Boolean misfire;
 
     private Boolean fireNow;
-
-    private String slaveIp;
 
     private Integer timeout;
 

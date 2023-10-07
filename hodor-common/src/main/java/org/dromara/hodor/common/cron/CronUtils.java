@@ -2,6 +2,8 @@ package org.dromara.hodor.common.cron;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.cron.pattern.CronPattern;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.dromara.hodor.common.utils.Utils.Assert;
 
 /**
@@ -40,4 +42,13 @@ public class CronUtils {
         return CRON_DISABLED.equals(cron);
     }
 
+    public static String parseCron(Date date) {
+        String dateFormat = "ss mm HH dd MM ? yyyy";
+        SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+        String formatTimeStr = null;
+        if (date != null) {
+            formatTimeStr = sdf.format(date);
+        }
+        return formatTimeStr;
+    }
 }

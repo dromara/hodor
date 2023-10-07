@@ -328,9 +328,12 @@ public class SchedulerResource {
         String timeExp = jobInfo.getTimeExp();
         Priority priority = jobInfo.getPriority();
         Long hashId = jobInfo.getHashId();
+
         Assert.notBlank(groupName, "group name must be not null");
         Assert.notBlank(jobName, "job name must be not null");
-        Assert.notBlank(timeExp, "cron must be not null");
+        if (jobInfo.getTimeType() != TimeType.NONE) {
+            Assert.notBlank(timeExp, "cron must be not null");
+        }
         Assert.notNull(priority, "priority must be not null");
         Assert.notNull(hashId, "hashId must be not null");
     }

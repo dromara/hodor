@@ -17,8 +17,10 @@
 
 package org.dromara.hodor.scheduler.quartz;
 
+import cn.hutool.core.date.DateTime;
 import java.util.Date;
 import org.dromara.hodor.common.cron.CronUtils;
+import org.dromara.hodor.common.utils.DateUtils;
 import org.dromara.hodor.common.utils.Utils;
 import org.dromara.hodor.model.enums.TimeType;
 import org.dromara.hodor.model.job.JobDesc;
@@ -62,37 +64,7 @@ public class QuartzTrigger {
         final String cron = jobDesc.getTimeExp();
         CronUtils.assertValidCron(cron, "The cron {} expression is invalid", cron);
 
-        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron)
-            .withMisfireHandlingInstructionDoNothing();
-        if (jobDesc.getMisfire()) {
-            cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron)
-                .withMisfireHandlingInstructionFireAndProceed();
-        }
-
-        TriggerBuilder<CronTrigger> triggerBuilder = TriggerBuilder.newTrigger()
-            .withIdentity(jobDesc.getJobName(), jobDesc.getGroupName())
-            .withSchedule(cronScheduleBuilder)
-            .withPriority(jobDesc.getPriority().getValue())
-            .forJob(jobDetail);
-
-        Date startTime = jobDesc.getStartTime();
-        Date endTime = jobDesc.getEndTime();
-
-        if (jobDesc.getFireNow() && startTime == null) {
-            triggerBuilder = triggerBuilder.startNow();
-        }
-
-        if (startTime != null) {
-            Date currentTime = new Date();
-            if (startTime.before(currentTime)) {
-                startTime = currentTime;
-            }
-            triggerBuilder = triggerBuilder.startAt(startTime);
-        }
-        if (endTime != null) {
-            triggerBuilder = triggerBuilder.endAt(endTime);
-        }
-        return triggerBuilder.build();
+        return buildCronTrigger(jobDesc, jobDetail, cron);
     }
 
     private Trigger buildFixedDelayTrigger(JobDesc jobDesc, JobDetail jobDetail) {
@@ -117,6 +89,73 @@ public class QuartzTrigger {
             .withPriority(jobDesc.getPriority().getValue())
             .forJob(jobDetail);
 
+        triggerBuilder = configTriggerTimeBuilder(jobDesc, triggerBuilder);
+        return triggerBuilder.build();
+    }
+
+    private Trigger buildFixedRateTrigger(JobDesc jobDesc, JobDetail jobDetail) {
+        final TimeType timeType = jobDesc.getTimeType();
+        if (!TimeType.FIXED_RATE.equals(timeType)) {
+            throw new IllegalArgumentException("current time type not FIXED_RATE type, " + timeType.getDescription());
+        }
+        final String fixedRate = jobDesc.getTimeExp();
+        final Integer fixedRateSecond = Utils.Assert.validParse(() -> Integer.parseInt(fixedRate) / 1000,
+            "The fixedDelay {} expression is invalid", fixedRate);
+
+        SimpleScheduleBuilder simpleScheduleBuilder = SimpleScheduleBuilder.repeatSecondlyForTotalCount(1, fixedRateSecond)
+            .withMisfireHandlingInstructionIgnoreMisfires();
+        if (jobDesc.getMisfire()) {
+            simpleScheduleBuilder = SimpleScheduleBuilder.repeatSecondlyForTotalCount(1, fixedRateSecond)
+                .withMisfireHandlingInstructionFireNow();
+        }
+
+        TriggerBuilder<SimpleTrigger> triggerBuilder = TriggerBuilder.newTrigger()
+            .withIdentity(jobDesc.getJobName(), jobDesc.getGroupName())
+            .withSchedule(simpleScheduleBuilder)
+            .withPriority(jobDesc.getPriority().getValue())
+            .forJob(jobDetail);
+
+        triggerBuilder = configTriggerTimeBuilder(jobDesc, triggerBuilder);
+        return triggerBuilder.build();
+    }
+
+    private Trigger buildOnceTrigger(JobDesc jobDesc, JobDetail jobDetail) {
+        final TimeType timeType = jobDesc.getTimeType();
+        if (!TimeType.ONCE_TIME.equals(timeType)) {
+            throw new IllegalArgumentException("current time type not ONCE_TIME type, " + timeType.getDescription());
+        }
+        final String onceTime = jobDesc.getTimeExp();
+        // "yyyy-MM-dd HH:mm:ss"
+        String cron;
+        try {
+            final DateTime dateTime = DateUtils.parseDateTime(onceTime);
+            cron = CronUtils.parseCron(dateTime);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("time expression is invalid, " + onceTime);
+        }
+
+        return buildCronTrigger(jobDesc, jobDetail, cron);
+    }
+
+    private static CronTrigger buildCronTrigger(JobDesc jobDesc, JobDetail jobDetail, String cron) {
+        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron)
+            .withMisfireHandlingInstructionDoNothing();
+        if (jobDesc.getMisfire()) {
+            cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron)
+                .withMisfireHandlingInstructionFireAndProceed();
+        }
+
+        TriggerBuilder<CronTrigger> triggerBuilder = TriggerBuilder.newTrigger()
+            .withIdentity(jobDesc.getJobName(), jobDesc.getGroupName())
+            .withSchedule(cronScheduleBuilder)
+            .withPriority(jobDesc.getPriority().getValue())
+            .forJob(jobDetail);
+
+        triggerBuilder = configTriggerTimeBuilder(jobDesc, triggerBuilder);
+        return triggerBuilder.build();
+    }
+
+    private static <T extends Trigger> TriggerBuilder<T> configTriggerTimeBuilder(JobDesc jobDesc, TriggerBuilder<T> triggerBuilder) {
         Date startTime = jobDesc.getStartTime();
         Date endTime = jobDesc.getEndTime();
 
@@ -134,14 +173,6 @@ public class QuartzTrigger {
         if (endTime != null) {
             triggerBuilder = triggerBuilder.endAt(endTime);
         }
-        return triggerBuilder.build();
-    }
-
-    private Trigger buildFixedRateTrigger(JobDesc jobDesc, JobDetail jobDetail) {
-        return null;
-    }
-
-    private Trigger buildOnceTrigger(JobDesc jobDesc, JobDetail jobDetail) {
-        return null;
+        return triggerBuilder;
     }
 }
