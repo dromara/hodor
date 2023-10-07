@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.actuator.api.JobRegister;
 import org.dromara.hodor.actuator.api.core.JobInstance;
 import org.dromara.hodor.actuator.java.ServiceProvider;
+import org.dromara.hodor.model.enums.TimeType;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.model.job.JobKey;
 import org.springframework.beans.BeansException;
@@ -45,7 +46,6 @@ public class XxlJobSpringExecutor implements ApplicationContextAware, SmartIniti
 
     @Override
     public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
-        ServiceProvider.getInstance().setApplicationContext(applicationContext);
         this.applicationContext = applicationContext;
     }
 
@@ -158,6 +158,7 @@ public class XxlJobSpringExecutor implements ApplicationContextAware, SmartIniti
 
         JobDesc jobDesc = JobDesc.builder()
             .groupName(beanName)
+            .timeType(TimeType.NONE)
             .jobName(jobName)
             .jobCommandType("java")
             .build();
