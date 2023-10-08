@@ -1,8 +1,10 @@
-package org.dromara.hodor.actuator.bigdata.job;
+package org.dromara.hodor.actuator.agent;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import org.dromara.hodor.actuator.agent.config.HodorActuatorAgentProperties;
+import org.dromara.hodor.actuator.agent.job.AgentJobRegister;
 import org.dromara.hodor.actuator.api.ExecutableJob;
 import org.dromara.hodor.actuator.api.config.HodorProperties;
 import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
@@ -10,11 +12,10 @@ import org.dromara.hodor.actuator.api.core.JobLogger;
 import org.dromara.hodor.actuator.api.core.JobLoggerManager;
 import org.dromara.hodor.actuator.api.utils.JobPathUtils;
 import org.dromara.hodor.actuator.api.utils.Props;
-import org.dromara.hodor.actuator.bigdata.config.HodorActuatorBigdataProperties;
-import org.dromara.hodor.actuator.bigdata.core.executor.CommonJobProperties;
-import org.dromara.hodor.actuator.bigdata.core.executor.Job;
-import org.dromara.hodor.actuator.bigdata.core.executor.NoopJob;
-import org.dromara.hodor.actuator.bigdata.core.jobtype.JobTypeManager;
+import org.dromara.hodor.actuator.jobtype.api.executor.CommonJobProperties;
+import org.dromara.hodor.actuator.jobtype.api.executor.Job;
+import org.dromara.hodor.actuator.jobtype.api.executor.NoopJob;
+import org.dromara.hodor.actuator.jobtype.api.jobtype.JobTypeManager;
 import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
@@ -53,10 +54,10 @@ public class BigdataExecutableJobTest {
         String jobPath = this.getClass().getResource("/sample_flow_01.zip").getPath();
 
         HodorProperties hodorProperties = Mockito.mock(HodorProperties.class);
-        HodorActuatorBigdataProperties properties = Mockito.mock(HodorActuatorBigdataProperties.class);
+        HodorActuatorAgentProperties properties = Mockito.mock(HodorActuatorAgentProperties.class);
         Mockito.when(hodorProperties.getDataPath()).thenReturn(dataPath);
         Mockito.when(hodorProperties.getAppName()).thenReturn("test_bigdata_actuator");
-        Mockito.when(properties.getBigdata()).thenReturn(new HashMap<>());
+        Mockito.when(properties.getAgentConfig()).thenReturn(new HashMap<>());
         Mockito.when(properties.getCommonProperties()).thenReturn(hodorProperties);
 
         RequestContext requestContext = Mockito.mock(RequestContext.class);
@@ -76,7 +77,7 @@ public class BigdataExecutableJobTest {
             .jobLogger(jobLogger)
             .build();
 
-        BigdataJobRegister register = new BigdataJobRegister(properties);
+        AgentJobRegister register = new AgentJobRegister(properties);
         ExecutableJob executableJob = register.provideExecutableJob(context);
         executableJob.execute(context);
         jobLoggerManager.stopJobLogger();

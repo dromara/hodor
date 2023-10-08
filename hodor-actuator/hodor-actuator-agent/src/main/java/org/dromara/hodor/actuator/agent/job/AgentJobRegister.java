@@ -68,7 +68,7 @@ public class AgentJobRegister implements JobRegister {
         Utils.Assert.notNull("jobtype plugins path must be not null", jobtypePath);
         String jobTypePluginDir = StringUtils.join(jobtypePath, File.separator, JobTypeManager.DEFAULT_JOBTYPEPLUGINDIR);
         Props globalProps = new Props();
-        globalProps.putAll(properties.getBigdata());
+        globalProps.putAll(properties.getAgentConfig());
         // TODO: 在JobTypeManager中修改读取任务类型逻辑
         this.jobTypeManager = new JobTypeManager(jobTypePluginDir, globalProps, getClass().getClassLoader());
         this.fileStorage = ExtensionLoader.getExtensionLoader(FileStorage.class).getDefaultJoin();

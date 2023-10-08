@@ -50,7 +50,7 @@ public class HodorActuatorAgentProperties {
         this.commons = commons;
     }
 
-    public Map<String, Object> getBigdata() {
+    public Map<String, Object> getAgentConfig() {
         return bigdata;
     }
 
