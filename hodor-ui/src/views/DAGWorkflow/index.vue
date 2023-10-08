@@ -1,9 +1,9 @@
 <script setup>
-
+import DAGWorkflow from './components/DAGWorkflow.vue'
 </script>
 
 <template>
     <div>
-        DAG任务流
+        <DAGWorkflow/>
     </div>
 </template>

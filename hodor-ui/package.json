@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@ant-design/icons-vue": "^6.1.0",
+    "@antv/x6": "^2.13.1",
+    "@antv/x6-vue-shape": "^2.1.1",
     "@codemirror/lang-javascript": "^6.1.9",
     "@codemirror/theme-one-dark": "^6.1.2",
     "ant-design-vue": "^4.0.0-rc.5",
