@@ -1,6 +1,7 @@
 package org.dromara.hodor.actuator.java;
 
 import java.beans.Introspector;
+import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -65,4 +66,11 @@ public class ServiceProvider {
         beanFactory.registerSingleton(Introspector.decapitalize(singletonObject.getClass().getSimpleName()), singletonObject);
     }
 
+    public Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> annotationType) {
+        return applicationContext.getBeansWithAnnotation(annotationType);
+    }
+
+    public ApplicationContext getContext() {
+        return applicationContext;
+    }
 }
