@@ -13,29 +13,23 @@ import org.dromara.hodor.actuator.java.ServiceProvider;
 import org.dromara.hodor.model.enums.TimeType;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.model.job.JobKey;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.SmartInitializingSingleton;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.MethodIntrospector;
 import org.springframework.core.annotation.AnnotatedElementUtils;
-import org.springframework.lang.NonNull;
 
 /**
  * @author xuxueli
  */
 @Slf4j
-public class XxlJobSpringExecutor implements ApplicationContextAware, SmartInitializingSingleton, DisposableBean {
-
-    private ApplicationContext applicationContext;
+public class XxlJobSpringExecutor implements SmartInitializingSingleton, DisposableBean {
 
     @Override
     public void afterSingletonsInstantiated() {
-        initJobHandlerRepository(applicationContext);
+        initJobHandlerRepository();
         log.info("initJobHandlerRepository finished");
 
-        initJobHandlerMethodRepository(applicationContext);
+        initJobHandlerMethodRepository();
         log.info("initJobHandlerMethodRepository finished");
     }
 
@@ -44,56 +38,46 @@ public class XxlJobSpringExecutor implements ApplicationContextAware, SmartIniti
 
     }
 
-    @Override
-    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
-
-    private void initJobHandlerRepository(ApplicationContext applicationContext) {
-        if (applicationContext == null) {
-            return;
-        }
-
-        final JobRegister jobRegister = applicationContext.getBean(JobRegister.class);
+    private void initJobHandlerRepository() {
+        final JobRegister jobRegister = ServiceProvider.getInstance().getBean(JobRegister.class);
         String groupName = "xxl-job-group";
         // init job handler action
-        Map<String, Object> serviceBeanMap = applicationContext.getBeansWithAnnotation(JobHandler.class);
-        if (serviceBeanMap.size() > 0) {
-            for (Object serviceBean : serviceBeanMap.values()) {
-                if (serviceBean instanceof IJobHandler) {
-                    String jobName = serviceBean.getClass().getAnnotation(JobHandler.class).value();
-                    IJobHandler handler = (IJobHandler) serviceBean;
+        Map<String, Object> serviceBeanMap = ServiceProvider.getInstance().getBeansWithAnnotation(JobHandler.class);
+        if (serviceBeanMap.size() == 0) {
+            return;
+        }
+        for (Object serviceBean : serviceBeanMap.values()) {
+            if (serviceBean instanceof IJobHandler) {
+                String jobName = serviceBean.getClass().getAnnotation(JobHandler.class).value();
+                IJobHandler handler = (IJobHandler) serviceBean;
 
-                    if (jobRegister.getJobDesc(JobKey.of(groupName, jobName)) != null) {
-                        throw new RuntimeException("xxl-job jobhandler[" + jobName + "] naming conflicts.");
-                    }
-
-                    JobDesc jobDesc = JobDesc.builder()
-                        .groupName(groupName)
-                        .jobName(jobName)
-                        .jobCommandType("java")
-                        .build();
-                    JobInstance jobInstance = JobInstance.builder()
-                        .jobDesc(jobDesc)
-                        .jobRunnable(handler)
-                        .build();
-                    jobRegister.registerJob(jobInstance);
-                    log.info("xxl-job register jobhandler, name:{}", jobName);
+                if (jobRegister.getJobDesc(JobKey.of(groupName, jobName)) != null) {
+                    throw new RuntimeException("xxl-job jobhandler[" + jobName + "] naming conflicts.");
                 }
+
+                JobDesc jobDesc = JobDesc.builder()
+                    .groupName(groupName)
+                    .jobName(jobName)
+                    .timeType(TimeType.NONE)
+                    .jobCommandType("java")
+                    .build();
+                JobInstance jobInstance = JobInstance.builder()
+                    .jobDesc(jobDesc)
+                    .jobRunnable(handler)
+                    .build();
+                jobRegister.registerJob(jobInstance);
+                log.info("xxl-job register jobhandler, name:{}", jobName);
             }
         }
     }
 
-    public static void initJobHandlerMethodRepository(ApplicationContext applicationContext) {
-        if (applicationContext == null) {
-            return;
-        }
-        final JobRegister jobRegister = applicationContext.getBean(JobRegister.class);
+    public static void initJobHandlerMethodRepository() {
+        final JobRegister jobRegister = ServiceProvider.getInstance().getBean(JobRegister.class);
         // init job handler from method
-        String[] beanDefinitionNames = applicationContext.getBeanNamesForType(Object.class, false, true);
+        String[] beanDefinitionNames = ServiceProvider.getInstance().getContext()
+            .getBeanNamesForType(Object.class, false, true);
         for (String beanDefinitionName : beanDefinitionNames) {
-            Object bean = applicationContext.getBean(beanDefinitionName);
-
+            Object bean = ServiceProvider.getInstance().getContext().getBean(beanDefinitionName);
             Map<Method, XxlJob> annotatedMethods = null;   // referred to ：org.springframework.context.event.EventListenerMethodProcessor.processBean
             try {
                 annotatedMethods = MethodIntrospector.selectMethods(bean.getClass(),
