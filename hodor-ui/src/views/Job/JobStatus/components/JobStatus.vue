@@ -6,7 +6,8 @@ import {
   shallowRef,
   nextTick,
   onBeforeUnmount,
-  computed
+  computed,
+  onBeforeUpdate,
 } from 'vue';
 import {useJobStatusStore} from "@/stores/job/jobStatus";
 import {sleep} from '@/utils/timeUtil';
@@ -18,6 +19,8 @@ import {Codemirror} from 'vue-codemirror'
 import {javascript} from '@codemirror/lang-javascript'
 import {oneDark} from '@codemirror/theme-one-dark'
 import {message} from "ant-design-vue";
+
+import RefreshButton from '@/components/RefreshButton.vue';
 
 const jobStatusStore = useJobStatusStore();
 const {jobStatusList, paginationOpt, logOpt,} = storeToRefs(jobStatusStore);
@@ -229,6 +232,12 @@ const handleCloseLog = () => {
   if (timer) clearInterval(timer)
 }
 
+const refreshTable=()=>{
+    const queryParam = route.query;
+    getQueryParams(queryParam);
+    queryJobStatusListPaging(paginationOpt, queryParam);
+}
+
 // 监听路由参数变化
 onBeforeRouteUpdate(to => {
   queryJobStatusListPaging(paginationOpt, to.query)
@@ -257,58 +266,72 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <!-- <a-card>
-      <a-row :gutter="24">
-          <a-col :span="4">
-              <a-button type="primary" @click="handleClickKillRunningJob">杀死正在执行的任务</a-button>
-          </a-col>
-          <a-col :span="16">
-              <a-input-search v-model:value="searchInfo" placeholder="请输入内容" enter-button @search="onSearch" />
-          </a-col>
-      </a-row>
-  </a-card>
-  <br /> -->
-  <a-card>
-    <h3 class="title">任务执行状态管理</h3>
-    <span>展示任务执行状态信息，管理所有任务执行状态，具有查看任务状态的执行日志，杀死正在执行的任务等功能</span>
-  </a-card>
-  <br/>
-  <a-card>
-    <a-breadcrumb :routes="routes" v-show="showBread">
-      <template #itemRender="{ route, paths }">
+    <!-- <a-card>
+        <a-row :gutter="24">
+            <a-col :span="16">
+                <a-input-search v-model:value="searchInfo" placeholder="请输入内容" enter-button @search="onSearch" />
+            </a-col>
+        </a-row>
+    </a-card>
+    <br /> -->
+    <a-card>
+        <h3 class="title">任务执行状态管理</h3>
+        <span>展示任务执行状态信息，管理所有任务执行状态，具有查看任务状态的执行日志，杀死正在执行的任务等功能</span>
+    </a-card>
+    <br/>
+    <a-card>
+        <a-breadcrumb :routes="routes" v-show="showBread">
+            <template #itemRender="{ route, paths }">
                 <span v-if="routes.indexOf(route) === routes.length - 1">
                     {{ route.breadcrumbName }}
                 </span>
-        <router-link v-else :to="`${paths.join('/')}`">
-          {{ route.breadcrumbName }}
-        </router-link>
-      </template>
-    </a-breadcrumb>
-    <br/>
-    <a-table :columns="jobStatusColumns" :data-source="jobStatusList" bordered :scroll="{ x: true }"
-             :pagination="paginationOpt">
-      <template #bodyCell="{ column, text, record }">
-        <template v-if="column.dataIndex === 'action'">
-          <a-tooltip title="查看执行日志">
-            <a-button type="text" @click="handleClickGetExecuteLog(record)"
-                      class="iconfont icon-rizhi"></a-button>
-          </a-tooltip>
-          <a-popconfirm title="确定杀死当前任务?" ok-text="确定" cancel-text="取消" placement="bottom"
+                <router-link v-else :to="`${paths.join('/')}`">
+                    {{ route.breadcrumbName }}
+                </router-link>
+            </template>
+        </a-breadcrumb>
+        <br/>
+        <a-row type="flex" justify="end">
+            <RefreshButton :onClick="refreshTable"/>
+        </a-row>
+        <br/>
+        <a-table :columns="jobStatusColumns" :data-source="jobStatusList" bordered :scroll="{ x: true }"
+            :pagination="paginationOpt">
+            <template #bodyCell="{ column, text, record }">
+                <template v-if="column.dataIndex === 'action'">
+                    <a-tooltip title="查看执行日志">
+                        <a-button type="text" @click="handleClickGetExecuteLog(record)"
+                            class="iconfont icon-rizhi"></a-button>
+                    </a-tooltip>
+                    <a-popconfirm title="确定杀死当前任务?" ok-text="确定" cancel-text="取消" placement="bottom"
                         @confirm="handleClickKillRunningJob(record)" @cancel="cancel">
-            <a-tooltip title="杀死正在执行的任务">
-              <a-button type="text" class="iconfont icon-kill"></a-button>
-            </a-tooltip>
-          </a-popconfirm>
-        </template>
-      </template>
-    </a-table>
-  </a-card>
-  <a-drawer v-model:open="visibleLog" class="custom-class" root-class-name="root-class-name" size="large"
-            title="查看执行日志"
-            placement="right" closable @close="handleCloseLog">
-    <codemirror ref="codeMirrorRef" v-model="logData" :style="{ height: '400px' }" :autofocus="true"
-                :indent-with-tab="true" :tab-size="2" :extensions="extensions" @ready="handleReady"/>
-  </a-drawer>
+                        <a-tooltip title="杀死正在执行的任务">
+                            <a-button type="text" class="iconfont icon-kill"></a-button>
+                        </a-tooltip>
+                    </a-popconfirm>
+                </template>
+            </template>
+        </a-table>
+        <!-- <Table :columns="jobStatusColumns" :data-source="jobStatusList" :pagination="paginationOpt">
+            <template v-slot="{record}">
+                <a-tooltip title="查看执行日志">
+                        <a-button type="text" @click="handleClickGetExecuteLog(record)"
+                            class="iconfont icon-rizhi"></a-button>
+                    </a-tooltip>
+                    <a-popconfirm title="确定杀死当前任务?" ok-text="确定" cancel-text="取消" placement="bottom"
+                        @confirm="handleClickKillRunningJob(record)" @cancel="cancel">
+                        <a-tooltip title="杀死正在执行的任务">
+                            <a-button type="text" class="iconfont icon-kill"></a-button>
+                        </a-tooltip>
+                    </a-popconfirm>
+            </template>
+        </Table> -->
+    </a-card>
+    <a-drawer v-model:open="visibleLog" class="custom-class" root-class-name="root-class-name" size="large" title="查看执行日志"
+        placement="right" closable @close="handleCloseLog">
+        <codemirror ref="codeMirrorRef" v-model="logData" :style="{ height: '400px' }" :autofocus="true"
+            :indent-with-tab="true" :tab-size="2" :extensions="extensions" @ready="handleReady" />
+    </a-drawer>
 </template>
 
 <style scoped>

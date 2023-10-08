@@ -90,8 +90,14 @@ export const useJobStatusStore = defineStore('jobStatus', () => {
     }
 
     const getQueryParams=(params)=>{
-        Object.assign(queryParams,params);
-        console.log("queryParams",queryParams)
+        // 判断query参数是否为空
+        if(JSON.stringify(params)=== '{}'){
+            queryParams.groupName='';
+            queryParams.jobName='';
+        }
+        else{
+            Object.assign(queryParams,params);
+        }
     }
 
     return {

@@ -75,9 +75,9 @@ const collapsed = ref(false)
                 <div :style="{ padding: '24px 20px 24px 15px', minHeight: '360px' }">
                     <Tabs />
                     <router-view v-slot="{ Component, route }">
-                        <KeepAlive>
+                        <!-- <KeepAlive> -->
                             <component :is="Component" :key="route.name"></component>
-                        </KeepAlive>
+                        <!-- </KeepAlive> -->
                     </router-view>
                 </div>
             </a-layout-content>
