@@ -28,6 +28,12 @@ public class HodorJobExecutionContext {
 
     private final Date fireTime;
 
+    private Integer shardingCount = 1;
+
+    private Integer shardingId = 0;
+
+    private String shardingParams;
+
     private final List<Host> hosts = new ArrayList<>();
 
     public HodorJobExecutionContext(final JobKey rootJobKey, final JobDesc jobDesc,
@@ -82,20 +88,52 @@ public class HodorJobExecutionContext {
         this.hosts.addAll(hosts);
     }
 
+    public void refreshHosts(Host selected) {
+        hosts.remove(selected);
+        hosts.add(selected);
+    }
+
     public List<Host> getHosts() {
         return this.hosts;
     }
 
+    public Integer getShardingCount() {
+        return shardingCount;
+    }
+
+    public void setShardingCount(Integer shardingCount) {
+        this.shardingCount = shardingCount;
+    }
+
+    public Integer getShardingId() {
+        return shardingId;
+    }
+
+    public void setShardingId(Integer shardingId) {
+        this.shardingId = shardingId;
+    }
+
+    public String getShardingParams() {
+        return shardingParams;
+    }
+
+    public void setShardingParams(String shardingParams) {
+        this.shardingParams = shardingParams;
+    }
+
     @Override
     public String toString() {
-        return "HodorJobExecutionContext {" +
+        return "HodorJobExecutionContext{" +
             "requestId=" + requestId +
             ", schedulerName='" + schedulerName + '\'' +
             ", rootJobKey=" + rootJobKey +
             ", jobKey=" + jobKey +
+            ", jobDesc=" + jobDesc +
             ", fireTime=" + fireTime +
+            ", shardingCount=" + shardingCount +
+            ", shardingId=" + shardingId +
+            ", shardingParams='" + shardingParams + '\'' +
             ", hosts=" + hosts +
             '}';
     }
-
 }

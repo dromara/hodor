@@ -41,30 +41,25 @@ public enum ScheduleStrategy {
     LOWEST_LOAD(2, "lowest_load"),
 
     /**
-     * 广播执行
-     */
-    BROADCAST(3, "broadcast"),
-
-    /**
      * 指定actuator ip
      */
-    SPECIFY_ACTUATOR(3, "specify_actuator");
+    SPECIFY(3, "specify");
 
     private int value;
 
-    private String description;
+    private String name;
 
-    private ScheduleStrategy(int value, String description) {
+    private ScheduleStrategy(int value, String name) {
         this.value = value;
-        this.description = description;
+        this.name = name;
     }
 
     public int getValue() {
         return this.value;
     }
 
-    public String getDescription() {
-        return this.description;
+    public String getName() {
+        return this.name;
     }
 
     public static ScheduleStrategy of(int value) throws IllegalArgumentException {

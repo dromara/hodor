@@ -8,11 +8,30 @@ package org.dromara.hodor.model.enums;
  */
 public enum JobType {
 
+    /**
+     * 普通任务
+     */
     COMMON_JOB(0),
 
-    TIME_JOB(1),
+    /**
+     * 工作流任务
+     */
+    WORKFLOW_JOB(1),
 
-    WORKFLOW_JOB(2);
+    /**
+     * 分片任务
+     */
+    SHARDING_JOB(2),
+
+    /**
+     * 广播任务
+     */
+    BROADCAST_JOB(3),
+
+    /**
+     * map_reduce任务
+     */
+    MAP_REDUCE_JOB(3);
 
     private final int code;
 

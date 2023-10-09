@@ -36,10 +36,12 @@ public class JobExecuteRequest implements RequestBody {
     private Integer timeout = 180;
 
     @Builder.Default
-    private Integer shardingCount = 0;
+    private Integer shardingCount = 1;
 
     @Builder.Default
     private Integer shardingId = 0;
+
+    private String shardingParams;
 
     @Builder.Default
     private Integer retryCount = 0;

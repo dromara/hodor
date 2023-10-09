@@ -17,6 +17,10 @@ public class JobExecDetail {
 
     private Long id;
 
+    private Integer shardingCount;
+
+    private Integer shardingId;
+
     private String groupName;
 
     private String jobName;

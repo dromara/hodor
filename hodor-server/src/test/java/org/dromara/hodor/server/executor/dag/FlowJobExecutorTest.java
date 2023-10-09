@@ -33,7 +33,7 @@ import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.remoting.api.message.RemotingResponse;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
-import org.dromara.hodor.server.executor.JobDispatcher;
+import org.dromara.hodor.server.executor.dispatch.JobDispatcher;
 import org.dromara.hodor.server.executor.handler.RequestHandler;
 import org.junit.Test;
 

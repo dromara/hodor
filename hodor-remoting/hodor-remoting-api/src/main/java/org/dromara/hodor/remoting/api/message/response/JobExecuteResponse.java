@@ -35,6 +35,8 @@ public class JobExecuteResponse implements ResponseBody {
 
     private Integer shardingId;
 
+    private String shardingParams;
+
     private String comments;
 
     private byte[] result;
@@ -42,16 +44,17 @@ public class JobExecuteResponse implements ResponseBody {
     @Override
     public String toString() {
         return "JobExecuteResponse{" +
-            "jobKey=" + jobKey +
+            "requestId=" + requestId +
+            ", jobKey=" + jobKey +
             ", status=" + status +
             ", startTime='" + startTime + '\'' +
             ", completeTime='" + completeTime + '\'' +
             ", processTime=" + processTime +
             ", shardingCount=" + shardingCount +
             ", shardingId=" + shardingId +
+            ", shardingParams='" + shardingParams + '\'' +
             ", comments='" + comments + '\'' +
             ", result='" + StringUtils.decodeString(result) + '\'' +
             '}';
     }
-
 }

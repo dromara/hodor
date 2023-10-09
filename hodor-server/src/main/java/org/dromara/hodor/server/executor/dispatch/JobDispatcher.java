@@ -1,4 +1,4 @@
-package org.dromara.hodor.server.executor;
+package org.dromara.hodor.server.executor.dispatch;
 
 import org.dromara.hodor.common.executor.HodorExecutor;
 import org.dromara.hodor.common.executor.HodorExecutorFactory;

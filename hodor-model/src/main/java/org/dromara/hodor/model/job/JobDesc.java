@@ -64,8 +64,6 @@ public class JobDesc {
 
     private String timeZone;
 
-    private Integer shardingCount;
-
     private String jobParameters;
 
     private String extensibleParameters;

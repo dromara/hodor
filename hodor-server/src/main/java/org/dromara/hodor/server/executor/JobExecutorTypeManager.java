@@ -29,8 +29,10 @@ public class JobExecutorTypeManager {
     private enum JobExecutorClassEnum {
 
         COMMON_JOB_EXECUTOR(JobType.COMMON_JOB, CommonJobExecutor.class.getName()),
-        TIME_JOB_EXECUTOR(JobType.TIME_JOB, TimeJobExecutor.class.getName()),
-        WORKFLOW_JOB_EXECUTOR(JobType.WORKFLOW_JOB, FlowJobExecutor.class.getName());
+        WORKFLOW_JOB_EXECUTOR(JobType.WORKFLOW_JOB, FlowJobExecutor.class.getName()),
+        SHARDING_JOB_EXECUTOR(JobType.SHARDING_JOB, ShardingJobExecutor.class.getName()),
+        BROADCAST_JOB_EXECUTOR(JobType.BROADCAST_JOB, BroadcastJobExecutor.class.getName()),
+        MAP_REDUCE_JOB_EXECUTOR(JobType.MAP_REDUCE_JOB, MapReduceJobExecutor.class.getName());
 
         private final JobType jobType;
 
@@ -51,15 +53,15 @@ public class JobExecutorTypeManager {
 
         public static JobExecutorClassEnum get(JobType jobType) {
             // if branch predicate
-            if (JobExecutorClassEnum.TIME_JOB_EXECUTOR.jobType == jobType) {
-                return JobExecutorClassEnum.TIME_JOB_EXECUTOR;
+            if (JobExecutorClassEnum.COMMON_JOB_EXECUTOR.jobType == jobType) {
+                return JobExecutorClassEnum.COMMON_JOB_EXECUTOR;
             }
             for (JobExecutorClassEnum jobClassEnum : JobExecutorClassEnum.values()) {
                 if (jobClassEnum.jobType == jobType) {
                     return jobClassEnum;
                 }
             }
-            return JobExecutorClassEnum.COMMON_JOB_EXECUTOR;
+            throw new IllegalArgumentException("Illegal job type : " + jobType.name());
         }
     }
 

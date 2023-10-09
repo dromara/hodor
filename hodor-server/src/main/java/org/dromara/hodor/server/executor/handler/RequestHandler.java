@@ -13,11 +13,11 @@ import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
  */
 public interface RequestHandler {
 
-    void preHandle(final HodorJobExecutionContext context);
+    default void preHandle(final HodorJobExecutionContext context) {};
 
     void handle(final HodorJobExecutionContext context);
 
-    void postHandle(final HodorJobExecutionContext context);
+    default void postHandle(final HodorJobExecutionContext context) {};
 
     void resultHandle(Map<String, Object> attachment, final RemotingResponse<JobExecuteResponse> remotingResponse);
 

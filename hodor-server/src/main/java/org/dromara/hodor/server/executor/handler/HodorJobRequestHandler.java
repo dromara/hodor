@@ -11,13 +11,12 @@ import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.concurrent.FutureCallback;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.loadbalance.LoadBalance;
-import org.dromara.hodor.common.loadbalance.LoadBalanceEnum;
 import org.dromara.hodor.common.loadbalance.LoadBalanceFactory;
 import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.core.Constants.FlowNodeConstants;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
+import org.dromara.hodor.model.enums.ScheduleStrategy;
 import org.dromara.hodor.model.job.JobDesc;
-import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.remoting.api.RemotingClient;
 import org.dromara.hodor.remoting.api.RemotingConst;
 import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
@@ -28,9 +27,7 @@ import org.dromara.hodor.remoting.api.message.RemotingResponse;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
-import org.dromara.hodor.server.executor.exception.IllegalJobExecuteStateException;
 import org.dromara.hodor.server.executor.exception.JobScheduleException;
-import org.dromara.hodor.server.manager.ActuatorNodeManager;
 import org.dromara.hodor.server.manager.JobExecuteManager;
 
 /**
@@ -44,38 +41,35 @@ public class HodorJobRequestHandler implements RequestHandler {
 
     private final RemotingClient clientService;
 
-    private final ActuatorNodeManager actuatorNodeManager;
-
     private final RemotingMessageSerializer serializer;
 
     private final TypeReference<RemotingResponse<JobExecuteResponse>> typeReference;
 
     public HodorJobRequestHandler() {
         this.clientService = RemotingClient.getInstance();
-        this.actuatorNodeManager = ActuatorNodeManager.getInstance();
         this.serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
         this.typeReference = new TypeReference<RemotingResponse<JobExecuteResponse>>() {};
     }
 
     public void preHandle(final HodorJobExecutionContext context) {
-        // check job is running
-        final JobKey jobKey = context.getJobKey();
-        if (JobExecuteManager.getInstance().isRunning(jobKey)) {
-            throw new IllegalJobExecuteStateException("The job {} is running", jobKey);
-        }
-        JobExecuteManager.getInstance().addSchedulerStartJob(context);
-        // check available hosts
-        final List<Host> hosts = actuatorNodeManager.getAvailableHosts(jobKey);
-        if (hosts.isEmpty()) {
-            throw new JobScheduleException("The job [{}] has no available actuator nodes", jobKey);
+        final JobDesc jobDesc = context.getJobDesc();
+        final List<Host> hosts = context.getHosts();
+        Host selected;
+        if (jobDesc.getScheduleStrategy() == ScheduleStrategy.SPECIFY) {
+            final String scheduleExp = jobDesc.getScheduleExp();
+            // 检查是否合法ip:port
+            final Host host = Host.of(scheduleExp);
+            if (!hosts.contains(host)) {
+                throw new JobScheduleException("The specify actuator endpoint [{}] is not contains available actuator nodes", scheduleExp);
+            }
+            selected = host;
+        } else {
+            LoadBalance loadBalance = LoadBalanceFactory.getLoadBalance(jobDesc.getScheduleStrategy().getName());
+            selected = loadBalance.select(hosts);
         }
 
-        // TODO: get load balance type from job
-        LoadBalance loadBalance = LoadBalanceFactory.getLoadBalance(LoadBalanceEnum.RANDOM.name());
-        Host selected = loadBalance.select(hosts);
         hosts.remove(selected);
         hosts.add(selected);
-
         context.resetHosts(hosts);
     }
 
@@ -106,6 +100,10 @@ public class HodorJobRequestHandler implements RequestHandler {
                 break;
             } catch (Exception e) {
                 jobException = e;
+            }
+            // 广播任务可能需要将此设置为false
+            if (!context.getJobDesc().getFailover()) {
+                break;
             }
         }
         if (jobException != null) {
@@ -156,11 +154,13 @@ public class HodorJobRequestHandler implements RequestHandler {
             .jobName(jobDesc.getJobName())
             .groupName(jobDesc.getGroupName())
             .jobPath(jobDesc.getJobPath())
-            .jobCommand(jobDesc.getJobCommand())
             .jobCommandType(jobDesc.getJobCommandType())
+            .jobCommand(jobDesc.getJobCommand())
             .jobParameters(jobDesc.getJobParameters())
             .extensibleParameters(jobDesc.getExtensibleParameters())
-            .shardingCount(jobDesc.getShardingCount())
+            .shardingCount(context.getShardingCount())
+            .shardingId(context.getShardingId())
+            .shardingParams(context.getShardingParams())
             .timeout(jobDesc.getTimeout())
             .retryCount(jobDesc.getRetryCount())
             .version(jobDesc.getVersion())
