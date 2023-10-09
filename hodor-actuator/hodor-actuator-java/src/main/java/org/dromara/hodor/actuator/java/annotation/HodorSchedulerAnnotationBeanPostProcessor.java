@@ -158,6 +158,8 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
         }
 
         boolean fireNow = job.fireNow();
+        boolean misfire = job.misfire();
+        boolean failover = job.failover();
         int timeout = job.timeout();
         String commandType = job.commandType();
 
@@ -168,6 +170,8 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
             .timeType(timeType)
             .timeExp(timeExp)
             .fireNow(fireNow)
+            .misfire(misfire)
+            .failover(failover)
             .timeout(timeout)
             .build();
 
