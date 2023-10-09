@@ -13,10 +13,7 @@ import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.core.service.JobInfoService;
 import org.dromara.hodor.model.actuator.JobTypeInfo;
 import org.dromara.hodor.model.common.HodorResult;
-import org.dromara.hodor.model.enums.JobStatus;
-import org.dromara.hodor.model.enums.JobType;
-import org.dromara.hodor.model.enums.Priority;
-import org.dromara.hodor.model.enums.TimeType;
+import org.dromara.hodor.model.enums.*;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.model.scheduler.CopySet;
@@ -316,9 +313,11 @@ public class SchedulerResource {
     private void resetJobInfo(JobInfo jobInfo) {
         jobInfo.setHashId(HashUtils.hash(jobInfo.getGroupName() + jobInfo.getJobName()));
         jobInfo.setJobStatus(JobStatus.READY);
-        jobInfo.setFireNow(jobInfo.getFireNow() != null && jobInfo.getFireNow());
         jobInfo.setPriority(jobInfo.getPriority() == null ? Priority.DEFAULT : jobInfo.getPriority());
+        jobInfo.setScheduleStrategy(jobInfo.getScheduleStrategy() == null ? ScheduleStrategy.RANDOM : jobInfo.getScheduleStrategy());
+        jobInfo.setFireNow(jobInfo.getFireNow() != null && jobInfo.getFireNow());
         jobInfo.setFailover(jobInfo.getFailover() != null && jobInfo.getFailover());
+        jobInfo.setMisfire(jobInfo.getMisfire() != null && jobInfo.getMisfire());
         jobInfo.setCreateTime(DateUtils.nowDate());
     }
 

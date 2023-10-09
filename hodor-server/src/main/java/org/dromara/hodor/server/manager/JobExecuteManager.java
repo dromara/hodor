@@ -28,8 +28,6 @@ import org.dromara.hodor.remoting.api.message.response.KillRunningJobResponse;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.server.ServiceProvider;
 
-import java.util.Date;
-
 /**
  * job status manager
  *
@@ -66,7 +64,8 @@ public class JobExecuteManager {
 
     public boolean isRunning(JobKey jobKey) {
         JobExecDetail jobExecDetail = jobExecuteRecorder.getJobExecDetail(jobKey);
-        if (jobExecDetail == null || (jobExecDetail.getExecuteStatus() != JobExecuteStatus.READY
+        if (jobExecDetail == null || jobExecDetail.getActuatorEndpoint() == null
+            || (jobExecDetail.getExecuteStatus() != JobExecuteStatus.READY
             && jobExecDetail.getExecuteStatus() != JobExecuteStatus.PENDING
             && jobExecDetail.getExecuteStatus() != JobExecuteStatus.RUNNING)) {
             return false;

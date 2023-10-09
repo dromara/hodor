@@ -67,15 +67,11 @@ public class HodorJobRequestHandler implements RequestHandler {
             LoadBalance loadBalance = LoadBalanceFactory.getLoadBalance(jobDesc.getScheduleStrategy().getName());
             selected = loadBalance.select(hosts);
         }
-
-        hosts.remove(selected);
-        hosts.add(selected);
-        context.resetHosts(hosts);
+        context.refreshHosts(selected);
     }
 
     public void handle(final HodorJobExecutionContext context) {
         log.info("Job [key:{}, id:{}] dispatch begins, details: {}", context.getJobKey(), context.getRequestId(), context);
-
         Exception jobException = null;
         final RemotingMessage request = getRequestBody(context);
         final List<Host> hosts = context.getHosts();

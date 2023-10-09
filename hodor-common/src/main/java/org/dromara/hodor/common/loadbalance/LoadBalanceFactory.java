@@ -1,5 +1,7 @@
 package org.dromara.hodor.common.loadbalance;
 
+import org.dromara.hodor.common.utils.StringUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +29,7 @@ public final class LoadBalanceFactory {
      */
     private static LoadBalanceEnum getLoadBalanceEnum(String type) {
         try {
-            return LoadBalanceEnum.valueOf(type);
+            return LoadBalanceEnum.valueOf(StringUtils.upperCase(type));
         } catch (Exception e) {
             return LoadBalanceEnum.ROUND_ROBIN;
         }
