@@ -22,7 +22,6 @@ import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.utils.Utils;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.server.executor.dispatch.JobDispatcher;
-import org.dromara.hodor.server.executor.exception.JobScheduleException;
 import org.dromara.hodor.server.executor.handler.HodorBroadcastJobRequestHandler;
 
 /**
