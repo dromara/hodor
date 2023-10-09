@@ -61,10 +61,13 @@ public class SchedulerResource {
 
     private final SchedulerManager schedulerManager;
 
+    private final JobExecutorTypeManager executorTypeManager;
+
     public SchedulerResource(final RegistryService registryService, final JobInfoService jobInfoService) {
         this.registryService = registryService;
         this.jobInfoService = jobInfoService;
         this.schedulerManager = SchedulerManager.getInstance();
+        this.executorTypeManager = JobExecutorTypeManager.getInstance();
     }
 
     @RestMethod("isAlive")
@@ -233,14 +236,14 @@ public class SchedulerResource {
                 if (serverEndpoint.equals(copySet.getLeader())) {
                     DataInterval dataInterval = copySet.getDataInterval();
                     HodorScheduler activeScheduler = schedulerManager.createActiveSchedulerIfAbsent(serverEndpoint, copySet.getId(), dataInterval);
-                    activeScheduler.putJob(jobInfo, JobExecutorTypeManager.getInstance().getJobExecutor(jobInfo.getJobType()));
+                    activeScheduler.putJob(jobInfo, executorTypeManager.getJobExecutor(jobInfo.getJobType()));
                     return HodorResult.success(StringUtils.format("add job {} to active scheduler {} success",
                         JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName()), activeScheduler.getSchedulerName()));
                 }
                 if (copySet.getServers().contains(serverEndpoint)) {
                     DataInterval standbyDataInterval = copySet.getDataInterval();
                     HodorScheduler standbyScheduler = schedulerManager.createStandbySchedulerIfAbsent(serverEndpoint, copySet.getId(), standbyDataInterval);
-                    standbyScheduler.putJob(jobInfo, JobExecutorTypeManager.getInstance().getJobExecutor(jobInfo.getJobType()));
+                    standbyScheduler.putJob(jobInfo, executorTypeManager.getJobExecutor(jobInfo.getJobType()));
                     return HodorResult.success(StringUtils.format("add job {} to standby scheduler {} success",
                         JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName()), standbyScheduler.getSchedulerName()));
                 }
@@ -248,14 +251,14 @@ public class SchedulerResource {
                 if (serverEndpoint.equals(copySet.getLeader())) {
                     DataInterval dataInterval = copySet.getDataInterval();
                     HodorScheduler activeScheduler = schedulerManager.getActiveScheduler(schedulerManager.createSchedulerName(serverEndpoint, copySet.getId()));
-                    activeScheduler.putJob(jobInfo, JobExecutorTypeManager.getInstance().getJobExecutor(jobInfo.getJobType()));
+                    activeScheduler.putJob(jobInfo, executorTypeManager.getJobExecutor(jobInfo.getJobType()));
                     return HodorResult.success(StringUtils.format("update job {} to active scheduler {} success",
                         JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName()), activeScheduler.getSchedulerName()));
                 }
                 if (copySet.getServers().contains(serverEndpoint)) {
                     DataInterval standbyDataInterval = copySet.getDataInterval();
                     HodorScheduler standbyScheduler = schedulerManager.getStandbyScheduler(schedulerManager.createSchedulerName(serverEndpoint, copySet.getId()));
-                    standbyScheduler.putJob(jobInfo, JobExecutorTypeManager.getInstance().getJobExecutor(jobInfo.getJobType()));
+                    standbyScheduler.putJob(jobInfo, executorTypeManager.getJobExecutor(jobInfo.getJobType()));
                     return HodorResult.success(StringUtils.format("update job {} to standby scheduler {} success",
                         JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName()), standbyScheduler.getSchedulerName()));
                 }
@@ -281,7 +284,7 @@ public class SchedulerResource {
                 }
                 if (jobInfo.getTimeType() == TimeType.NONE) {
                     HodorJobExecutionContext executionContext = new HodorJobExecutionContext(null, jobInfo, schedulerName, DateUtils.nowDate());
-                    JobExecutor jobExecutor = JobExecutorTypeManager.getInstance().getJobExecutor(jobInfo.getJobType());
+                    JobExecutor jobExecutor = executorTypeManager.getJobExecutor(jobInfo.getJobType());
                     jobExecutor.execute(executionContext);
                 } else {
                     DataInterval dataInterval = copySet.getDataInterval();

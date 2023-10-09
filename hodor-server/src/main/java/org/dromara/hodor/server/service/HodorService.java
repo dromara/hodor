@@ -25,6 +25,7 @@ import org.dromara.hodor.server.listener.SchedulerNodeChangeListener;
 import org.dromara.hodor.server.manager.ActuatorNodeManager;
 import org.dromara.hodor.server.manager.CopySetManager;
 import org.dromara.hodor.server.manager.SchedulerNodeManager;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 /**
@@ -111,16 +112,7 @@ public class HodorService implements HodorLifecycle {
         List<List<String>> copySetNodes = CopySets.buildCopySets(currRunningNodes, CopySetConstants.REPLICA_COUNT, CopySetConstants.SCATTER_WIDTH);
         int setsNum = Math.max(copySetNodes.size(), currRunningNodes.size());
         // distribution copySet
-        List<CopySet> copySets = Lists.newArrayList();
-        for (int i = 0; i < setsNum; i++) {
-            int setsIndex = i % copySetNodes.size();
-            List<String> copySetNode = copySetNodes.get(setsIndex);
-            CopySet copySet = new CopySet();
-            // FixBug: 这个地方CopySet的数量可能会小于setsNum的大小，所以可能会重用同一个CopySet节点，所以这里的id不能使用setsIndex，而应该使用setsNum下标
-            copySet.setId(i);
-            copySet.setServers(copySetNode);
-            copySets.add(copySet);
-        }
+        List<CopySet> copySets = getCopySets(setsNum, copySetNodes);
 
         // get metadata and update
         int jobCount = jobInfoService.queryAssignableJobCount();
@@ -151,6 +143,21 @@ public class HodorService implements HodorLifecycle {
         log.info("Create metadata: {}", Utils.Jsons.toJsonPrettyStr(metadata));
 
         registryService.createMetadata(metadata);
+    }
+
+    @NotNull
+    private static List<CopySet> getCopySets(int setsNum, List<List<String>> copySetNodes) {
+        List<CopySet> copySets = Lists.newArrayList();
+        for (int i = 0; i < setsNum; i++) {
+            int setsIndex = i % copySetNodes.size();
+            List<String> copySetNode = copySetNodes.get(setsIndex);
+            CopySet copySet = new CopySet();
+            // FixBug: 这个地方CopySet的数量可能会小于setsNum的大小，所以可能会重用同一个CopySet节点，所以这里的id不能使用setsIndex，而应该使用setsNum下标
+            copySet.setId(i);
+            copySet.setServers(copySetNode);
+            copySets.add(copySet);
+        }
+        return copySets;
     }
 
     public void addRunningJob(final HodorScheduler scheduler, DataInterval dataInterval) {

@@ -1,10 +1,7 @@
 package org.dromara.hodor.server.executor;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import org.dromara.hodor.model.enums.JobType;
 import org.dromara.hodor.scheduler.api.JobExecutor;
-import org.dromara.hodor.scheduler.api.exception.HodorSchedulerException;
 
 /**
  * job executor type manager
@@ -16,8 +13,6 @@ public class JobExecutorTypeManager {
 
     private static final JobExecutorTypeManager INSTANCE = new JobExecutorTypeManager();
 
-    private final Map<String, JobExecutor> jobExecutorMap = new ConcurrentHashMap<>();
-
     private JobExecutorTypeManager() {
 
     }
@@ -28,27 +23,27 @@ public class JobExecutorTypeManager {
 
     private enum JobExecutorClassEnum {
 
-        COMMON_JOB_EXECUTOR(JobType.COMMON_JOB, CommonJobExecutor.class.getName()),
-        WORKFLOW_JOB_EXECUTOR(JobType.WORKFLOW_JOB, FlowJobExecutor.class.getName()),
-        SHARDING_JOB_EXECUTOR(JobType.SHARDING_JOB, ShardingJobExecutor.class.getName()),
-        BROADCAST_JOB_EXECUTOR(JobType.BROADCAST_JOB, BroadcastJobExecutor.class.getName()),
-        MAP_REDUCE_JOB_EXECUTOR(JobType.MAP_REDUCE_JOB, MapReduceJobExecutor.class.getName());
+        COMMON_JOB_EXECUTOR(JobType.COMMON_JOB, new CommonJobExecutor()),
+        WORKFLOW_JOB_EXECUTOR(JobType.WORKFLOW_JOB, new FlowJobExecutor()),
+        SHARDING_JOB_EXECUTOR(JobType.SHARDING_JOB, new ShardingJobExecutor()),
+        BROADCAST_JOB_EXECUTOR(JobType.BROADCAST_JOB, new BroadcastJobExecutor()),
+        MAP_REDUCE_JOB_EXECUTOR(JobType.MAP_REDUCE_JOB, new MapReduceJobExecutor());
 
         private final JobType jobType;
 
-        private final String name;
+        private final JobExecutor jobExecutor;
 
-        JobExecutorClassEnum(JobType jobType, String className) {
+        JobExecutorClassEnum(JobType jobType, JobExecutor jobExecutor) {
             this.jobType = jobType;
-            this.name = className;
+            this.jobExecutor = jobExecutor;
         }
 
         public JobType getJobType() {
             return jobType;
         }
 
-        public String getName() {
-            return name;
+        public JobExecutor getJobExecutor() {
+            return jobExecutor;
         }
 
         public static JobExecutorClassEnum get(JobType jobType) {
@@ -67,15 +62,7 @@ public class JobExecutorTypeManager {
 
     public JobExecutor getJobExecutor(JobType jobType) {
         JobExecutorClassEnum jobClassEnum = JobExecutorClassEnum.get(jobType);
-        return jobExecutorMap.computeIfAbsent(jobClassEnum.getName(), this::initJobExecutor);
-    }
-
-    public JobExecutor initJobExecutor(String className) {
-        try {
-            return (JobExecutor) Class.forName(className).newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new HodorSchedulerException("jobExecutor class '%s' can't initialize.", className);
-        }
+        return jobClassEnum.getJobExecutor();
     }
 
 }
