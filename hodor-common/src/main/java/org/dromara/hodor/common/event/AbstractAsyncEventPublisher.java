@@ -7,7 +7,7 @@ import org.dromara.hodor.common.executor.HodorRunnable;
 
 /**
  * abstract async event publisher
- *
+ * <p>
  * 异步串行执行：事件发布不会阻塞主任务执行，但是同一事件发布器发布的事件为有序执行
  *
  * @author tomgs
@@ -25,14 +25,14 @@ public abstract class AbstractAsyncEventPublisher<V> extends AbstractEventPublis
     @Override
     public void publish(Event<V> event) {
         Set<HodorEventListener<V>> listenerSet = getListeners(event.getEventType());
-        eventExecutor.serialExecute(new HodorRunnable() {
-            @Override
-            public void execute() {
-                for (HodorEventListener<V> listener : listenerSet) {
+        for (HodorEventListener<V> listener : listenerSet) {
+            eventExecutor.serialExecute(new HodorRunnable() {
+                @Override
+                public void execute() {
                     listener.onEvent(event);
                 }
-            }
-        });
+            });
+        }
     }
 
     /**
@@ -42,14 +42,14 @@ public abstract class AbstractAsyncEventPublisher<V> extends AbstractEventPublis
      */
     public void parallelPublish(Event<V> event) {
         Set<HodorEventListener<V>> listenerSet = getListeners(event.getEventType());
-        eventExecutor.parallelExecute(new HodorRunnable() {
-            @Override
-            public void execute() {
-                for (HodorEventListener<V> listener : listenerSet) {
+        for (HodorEventListener<V> listener : listenerSet) {
+            eventExecutor.parallelExecute(new HodorRunnable() {
+                @Override
+                public void execute() {
                     listener.onEvent(event);
                 }
-            }
-        });
+            });
+        }
     }
 
 }
