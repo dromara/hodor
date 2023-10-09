@@ -17,7 +17,7 @@
 package org.dromara.hodor.actuator.jobtype.api.executor;
 
 import org.apache.logging.log4j.Logger;
-import org.dromara.hodor.actuator.api.utils.Props;
+import org.dromara.hodor.common.utils.Props;
 
 public abstract class AbstractJob implements Job {
 

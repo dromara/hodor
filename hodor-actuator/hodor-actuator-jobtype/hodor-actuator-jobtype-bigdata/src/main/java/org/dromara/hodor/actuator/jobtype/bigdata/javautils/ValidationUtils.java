@@ -17,7 +17,7 @@ package org.dromara.hodor.actuator.jobtype.bigdata.javautils;
 import java.util.Arrays;
 import java.util.Objects;
 import org.apache.commons.lang.StringUtils;
-import org.dromara.hodor.actuator.api.utils.Props;
+import org.dromara.hodor.common.utils.Props;
 
 public class ValidationUtils {
 

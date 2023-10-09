@@ -33,7 +33,7 @@ import org.apache.hadoop.hive.ql.session.SessionState;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.dromara.hodor.actuator.api.utils.Props;
+import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.actuator.jobtype.bigdata.hiveutils.HiveQueryExecutionException;
 
 import static org.apache.hadoop.hive.conf.HiveConf.ConfVars.HIVEAUXJARS;

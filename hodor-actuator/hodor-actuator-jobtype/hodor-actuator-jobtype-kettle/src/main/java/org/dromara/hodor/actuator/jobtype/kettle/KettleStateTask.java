@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
-import org.dromara.hodor.actuator.api.utils.Props;
+import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.actuator.jobtype.api.queue.AbstractAsyncTask;
 import org.dromara.hodor.actuator.jobtype.api.queue.AsyncTask;
 import org.pentaho.di.job.Job;
@@ -41,7 +41,7 @@ public class KettleStateTask extends AbstractAsyncTask {
         if (isFinished) {
             return null;
         }
-        
+
         if (job.getErrors() > 0) {
             return null;
         }

@@ -18,7 +18,7 @@
 package org.dromara.hodor.actuator.jobtype.kettle;
 
 import java.util.Map;
-import org.dromara.hodor.actuator.api.utils.Props;
+import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.common.utils.Utils;
 import org.pentaho.di.base.AbstractMeta;

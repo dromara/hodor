@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.Logger;
-import org.dromara.hodor.actuator.api.utils.Props;
+import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.actuator.jobtype.api.executor.process.ExecutorProcess;
 import org.dromara.hodor.actuator.jobtype.api.executor.process.ExecutorProcessBuilder;
 import org.dromara.hodor.actuator.jobtype.api.utils.Pair;

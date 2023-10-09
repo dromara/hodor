@@ -3,7 +3,7 @@ package org.dromara.hodor.actuator.jobtype.bigdata.asyncHadoop;
 import java.util.Set;
 import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.api.exceptions.JobExecutionException;
-import org.dromara.hodor.actuator.api.utils.Props;
+import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.actuator.jobtype.api.queue.AsyncTaskStateChecker;
 import org.dromara.hodor.actuator.jobtype.bigdata.HadoopJavaJob;
 import org.dromara.hodor.actuator.jobtype.bigdata.HadoopJobUtils;

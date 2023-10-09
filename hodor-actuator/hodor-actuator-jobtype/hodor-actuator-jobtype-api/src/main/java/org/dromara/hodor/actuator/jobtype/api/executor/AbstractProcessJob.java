@@ -26,8 +26,8 @@ import java.util.Map;
 import org.apache.commons.fileupload.util.Streams;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Logger;
-import org.dromara.hodor.actuator.api.utils.Props;
-import org.dromara.hodor.actuator.api.utils.PropsUtils;
+import org.dromara.hodor.common.utils.Props;
+import org.dromara.hodor.common.utils.PropsUtils;
 import org.dromara.hodor.actuator.jobtype.api.utils.JSONUtils;
 
 /**

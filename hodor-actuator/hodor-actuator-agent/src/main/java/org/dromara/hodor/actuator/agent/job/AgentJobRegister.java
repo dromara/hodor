@@ -31,7 +31,7 @@ import org.dromara.hodor.actuator.api.ExecutableJob;
 import org.dromara.hodor.actuator.api.JobRegister;
 import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.api.core.JobLogger;
-import org.dromara.hodor.actuator.api.utils.Props;
+import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.actuator.jobtype.api.executor.AbstractProcessJob;
 import org.dromara.hodor.actuator.jobtype.api.executor.CommonJobProperties;
 import org.dromara.hodor.actuator.jobtype.api.executor.Constants;

@@ -43,7 +43,7 @@ import org.apache.hadoop.mapred.TaskReport;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.layout.PatternLayout;
-import org.dromara.hodor.actuator.api.utils.Props;
+import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.actuator.jobtype.api.utils.JSONUtils;
 import org.dromara.hodor.actuator.jobtype.bigdata.MapReduceJobState;
 import org.dromara.hodor.actuator.jobtype.bigdata.StatsUtils;

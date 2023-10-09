@@ -4,7 +4,7 @@ import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.api.core.JobLogger;
 import org.dromara.hodor.actuator.api.core.JobLoggerManager;
 import org.dromara.hodor.actuator.api.utils.JobPathUtils;
-import org.dromara.hodor.actuator.api.utils.Props;
+import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.actuator.jobtype.api.executor.Job;
 import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.remoting.api.message.RequestContext;

@@ -8,7 +8,7 @@ import org.apache.hadoop.yarn.api.records.YarnApplicationState;
 import org.apache.hadoop.yarn.exceptions.YarnException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.dromara.hodor.actuator.api.utils.Props;
+import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.actuator.jobtype.api.executor.CommonJobProperties;
 import org.dromara.hodor.actuator.jobtype.api.queue.AbstractAsyncTask;
 import org.dromara.hodor.actuator.jobtype.api.queue.AsyncTask;

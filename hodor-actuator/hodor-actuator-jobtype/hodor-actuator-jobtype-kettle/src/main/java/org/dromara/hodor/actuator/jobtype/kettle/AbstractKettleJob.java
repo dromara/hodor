@@ -20,7 +20,7 @@ package org.dromara.hodor.actuator.jobtype.kettle;
 import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.api.exceptions.JobExecutionException;
-import org.dromara.hodor.actuator.api.utils.Props;
+import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.actuator.jobtype.api.executor.AbstractJob;
 import org.dromara.hodor.actuator.jobtype.api.executor.CommonJobProperties;
 import org.dromara.hodor.common.utils.StringUtils;

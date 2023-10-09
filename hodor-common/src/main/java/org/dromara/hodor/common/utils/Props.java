@@ -14,7 +14,7 @@
  * the License.
  */
 
-package org.dromara.hodor.actuator.api.utils;
+package org.dromara.hodor.common.utils;
 
 import org.apache.commons.io.input.CharSequenceReader;
 import org.apache.commons.lang3.StringUtils;

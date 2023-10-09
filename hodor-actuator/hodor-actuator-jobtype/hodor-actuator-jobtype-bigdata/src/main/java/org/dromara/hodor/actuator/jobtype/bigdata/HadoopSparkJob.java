@@ -30,7 +30,7 @@ import java.util.StringTokenizer;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.DirectoryScanner;
-import org.dromara.hodor.actuator.api.utils.Props;
+import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.actuator.jobtype.api.executor.CommonJobProperties;
 import org.dromara.hodor.actuator.jobtype.api.executor.JavaProcessJob;
 import org.dromara.hodor.actuator.jobtype.bigdata.security.commons.HadoopSecurityManager;

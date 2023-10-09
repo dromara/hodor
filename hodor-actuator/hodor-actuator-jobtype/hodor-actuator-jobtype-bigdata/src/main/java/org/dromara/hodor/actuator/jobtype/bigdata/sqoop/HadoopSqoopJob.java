@@ -3,7 +3,7 @@ package org.dromara.hodor.actuator.jobtype.bigdata.sqoop;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.Logger;
-import org.dromara.hodor.actuator.api.utils.Props;
+import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.actuator.jobtype.api.executor.ProcessJob;
 
 /**

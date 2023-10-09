@@ -17,6 +17,8 @@
 
 package org.dromara.hodor.actuator.api.utils;
 
+import org.dromara.hodor.common.utils.Props;
+import org.dromara.hodor.common.utils.PropsUtils;
 import org.junit.Test;
 
 /**

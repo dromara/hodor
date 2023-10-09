@@ -16,7 +16,7 @@
 
 package org.dromara.hodor.actuator.jobtype.api.executor;
 
-import org.dromara.hodor.actuator.api.utils.Props;
+import org.dromara.hodor.common.utils.Props;
 
 /**
  * Raw job interface.

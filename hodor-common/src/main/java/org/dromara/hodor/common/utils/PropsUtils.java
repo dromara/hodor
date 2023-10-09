@@ -14,7 +14,7 @@
  * the License.
  */
 
-package org.dromara.hodor.actuator.api.utils;
+package org.dromara.hodor.common.utils;
 
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
@@ -35,7 +35,6 @@ import org.apache.commons.jexl2.JexlEngine;
 import org.apache.commons.jexl2.JexlException;
 import org.apache.commons.jexl2.MapContext;
 import org.dromara.hodor.common.exception.UndefinedPropertyException;
-import org.dromara.hodor.common.utils.StringUtils;
 
 @Slf4j
 public class PropsUtils {

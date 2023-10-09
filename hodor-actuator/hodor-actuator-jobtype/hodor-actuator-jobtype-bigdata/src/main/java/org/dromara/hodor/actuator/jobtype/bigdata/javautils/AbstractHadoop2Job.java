@@ -16,7 +16,7 @@ import org.apache.hadoop.mapreduce.TaskReport;
 import org.apache.hadoop.mapreduce.TaskType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.dromara.hodor.actuator.api.utils.Props;
+import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.actuator.jobtype.api.utils.JSONUtils;
 import org.dromara.hodor.actuator.jobtype.bigdata.MapReduceJob2State;
 import org.dromara.hodor.actuator.jobtype.bigdata.StatsUtils;

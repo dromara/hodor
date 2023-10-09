@@ -69,7 +69,7 @@ import org.apache.hadoop.yarn.util.ConverterUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.thrift.TException;
-import org.dromara.hodor.actuator.api.utils.Props;
+import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.actuator.jobtype.api.executor.Constants;
 import org.dromara.hodor.actuator.jobtype.api.utils.ExecuteAsUser;
 import org.dromara.hodor.actuator.jobtype.bigdata.security.commons.HadoopSecurityManager;

@@ -35,7 +35,7 @@ public class Host {
             return Host.builder().endpoint(endpoint).ip(hostSplit.get(0)).port(80).build();
         }
         if (hostSplit.size() != 2) {
-            throw new IllegalArgumentException("endpoint format is illegal.");
+            throw new IllegalArgumentException(" endpoint format is illegal, " + endpoint);
         }
         return Host.builder().endpoint(endpoint).ip(hostSplit.get(0)).port(Integer.parseInt(hostSplit.get(1))).build();
     }

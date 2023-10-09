@@ -34,7 +34,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.layout.PatternLayout;
-import org.dromara.hodor.actuator.api.utils.Props;
+import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.actuator.jobtype.api.executor.ProcessJob;
 import org.dromara.hodor.actuator.jobtype.api.utils.JSONUtils;
 import org.dromara.hodor.actuator.jobtype.bigdata.javautils.JobUtils;
