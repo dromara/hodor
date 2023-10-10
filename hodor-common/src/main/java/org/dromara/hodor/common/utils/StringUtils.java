@@ -24,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import org.apache.commons.text.TextStringBuilder;
 
@@ -220,4 +221,10 @@ public final class StringUtils extends org.apache.commons.lang3.StringUtils {
         return str.isEmpty() || str.charAt(str.length() - 1) != c ? str + c : str;
     }
 
+    public static Optional<String> ofBlankable(String str) {
+        if (isBlank(str)) {
+            return Optional.empty();
+        }
+        return Optional.of(str);
+    }
 }
