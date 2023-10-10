@@ -33,6 +33,21 @@ public class JobDesc {
     private String jobName;
 
     /**
+     * 任务类型：普通任务、工作流任务、分片任务
+     */
+    private JobType jobType;
+
+    /**
+     * 任务命令类型：java、shell、python等，根据执行器支持执行的任务
+     */
+    private String jobCommandType;
+
+    /**
+     * 任务执行的命令，Java任务即执行的方法
+     */
+    private String jobCommand;
+
+    /**
      * 调度策略
      */
     private ScheduleStrategy scheduleStrategy;
@@ -41,22 +56,6 @@ public class JobDesc {
      * 调度策略表达式
      */
     private String scheduleExp;
-
-    /**
-     * 任务类型：普通任务、定时任务、工作流任务
-     */
-    private JobType jobType;
-
-    private String jobPath;
-
-    /**
-     * 任务命令类型：java、shell、python等，根据执行器支持执行的任务
-     */
-    private String jobCommandType;
-
-    private String jobCommand;
-
-    private Priority priority;
 
     private TimeType timeType;
 
@@ -67,6 +66,8 @@ public class JobDesc {
     private String jobParameters;
 
     private String extensibleParameters;
+
+    private Priority priority;
 
     private Boolean failover;
 

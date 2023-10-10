@@ -48,7 +48,8 @@ public class JobExecuteManager {
     private JobExecuteManager() {
         this.jobExecuteRecorder = ServiceProvider.getInstance().getBean(JobExecuteRecorder.class);
         this.serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
-        this.typeReference = new TypeReference<RemotingResponse<JobExecuteStatusResponse>>() { };
+        this.typeReference = new TypeReference<RemotingResponse<JobExecuteStatusResponse>>() {
+        };
     }
 
     public static JobExecuteManager getInstance() {
@@ -64,16 +65,15 @@ public class JobExecuteManager {
 
     public boolean isRunning(JobKey jobKey) {
         JobExecDetail jobExecDetail = jobExecuteRecorder.getJobExecDetail(jobKey);
-        if (jobExecDetail == null || jobExecDetail.getActuatorEndpoint() == null
-            || (jobExecDetail.getExecuteStatus() != JobExecuteStatus.READY
+        if (jobExecDetail == null || (jobExecDetail.getExecuteStatus() != JobExecuteStatus.READY
             && jobExecDetail.getExecuteStatus() != JobExecuteStatus.PENDING
             && jobExecDetail.getExecuteStatus() != JobExecuteStatus.RUNNING)) {
             return false;
         }
-        // 去执行端查询状态，并且更新状态
+        /*// 去执行端查询状态，并且更新状态
         Host host = Host.of(jobExecDetail.getActuatorEndpoint());
         JobExecuteStatusRequest statusRequest = new JobExecuteStatusRequest();
-        statusRequest.setRequestId(jobExecDetail.getId());
+        statusRequest.setRequestId(jobExecDetail.getRequestId());
         JobExecuteStatusResponse statusResponse = queryExecuteJobStatus(host, statusRequest);
         // 未查询到说明当前执行器上面并没有此任务运行
         if (statusResponse == null) {
@@ -82,7 +82,8 @@ public class JobExecuteManager {
         if (JobExecuteStatus.isFinished(statusResponse.getStatus())) {
             removeRunningJob(jobKey);
         }
-        return JobExecuteStatus.isRunning(statusResponse.getStatus());
+        return JobExecuteStatus.isRunning(statusResponse.getStatus());*/
+        return true;
     }
 
     public void removeRunningJob(JobKey jobKey) {
@@ -116,18 +117,23 @@ public class JobExecuteManager {
     private JobExecDetail buildSchedulerStartJobExecDetail(HodorJobExecutionContext context) {
         JobDesc jobDesc = context.getJobDesc();
         JobExecDetail jobExecDetail = new JobExecDetail();
-        jobExecDetail.setId(context.getRequestId());
+        jobExecDetail.setId(context.getInstanceId());
+        jobExecDetail.setRequestId(context.getRequestId());
         jobExecDetail.setGroupName(jobDesc.getGroupName());
         jobExecDetail.setJobName(jobDesc.getJobName());
         jobExecDetail.setSchedulerEndpoint(StringUtils.splitToList(context.getSchedulerName(), StringUtils.UNDER_LINE_SEPARATOR).get(1));
         jobExecDetail.setScheduleStart(DateUtil.date());
         jobExecDetail.setExecuteStatus(JobExecuteStatus.READY);
+        jobExecDetail.setShardingCount(context.getShardingCount());
+        jobExecDetail.setShardingId(context.getShardingId());
+        jobExecDetail.setShardingParams(context.getShardingParams());
         return jobExecDetail;
     }
 
     private JobExecDetail buildSchedulerEndJobExecDetail(HodorJobExecutionContext context, Host host) {
         JobExecDetail jobExecDetail = new JobExecDetail();
-        jobExecDetail.setId(context.getRequestId());
+        jobExecDetail.setId(context.getInstanceId());
+        jobExecDetail.setRequestId(context.getRequestId());
         jobExecDetail.setGroupName(context.getJobKey().getGroupName());
         jobExecDetail.setJobName(context.getJobKey().getJobName());
         jobExecDetail.setScheduleEnd(DateUtil.date());
@@ -138,7 +144,7 @@ public class JobExecuteManager {
 
     private JobExecDetail buildFinishJobExecDetail(JobExecuteResponse response) {
         JobExecDetail jobExecDetail = new JobExecDetail();
-        jobExecDetail.setId(response.getRequestId());
+        jobExecDetail.setRequestId(response.getRequestId());
         jobExecDetail.setExecuteStatus(response.getStatus());
         if (!StringUtils.isBlank(response.getStartTime())) {
             jobExecDetail.setExecuteStart(DateUtil.parse(response.getStartTime(), DatePattern.NORM_DATETIME_FORMAT));
@@ -168,15 +174,15 @@ public class JobExecuteManager {
     public <R> R executeRequest(Host host, RequestBody requestBody, MessageType messageType) {
         byte[] body = serializer.serialize(requestBody);
         Header header = Header.builder()
-                .id(requestBody.getRequestId())
-                .type(messageType.getType())
-                .length(body.length)
-                .version(RemotingConst.DEFAULT_VERSION)
-                .build();
+            .id(requestBody.getRequestId())
+            .type(messageType.getType())
+            .length(body.length)
+            .version(RemotingConst.DEFAULT_VERSION)
+            .build();
         RemotingMessage remotingRequest = RemotingMessage.builder()
-                .header(header)
-                .body(body)
-                .build();
+            .header(header)
+            .body(body)
+            .build();
         try {
             RemotingMessage remotingMessage = RemotingClient.getInstance().sendSyncRequest(host, remotingRequest, 1500);
             RemotingResponse<R> remotingResponse = serializer.deserialize(remotingMessage.getBody(), typeReference.getType());

@@ -3,6 +3,9 @@ package org.dromara.hodor.scheduler.api;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.IdGenerator;
 import org.dromara.hodor.model.job.JobDesc;
@@ -14,19 +17,24 @@ import org.dromara.hodor.model.job.JobKey;
  * @author tomgs
  * @version 2020/6/25 1.0
  */
+@Getter
+@Setter
+@ToString
 public class HodorJobExecutionContext {
 
-    private final long requestId;
+    private Long instanceId;
 
-    private final String schedulerName;
+    private Long requestId;
 
-    private final JobKey rootJobKey;
+    private String schedulerName;
 
-    private final JobKey jobKey;
+    private JobKey rootJobKey;
 
-    private final JobDesc jobDesc;
+    private JobKey jobKey;
 
-    private final Date fireTime;
+    private JobDesc jobDesc;
+
+    private Date fireTime;
 
     private Integer shardingCount = 1;
 
@@ -39,6 +47,7 @@ public class HodorJobExecutionContext {
     public HodorJobExecutionContext(final JobKey rootJobKey, final JobDesc jobDesc,
                                     final String schedulerName, final Date fireTime) {
         this.rootJobKey = rootJobKey;
+        this.instanceId = IdGenerator.defaultGenerator().nextId();
         this.requestId = IdGenerator.defaultGenerator().nextId();
         this.schedulerName = schedulerName;
         this.jobDesc = jobDesc;
@@ -46,39 +55,16 @@ public class HodorJobExecutionContext {
         this.fireTime = fireTime;
     }
 
-    public HodorJobExecutionContext(final long requestId,
+    public HodorJobExecutionContext(final long instanceId, final long requestId,
                                     final JobKey rootJobKey, final JobDesc jobDesc,
                                     final String schedulerName, final Date fireTime) {
+        this.instanceId = instanceId;
         this.requestId = requestId;
         this.schedulerName = schedulerName;
         this.jobDesc = jobDesc;
         this.jobKey = JobKey.of(jobDesc.getGroupName(), jobDesc.getJobName());
         this.rootJobKey = rootJobKey;
         this.fireTime = fireTime;
-    }
-
-    public long getRequestId() {
-        return requestId;
-    }
-
-    public JobKey getRootJobKey() {
-        return rootJobKey;
-    }
-
-    public JobKey getJobKey() {
-        return jobKey;
-    }
-
-    public JobDesc getJobDesc() {
-        return jobDesc;
-    }
-
-    public Date getFireTime() {
-        return fireTime;
-    }
-
-    public String getSchedulerName() {
-        return schedulerName;
     }
 
     public void resetHosts(List<Host> hosts) {
@@ -93,47 +79,4 @@ public class HodorJobExecutionContext {
         hosts.add(selected);
     }
 
-    public List<Host> getHosts() {
-        return this.hosts;
-    }
-
-    public Integer getShardingCount() {
-        return shardingCount;
-    }
-
-    public void setShardingCount(Integer shardingCount) {
-        this.shardingCount = shardingCount;
-    }
-
-    public Integer getShardingId() {
-        return shardingId;
-    }
-
-    public void setShardingId(Integer shardingId) {
-        this.shardingId = shardingId;
-    }
-
-    public String getShardingParams() {
-        return shardingParams;
-    }
-
-    public void setShardingParams(String shardingParams) {
-        this.shardingParams = shardingParams;
-    }
-
-    @Override
-    public String toString() {
-        return "HodorJobExecutionContext{" +
-            "requestId=" + requestId +
-            ", schedulerName='" + schedulerName + '\'' +
-            ", rootJobKey=" + rootJobKey +
-            ", jobKey=" + jobKey +
-            ", jobDesc=" + jobDesc +
-            ", fireTime=" + fireTime +
-            ", shardingCount=" + shardingCount +
-            ", shardingId=" + shardingId +
-            ", shardingParams='" + shardingParams + '\'' +
-            ", hosts=" + hosts +
-            '}';
-    }
 }

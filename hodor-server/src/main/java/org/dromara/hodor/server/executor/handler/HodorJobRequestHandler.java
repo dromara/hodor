@@ -149,7 +149,6 @@ public class HodorJobRequestHandler implements RequestHandler {
             .requestId(requestId)
             .jobName(jobDesc.getJobName())
             .groupName(jobDesc.getGroupName())
-            .jobPath(jobDesc.getJobPath())
             .jobCommandType(jobDesc.getJobCommandType())
             .jobCommand(jobDesc.getJobCommand())
             .jobParameters(jobDesc.getJobParameters())

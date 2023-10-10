@@ -19,10 +19,12 @@ package org.dromara.hodor.server.executor;
 
 import java.util.List;
 import org.dromara.hodor.common.Host;
+import org.dromara.hodor.common.IdGenerator;
 import org.dromara.hodor.common.utils.Utils;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.server.executor.dispatch.JobDispatcher;
 import org.dromara.hodor.server.executor.handler.HodorBroadcastJobRequestHandler;
+import org.dromara.hodor.server.manager.JobExecuteManager;
 
 /**
  * ShardingJobExecutor
@@ -43,11 +45,13 @@ public class BroadcastJobExecutor extends CommonJobExecutor {
         final List<Host> hosts = context.getHosts();
         for (int i = 0; i < hosts.size(); i++) {
             final HodorJobExecutionContext shardingContext = Utils.Beans.copyProperties(context, HodorJobExecutionContext.class);
+            shardingContext.setRequestId(IdGenerator.defaultGenerator().nextId());
             shardingContext.setShardingCount(hosts.size());
             shardingContext.setShardingId(i);
             Host selected = hosts.get(i);
             shardingContext.refreshHosts(selected);
 
+            JobExecuteManager.getInstance().addSchedulerStartJob(shardingContext);
             dispatcher.dispatch(shardingContext);
         }
     }

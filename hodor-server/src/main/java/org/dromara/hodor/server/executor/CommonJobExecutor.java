@@ -42,7 +42,6 @@ public class CommonJobExecutor extends AbstractJobExecutor {
         if (JobExecuteManager.getInstance().isRunning(jobKey)) {
             throw new IllegalJobExecuteStateException("The job {} is running", jobKey);
         }
-        JobExecuteManager.getInstance().addSchedulerStartJob(context);
         // set actuator hosts
         final List<Host> hosts = actuatorNodeManager.getAvailableHosts(jobKey);
         if (hosts.isEmpty()) {
@@ -54,6 +53,7 @@ public class CommonJobExecutor extends AbstractJobExecutor {
     @Override
     public void process(final HodorJobExecutionContext context) {
         log.debug("scheduler executor, context: {}.", context);
+        JobExecuteManager.getInstance().addSchedulerStartJob(context);
         dispatcher.dispatch(context);
     }
 

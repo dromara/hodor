@@ -17,13 +17,17 @@ public class JobExecDetail {
 
     private Long id;
 
-    private Integer shardingCount;
-
-    private Integer shardingId;
+    private Long requestId;
 
     private String groupName;
 
     private String jobName;
+
+    private Integer shardingCount;
+
+    private Integer shardingId;
+
+    private String shardingParams;
 
     private String schedulerEndpoint;
 
@@ -43,12 +47,8 @@ public class JobExecDetail {
 
     private Boolean isTimeout;
 
-    private Integer encType;
-
-    private byte[] detailedLog;
+    private String comments;
 
     private byte[] jobExecData;
-
-    private String comments;
 
 }

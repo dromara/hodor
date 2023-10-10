@@ -171,7 +171,7 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
             log.info("{} is RUNNING", node);
 
             JobDesc jobDesc = (JobDesc) node.getRawData();
-            HodorJobExecutionContext hodorJobExecutionContext = new HodorJobExecutionContext(node.getNodeId(), null, jobDesc, "test-scheduler", new Date());
+            HodorJobExecutionContext hodorJobExecutionContext = new HodorJobExecutionContext(node.getNodeId(), 0, null, jobDesc, "test-scheduler", new Date());
             jobDispatcher.dispatch(hodorJobExecutionContext);
         }, Status.RUNNING);
 

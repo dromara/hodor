@@ -19,6 +19,7 @@ package org.dromara.hodor.server.executor;
 
 import java.util.List;
 import org.dromara.hodor.common.Host;
+import org.dromara.hodor.common.IdGenerator;
 import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.common.utils.Utils;
@@ -28,6 +29,7 @@ import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.server.executor.dispatch.JobDispatcher;
 import org.dromara.hodor.server.executor.exception.IllegalJobExecuteStateException;
 import org.dromara.hodor.server.executor.handler.HodorShardingJobRequestHandler;
+import org.dromara.hodor.server.manager.JobExecuteManager;
 
 /**
  * ShardingJobExecutor
@@ -68,6 +70,7 @@ public class ShardingJobExecutor extends CommonJobExecutor {
             final String shard = shardings.get(i);
             final List<String> shards = StringUtils.splitToList(shard, "=");
             final HodorJobExecutionContext shardingContext = Utils.Beans.copyProperties(context, HodorJobExecutionContext.class);
+            shardingContext.setRequestId(IdGenerator.defaultGenerator().nextId());
             shardingContext.setShardingCount(shardings.size());
             shardingContext.setShardingId(Integer.parseInt(shards.get(0)));
             shardingContext.setShardingParams(shards.get(1));
@@ -75,6 +78,8 @@ public class ShardingJobExecutor extends CommonJobExecutor {
             final int hostSize = hosts.size();
             Host selected = hosts.get(i % hostSize);
             shardingContext.refreshHosts(selected);
+
+            JobExecuteManager.getInstance().addSchedulerStartJob(shardingContext);
             dispatcher.dispatch(shardingContext);
         }
     }
