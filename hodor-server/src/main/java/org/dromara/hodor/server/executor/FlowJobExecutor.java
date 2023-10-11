@@ -13,7 +13,7 @@ import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
  *  workflow job executor
  *
  * @author tomgs
- * @version 2020/6/25 1.0 
+ * @version 2020/6/25 1.0
  */
 @Slf4j
 public class FlowJobExecutor extends CommonJobExecutor {
@@ -22,6 +22,10 @@ public class FlowJobExecutor extends CommonJobExecutor {
 
     public FlowJobExecutor() {
         this.flowJobExecutorManager = FlowJobExecutorManager.getInstance();
+    }
+
+    @Override
+    public void preProcess(HodorJobExecutionContext context) {
     }
 
     @Override

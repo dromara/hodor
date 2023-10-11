@@ -36,7 +36,8 @@ public class JobExecDetailServiceImpl implements JobExecDetailService {
 
     @Override
     public void createIfAbsent(JobExecDetail jobExecDetail) {
-        jobExecDetailMapper.insertIgnore(jobExecDetail);
+        jobExecDetailMapper.insert(jobExecDetail);
+        //jobExecDetailMapper.insertIgnore(jobExecDetail);
     }
 
     @Override

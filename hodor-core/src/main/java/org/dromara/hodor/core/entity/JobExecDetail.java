@@ -17,7 +17,7 @@ public class JobExecDetail {
 
     private Long id;
 
-    private Long requestId;
+    private Long instanceId;
 
     private String groupName;
 

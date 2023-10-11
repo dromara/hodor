@@ -41,8 +41,8 @@ public interface JobExecuteRecorder {
     default JobExecDetail toRawJobExecDetail(String detailString) {
         List<String> strings = StringUtils.splitToList(detailString, "|");
         JobExecDetail jobExecDetail = new JobExecDetail();
-        final String instanceId = strings.get(1);
-        final String requestId = strings.get(2);
+        final String requestId = strings.get(1);
+        final String instanceId = strings.get(2);
         final String groupName = strings.get(3);
         final String jobName = strings.get(4);
         final String shardingCount = strings.get(5);
@@ -60,8 +60,8 @@ public interface JobExecuteRecorder {
         final String comments = strings.get(17);
         final String jobExecData = strings.get(18);
 
-        jobExecDetail.setRequestId(Long.parseLong(requestId));
-        StringUtils.ofBlankable(instanceId).ifPresent(e -> jobExecDetail.setId(Long.parseLong(e)));
+        jobExecDetail.setId(Long.parseLong(requestId));
+        StringUtils.ofBlankable(instanceId).ifPresent(e -> jobExecDetail.setInstanceId(Long.parseLong(e)));
         StringUtils.ofBlankable(groupName).ifPresent(jobExecDetail::setGroupName);
         StringUtils.ofBlankable(jobName).ifPresent(jobExecDetail::setJobName);
         StringUtils.ofBlankable(groupName).ifPresent(jobExecDetail::setGroupName);
@@ -93,7 +93,7 @@ public interface JobExecuteRecorder {
         sb.setNullText("");
         sb.append(op).append("|");
         sb.append(detail.getId()).append("|");
-        sb.append(detail.getRequestId()).append("|");
+        sb.append(detail.getInstanceId()).append("|");
         sb.append(detail.getGroupName()).append("|");
         sb.append(detail.getJobName()).append("|");
         sb.append(detail.getShardingCount()).append("|");

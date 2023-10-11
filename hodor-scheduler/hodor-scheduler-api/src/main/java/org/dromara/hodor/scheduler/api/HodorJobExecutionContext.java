@@ -36,6 +36,8 @@ public class HodorJobExecutionContext {
 
     private Date fireTime;
 
+    private List<String> shardings;
+
     private Integer shardingCount = 1;
 
     private Integer shardingId = 0;
@@ -44,11 +46,13 @@ public class HodorJobExecutionContext {
 
     private final List<Host> hosts = new ArrayList<>();
 
+    public HodorJobExecutionContext() {}
+
     public HodorJobExecutionContext(final JobKey rootJobKey, final JobDesc jobDesc,
                                     final String schedulerName, final Date fireTime) {
         this.rootJobKey = rootJobKey;
         this.instanceId = IdGenerator.defaultGenerator().nextId();
-        this.requestId = IdGenerator.defaultGenerator().nextId();
+        this.requestId = instanceId;
         this.schedulerName = schedulerName;
         this.jobDesc = jobDesc;
         this.jobKey = JobKey.of(jobDesc.getGroupName(), jobDesc.getJobName());

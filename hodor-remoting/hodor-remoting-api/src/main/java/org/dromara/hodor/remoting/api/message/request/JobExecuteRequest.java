@@ -18,6 +18,8 @@ public class JobExecuteRequest implements RequestBody {
 
     private Long requestId;
 
+    private Long instanceId;
+
     private String jobName;
 
     private String groupName;

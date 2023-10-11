@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.utils.StringUtils;
+import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.core.entity.JobExecDetail;
 import org.dromara.hodor.core.recoder.JobExecuteRecorder;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
@@ -102,6 +103,24 @@ public class JobExecuteManager {
         jobExecuteRecorder.recordJobExecDetail(JobExecuteRecorder.OP_UPDATE, jobExecDetail);
     }
 
+    public void addSchedulerFailedJob(HodorJobExecutionContext context, Exception e) {
+        JobDesc jobDesc = context.getJobDesc();
+        JobExecDetail jobExecDetail = new JobExecDetail();
+        jobExecDetail.setId(context.getRequestId());
+        jobExecDetail.setInstanceId(context.getInstanceId());
+        jobExecDetail.setGroupName(jobDesc.getGroupName());
+        jobExecDetail.setJobName(jobDesc.getJobName());
+        jobExecDetail.setSchedulerEndpoint(StringUtils.splitToList(context.getSchedulerName(), StringUtils.UNDER_LINE_SEPARATOR).get(1));
+        jobExecDetail.setScheduleStart(DateUtil.date());
+        jobExecDetail.setScheduleEnd(DateUtil.date());
+        jobExecDetail.setExecuteStatus(JobExecuteStatus.ERROR);
+        jobExecDetail.setShardingCount(context.getShardingCount());
+        jobExecDetail.setShardingId(context.getShardingId());
+        jobExecDetail.setShardingParams(context.getShardingParams());
+        jobExecDetail.setComments(ThreadUtils.getStackTraceInfo(e));
+        jobExecuteRecorder.recordJobExecDetail(JobExecuteRecorder.OP_INSERT, jobExecDetail);
+    }
+
     public void addFinishJob(JobExecuteResponse jobExecuteResponse) {
         JobExecDetail jobExecDetail = buildFinishJobExecDetail(jobExecuteResponse);
         if (JobExecuteStatus.isFinished(jobExecDetail.getExecuteStatus())) {
@@ -117,8 +136,8 @@ public class JobExecuteManager {
     private JobExecDetail buildSchedulerStartJobExecDetail(HodorJobExecutionContext context) {
         JobDesc jobDesc = context.getJobDesc();
         JobExecDetail jobExecDetail = new JobExecDetail();
-        jobExecDetail.setId(context.getInstanceId());
-        jobExecDetail.setRequestId(context.getRequestId());
+        jobExecDetail.setId(context.getRequestId());
+        jobExecDetail.setInstanceId(context.getInstanceId());
         jobExecDetail.setGroupName(jobDesc.getGroupName());
         jobExecDetail.setJobName(jobDesc.getJobName());
         jobExecDetail.setSchedulerEndpoint(StringUtils.splitToList(context.getSchedulerName(), StringUtils.UNDER_LINE_SEPARATOR).get(1));
@@ -132,8 +151,8 @@ public class JobExecuteManager {
 
     private JobExecDetail buildSchedulerEndJobExecDetail(HodorJobExecutionContext context, Host host) {
         JobExecDetail jobExecDetail = new JobExecDetail();
-        jobExecDetail.setId(context.getInstanceId());
-        jobExecDetail.setRequestId(context.getRequestId());
+        jobExecDetail.setId(context.getRequestId());
+        jobExecDetail.setInstanceId(context.getInstanceId());
         jobExecDetail.setGroupName(context.getJobKey().getGroupName());
         jobExecDetail.setJobName(context.getJobKey().getJobName());
         jobExecDetail.setScheduleEnd(DateUtil.date());
@@ -144,7 +163,8 @@ public class JobExecuteManager {
 
     private JobExecDetail buildFinishJobExecDetail(JobExecuteResponse response) {
         JobExecDetail jobExecDetail = new JobExecDetail();
-        jobExecDetail.setRequestId(response.getRequestId());
+        jobExecDetail.setId(response.getRequestId());
+        jobExecDetail.setInstanceId(response.getInstanceId());
         jobExecDetail.setExecuteStatus(response.getStatus());
         if (!StringUtils.isBlank(response.getStartTime())) {
             jobExecDetail.setExecuteStart(DateUtil.parse(response.getStartTime(), DatePattern.NORM_DATETIME_FORMAT));
@@ -195,5 +215,4 @@ public class JobExecuteManager {
         }
         return null;
     }
-
 }

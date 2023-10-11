@@ -10,7 +10,6 @@ import org.dromara.hodor.server.executor.dispatch.JobDispatcher;
 import org.dromara.hodor.server.executor.exception.IllegalJobExecuteStateException;
 import org.dromara.hodor.server.executor.exception.JobScheduleException;
 import org.dromara.hodor.server.executor.handler.HodorJobRequestHandler;
-import org.dromara.hodor.server.executor.handler.RequestHandler;
 import org.dromara.hodor.server.manager.ActuatorNodeManager;
 import org.dromara.hodor.server.manager.JobExecuteManager;
 
@@ -27,11 +26,8 @@ public class CommonJobExecutor extends AbstractJobExecutor {
 
     private final ActuatorNodeManager actuatorNodeManager;
 
-    private final RequestHandler requestHandler;
-
     public CommonJobExecutor() {
-        this.requestHandler = new HodorJobRequestHandler();
-        this.dispatcher = new JobDispatcher(requestHandler);
+        this.dispatcher = new JobDispatcher(new HodorJobRequestHandler());
         this.actuatorNodeManager = ActuatorNodeManager.getInstance();
     }
 
@@ -59,7 +55,7 @@ public class CommonJobExecutor extends AbstractJobExecutor {
 
     @Override
     public void exceptionProcess(HodorJobExecutionContext context, Exception e) {
-        requestHandler.exceptionCaught(context, e);
+        JobExecuteManager.getInstance().addSchedulerFailedJob(context, e);
     }
 
 }

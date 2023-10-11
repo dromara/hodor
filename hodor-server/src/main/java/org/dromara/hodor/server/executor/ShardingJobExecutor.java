@@ -46,10 +46,9 @@ public class ShardingJobExecutor extends CommonJobExecutor {
     }
 
     @Override
-    public void process(HodorJobExecutionContext context) {
+    public void preProcess(HodorJobExecutionContext context) {
         final JobKey jobKey = context.getJobKey();
         final JobDesc jobDesc = context.getJobDesc();
-        final List<Host> hosts = context.getHosts();
         Props jobProps = new Props();
         jobProps.putAll(jobDesc.getJobParameters());
         // 通过在配置sharding指定分片参数，sharding=0=hello,1=world,2=hodor
@@ -66,6 +65,18 @@ public class ShardingJobExecutor extends CommonJobExecutor {
             }
         }
 
+        context.setShardingParams(sharding);
+        context.setShardingCount(shardings.size());
+        context.setShardingId(-1);
+        context.setShardings(shardings);
+
+        super.preProcess(context);
+    }
+
+    @Override
+    public void process(HodorJobExecutionContext context) {
+        final List<Host> hosts = context.getHosts();
+        final List<String> shardings = context.getShardings();
         for (int i = 0; i < shardings.size(); i++) {
             final String shard = shardings.get(i);
             final List<String> shards = StringUtils.splitToList(shard, "=");

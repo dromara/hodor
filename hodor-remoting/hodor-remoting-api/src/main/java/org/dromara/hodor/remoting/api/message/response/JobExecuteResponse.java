@@ -21,6 +21,8 @@ public class JobExecuteResponse implements ResponseBody {
 
     private Long requestId;
 
+    private Long instanceId;
+
     private JobKey jobKey;
 
     private JobExecuteStatus status;
@@ -45,6 +47,7 @@ public class JobExecuteResponse implements ResponseBody {
     public String toString() {
         return "JobExecuteResponse{" +
             "requestId=" + requestId +
+            ", instanceId=" + instanceId +
             ", jobKey=" + jobKey +
             ", status=" + status +
             ", startTime='" + startTime + '\'' +
