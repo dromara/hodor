@@ -27,9 +27,18 @@ public class JobList {
         return "a=123";
     }
 
-    @Job(group = "testGroup", jobName = "test2", cron = "0/15 * * * * ?")
-    public void test2() {
-        log.info("Job [testGroup#test2] execute, no arguments");
+    @Job(group = "testGroup", jobName = "test2", cron = "0/30 * * * * ?")
+    public void test2(JobExecutionContext context) {
+        final Integer shardingCount = context.getJobParameter().getShardingCount();
+        final Integer shardingId = context.getJobParameter().getShardingId();
+        final String shardingParams = context.getJobParameter().getShardingParams();
+        log.info("Sharding Job [testGroup#test2] execute, shardingCount: {}, shardingId: {}, shardingParams: {}",
+            shardingCount, shardingId, shardingParams);
+    }
+
+    @Job(group = "testGroup", jobName = "test3", cron = "0/15 * * * * ?")
+    public void test3() {
+        log.info("Job [testGroup#test3] execute, no arguments");
     }
 
 }

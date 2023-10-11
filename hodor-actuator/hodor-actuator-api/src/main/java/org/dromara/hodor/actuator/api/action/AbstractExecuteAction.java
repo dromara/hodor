@@ -2,7 +2,6 @@ package org.dromara.hodor.actuator.api.action;
 
 import cn.hutool.core.date.DateUtil;
 import java.io.File;
-import java.util.Date;
 import java.util.Map;
 import org.dromara.hodor.actuator.api.config.HodorProperties;
 import org.dromara.hodor.actuator.api.core.HodorJobExecution;
@@ -30,7 +29,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
 
     private JobLogger jobLogger;
 
-    private Long requestId;
+    private JobExecuteRequest request;
 
     private JobKey jobKey;
 
@@ -56,7 +55,8 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
 
     @Override
     public JobExecuteResponse executeRequest(final JobExecuteRequest request) throws Exception {
-        requestId = request.getRequestId();
+        this.request = request;
+        Long requestId = request.getRequestId();
         jobKey = JobKey.of(request.getGroupName(), request.getJobName());
         // create job logger
         final String loggerName = JobPathUtils.createLoggerName(request.getGroupName(), request.getJobName(), requestId);
@@ -88,12 +88,9 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
         jobLogger.error("execute exception: {}", e.getMessage(), e);
 
         String exceptionStack = ThreadUtils.getStackTraceInfo(e);
-        HodorJobExecution failureJobExecution = HodorJobExecution.createFailureJobExecution(requestId, exceptionStack);
+        HodorJobExecution failureJobExecution = HodorJobExecution.createFailureJobExecution(request.getRequestId(), exceptionStack);
         jobExecutionPersistence.fireJobExecutionEvent(failureJobExecution);
-
-        JobExecuteResponse response = new JobExecuteResponse();
-        response.setRequestId(requestId);
-        response.setJobKey(jobKey);
+        JobExecuteResponse response = buildResponse(request);
         response.setStatus(JobExecuteStatus.FAILED);
         response.setCompleteTime(DateUtil.now());
         response.setComments(exceptionStack);
@@ -116,9 +113,11 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
     public JobExecuteResponse buildResponse(final JobExecuteRequest request) {
         JobExecuteResponse response = new JobExecuteResponse();
         response.setRequestId(request.getRequestId());
+        response.setInstanceId(request.getInstanceId());
         response.setJobKey(jobKey);
         response.setShardingCount(request.getShardingCount());
         response.setShardingId(request.getShardingId());
+        response.setShardingParams(request.getShardingParams());
         return response;
     }
 
@@ -129,7 +128,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
     @Override
     public void afterProcess() {
         jobLogger.info("job execution finished.");
-        getRequestHandleManager().removeExecutableJobContext(requestId);
+        getRequestHandleManager().removeExecutableJobContext(request.getRequestId());
         jobLoggerManager.stopJobLogger();
     }
 
