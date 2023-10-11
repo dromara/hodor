@@ -53,6 +53,11 @@ const jobStatusColumns = ref([
     key: 'id',
   },
   {
+    title: 'instanceId',
+    dataIndex: 'instanceId',
+    key: 'instanceId',
+  },
+  {
     title: 'groupName',
     dataIndex: 'groupName',
     key: 'groupName',
@@ -76,6 +81,21 @@ const jobStatusColumns = ref([
     title: 'executeStatus',
     dataIndex: 'executeStatus',
     key: 'executeStatus',
+  },
+  {
+    title: 'shardingCount',
+    dataIndex: 'shardingCount',
+    key: 'shardingCount',
+  },
+  {
+    title: 'shardingId',
+    dataIndex: 'shardingId',
+    key: 'shardingId',
+  },
+  {
+    title: 'shardingParams',
+    dataIndex: 'shardingParams',
+    key: 'shardingParams',
   },
   {
     title: 'scheduleStart',
