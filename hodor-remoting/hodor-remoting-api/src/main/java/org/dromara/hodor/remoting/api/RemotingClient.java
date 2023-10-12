@@ -27,8 +27,6 @@ import org.dromara.hodor.remoting.api.message.RemotingMessage;
 @Slf4j
 public class RemotingClient {
 
-    private static final RemotingClient INSTANCE = new RemotingClient();
-
     private static final Map<Long, CompletableFuture<RemotingMessage>> FUTURE_MAP = new ConcurrentHashMap<>();
 
     private final Cache<Host, HodorChannel> bidiActiveChannels;
@@ -39,7 +37,7 @@ public class RemotingClient {
 
     private final NetClientTransport clientTransport;
 
-    private RemotingClient() {
+    public RemotingClient() {
         this.bidiActiveChannels = CacheBuilder.newBuilder()
             .initialCapacity(30)
             .expireAfterAccess(30, TimeUnit.MINUTES)
@@ -51,10 +49,6 @@ public class RemotingClient {
             .removalListener(new ChannelRemoveListener())
             .build();
         this.clientTransport = ExtensionLoader.getExtensionLoader(NetClientTransport.class).getDefaultJoin();
-    }
-
-    public static RemotingClient getInstance() {
-        return INSTANCE;
     }
 
     public void sendBidiRequest(final Host host, final RemotingMessage request, final FutureCallback<RemotingMessage> responseCallback) throws RemotingException {

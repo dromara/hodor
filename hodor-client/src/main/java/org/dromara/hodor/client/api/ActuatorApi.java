@@ -77,7 +77,7 @@ public class ActuatorApi {
         this.appName = appName;
         this.appKey = appKey;
         this.serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
-        this.remotingClient = RemotingClient.getInstance();
+        this.remotingClient = new RemotingClient();
         this.logResponseTypeReference = new TypeReference<RemotingResponse<JobExecuteLogResponse>>() {};
         this.killResponseTypeReference = new TypeReference<RemotingResponse<KillRunningJobResponse>>() {};
     }
