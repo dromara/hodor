@@ -18,7 +18,6 @@
 package org.dromara.hodor.server.executor.handler;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 
 /**
  * HodorShardingJobRequestHandler
@@ -28,10 +27,5 @@ import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
  */
 @Slf4j
 public class HodorBroadcastJobRequestHandler extends HodorJobRequestHandler {
-
-    @Override
-    public void preHandle(HodorJobExecutionContext context) {
-      log.info("broadcast job start handling");
-    }
 
 }

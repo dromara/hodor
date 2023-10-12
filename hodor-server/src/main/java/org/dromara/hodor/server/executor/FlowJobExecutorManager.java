@@ -230,7 +230,7 @@ public class FlowJobExecutorManager extends AbstractAsyncEventPublisher<Node> {
     }
 
     private HodorJobExecutionContext getHodorJobExecutionContext(Node node) {
-        return new HodorJobExecutionContext(0, node.getNodeId(),
+        return new HodorJobExecutionContext(node.getDag().getDagId(), node.getNodeId(),
             JobKey.of(node.getDag().getName()),
             (JobDesc) node.getRawData(),
             node.getDag().getSchedulerName(),

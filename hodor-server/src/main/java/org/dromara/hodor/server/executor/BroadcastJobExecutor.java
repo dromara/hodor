@@ -24,7 +24,6 @@ import org.dromara.hodor.common.utils.Utils;
 import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.server.executor.dispatch.JobDispatcher;
 import org.dromara.hodor.server.executor.handler.HodorBroadcastJobRequestHandler;
-import org.dromara.hodor.server.manager.JobExecuteManager;
 
 /**
  * ShardingJobExecutor
@@ -51,7 +50,6 @@ public class BroadcastJobExecutor extends CommonJobExecutor {
             Host selected = hosts.get(i);
             shardingContext.refreshHosts(selected);
 
-            JobExecuteManager.getInstance().addSchedulerStartJob(shardingContext);
             dispatcher.dispatch(shardingContext);
         }
     }

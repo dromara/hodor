@@ -27,7 +27,7 @@ public class JobExecutorTypeManager {
         WORKFLOW_JOB_EXECUTOR(JobType.WORKFLOW_JOB, new FlowJobExecutor()),
         SHARDING_JOB_EXECUTOR(JobType.SHARDING_JOB, new ShardingJobExecutor()),
         BROADCAST_JOB_EXECUTOR(JobType.BROADCAST_JOB, new BroadcastJobExecutor()),
-        MAP_REDUCE_JOB_EXECUTOR(JobType.MAP_REDUCE_JOB, new MapReduceJobExecutor());
+        MAP_REDUCE_JOB_EXECUTOR(JobType.MAPREDUCE_JOB, new MapReduceJobExecutor());
 
         private final JobType jobType;
 

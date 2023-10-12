@@ -1,19 +1,42 @@
 package org.dromara.hodor.server.executor.dispatch;
 
-import org.dromara.hodor.common.executor.HodorExecutor;
-import org.dromara.hodor.common.executor.HodorExecutorFactory;
-import org.dromara.hodor.common.executor.HodorRunnable;
-import org.dromara.hodor.common.queue.DiscardOldestElementPolicy;
-import org.dromara.hodor.model.job.JobKey;
-import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
-import org.dromara.hodor.server.executor.handler.RequestHandler;
-
+import cn.hutool.core.lang.TypeReference;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.common.Host;
+import org.dromara.hodor.common.concurrent.FutureCallback;
+import org.dromara.hodor.common.executor.HodorExecutor;
+import org.dromara.hodor.common.executor.HodorExecutorFactory;
+import org.dromara.hodor.common.executor.HodorRunnable;
+import org.dromara.hodor.common.extension.ExtensionLoader;
+import org.dromara.hodor.common.loadbalance.LoadBalance;
+import org.dromara.hodor.common.loadbalance.LoadBalanceFactory;
+import org.dromara.hodor.common.queue.DiscardOldestElementPolicy;
+import org.dromara.hodor.core.Constants;
+import org.dromara.hodor.model.enums.ScheduleStrategy;
+import org.dromara.hodor.model.job.JobDesc;
+import org.dromara.hodor.model.job.JobKey;
+import org.dromara.hodor.remoting.api.RemotingClient;
+import org.dromara.hodor.remoting.api.RemotingConst;
+import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
+import org.dromara.hodor.remoting.api.message.Header;
+import org.dromara.hodor.remoting.api.message.MessageType;
+import org.dromara.hodor.remoting.api.message.RemotingMessage;
+import org.dromara.hodor.remoting.api.message.RemotingResponse;
+import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
+import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
+import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
+import org.dromara.hodor.server.executor.exception.JobScheduleException;
+import org.dromara.hodor.server.executor.handler.RequestHandler;
+import org.dromara.hodor.server.manager.JobExecuteManager;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 任务分发器
@@ -21,6 +44,7 @@ import java.util.concurrent.TimeUnit;
  * @author tomgs
  * @since 1.0
  */
+@Slf4j
 public class JobDispatcher {
 
     private static final Map<JobKey, HodorExecutor> hodorExecutorMap = new ConcurrentHashMap<>();
@@ -29,12 +53,24 @@ public class JobDispatcher {
 
     private final RequestHandler requestHandler;
 
+    private final RemotingClient clientService;
+
+    private final RemotingMessageSerializer serializer;
+
+    private final FutureCallback<RemotingMessage> futureCallback;
+
+    private final TypeReference<RemotingResponse<JobExecuteResponse>> typeReference;
+
     public JobDispatcher(final RequestHandler requestHandler) {
         final int threadSize = Runtime.getRuntime().availableProcessors() * 2;
         this.threadPoolExecutor = HodorExecutorFactory.createThreadPoolExecutor("job-dispatcher", threadSize, 500, false);
         ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(2);
         scheduledThreadPoolExecutor.scheduleWithFixedDelay(this::clearUnavailableExecutor, 1, 1, TimeUnit.HOURS);
         this.requestHandler = requestHandler;
+        this.clientService = new RemotingClient();
+        this.futureCallback = getResponseCallback();
+        this.typeReference = new TypeReference<RemotingResponse<JobExecuteResponse>>() {};
+        this.serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
     }
 
     /**
@@ -49,14 +85,77 @@ public class JobDispatcher {
             @Override
             public void execute() {
                 try {
-                    requestHandler.preHandle(context);
-                    requestHandler.handle(context);
-                    requestHandler.postHandle(context);
+                    doDispatch(context);
                 } catch (Throwable t) {
-                    requestHandler.exceptionCaught(context, t);
+                    requestHandler.exceptionHandle(context, t);
                 }
             }
         });
+    }
+
+    private void doDispatch(HodorJobExecutionContext context) {
+        log.info("Job [key:{}, id:{}] dispatch begins, details: {}", context.getJobKey(), context.getRequestId(), context);
+        selectHost(context);
+
+        JobExecuteManager.getInstance().addSchedulerStartJob(context);
+        Exception jobException = null;
+        final RemotingMessage request = getRequestBody(context);
+        final List<Host> hosts = context.getHosts();
+        for (int i = hosts.size() - 1; i >= 0; i--) {
+            Host host = hosts.get(i);
+            try {
+                clientService.sendBidiRequest(host, request, futureCallback);
+                JobExecuteManager.getInstance().addSchedulerEndJob(context, host);
+                jobException = null;
+                break;
+            } catch (Exception e) {
+                jobException = e;
+            }
+            // 广播任务可能需要将此设置为false
+            if (!context.getJobDesc().getFailover()) {
+                break;
+            }
+        }
+        if (jobException != null) {
+            requestHandler.exceptionHandle(context, jobException);
+        }
+        log.info("Job [key:{}, id:{}] dispatch success", context.getJobKey(), context.getRequestId());
+    }
+
+    @NotNull
+    private FutureCallback<RemotingMessage> getResponseCallback() {
+        return new FutureCallback<RemotingMessage>() {
+            @Override
+            public void onSuccess(RemotingMessage response) {
+                Header header = response.getHeader();
+                RemotingResponse<JobExecuteResponse> remotingResponse = serializer.deserialize(response.getBody(), typeReference.getType());
+                requestHandler.resultHandle(header.getAttachment(), remotingResponse);
+            }
+
+            @Override
+            public void onFailure(Throwable cause) {
+                log.error("HodorJobRequestHandler exceptionCaught : {}", cause.getMessage(), cause);
+            }
+        };
+    }
+
+    private static void selectHost(HodorJobExecutionContext context) {
+        final JobDesc jobDesc = context.getJobDesc();
+        final List<Host> hosts = context.getHosts();
+        Host selected;
+        if (jobDesc.getScheduleStrategy() == ScheduleStrategy.SPECIFY) {
+            final String scheduleExp = jobDesc.getScheduleExp();
+            // 检查是否合法ip:port
+            final Host host = Host.of(scheduleExp);
+            if (!hosts.contains(host)) {
+                throw new JobScheduleException("The specify actuator endpoint [{}] is not contains available actuator nodes", scheduleExp);
+            }
+            selected = host;
+        } else {
+            LoadBalance loadBalance = LoadBalanceFactory.getLoadBalance(jobDesc.getScheduleStrategy().getName());
+            selected = loadBalance.select(hosts);
+        }
+        context.refreshHosts(selected);
     }
 
     private HodorExecutor createHodorExecutor(final JobKey key) {
@@ -84,6 +183,49 @@ public class JobDispatcher {
                 hodorExecutorMap.remove(item.getKey());
             }
         }
+    }
+
+    private RemotingMessage getRequestBody(final HodorJobExecutionContext context) {
+        byte[] requestBody = serializer.serialize(buildRequestFromContext(context));
+        return RemotingMessage.builder()
+            .header(buildHeader(requestBody.length, context))
+            .body(requestBody)
+            .build();
+    }
+
+    private JobExecuteRequest buildRequestFromContext(final HodorJobExecutionContext context) {
+        Long requestId = context.getRequestId();
+        JobDesc jobDesc = context.getJobDesc();
+        return JobExecuteRequest.builder()
+            .requestId(requestId)
+            .jobName(jobDesc.getJobName())
+            .groupName(jobDesc.getGroupName())
+            .jobCommandType(jobDesc.getJobCommandType())
+            .jobCommand(jobDesc.getJobCommand())
+            .jobParameters(jobDesc.getJobParameters())
+            .extensibleParameters(jobDesc.getExtensibleParameters())
+            .shardingCount(context.getShardingCount())
+            .shardingId(context.getShardingId())
+            .shardingParams(context.getShardingParams())
+            .timeout(jobDesc.getTimeout())
+            .retryCount(jobDesc.getRetryCount())
+            .version(jobDesc.getVersion())
+            .build();
+    }
+
+    private Header buildHeader(int bodyLength, HodorJobExecutionContext context) {
+        Map<String, Object> attachment = new HashMap<>();
+        attachment.put("schedulerName", context.getSchedulerName());
+        if (context.getRootJobKey() != null) {
+            attachment.put(Constants.FlowNodeConstants.ROOT_JOB_KEY, context.getRootJobKey().getKeyName());
+        }
+        return Header.builder()
+            .id(context.getRequestId())
+            .version(RemotingConst.DEFAULT_VERSION)
+            .type(MessageType.JOB_EXEC_REQUEST.getType())
+            .attachment(attachment)
+            .length(bodyLength)
+            .build();
     }
 
 }

@@ -17,8 +17,10 @@
 
 package org.dromara.hodor.server.executor.handler;
 
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
+import org.dromara.hodor.remoting.api.message.RemotingResponse;
+import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
 
 /**
  * HodorShardingJobRequestHandler
@@ -30,8 +32,7 @@ import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 public class HodorShardingJobRequestHandler extends HodorJobRequestHandler {
 
     @Override
-    public void preHandle(HodorJobExecutionContext context) {
-      log.info("sharding job start handling");
+    public void resultHandle(Map<String, Object> attachment, RemotingResponse<JobExecuteResponse> remotingResponse) {
+        super.resultHandle(attachment, remotingResponse);
     }
-
 }

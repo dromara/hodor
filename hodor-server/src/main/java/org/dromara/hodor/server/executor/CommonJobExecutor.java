@@ -49,12 +49,12 @@ public class CommonJobExecutor extends AbstractJobExecutor {
     @Override
     public void process(final HodorJobExecutionContext context) {
         log.debug("scheduler executor, context: {}.", context);
-        JobExecuteManager.getInstance().addSchedulerStartJob(context);
         dispatcher.dispatch(context);
     }
 
     @Override
     public void exceptionProcess(HodorJobExecutionContext context, Exception e) {
+        log.error("job [{}] scheduler exception, context: {}.", context.getJobKey(), context, e);
         JobExecuteManager.getInstance().addSchedulerFailedJob(context, e);
     }
 

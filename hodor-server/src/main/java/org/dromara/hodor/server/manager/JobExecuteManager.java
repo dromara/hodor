@@ -44,6 +44,8 @@ public class JobExecuteManager {
 
     private final RemotingMessageSerializer serializer;
 
+    private final RemotingClient remotingClient;
+
     private final TypeReference<RemotingResponse<JobExecuteStatusResponse>> typeReference;
 
     private JobExecuteManager() {
@@ -51,6 +53,7 @@ public class JobExecuteManager {
         this.serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
         this.typeReference = new TypeReference<RemotingResponse<JobExecuteStatusResponse>>() {
         };
+        this.remotingClient = new RemotingClient();
     }
 
     public static JobExecuteManager getInstance() {
@@ -66,15 +69,16 @@ public class JobExecuteManager {
 
     public boolean isRunning(JobKey jobKey) {
         JobExecDetail jobExecDetail = jobExecuteRecorder.getJobExecDetail(jobKey);
-        if (jobExecDetail == null || (jobExecDetail.getExecuteStatus() != JobExecuteStatus.READY
+        if (jobExecDetail == null || jobExecDetail.getActuatorEndpoint() == null
+            || (jobExecDetail.getExecuteStatus() != JobExecuteStatus.READY
             && jobExecDetail.getExecuteStatus() != JobExecuteStatus.PENDING
             && jobExecDetail.getExecuteStatus() != JobExecuteStatus.RUNNING)) {
             return false;
         }
-        /*// 去执行端查询状态，并且更新状态
+        // 去执行端查询状态，并且更新状态
         Host host = Host.of(jobExecDetail.getActuatorEndpoint());
         JobExecuteStatusRequest statusRequest = new JobExecuteStatusRequest();
-        statusRequest.setRequestId(jobExecDetail.getRequestId());
+        statusRequest.setRequestId(jobExecDetail.getId());
         JobExecuteStatusResponse statusResponse = queryExecuteJobStatus(host, statusRequest);
         // 未查询到说明当前执行器上面并没有此任务运行
         if (statusResponse == null) {
@@ -83,8 +87,7 @@ public class JobExecuteManager {
         if (JobExecuteStatus.isFinished(statusResponse.getStatus())) {
             removeRunningJob(jobKey);
         }
-        return JobExecuteStatus.isRunning(statusResponse.getStatus());*/
-        return true;
+        return JobExecuteStatus.isRunning(statusResponse.getStatus());
     }
 
     public void removeRunningJob(JobKey jobKey) {
@@ -204,7 +207,7 @@ public class JobExecuteManager {
             .body(body)
             .build();
         try {
-            RemotingMessage remotingMessage = RemotingClient.getInstance().sendSyncRequest(host, remotingRequest, 1500);
+            RemotingMessage remotingMessage = remotingClient.sendSyncRequest(host, remotingRequest, 1500);
             RemotingResponse<R> remotingResponse = serializer.deserialize(remotingMessage.getBody(), typeReference.getType());
             if (!remotingResponse.isSuccess()) {
                 log.error("request failure, code: {}, msg: {}", remotingResponse.getCode(), remotingResponse.getMsg());

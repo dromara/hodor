@@ -14,7 +14,6 @@ import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.compress.Compress;
 import org.dromara.hodor.common.compress.CompressFactory;
@@ -25,7 +24,6 @@ import org.dromara.hodor.common.dag.NodeLayer;
 import org.dromara.hodor.common.dag.Status;
 import org.dromara.hodor.common.event.AbstractAsyncEventPublisher;
 import org.dromara.hodor.common.event.Event;
-import org.dromara.hodor.common.utils.ThreadUtils;
 import org.dromara.hodor.core.dag.DagCreator;
 import org.dromara.hodor.core.dag.FlowData;
 import org.dromara.hodor.core.dag.FlowDataLoader;
@@ -265,23 +263,13 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
 
         Random random = new Random();
 
-        @Override
-        public void preHandle(HodorJobExecutionContext context) {
-            log.info("preHandler {} {}", context.getRequestId(), context.getJobKey());
-        }
-
-        @Override
-        public void handle(HodorJobExecutionContext context) {
-            log.info("handle {} {}", context.getRequestId(), context.getJobKey());
-            ThreadUtils.sleep(TimeUnit.SECONDS, random.nextInt(5));
-            Node node = dag.getNode(context.getJobKey().getGroupName(), context.getJobKey().getJobName());
-            publish(Event.create(node, Status.SUCCESS));
-        }
-
-        @Override
-        public void postHandle(HodorJobExecutionContext context) {
-            log.info("postHandle {} {}", context.getRequestId(), context.getJobKey());
-        }
+//        @Override
+//        public void handle(HodorJobExecutionContext context) {
+//            log.info("handle {} {}", context.getRequestId(), context.getJobKey());
+//            ThreadUtils.sleep(TimeUnit.SECONDS, random.nextInt(5));
+//            Node node = dag.getNode(context.getJobKey().getGroupName(), context.getJobKey().getJobName());
+//            publish(Event.create(node, Status.SUCCESS));
+//        }
 
         @Override
         public void resultHandle(Map<String, Object> attachment, RemotingResponse<JobExecuteResponse> remotingResponse) {
@@ -289,7 +277,7 @@ public class FlowJobExecutorTest extends AbstractAsyncEventPublisher<Node> {
         }
 
         @Override
-        public void exceptionCaught(HodorJobExecutionContext context, Throwable t) {
+        public void exceptionHandle(HodorJobExecutionContext context, Throwable t) {
             log.info("exceptionCaught {} {}", context.getRequestId(), context.getJobKey());
             Node node = dag.getNode(context.getJobKey().getGroupName(), context.getJobKey().getJobName());
             publish(Event.create(node, Status.FAILURE));

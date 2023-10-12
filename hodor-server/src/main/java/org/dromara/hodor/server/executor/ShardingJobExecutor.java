@@ -29,7 +29,6 @@ import org.dromara.hodor.scheduler.api.HodorJobExecutionContext;
 import org.dromara.hodor.server.executor.dispatch.JobDispatcher;
 import org.dromara.hodor.server.executor.exception.IllegalJobExecuteStateException;
 import org.dromara.hodor.server.executor.handler.HodorShardingJobRequestHandler;
-import org.dromara.hodor.server.manager.JobExecuteManager;
 
 /**
  * ShardingJobExecutor
@@ -90,7 +89,6 @@ public class ShardingJobExecutor extends CommonJobExecutor {
             Host selected = hosts.get(i % hostSize);
             shardingContext.refreshHosts(selected);
 
-            JobExecuteManager.getInstance().addSchedulerStartJob(shardingContext);
             dispatcher.dispatch(shardingContext);
         }
     }

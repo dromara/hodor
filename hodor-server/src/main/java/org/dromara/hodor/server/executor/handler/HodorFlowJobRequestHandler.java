@@ -27,7 +27,7 @@ public class HodorFlowJobRequestHandler extends HodorJobRequestHandler {
     }
 
     @Override
-    public void exceptionCaught(final HodorJobExecutionContext context, final Throwable t) {
+    public void exceptionHandle(final HodorJobExecutionContext context, final Throwable t) {
         log.error("job {} request [id:{}] execute exception, msg: {}.", context.getRequestId(), context.getJobKey(), t.getMessage(), t);
         RemotingResponse<JobExecuteResponse> errorResponse = getErrorResponse(context, t);
         HodorFlowJobResponseHandler.INSTANCE.fireJobResponseHandler(new Pair<>(context.getRootJobKey(), errorResponse));
