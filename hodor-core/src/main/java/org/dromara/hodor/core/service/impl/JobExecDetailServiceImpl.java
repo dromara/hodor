@@ -10,6 +10,7 @@ import org.dromara.hodor.core.PageInfo;
 import org.dromara.hodor.core.entity.JobExecDetail;
 import org.dromara.hodor.core.mapper.JobExecDetailMapper;
 import org.dromara.hodor.core.service.JobExecDetailService;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,14 @@ public class JobExecDetailServiceImpl implements JobExecDetailService {
 
     @Override
     public void createIfAbsent(JobExecDetail jobExecDetail) {
-        jobExecDetailMapper.insert(jobExecDetail);
+        try {
+            jobExecDetailMapper.insert(jobExecDetail);
+        } catch (Exception e) {
+            if (e instanceof DuplicateKeyException) {
+                return;
+            }
+            throw new RuntimeException("create job exec detail exception", e);
+        }
         //jobExecDetailMapper.insertIgnore(jobExecDetail);
     }
 
