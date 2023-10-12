@@ -50,12 +50,12 @@ public class Node {
 
     public Node(final String groupName, final String nodeName, Object rawData, final Dag dag) {
         requireNonNull(groupName, "The groupName of the node can't be null");
-        this.groupName = groupName;
         requireNonNull(nodeName, "The nodeName of the node can't be null");
-        this.nodeName = nodeName;
         requireNonNull(dag, "The dag of the node can't be null");
-        this.dag = dag;
         requireNonNull(rawData, "The rawData of the node can't be null");
+        this.groupName = groupName;
+        this.nodeName = nodeName;
+        this.dag = dag;
         this.rawData = rawData;
         this.id = IdGenerator.defaultGenerator().nextId();
         dag.addNode(this);
