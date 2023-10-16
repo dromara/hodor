@@ -554,6 +554,7 @@ onMounted(() => {
     <a-space direction="vertical">
       <a-row type="flex" justify="space-between">
         <a-space>
+          <!-- 创建任务 -->
           <a-button type="primary" @click="{ openCreateModal = true; }">创建任务</a-button>
           <a-modal v-model:open="openCreateModal" ok-text="确定" cancel-text="取消" @ok="onOk" width="80%"
                    :ok-button-props="{ style: { display: 'none' } }"
@@ -756,6 +757,7 @@ onMounted(() => {
               </a-tab-pane>
             </a-tabs>
           </a-modal>
+
           <a-button type="primary" @click="handleClickDrawer">批量编辑任务</a-button>
           <a-drawer title="数据编辑器" :width="500" :visible="visibleEditor" :body-style="{ paddingBottom: '80px' }"
                     @close="onCloseEditor">
