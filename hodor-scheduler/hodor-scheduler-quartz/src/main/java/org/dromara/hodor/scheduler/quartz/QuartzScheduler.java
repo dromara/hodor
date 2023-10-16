@@ -6,6 +6,7 @@ import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 import org.dromara.hodor.common.extension.Join;
 import org.dromara.hodor.common.utils.StringUtils;
+import org.dromara.hodor.model.enums.TimeType;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.scheduler.api.HodorScheduler;
 import org.dromara.hodor.scheduler.api.JobExecutor;
@@ -116,6 +117,12 @@ public class QuartzScheduler implements HodorScheduler {
 
     @Override
     public void putJob(JobDesc jobDesc, JobExecutor jobExecutor) {
+        final TimeType timeType = jobDesc.getTimeType();
+        if (timeType == TimeType.NONE) {
+            deleteJob(jobDesc);
+            return;
+        }
+
         if (checkExists(jobDesc)) {
             JobKey jobKey = JobKey.jobKey(jobDesc.getJobName(), jobDesc.getGroupName());
             try {
