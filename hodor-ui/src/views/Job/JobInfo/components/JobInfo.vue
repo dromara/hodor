@@ -82,10 +82,9 @@ const checkboxOptions = [{
   label: '马上调度',
   value: 'fireNow',
 }];
-// 新建任务表单
-const formRef = ref()
-const formStateCreateJob = reactive({
-  layout: 'horizontal',
+
+const jobInfo = {
+  id: '',
   groupName: '',
   jobName: '',
   jobType: 'COMMON_JOB',
@@ -108,8 +107,12 @@ const formStateCreateJob = reactive({
   executeTime: [],
   misfire: true,
   fireNow: false,
-  version: '1.0'
-});
+  version: '1'
+};
+
+// 新建任务表单
+const formRef = ref()
+const formStateCreateJob = reactive(jobInfo);
 // 新建任务表单验证规则
 const rulesCreateJob = {
   groupName: [{required: true, message: 'Please select groupName!', trigger: 'blur'}],
@@ -264,6 +267,21 @@ const onRangeChange = (date, dateStr) => {
   // console.log("dateStr", dateStr);
   formStateCreateJob.executeTime = dateStr;
 }
+
+const onRangeOk = (date, dateStr) => {
+  // console.log("dateStr", dateStr);
+  // formStateCreateJob.executeTime = dateStr;
+}
+
+const handleReady = (data) => {
+
+}
+
+const onClickValidCron = (data) => {
+
+}
+
+
 // 多选框
 const selectedJobIds = ref([]);
 const selectedJobInfos = ref([])
@@ -298,27 +316,7 @@ const extensions = [javascript(), oneDark];
 const codeMirrorRef = ref(null);
 // 编辑任务表单
 const formUpdateRef = ref()
-const formStateUpdateJob = reactive({
-  layout: 'horizontal',
-  id: '',
-  groupName: '',
-  jobName: '',
-  jobType: '',
-  jobStatus: '',
-  timeType: '',
-  timeExp: '',
-  priority: '',
-  jobCategory: '',
-  jobDesc: '',
-  jobCommandType: '',
-  jobDataType: '',
-  jobDataPath: '',
-  jobParameters: '',
-  timeOut: '180',
-  retryCount: '',
-  checkValue: [],
-  executeTime: [],
-});
+const formStateUpdateJob = reactive(jobInfo);
 
 // 暂停任务
 const stopSelectedJobs = () => {
@@ -374,8 +372,8 @@ const saveJobInfo = () => {
   const {id} = editableData.value;
   formUpdateRef.value.validateFields().then(values => {
     formStateUpdateJob.id = id;
-    formStateUpdateJob.misfire = checkValue.includes('misfire');
-    formStateUpdateJob.fireNow = checkValue.includes('fireNow');
+    formStateUpdateJob.misfire = formStateUpdateJob.checkValue.includes('misfire');
+    formStateUpdateJob.fireNow = formStateUpdateJob.checkValue.includes('fireNow');
     updateJob(formStateUpdateJob);
   })
   editableData.value = {};
@@ -442,8 +440,8 @@ const onOk = () => {
   openCreateModal.value = false;
   formRef.value.validateFields().then(values => {
     formStateCreateJob.jobStatus = 'READY';  // 默认状态
-    formStateCreateJob.misfire = checkValue.includes('misfire');
-    formStateCreateJob.fireNow = checkValue.includes('fireNow');
+    formStateCreateJob.misfire = formStateCreateJob.checkValue.includes('misfire');
+    formStateCreateJob.fireNow = formStateCreateJob.checkValue.includes('fireNow');
     createJob(formStateCreateJob);
     queryJobInfoListPaging(paginationOpt);
   })
@@ -814,8 +812,10 @@ onMounted(() => {
               <a-select ref="select" v-model:value="formStateSearch.jobType" placeholder="任务类型">
                 <a-select-option value="ALL"></a-select-option>
                 <a-select-option value="COMMON_JOB"></a-select-option>
-                <a-select-option value="TIME_JOB"></a-select-option>
                 <a-select-option value="WORKFLOW_JOB"></a-select-option>
+                <a-select-option value="SHARDING_JOB"></a-select-option>
+                <a-select-option value="BROADCAST_JOB"></a-select-option>
+                <a-select-option value="MAPREDUCE_JOB"></a-select-option>
               </a-select>
             </a-form-item>
             <a-form-item name="createTime">
@@ -893,7 +893,7 @@ onMounted(() => {
       <a-row :gutter="24">
         <a-col :span="5">
           <a-form-item label="任务类型:" name="jobType">
-            <a-select ref="select" v-model:value="formStateCreateJob.jobType">
+            <a-select ref="select" v-model:value="formStateUpdateJob.jobType">
               <a-select-option value="COMMON_JOB"></a-select-option>
               <a-select-option value="WORKFLOW_JOB"></a-select-option>
               <a-select-option value="SHARDING_JOB"></a-select-option>
@@ -904,7 +904,7 @@ onMounted(() => {
         </a-col>
         <a-col :span="5">
           <a-form-item label="时间类型:" name="timeType">
-            <a-select ref="select" v-model:value="formStateCreateJob.timeType">
+            <a-select ref="select" v-model:value="formStateUpdateJob.timeType">
               <a-select-option value="NONE"></a-select-option>
               <a-select-option value="CRON"></a-select-option>
               <a-select-option value="FIXED_RATE"></a-select-option>
@@ -913,10 +913,10 @@ onMounted(() => {
             </a-select>
           </a-form-item>
         </a-col>
-        <div class="flexDisplay" v-show="formStateCreateJob.timeType !== 'NONE'">
+        <div class="flexDisplay" v-show="formStateUpdateJob.timeType !== 'NONE'">
           <a-col :span="8" style="flex: 1;max-width: 100%;">
             <a-form-item label="时间表达式:" name="timeExp">
-              <a-input v-model:value="formStateCreateJob.timeExp"/>
+              <a-input v-model:value="formStateUpdateJob.timeExp"/>
             </a-form-item>
           </a-col>
           <a-col :span="4">
@@ -927,8 +927,8 @@ onMounted(() => {
       <a-row :gutter="24">
         <a-col :span="5">
           <a-form-item label="任务命令类型:" name="jobCommandType" placeholder="任务命令类型">
-            <a-select ref="select" v-model:value="formStateCreateJob.jobCommandType">
-              <a-select-option v-for="item in jobTypeNames[bindingList[formStateCreateJob.groupName]]"
+            <a-select ref="select" v-model:value="formStateUpdateJob.jobCommandType">
+              <a-select-option v-for="item in jobTypeNames[bindingList[formStateUpdateJob.groupName]]"
                                :value=item></a-select-option>
               <!-- <a-select-option value="java"></a-select-option> -->
             </a-select>
@@ -936,7 +936,7 @@ onMounted(() => {
         </a-col>
         <a-col :span="12">
           <a-form-item label="任务命令:" name="jobCommand" placeholder="任务命令">
-            <a-input v-model:value="formStateCreateJob.jobCommand"/>
+            <a-input v-model:value="formStateUpdateJob.jobCommand"/>
           </a-form-item>
         </a-col>
       </a-row>
@@ -948,7 +948,7 @@ onMounted(() => {
         </a-col>
         <a-col :span="12">
           <a-form-item label="任务资源路径:" name="jobDataPath">
-            <a-input v-model:value="formStateCreateJob.jobDataPath"/>
+            <a-input v-model:value="formStateUpdateJob.jobDataPath"/>
           </a-form-item>
         </a-col>
       </a-row>
@@ -992,7 +992,7 @@ onMounted(() => {
         </a-col>
         <a-col :span="5">
           <a-form-item label="版本号:" name="version">
-            <a-input v-model:value="formStateCreateJob.version"/>
+            <a-input v-model:value="formStateUpdateJob.version"/>
           </a-form-item>
         </a-col>
         <a-col :span="9">
