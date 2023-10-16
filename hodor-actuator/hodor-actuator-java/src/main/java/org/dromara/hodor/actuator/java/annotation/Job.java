@@ -28,6 +28,8 @@ public @interface Job {
 
     String commandType() default "java";
 
+    String command() default "";
+
     String zone() default "";
 
     int fixedDelay() default -1;

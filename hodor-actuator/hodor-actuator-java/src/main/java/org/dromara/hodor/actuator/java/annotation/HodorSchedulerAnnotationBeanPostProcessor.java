@@ -1,6 +1,5 @@
 package org.dromara.hodor.actuator.java.annotation;
 
-import java.beans.Introspector;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Map;
@@ -29,7 +28,6 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.support.CronExpression;
 import org.springframework.util.Assert;
-import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.util.StringValueResolver;
 
@@ -119,19 +117,8 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
 
     protected void processJob(Job job, Method method, Object bean) {
         ScheduledMethodRunnable runnable = createRunnable(bean, method);
-
         String groupName = job.group();
-        if (!StringUtils.hasText(groupName)) {
-            // 默认使用类的简化名称作为group
-            groupName = Introspector.decapitalize(ClassUtils.getShortName(bean.getClass()));
-        }
-
         String jobName = job.jobName();
-        if (!StringUtils.hasText(jobName)) {
-            // 默认使用方法名作为任务名称
-            jobName = method.getName();
-        }
-
         // check cron expresion
         String cron = job.cron();
         if (StringUtils.hasText(cron) && !Scheduled.CRON_DISABLED.equals(cron)) {
@@ -162,11 +149,13 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
         boolean failover = job.failover();
         int timeout = job.timeout();
         String commandType = job.commandType();
+        String command = job.command();
 
         JobDesc jobDesc = JobDesc.builder()
             .groupName(groupName)
             .jobName(jobName)
             .jobCommandType(commandType)
+            .jobCommand(command)
             .timeType(timeType)
             .timeExp(timeExp)
             .fireNow(fireNow)
