@@ -11,6 +11,7 @@ import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.api.exceptions.JobExecutionException;
 import org.dromara.hodor.actuator.api.executor.JobExecutionPersistence;
 import org.dromara.hodor.actuator.api.executor.RequestHandleManager;
+import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.model.job.JobKey;
@@ -68,7 +69,7 @@ public class JobExecuteAction extends AbstractExecuteAction {
         response.setStatus(JobExecuteStatus.SUCCEEDED);
         response.setCompleteTime(DateUtil.formatDateTime(new Date()));
         if (result != null) {
-            response.setResult(getRequestContext().serializer().serialize(result));
+            response.setResult(SerializeUtils.serialize(result));
         }
         return response;
     }
@@ -87,10 +88,15 @@ public class JobExecuteAction extends AbstractExecuteAction {
         executableJobContext.setJobKey(jobKey);
         executableJobContext.setExecuteRequest(request);
         executableJobContext.setJobCommandType(request.getJobCommandType());
+        executableJobContext.setJobCommand(request.getJobCommand());
         executableJobContext.setCurrentThread(Thread.currentThread());
         executableJobContext.setExecuteStatus(JobExecuteStatus.PENDING);
         executableJobContext.setJobLogger(getJobLogger());
         executableJobContext.setRequestContext(getRequestContext());
+        //executableJobContext.setDataPath(request.getDataPath());
+        executableJobContext.setParentJobData(request.getParentJobData());
+        executableJobContext.setParentJobExecuteStatuses(request.getParentJobExecuteStatuses());
+        executableJobContext.setParentJobExecuteResults(request.getParentJobExecuteResults());
         return executableJobContext;
     }
 

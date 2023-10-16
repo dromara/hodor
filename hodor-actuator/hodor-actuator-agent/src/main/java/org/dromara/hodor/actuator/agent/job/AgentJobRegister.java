@@ -119,7 +119,7 @@ public class AgentJobRegister implements JobRegister {
         File resourceFileDir = executableJobContext.getResourcesPath().toFile();
         if (!resourceFileDir.exists()) {
             //download job file from storage
-            File sourceFile = new File(executeRequest.getJobPath());
+            File sourceFile = new File(executeRequest.getJobCommand());
             File zipFile = new File(resourceFileDir, sourceFile.getName());
             InputStream fileStream = fileStorage.fetchFile(sourceFile.toPath());
             FileUtils.copyInputStreamToFile(fileStream, zipFile);

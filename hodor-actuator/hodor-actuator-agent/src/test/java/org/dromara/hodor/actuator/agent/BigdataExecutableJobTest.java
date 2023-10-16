@@ -62,7 +62,7 @@ public class BigdataExecutableJobTest {
 
         RequestContext requestContext = Mockito.mock(RequestContext.class);
         JobExecuteRequest jobExecuteRequest = Mockito.mock(JobExecuteRequest.class);
-        Mockito.when(jobExecuteRequest.getJobPath()).thenReturn(jobPath);
+        Mockito.when(jobExecuteRequest.getJobCommand()).thenReturn(jobPath);
         Mockito.when(jobExecuteRequest.getVersion()).thenReturn(1);
         Mockito.when(jobExecuteRequest.getGroupName()).thenReturn(jobKey.getGroupName());
         Mockito.when(jobExecuteRequest.getJobName()).thenReturn(jobKey.getJobName());

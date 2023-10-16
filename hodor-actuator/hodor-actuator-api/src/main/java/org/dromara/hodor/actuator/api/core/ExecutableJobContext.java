@@ -18,6 +18,7 @@
 package org.dromara.hodor.actuator.api.core;
 
 import java.nio.file.Path;
+import java.util.Map;
 import lombok.Builder;
 import lombok.Data;
 import org.dromara.hodor.actuator.api.ExecutableJob;
@@ -43,6 +44,8 @@ public class ExecutableJobContext {
 
     private String jobCommandType;
 
+    private String jobCommand;
+
     private ExecutableJob jobRunnable;
 
     private JobExecuteRequest executeRequest;
@@ -57,7 +60,14 @@ public class ExecutableJobContext {
 
     private JobLogger jobLogger;
 
-    private Object result;
+    // 上游数据
+    private Object parentJobData;
+
+    //上游任务的结果 Map<requestId, result>
+    private Map<Long, Object> parentJobExecuteResults;
+
+    //上游任务的状态 Map<requestId, executeStatus>
+    private Map<Long, JobExecuteStatus> parentJobExecuteStatuses;
 
     public Path getResourcesPath() {
         return JobPathUtils.getResourcesPath(dataPath, jobKey, String.valueOf(executeRequest.getVersion()));

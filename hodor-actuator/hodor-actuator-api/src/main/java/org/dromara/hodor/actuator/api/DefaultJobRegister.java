@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.api.core.JobInstance;
+import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.common.utils.Utils.Assert;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.model.job.JobKey;
@@ -27,7 +28,7 @@ public class DefaultJobRegister implements JobRegister {
 
     private final Map<JobKey, JobDesc> jobCache;
 
-    private final Map<JobKey, ExecutableJob> runnableJobCache;
+    private final Map<String, ExecutableJob> runnableJobCache;
 
     private final Set<String> groupNames;
 
@@ -66,16 +67,26 @@ public class DefaultJobRegister implements JobRegister {
         ExecutableJob runnableJob = jobInstance.getJobRunnable();
 
         log.info("add job {}", jobInstance);
-
         JobKey jobKey = JobKey.of(jobDesc.getGroupName(), jobDesc.getJobName());
-        groupNames.add(jobDesc.getGroupName());
-        jobCache.putIfAbsent(jobKey, jobDesc);
-        runnableJobCache.putIfAbsent(jobKey, runnableJob);
+        if (StringUtils.isNotBlank(jobDesc.getGroupName())
+            && StringUtils.isNotBlank(jobDesc.getJobName())) {
+            groupNames.add(jobDesc.getGroupName());
+            jobCache.putIfAbsent(jobKey, jobDesc);
+        }
+        final String jobCommand = jobDesc.getJobCommand();
+        if (StringUtils.isNotBlank(jobCommand)) {
+            runnableJobCache.putIfAbsent(jobCommand, runnableJob);
+        } else {
+            runnableJobCache.putIfAbsent(jobKey.toString(), runnableJob);
+        }
     }
 
     @Override
     public ExecutableJob provideExecutableJob(ExecutableJobContext executableJobContext) {
-        return runnableJobCache.get(executableJobContext.getJobKey());
+        if (StringUtils.isBlank(executableJobContext.getJobCommand())) {
+            return runnableJobCache.get(executableJobContext.getJobKey().toString());
+        }
+        return runnableJobCache.get(executableJobContext.getJobCommand());
     }
 
     @Override

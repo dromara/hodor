@@ -105,7 +105,7 @@ public abstract class AbstractExecuteAction extends AbstractAction<JobExecuteReq
         Map<String, Object> attachment = getRequestContext().requestHeader().getAttachment();
         HodorJobExecution runningJobExecution = HodorJobExecution.createRunningJobExecution(request.getRequestId(), request.getGroupName(),
             request.getJobName(), request.getJobParameters(),
-            attachment == null ? getRequestContext().channel().remoteAddress().toString() : attachment.get("schedulerName").toString());
+            attachment.get("schedulerName") == null ? getRequestContext().channel().remoteAddress().toString() : attachment.get("schedulerName").toString());
         jobExecutionPersistence.fireJobExecutionEvent(runningJobExecution);
         retryableSendMessage(RemotingResponse.succeeded(response));
     }
