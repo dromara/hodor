@@ -7,14 +7,14 @@ import org.dromara.hodor.actuator.java.annotation.Job;
 import org.springframework.stereotype.Component;
 
 /**
- * job list demo
+ * BaseJobDemo
  *
  * @author tomgs
  * @since 1.0
  */
 @Slf4j
 @Component
-public class JobList {
+public class BaseJobDemo {
 
     @Job(group = "testGroup", jobName = "test1", cron = "0/30 * * * * ?")
     public String test1(JobExecutionContext context) {
