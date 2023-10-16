@@ -69,17 +69,12 @@ public class ActuatorApi {
 
     private final RemotingClient remotingClient;
 
-    private final TypeReference<RemotingResponse<JobExecuteLogResponse>> logResponseTypeReference;
-    private final TypeReference<RemotingResponse<KillRunningJobResponse>> killResponseTypeReference;
-
     public ActuatorApi(ConnectStringParser connectStringParser, String appName, String appKey) {
         this.connectStringParser = connectStringParser;
         this.appName = appName;
         this.appKey = appKey;
         this.serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
         this.remotingClient = new RemotingClient();
-        this.logResponseTypeReference = new TypeReference<RemotingResponse<JobExecuteLogResponse>>() {};
-        this.killResponseTypeReference = new TypeReference<RemotingResponse<KillRunningJobResponse>>() {};
     }
 
     public LogQueryResult queryLog(LogQueryRequest request) throws ExecutionException, InterruptedException, TimeoutException {
@@ -104,6 +99,7 @@ public class ActuatorApi {
         return queryResult;
     }
 
+    @SuppressWarnings("unchecked")
     private RemotingResponse<JobExecuteLogResponse> getJobExecuteLogResponse(Host host, JobExecuteLogRequest executeLogRequest, int timeout) throws InterruptedException, ExecutionException, TimeoutException {
         final byte[] bodyBytes = serializer.serialize(executeLogRequest);
         RemotingMessage requestMessage = RemotingMessage.builder()
@@ -111,7 +107,7 @@ public class ActuatorApi {
             .body(bodyBytes)
             .build();
         final RemotingMessage remotingMessage = remotingClient.sendSyncRequest(host, requestMessage, timeout);
-        return serializer.deserialize(remotingMessage.getBody(), logResponseTypeReference.getType());
+        return serializer.deserialize(remotingMessage.getBody(), RemotingResponse.class);
     }
 
     private Header buildJobLogHeader(int bodyLength, JobExecuteLogRequest request) {
@@ -225,6 +221,7 @@ public class ActuatorApi {
         return killJobResult;
     }
 
+    @SuppressWarnings("unchecked")
     private RemotingResponse<KillRunningJobResponse> getKillRunningJobResponse(Host host, KillRunningJobRequest killRunningJobRequest, int timeout) throws InterruptedException, ExecutionException, TimeoutException {
         final byte[] bodyBytes = serializer.serialize(killRunningJobRequest);
         RemotingMessage requestMessage = RemotingMessage.builder()
@@ -232,7 +229,7 @@ public class ActuatorApi {
             .body(bodyBytes)  // 请求体
             .build();
         final RemotingMessage remotingMessage = remotingClient.sendSyncRequest(host, requestMessage, timeout);
-        return serializer.deserialize(remotingMessage.getBody(), killResponseTypeReference.getType());
+        return serializer.deserialize(remotingMessage.getBody(), RemotingResponse.class);
     }
 
     private Header buildKillRunningJobHeader(int bodyLength, KillRunningJobRequest request) {

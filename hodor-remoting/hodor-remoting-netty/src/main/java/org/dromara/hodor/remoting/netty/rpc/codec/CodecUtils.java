@@ -2,15 +2,13 @@ package org.dromara.hodor.remoting.netty.rpc.codec;
 
 import com.google.common.collect.Maps;
 import io.netty.buffer.ByteBuf;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
-import org.dromara.hodor.common.extension.ExtensionLoader;
+import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.remoting.api.RemotingConst;
-import org.dromara.hodor.remoting.api.RemotingMessageSerializer;
 import org.dromara.hodor.remoting.api.exception.RemotingException;
 import org.dromara.hodor.remoting.api.message.Header;
-
-import java.util.Map;
 
 /**
  * codec utils
@@ -20,8 +18,6 @@ import java.util.Map;
  */
 @Slf4j
 public class CodecUtils {
-
-    private static final RemotingMessageSerializer serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
 
     @SuppressWarnings("unchecked")
     public static Map<String, Object> parseAttachment(ByteBuf in, int attachmentSize) throws ResetReaderIndexException {
@@ -33,7 +29,7 @@ public class CodecUtils {
             }
             byte[] req = new byte[attachmentSize];
             in.readBytes(req);
-            attachment = (Map<String, Object>) serializer.deserialize(req, Map.class);
+            attachment = (Map<String, Object>) SerializeUtils.deserialize(req, Map.class);
         }
         return attachment;
     }
@@ -51,7 +47,7 @@ public class CodecUtils {
         if (MapUtils.isEmpty(header.getAttachment())) {
             out.writeInt(0);
         } else {
-            byte[] attachmentByte = serializer.serialize(header.getAttachment());
+            byte[] attachmentByte = SerializeUtils.serialize(header.getAttachment());
             out.writeInt(attachmentByte.length);
             out.writeBytes(attachmentByte);
         }

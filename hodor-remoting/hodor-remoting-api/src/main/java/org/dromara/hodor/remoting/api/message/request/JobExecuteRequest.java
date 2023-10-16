@@ -1,7 +1,9 @@
 package org.dromara.hodor.remoting.api.message.request;
 
+import java.util.Map;
 import lombok.Builder;
 import lombok.Data;
+import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.remoting.api.message.RequestBody;
 
 /**
@@ -24,15 +26,22 @@ public class JobExecuteRequest implements RequestBody {
 
     private String groupName;
 
-    private String jobPath;
+    private String jobCommandType;
 
     private String jobCommand;
-
-    private String jobCommandType;
 
     private String jobParameters;
 
     private String extensibleParameters;
+
+    // 上游任务结果数据
+    private Object parentJobData;
+
+    //上游任务的结果 Map<requestId, result>
+    private Map<Long, Object> parentJobExecuteResults;
+
+    //上游任务的状态 Map<requestId, executeStatus>
+    private Map<Long, JobExecuteStatus> parentJobExecuteStatuses;
 
     @Builder.Default
     private Integer timeout = 180;
