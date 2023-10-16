@@ -51,7 +51,7 @@ public class ShardingJobExecutor extends CommonJobExecutor {
         Props jobProps = new Props();
         jobProps.putAll(jobDesc.getJobParameters());
         // 通过在配置sharding指定分片参数，sharding=0=hello,1=world,2=hodor
-        final String sharding = jobProps.getString("sharding");
+        final String sharding = jobProps.getString("hodor.sharding");
         if (StringUtils.isBlank(sharding)) {
             throw new IllegalJobExecuteStateException("The job {} sharding parameter is null", jobKey);
         }

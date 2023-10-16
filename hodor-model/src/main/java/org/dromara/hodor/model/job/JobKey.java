@@ -17,21 +17,32 @@ public class JobKey {
 
     private String jobName;
 
-    public JobKey(String groupName, String jobName) {
+    private String command;
+
+    public JobKey(String groupName, String jobName, String command) {
         this.groupName = groupName;
         this.jobName = jobName;
+        this.command = command;
     }
 
     public static JobKey of(String groupName, String jobName) {
-        return new JobKey(groupName, jobName);
+        return new JobKey(groupName, jobName, null);
+    }
+
+    public static JobKey of(String groupName, String jobName, String command) {
+        return new JobKey(groupName, jobName, command);
     }
 
     public static JobKey of(String jobKey) {
-        String[] split = jobKey.split("#", 2);
-        if (split.length != 2) {
+        String[] split = jobKey.split("#");
+        if (split.length != 2 && split.length != 3) {
             throw new IllegalArgumentException(String.format("jobKey [%s] is illegal.", jobKey));
         }
-        return new JobKey(split[0], split[1]);
+        if (split.length == 2) {
+            return new JobKey(split[0], split[1], null);
+        } else {
+            return new JobKey(split[0], split[1], split[2]);
+        }
     }
 
     @Override
@@ -43,7 +54,9 @@ public class JobKey {
             return false;
         }
         JobKey jobKey = (JobKey) o;
-        return Objects.equals(groupName, jobKey.groupName) && Objects.equals(jobName, jobKey.jobName);
+        return Objects.equals(groupName, jobKey.groupName)
+            && Objects.equals(jobName, jobKey.jobName)
+            && Objects.equals(command, jobKey.command);
     }
 
     public String getKeyName() {
@@ -52,12 +65,16 @@ public class JobKey {
 
     @Override
     public int hashCode() {
-        return Objects.hash(groupName, jobName);
+        return Objects.hash(groupName, jobName, command);
     }
 
     @Override
     public String toString() {
-        return String.format("%s#%s", groupName, jobName);
+        if (command == null) {
+            return String.format("%s#%s", groupName, jobName);
+        } else {
+            return String.format("%s#%s#%s", groupName, jobName, command);
+        }
     }
 
 }

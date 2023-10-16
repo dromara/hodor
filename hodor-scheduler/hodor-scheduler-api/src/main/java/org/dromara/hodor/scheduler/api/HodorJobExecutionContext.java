@@ -3,11 +3,13 @@ package org.dromara.hodor.scheduler.api;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.dromara.hodor.common.Host;
 import org.dromara.hodor.common.IdGenerator;
+import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.model.job.JobKey;
 
@@ -34,6 +36,8 @@ public class HodorJobExecutionContext {
 
     private JobDesc jobDesc;
 
+    private String execCommand;
+
     private Date fireTime;
 
     private List<String> shardings;
@@ -44,9 +48,21 @@ public class HodorJobExecutionContext {
 
     private String shardingParams;
 
+    private String stage;
+
+    // 上游任务结果数据
+    private Object parentJobData;
+
+    //上游任务的结果 Map<requestId, result>
+    private Map<Long, Object> parentJobExecuteResults;
+
+    //上游任务的状态 Map<requestId, executeStatus>
+    private Map<Long, JobExecuteStatus> parentJobExecuteStatuses;
+
     private final List<Host> hosts = new ArrayList<>();
 
-    public HodorJobExecutionContext() {}
+    public HodorJobExecutionContext() {
+    }
 
     public HodorJobExecutionContext(final JobKey rootJobKey, final JobDesc jobDesc,
                                     final String schedulerName, final Date fireTime) {

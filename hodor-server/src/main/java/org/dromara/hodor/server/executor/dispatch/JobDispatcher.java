@@ -1,6 +1,5 @@
 package org.dromara.hodor.server.executor.dispatch;
 
-import cn.hutool.core.lang.TypeReference;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,8 +58,6 @@ public class JobDispatcher {
 
     private final FutureCallback<RemotingMessage> futureCallback;
 
-    private final TypeReference<RemotingResponse<JobExecuteResponse>> typeReference;
-
     public JobDispatcher(final RequestHandler requestHandler) {
         final int threadSize = Runtime.getRuntime().availableProcessors() * 2;
         this.threadPoolExecutor = HodorExecutorFactory.createThreadPoolExecutor("job-dispatcher", threadSize, 500, false);
@@ -69,7 +66,6 @@ public class JobDispatcher {
         this.requestHandler = requestHandler;
         this.clientService = new RemotingClient();
         this.futureCallback = getResponseCallback();
-        this.typeReference = new TypeReference<RemotingResponse<JobExecuteResponse>>() {};
         this.serializer = ExtensionLoader.getExtensionLoader(RemotingMessageSerializer.class).getDefaultJoin();
     }
 
@@ -123,12 +119,13 @@ public class JobDispatcher {
     }
 
     @NotNull
+    @SuppressWarnings("unchecked")
     private FutureCallback<RemotingMessage> getResponseCallback() {
         return new FutureCallback<RemotingMessage>() {
             @Override
             public void onSuccess(RemotingMessage response) {
                 Header header = response.getHeader();
-                RemotingResponse<JobExecuteResponse> remotingResponse = serializer.deserialize(response.getBody(), typeReference.getType());
+                RemotingResponse<JobExecuteResponse> remotingResponse = serializer.deserialize(response.getBody(), RemotingResponse.class);
                 requestHandler.resultHandle(header.getAttachment(), remotingResponse);
             }
 
@@ -198,15 +195,19 @@ public class JobDispatcher {
         JobDesc jobDesc = context.getJobDesc();
         return JobExecuteRequest.builder()
             .requestId(requestId)
+            .instanceId(context.getInstanceId())
             .jobName(jobDesc.getJobName())
             .groupName(jobDesc.getGroupName())
             .jobCommandType(jobDesc.getJobCommandType())
-            .jobCommand(jobDesc.getJobCommand())
+            .jobCommand(context.getExecCommand())
             .jobParameters(jobDesc.getJobParameters())
             .extensibleParameters(jobDesc.getExtensibleParameters())
             .shardingCount(context.getShardingCount())
             .shardingId(context.getShardingId())
             .shardingParams(context.getShardingParams())
+            .parentJobData(context.getParentJobData())
+            .parentJobExecuteStatuses(context.getParentJobExecuteStatuses())
+            .parentJobExecuteResults(context.getParentJobExecuteResults())
             .timeout(jobDesc.getTimeout())
             .retryCount(jobDesc.getRetryCount())
             .version(jobDesc.getVersion())
@@ -218,6 +219,9 @@ public class JobDispatcher {
         attachment.put("schedulerName", context.getSchedulerName());
         if (context.getRootJobKey() != null) {
             attachment.put(Constants.FlowNodeConstants.ROOT_JOB_KEY, context.getRootJobKey().getKeyName());
+        }
+        if (context.getStage() != null) {
+            attachment.put(Constants.JobConstants.JOB_STAGE_KEY, context.getStage());
         }
         return Header.builder()
             .id(context.getRequestId())

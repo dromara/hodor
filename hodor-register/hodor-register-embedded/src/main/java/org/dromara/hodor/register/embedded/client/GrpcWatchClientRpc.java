@@ -206,7 +206,8 @@ public class GrpcWatchClientRpc implements WatchClientRpc {
                         addOnFailureLoggingCallback(
                             grpcExecutor,
                             executor.schedule(() -> {
-                                watchStreamSendHandler();
+                                //watchStreamSendHandler();
+                                startHandleWatchStream();
                                 log.info("Resend registry watch request ...");
                                 for (WatchRequest watchRequest : watchRequests) {
                                     watchRequestStreamObserver.onNext(watchRequest);

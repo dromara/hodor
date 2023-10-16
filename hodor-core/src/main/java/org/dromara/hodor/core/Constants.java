@@ -33,6 +33,15 @@ public interface Constants {
 
         public static final String COMMAND_TYPE_KEY = "commandType";
 
+        public static final String COMMAND_KEY = "command";
+
+        public static final String JOB_STAGE_KEY = "stage";
+
+        public static final String SPLIT_STAGE = "split_stage";
+
+        public static final String MAP_STAGE = "map_stage";
+
+        public static final String REDUCE_STAGE = "reduce_stage";
     }
 
     /**

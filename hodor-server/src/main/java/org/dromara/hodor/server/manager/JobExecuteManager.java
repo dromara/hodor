@@ -102,8 +102,8 @@ public class JobExecuteManager {
 
     public void addSchedulerEndJob(HodorJobExecutionContext context, Host host) {
         JobExecDetail jobExecDetail = buildSchedulerEndJobExecDetail(context, host);
-        jobExecuteRecorder.addJobExecDetail(jobExecDetail);
         jobExecuteRecorder.recordJobExecDetail(JobExecuteRecorder.OP_UPDATE, jobExecDetail);
+        jobExecuteRecorder.addJobExecDetail(jobExecDetail);
     }
 
     public void addSchedulerFailedJob(HodorJobExecutionContext context, Exception e) {
@@ -122,14 +122,15 @@ public class JobExecuteManager {
         jobExecDetail.setShardingParams(context.getShardingParams());
         jobExecDetail.setComments(ThreadUtils.getStackTraceInfo(e));
         jobExecuteRecorder.recordJobExecDetail(JobExecuteRecorder.OP_INSERT, jobExecDetail);
+        removeRunningJob(context.getJobKey());
     }
 
     public void addFinishJob(JobExecuteResponse jobExecuteResponse) {
         JobExecDetail jobExecDetail = buildFinishJobExecDetail(jobExecuteResponse);
+        jobExecuteRecorder.recordJobExecDetail(JobExecuteRecorder.OP_UPDATE, jobExecDetail);
         if (JobExecuteStatus.isFinished(jobExecDetail.getExecuteStatus())) {
             removeRunningJob(jobExecuteResponse.getJobKey());
         }
-        jobExecuteRecorder.recordJobExecDetail(JobExecuteRecorder.OP_UPDATE, jobExecDetail);
     }
 
     public JobExecuteStatusResponse queryExecuteJobStatus(Host host, JobExecuteStatusRequest request) {
@@ -194,6 +195,7 @@ public class JobExecuteManager {
         return this.executeRequest(host, killRunningJobRequest, MessageType.KILL_JOB_REQUEST);
     }
 
+    @SuppressWarnings("unchecked")
     public <R> R executeRequest(Host host, RequestBody requestBody, MessageType messageType) {
         byte[] body = serializer.serialize(requestBody);
         Header header = Header.builder()
@@ -208,7 +210,7 @@ public class JobExecuteManager {
             .build();
         try {
             RemotingMessage remotingMessage = remotingClient.sendSyncRequest(host, remotingRequest, 1500);
-            RemotingResponse<R> remotingResponse = serializer.deserialize(remotingMessage.getBody(), typeReference.getType());
+            RemotingResponse<R> remotingResponse = serializer.deserialize(remotingMessage.getBody(), RemotingResponse.class);
             if (!remotingResponse.isSuccess()) {
                 log.error("request failure, code: {}, msg: {}", remotingResponse.getCode(), remotingResponse.getMsg());
             }

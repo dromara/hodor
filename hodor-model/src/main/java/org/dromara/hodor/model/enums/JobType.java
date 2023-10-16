@@ -31,7 +31,7 @@ public enum JobType {
     /**
      * map_reduce任务
      */
-    MAPREDUCE_JOB(3);
+    MAPREDUCE_JOB(4);
 
     private final int code;
 

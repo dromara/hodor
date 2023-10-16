@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.compress.Compress;
 import org.dromara.hodor.common.compress.CompressFactory;
 import org.dromara.hodor.common.compress.EncType;
-import org.dromara.hodor.common.cron.CronUtils;
 import org.dromara.hodor.common.utils.HashUtils;
 import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.common.utils.TypedMapWrapper;
@@ -75,6 +74,7 @@ public class FlowJobInfoServiceImpl implements FlowJobInfoService {
         rootFlowJobInfo.setJobName(jobName);
         rootFlowJobInfo.setJobType(JobType.WORKFLOW_JOB);
         rootFlowJobInfo.setJobCommandType(jobConfigWrapper.getString(Constants.JobConstants.COMMAND_TYPE_KEY));
+        rootFlowJobInfo.setJobCommand(jobConfigWrapper.getString(Constants.JobConstants.COMMAND_KEY));
         rootFlowJobInfo.setTimeType(TimeType.ofName(jobConfigWrapper.getString(Constants.JobConstants.TIME_TYPE_KEY)));
         rootFlowJobInfo.setTimeExp(jobConfigWrapper.getString(Constants.JobConstants.TIME_EXP_KEY));
         rootFlowJobInfo.setJobStatus(JobStatus.READY);
