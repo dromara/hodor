@@ -2,6 +2,7 @@ package org.dromara.hodor.actuator.agent;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.actuator.api.HodorActuatorManager;
+import org.dromara.hodor.common.exception.HodorException;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
@@ -26,21 +27,21 @@ public class HodorAgentActuatorInit implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         log.info("HodorBigdataActuator starting");
         Thread thread = new Thread(() -> {
             try {
                 actuatorManager.start();
+                log.info("HodorBigdataActuator starting success");
                 latch.await();
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new HodorException(e);
             }
         });
         thread.setDaemon(false);
         thread.setName("hodor-agent-server");
         thread.start();
 
-        log.info("HodorBigdataActuator starting success");
         // add close shutdown hook
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             log.info("HodorBigdataActuator closed");
