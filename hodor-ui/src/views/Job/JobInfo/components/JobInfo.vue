@@ -1014,6 +1014,11 @@ onMounted(() => {
 <style scoped lang="less">
 :deep(.ant-table) {
   white-space: nowrap;
+    tr:not(:first-child){
+      td:nth-child(8),td:nth-child(7){
+        white-space:pre;
+      }
+    }
 }
 
 .flexDisplay {
