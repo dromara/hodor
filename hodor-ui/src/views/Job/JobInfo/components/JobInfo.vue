@@ -439,9 +439,12 @@ const handleCancel = () => {
 const onOk = () => {
   openCreateModal.value = false;
   formRef.value.validateFields().then(values => {
+    formStateCreateJob.id = '';
+    formStateCreateJob.hashId = '';
     formStateCreateJob.jobStatus = 'READY';  // 默认状态
     formStateCreateJob.misfire = formStateCreateJob.checkValue.includes('misfire');
     formStateCreateJob.fireNow = formStateCreateJob.checkValue.includes('fireNow');
+
     createJob(formStateCreateJob);
     queryJobInfoListPaging(paginationOpt);
   })
