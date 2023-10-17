@@ -1,3 +1,7 @@
+spring:
+  application:
+    name: hodor-actuator-agent
+
 hodor:
   commons:
     appName: hodor-actuator-agent
