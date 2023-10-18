@@ -40,7 +40,7 @@ import org.dromara.hodor.common.exception.UndefinedPropertyException;
 public class PropsUtils {
 
     private static final Pattern VARIABLE_REPLACEMENT_PATTERN = Pattern
-        .compile("\\$\\{([a-zA-Z_.0-9]+)\\}");
+        .compile("\\$\\{([a-zA-Z_.0-9]+)}");
 
     /**
      * Load job schedules from the given directories
@@ -65,12 +65,13 @@ public class PropsUtils {
         try {
             final Props props = new Props(parent);
             final File[] files = dir.listFiles();
+            if (files == null) {
+                return props;
+            }
             Arrays.sort(files);
-            if (files != null) {
-                for (final File f : files) {
-                    if (f.isFile() && endsWith(f, suffixes)) {
-                        props.putAll(new Props(null, f.getAbsolutePath()));
-                    }
+            for (final File f : files) {
+                if (f.isFile() && endsWith(f, suffixes)) {
+                    props.putAll(new Props(null, f.getAbsolutePath()));
                 }
             }
             return props;
@@ -153,16 +154,23 @@ public class PropsUtils {
             return null;
         }
 
+        final Props objProps = new Props();
         final Props resolvedProps = new Props();
 
         final LinkedHashSet<String> visitedVariables = new LinkedHashSet<>();
         for (final String key : props.getKeySet()) {
-            String value = props.getString(key);
-            if (value == null) {
+            Object val = props.get(key);
+            // String value = props.getString(key);
+            if (val == null) {
                 log.warn("Null value in props for key '" + key + "'. Replacing with empty string.");
-                value = "";
+                val = "";
+            }
+            if (!(val instanceof String)) {
+                objProps.put(key, val);
+                continue;
             }
 
+            String value = (String) val;
             visitedVariables.add(key);
             final String replacedValue =
                 resolveVariableReplacement(value, props, visitedVariables);
@@ -177,6 +185,7 @@ public class PropsUtils {
             resolvedProps.put(key, expressedValue);
         }
 
+        resolvedProps.putAll(objProps);
         return resolvedProps;
     }
 
@@ -318,6 +327,7 @@ public class PropsUtils {
         return map;
     }
 
+    @SuppressWarnings("unchecked")
     public static Props fromHierarchicalMap(final Map<String, Object> propsMap) {
         if (propsMap == null) {
             return null;
@@ -351,7 +361,7 @@ public class PropsUtils {
      * @return the difference between oldProps and newProps.
      */
     public static String getPropertyDiff(Props oldProps, Props newProps) {
-        final StringBuilder builder = new StringBuilder("");
+        final StringBuilder builder = new StringBuilder();
 
         // oldProps can not be null during the below comparison process.
         if (oldProps == null) {
@@ -366,7 +376,7 @@ public class PropsUtils {
             Maps.difference(toStringMap(oldProps, false), toStringMap(newProps, false));
 
         final Map<String, String> newlyCreatedProperty = md.entriesOnlyOnRight();
-        if (newlyCreatedProperty != null && newlyCreatedProperty.size() > 0) {
+        if (newlyCreatedProperty.size() > 0) {
             builder.append("Newly created Properties: ");
             for (Map.Entry<String, String> entry : newlyCreatedProperty.entrySet()) {
                 builder.append("[ ").append(entry.getKey()).append(", ").append(entry.getValue()).append("], ");
@@ -375,7 +385,7 @@ public class PropsUtils {
         }
 
         final Map<String, String> deletedProperty = md.entriesOnlyOnLeft();
-        if (deletedProperty != null && deletedProperty.size() > 0) {
+        if (deletedProperty.size() > 0) {
             builder.append("Deleted Properties: ");
             for (Map.Entry<String, String> entry : deletedProperty.entrySet()) {
                 builder.append("[ ").append(entry.getKey()).append(", ").append(entry.getValue()).append("], ");
@@ -384,7 +394,7 @@ public class PropsUtils {
         }
 
         final Map<String, MapDifference.ValueDifference<String>> diffProperties = md.entriesDiffering();
-        if (diffProperties != null && diffProperties.size() > 0) {
+        if (diffProperties.size() > 0) {
             builder.append("Modified Properties: ");
             for (Map.Entry<String, MapDifference.ValueDifference<String>> entry : diffProperties.entrySet()) {
                 builder.append("[ ").append(entry.getKey()).append(", ").append(entry.getValue()).append("], ");
