@@ -91,6 +91,10 @@ public class JobOperatorServiceImpl implements JobOperatorService {
         if (updated == null) {
             return null;
         }
+        if (jobInfo.getJobStatus() == JobStatus.STOP) {
+            return updated;
+        }
+
         try {
             jobApi.updateJob(updated);
         } catch (Exception e) {

@@ -63,6 +63,10 @@ public enum MsgCode {
 
     DELETE_GROUP_ERROR(20016, "delete group error, msg {0}", "删除分组失败，信息 {0}"),
 
+    BINDING_GROUP_ERROR(20017, "binding group error, msg {0}", "绑定分组失败，信息 {0}"),
+
+    UNBINDING_GROUP_ERROR(20018, "unbinding group error, msg {0}", "解绑分组失败，信息 {0}"),
+
     // openapi
     INVALID_SIGN(30001, "the signature is invalid", "非法签名"),
     REQUEST_TIMEOUT(30002, "request timed out", "请求超时"),
