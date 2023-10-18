@@ -58,6 +58,6 @@ public class JobExecuteRequest implements RequestBody {
     private Integer retryCount = 0;
 
     @Builder.Default
-    private Integer version = -1;
+    private Integer version = 0;
 }
 
