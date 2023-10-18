@@ -2,11 +2,8 @@ package org.dromara.hodor.actuator.agent;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.actuator.api.HodorActuatorManager;
-import org.dromara.hodor.common.exception.HodorException;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-
-import java.util.concurrent.CountDownLatch;
 
 /**
  * HodorBigdataActuatorInit
@@ -19,11 +16,8 @@ public class HodorAgentActuatorInit implements ApplicationRunner {
 
     private final HodorActuatorManager actuatorManager;
 
-    private final CountDownLatch latch;
-
     public HodorAgentActuatorInit(final HodorActuatorManager actuatorManager) {
         this.actuatorManager = actuatorManager;
-        this.latch = new CountDownLatch(1);
     }
 
     @Override
@@ -35,7 +29,6 @@ public class HodorAgentActuatorInit implements ApplicationRunner {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             log.info("HodorBigdataActuator closed");
             actuatorManager.close();
-            latch.countDown();
         }));
     }
 
