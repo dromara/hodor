@@ -27,21 +27,10 @@ public class HodorAgentActuatorInit implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) {
+    public void run(ApplicationArguments args) throws Exception {
         log.info("HodorBigdataActuator starting");
-        Thread thread = new Thread(() -> {
-            try {
-                actuatorManager.start();
-                log.info("HodorBigdataActuator starting success");
-                latch.await();
-            } catch (Exception e) {
-                throw new HodorException(e);
-            }
-        });
-        thread.setDaemon(false);
-        thread.setName("hodor-agent-server");
-        thread.start();
-
+        actuatorManager.start();
+        log.info("HodorBigdataActuator starting success");
         // add close shutdown hook
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             log.info("HodorBigdataActuator closed");

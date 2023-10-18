@@ -17,12 +17,14 @@
 
 package org.dromara.hodor.actuator.jobtype.kettle;
 
+import java.nio.file.Paths;
 import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.api.exceptions.JobExecutionException;
-import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.actuator.jobtype.api.executor.AbstractJob;
+import org.dromara.hodor.actuator.jobtype.api.executor.AbstractProcessJob;
 import org.dromara.hodor.actuator.jobtype.api.executor.CommonJobProperties;
+import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.pentaho.di.core.logging.KettleLogStore;
 import org.pentaho.di.core.logging.KettleLoggingEventListener;
@@ -45,7 +47,7 @@ public abstract class AbstractKettleJob<T> extends AbstractJob {
 
     private final Logger log;
 
-    protected AbstractKettleJob(String jobId, Props sysProps, Props jobProps, Logger log) {
+    public AbstractKettleJob(String jobId, Props sysProps, Props jobProps, Logger log) {
         super(jobId, sysProps, jobProps, log);
         this.jobId = jobId;
         this.sysProps = sysProps;
@@ -58,14 +60,14 @@ public abstract class AbstractKettleJob<T> extends AbstractJob {
         ExecutableJobContext jobContext = this.jobProps.getObj(CommonJobProperties.JOB_CONTEXT);
         log.info("Start running kettle job [{}]", jobId);
 
+        String jobName = jobProps.getString(KettleConstant.NAME, jobContext.getJobKey().getJobName());
         String repositoryType = jobProps.getString(KettleConstant.REPOSITORY_TYPE, KettleConstant.FILE_TYPE);
         String repositoryPath = jobProps.getString(KettleConstant.REPOSITORY_PATH,
             sysProps.getString("kettle.repository", ""));
-        String path = jobProps.getString(KettleConstant.PATH);
+        String path = Paths.get(jobProps.getString(AbstractProcessJob.WORKING_DIR), jobName).toString();
         String plugins = jobProps.getString(KettleConstant.PLUGINS,
             sysProps.getString("kettle.plugins", ""));
-        String loglevel = jobProps.getString(KettleConstant.LOG_LEVEL);
-        String jobName = jobProps.getString(KettleConstant.NAME, jobContext.getJobKey().getJobName());
+        String loglevel = jobProps.getString(KettleConstant.LOG_LEVEL, "Debug");
 
         log.info("Kettle config repository type [{}]", repositoryType);
         log.info("Kettle config repository path [{}]", repositoryPath);

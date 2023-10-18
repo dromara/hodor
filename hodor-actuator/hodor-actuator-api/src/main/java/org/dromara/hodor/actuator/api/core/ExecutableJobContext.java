@@ -46,6 +46,8 @@ public class ExecutableJobContext {
 
     private String jobCommand;
 
+    private Integer version;
+
     private ExecutableJob jobRunnable;
 
     private JobExecuteRequest executeRequest;
@@ -55,8 +57,6 @@ public class ExecutableJobContext {
     private JobExecuteStatus executeStatus;
 
     private Thread currentThread;
-
-    private String dataPath;
 
     private JobLogger jobLogger;
 
@@ -69,11 +69,11 @@ public class ExecutableJobContext {
     //上游任务的状态 Map<requestId, executeStatus>
     private Map<Long, JobExecuteStatus> parentJobExecuteStatuses;
 
-    public Path getResourcesPath() {
+    public Path getResourcesPath(String dataPath) {
         return JobPathUtils.getResourcesPath(dataPath, jobKey, String.valueOf(executeRequest.getVersion()));
     }
 
-    public Path getExecutionsPath() {
+    public Path getExecutionsPath(String dataPath) {
         return JobPathUtils.getExecutionsPath(dataPath, jobKey.getGroupName(), jobKey.getJobName());
     }
 

@@ -21,15 +21,14 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.api.core.JobLogger;
-import org.dromara.hodor.common.utils.Props;
-import org.dromara.hodor.common.utils.PropsUtils;
+import org.dromara.hodor.actuator.api.core.JobLoggerManager;
 import org.dromara.hodor.actuator.jobtype.api.exception.JobExecutionException;
 import org.dromara.hodor.actuator.jobtype.api.executor.CommonJobProperties;
 import org.dromara.hodor.actuator.jobtype.api.executor.JavaProcessJob;
@@ -37,6 +36,8 @@ import org.dromara.hodor.actuator.jobtype.api.executor.Job;
 import org.dromara.hodor.actuator.jobtype.api.executor.NoopJob;
 import org.dromara.hodor.actuator.jobtype.api.executor.ProcessJob;
 import org.dromara.hodor.actuator.jobtype.api.utils.Utils;
+import org.dromara.hodor.common.utils.Props;
+import org.dromara.hodor.common.utils.PropsUtils;
 
 @Slf4j
 public class JobTypeManager {
@@ -72,7 +73,8 @@ public class JobTypeManager {
         this.jobTypePluginDir = jobtypePluginDir;
         this.parentLoader = parentClassLoader;
         this.globalProperties = globalProperties;
-        this.logger = LogManager.getLogger();
+        this.logger = new JobLoggerManager("dummy", null, Paths.get("/dev/null"))
+            .createJobLogger().getLogger();
 
         loadPlugins();
     }
@@ -243,8 +245,8 @@ public class JobTypeManager {
         try {
             final Props fakeSysProps = new Props(pluginLoadProps);
             final Props fakeJobProps = new Props(pluginJobProps);
-            Utils.callConstructor(clazz, "dummy", fakeSysProps,
-                fakeJobProps, logger);
+            Utils.callConstructor(clazz, ARG_TYPES, new Object[]{"dummy", fakeSysProps,
+                fakeJobProps, logger});
         } catch (final Throwable t) {
             log.info("Jobtype " + jobTypeName + " failed test!", t);
             throw new JobExecutionException(t);

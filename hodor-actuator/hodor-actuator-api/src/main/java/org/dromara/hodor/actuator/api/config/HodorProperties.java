@@ -1,5 +1,6 @@
 package org.dromara.hodor.actuator.api.config;
 
+import java.util.List;
 import lombok.Data;
 import org.dromara.hodor.common.storage.db.DataSourceConfig;
 import org.dromara.hodor.common.utils.HostUtils;
@@ -67,9 +68,15 @@ public class HodorProperties {
      * 任务类型插件路径
      */
     private String jobtypePlugins;
+
     /**
      * 数据库配置
      */
     private DataSourceConfig dataSourceConfig;
+
+    /**
+     * 支持的任务类型列表
+     */
+    private List<String> jobTypes;
 
 }

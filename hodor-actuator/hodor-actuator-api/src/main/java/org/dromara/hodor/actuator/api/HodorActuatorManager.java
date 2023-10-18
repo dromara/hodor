@@ -116,7 +116,7 @@ public class HodorActuatorManager {
 
     private void startExecutorServer() {
         Thread executorServerThread = new Thread(executorServer::start, "hodor-scheduler-executor-server");
-        executorServerThread.setDaemon(true);
+        executorServerThread.setDaemon(false);
         executorServerThread.start();
     }
 

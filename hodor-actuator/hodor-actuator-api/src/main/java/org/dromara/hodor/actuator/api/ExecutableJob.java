@@ -17,14 +17,9 @@
 
 package org.dromara.hodor.actuator.api;
 
-import java.io.File;
-import java.io.IOException;
 import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.api.exceptions.JobExecutionException;
-import org.dromara.hodor.actuator.api.utils.JobPathUtils;
-import org.dromara.hodor.common.utils.FileIOUtils;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
-import org.dromara.hodor.model.job.JobKey;
 
 /**
  * ExecutableJob
@@ -63,22 +58,6 @@ public interface ExecutableJob {
             return JobExecuteStatus.FINISHED;
         }
         return executableJobContext.getExecuteStatus();
-    }
-
-    /**
-     * 获取任务日志
-     *
-     * @param executableJobContext 待执行任务
-     * @param offset 日志起始位置
-     * @param length 日志长度
-     * @return 日志数据
-     * @throws IOException 读取日志文件异常
-     */
-    default FileIOUtils.LogData getLog(ExecutableJobContext executableJobContext, int offset, int length) throws Exception {
-        JobKey jobKey = executableJobContext.getJobKey();
-        File jobLoggerFile = JobPathUtils
-            .buildJobLoggerFile(executableJobContext.getDataPath(), jobKey.getGroupName(), jobKey.getJobName(), executableJobContext.getRequestId());
-        return FileIOUtils.readUtf8File(jobLoggerFile, offset, length);
     }
 
 }

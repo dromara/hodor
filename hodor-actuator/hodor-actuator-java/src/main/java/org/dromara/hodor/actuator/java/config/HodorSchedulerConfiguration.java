@@ -30,7 +30,7 @@ public class HodorSchedulerConfiguration {
 
     @Bean
     public JobRegister jobRegistrar() {
-        return new DefaultJobRegister(properties.getCommonProperties().getAppName());
+        return new DefaultJobRegister(properties.getCommonProperties());
     }
 
     @Bean

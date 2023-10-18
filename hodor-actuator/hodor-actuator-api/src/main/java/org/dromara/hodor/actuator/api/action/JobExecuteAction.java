@@ -93,10 +93,10 @@ public class JobExecuteAction extends AbstractExecuteAction {
         executableJobContext.setExecuteStatus(JobExecuteStatus.PENDING);
         executableJobContext.setJobLogger(getJobLogger());
         executableJobContext.setRequestContext(getRequestContext());
-        //executableJobContext.setDataPath(request.getDataPath());
         executableJobContext.setParentJobData(request.getParentJobData());
         executableJobContext.setParentJobExecuteStatuses(request.getParentJobExecuteStatuses());
         executableJobContext.setParentJobExecuteResults(request.getParentJobExecuteResults());
+        executableJobContext.setVersion(request.getVersion());
         return executableJobContext;
     }
 

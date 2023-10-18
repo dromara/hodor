@@ -17,6 +17,7 @@
 
 package org.dromara.hodor.actuator.agent.job;
 
+import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.core.util.ZipUtil;
 import com.google.common.collect.Sets;
 import java.io.File;
@@ -31,7 +32,6 @@ import org.dromara.hodor.actuator.api.ExecutableJob;
 import org.dromara.hodor.actuator.api.JobRegister;
 import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.api.core.JobLogger;
-import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.actuator.jobtype.api.executor.AbstractProcessJob;
 import org.dromara.hodor.actuator.jobtype.api.executor.CommonJobProperties;
 import org.dromara.hodor.actuator.jobtype.api.executor.Constants;
@@ -40,6 +40,7 @@ import org.dromara.hodor.actuator.jobtype.api.jobtype.JobTypeManager;
 import org.dromara.hodor.common.extension.ExtensionLoader;
 import org.dromara.hodor.common.storage.filesystem.FileStorage;
 import org.dromara.hodor.common.utils.FileIOUtils;
+import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.common.utils.Utils;
 import org.dromara.hodor.model.job.JobDesc;
@@ -60,12 +61,16 @@ public class AgentJobRegister implements JobRegister {
 
     private final FileStorage fileStorage;
 
+    private final String dataPath;
+
     private static final String JOB_CONFIG_FILE = "job.properties";
 
     public AgentJobRegister(HodorActuatorAgentProperties properties) {
         this.properties = properties;
+        this.dataPath = properties.getCommonProperties().getDataPath();
         final String jobtypePath = properties.getCommonProperties().getJobtypePlugins();
-        Utils.Assert.notNull("jobtype plugins path must be not null", jobtypePath);
+        Utils.Assert.notNull("jobtype plugins path config must be not null", jobtypePath);
+        Utils.Assert.notNull("dataPath config must be not null", dataPath);
         String jobTypePluginDir = StringUtils.join(jobtypePath, File.separator, JobTypeManager.DEFAULT_JOBTYPEPLUGINDIR);
         Props globalProps = new Props();
         globalProps.putAll(properties.getAgentConfig());
@@ -111,22 +116,25 @@ public class AgentJobRegister implements JobRegister {
     private void setup(ExecutableJobContext executableJobContext, Props jobProps) throws IOException {
         // ready job resource
         JobExecuteRequest executeRequest = executableJobContext.getExecuteRequest();
-        File executionsFile = executableJobContext.getExecutionsPath().toFile();
+        File executionsFile = executableJobContext.getExecutionsPath(dataPath).toFile();
         if (!executionsFile.exists()) {
             FileUtils.forceMkdir(executionsFile);
         }
         // ${data_path}/resources/${job_key}/${version}
-        File resourceFileDir = executableJobContext.getResourcesPath().toFile();
+        File resourceFileDir = executableJobContext.getResourcesPath(dataPath).toFile();
         if (!resourceFileDir.exists()) {
             //download job file from storage
             File sourceFile = new File(executeRequest.getJobCommand());
             File zipFile = new File(resourceFileDir, sourceFile.getName());
             InputStream fileStream = fileStorage.fetchFile(sourceFile.toPath());
             FileUtils.copyInputStreamToFile(fileStream, zipFile);
-            // unzip file
-            ZipUtil.unzip(zipFile, resourceFileDir);
-            // del zip file
-            FileUtils.forceDelete(zipFile);
+            if ("zip".equals(FileTypeUtil.getType(zipFile))) {
+                // unzip file
+                ZipUtil.unzip(zipFile, resourceFileDir);
+                // del zip file
+                FileUtils.forceDelete(zipFile);
+            }
+
             // create link
             FileIOUtils.createDeepHardlink(resourceFileDir, executionsFile);
         }
@@ -143,7 +151,7 @@ public class AgentJobRegister implements JobRegister {
         jobProps.put(CommonJobProperties.JOB_TYPE, executableJobContext.getJobCommandType());
         jobProps.put(CommonJobProperties.REQUEST_CONTEXT, executableJobContext.getRequestContext());
         jobProps.put(Constants.JobProperties.JOB_LOG_PATH, executableJobContext.getAbsoluteLogPath().toString());
-        jobProps.put(AbstractProcessJob.WORKING_DIR, executableJobContext.getExecutionsPath().toString());
+        jobProps.put(AbstractProcessJob.WORKING_DIR, executableJobContext.getResourcesPath(dataPath).toString());
         // get all field map
         //Map<String, String> requestDescribe = BeanUtils.describe(executableJobContext.getExecuteRequest());
         //jobProps.putAll(requestDescribe);

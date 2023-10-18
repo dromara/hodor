@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hodor.actuator.api.config.HodorProperties;
 import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.api.core.JobInstance;
 import org.dromara.hodor.common.utils.StringUtils;
@@ -32,9 +33,13 @@ public class DefaultJobRegister implements JobRegister {
 
     private final Set<String> groupNames;
 
-    public DefaultJobRegister(final String clusterName) {
-        Assert.notNull(clusterName, "clusterName must be not null");
-        this.clusterName = clusterName;
+    private final HodorProperties properties;
+
+    public DefaultJobRegister(final HodorProperties properties) {
+        Assert.notNull(properties, "properties must be not null");
+        Assert.notNull(properties.getAppName(), "clusterName must be not null");
+        this.properties = properties;
+        this.clusterName = properties.getAppName();
         this.jobCache = new ConcurrentHashMap<>(32);
         this.runnableJobCache = new ConcurrentHashMap<>(32);
         this.groupNames = new HashSet<>();
@@ -52,7 +57,8 @@ public class DefaultJobRegister implements JobRegister {
 
     @Override
     public List<String> registerJobType() {
-        return Lists.newArrayList("java");
+        return properties.getJobTypes() == null ?
+            Lists.newArrayList("java") : properties.getJobTypes();
     }
 
     @Override

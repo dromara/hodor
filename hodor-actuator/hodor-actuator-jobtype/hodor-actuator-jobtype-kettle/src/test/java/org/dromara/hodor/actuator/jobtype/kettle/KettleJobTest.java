@@ -1,18 +1,17 @@
 package org.dromara.hodor.actuator.jobtype.kettle;
 
+import java.nio.file.Path;
 import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.api.core.JobLogger;
 import org.dromara.hodor.actuator.api.core.JobLoggerManager;
 import org.dromara.hodor.actuator.api.utils.JobPathUtils;
-import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.actuator.jobtype.api.executor.Job;
+import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteRequest;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import java.nio.file.Path;
 import org.springframework.lang.NonNull;
 
 import static org.dromara.hodor.actuator.jobtype.api.executor.CommonJobProperties.JOB_CONTEXT;
@@ -84,7 +83,6 @@ public class KettleJobTest {
             .requestId(requestId)
             .jobKey(jobKey)
             .jobCommandType("kettleJob")
-            .dataPath(dataPath)
             .requestContext(requestContext)
             .executeRequest(jobExecuteRequest)
             .jobLogger(jobLogger)

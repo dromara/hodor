@@ -56,7 +56,7 @@ public class KettleJob extends AbstractKettleJob<Job> {
     @Override
     public int execute(Job job, int timeout) {
         kettleJob.start();
-        kettleJob.waitUntilFinished(timeout);
+        kettleJob.waitUntilFinished(timeout * 1000L);
         return kettleJob.getErrors();
     }
 

@@ -38,7 +38,7 @@ public class KettleTrans extends AbstractKettleJob<Trans> {
 
     private Trans kettleTrans;
 
-    protected KettleTrans(String jobId, Props sysProps, Props jobProps, Logger log) {
+    public KettleTrans(String jobId, Props sysProps, Props jobProps, Logger log) {
         super(jobId, sysProps, jobProps, log);
         this.jobProps = jobProps;
         this.log = log;
