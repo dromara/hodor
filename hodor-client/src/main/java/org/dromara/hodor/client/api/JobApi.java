@@ -55,18 +55,17 @@ public class JobApi {
         if (!Objects.requireNonNull(response).isOk()) {
             throw new HodorClientException("Register job failure, " + response.body());
         }
-        log.debug("Register job result: {}", response.body());
     }
 
     public void registerJobs(Collection<JobDesc> jobs) throws Exception {
-        String result = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/scheduler/batchCreateJob")
-                .body(Jsons.toJson(jobs))
-                .header("appName", appName)
-                .header("appKey", appKey)
-                .execute()
-                .body(),
-            ex -> new HodorClientException("JobApi registerJobs execute failure, " + ex.getMessage()));
-        log.debug("Register jobs result: {}", result);
+        final HttpResponse response = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/scheduler/batchCreateJob")
+            .body(Jsons.toJson(jobs))
+            .header("appName", appName)
+            .header("appKey", appKey)
+            .execute());
+        if (!Objects.requireNonNull(response).isOk()) {
+            throw new HodorClientException("Register failure, " + response.body());
+        }
     }
 
     public void updateJob(JobDesc job) throws Exception {
@@ -79,40 +78,39 @@ public class JobApi {
         if (!Objects.requireNonNull(response).isOk()) {
             throw new HodorClientException("Update job failure, " + response.body());
         }
-        log.debug("Update job result: {}", response.body());
     }
 
     public void deleteJob(JobDesc job) throws Exception {
-        String result = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/scheduler/deleteJob")
-                .body(Jsons.toJson(job))
-                .header("appName", appName)
-                .header("appKey", appKey)
-                .execute()
-                .body(),
-            ex -> new HodorClientException("JobApi deleteJob execute failure, " + ex.getMessage()));
-        log.debug("Register jobs result: {}", result);
+        final HttpResponse response = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/scheduler/deleteJob")
+            .body(Jsons.toJson(job))
+            .header("appName", appName)
+            .header("appKey", appKey)
+            .execute());
+        if (!Objects.requireNonNull(response).isOk()) {
+            throw new HodorClientException("DeleteJob failure, " + response.body());
+        }
     }
 
     public void executeJob(JobDesc job) throws Exception {
-        String result = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/scheduler/executeJob")
-                .body(Jsons.toJson(job))
-                .header("appName", appName)
-                .header("appKey", appKey)
-                .execute()
-                .body(),
-            ex -> new HodorClientException("JobApi executeJob execute failure, " + ex.getMessage()));
-        log.debug("Register jobs result: {}", result);
+        final HttpResponse response = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/scheduler/executeJob")
+            .body(Jsons.toJson(job))
+            .header("appName", appName)
+            .header("appKey", appKey)
+            .execute());
+        if (!Objects.requireNonNull(response).isOk()) {
+            throw new HodorClientException("Execute job failure, " + response.body());
+        }
     }
 
     public void stopJob(JobDesc job) throws Exception {
-        String result = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/scheduler/stopJob")
-                .body(Jsons.toJson(job))
-                .header("appName", appName)
-                .header("appKey", appKey)
-                .execute()
-                .body(),
-            ex -> new HodorClientException("JobApi stopJob execute failure, " + ex.getMessage()));
-        log.debug("Register jobs result: {}", result);
+        final HttpResponse response = TrySender.send(connectStringParser, (url) -> Https.createPost(url + "/scheduler/stopJob")
+            .body(Jsons.toJson(job))
+            .header("appName", appName)
+            .header("appKey", appKey)
+            .execute());
+        if (!Objects.requireNonNull(response).isOk()) {
+            throw new HodorClientException("Stop job failure, " + response.body());
+        }
     }
 
 }

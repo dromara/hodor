@@ -107,7 +107,8 @@ public class ActuatorApi {
             .body(bodyBytes)
             .build();
         final RemotingMessage remotingMessage = remotingClient.sendSyncRequest(host, requestMessage, timeout);
-        return serializer.deserialize(remotingMessage.getBody(), RemotingResponse.class);
+        final RemotingResponse response = serializer.deserialize(remotingMessage.getBody(), RemotingResponse.class);
+        return (RemotingResponse<JobExecuteLogResponse>) response;
     }
 
     private Header buildJobLogHeader(int bodyLength, JobExecuteLogRequest request) {
