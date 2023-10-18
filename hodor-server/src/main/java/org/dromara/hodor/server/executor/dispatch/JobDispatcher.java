@@ -199,7 +199,7 @@ public class JobDispatcher {
             .jobName(jobDesc.getJobName())
             .groupName(jobDesc.getGroupName())
             .jobCommandType(jobDesc.getJobCommandType())
-            .jobCommand(context.getExecCommand())
+            .jobCommand(context.getExecCommand() == null ? jobDesc.getJobCommand() : context.getExecCommand())
             .jobParameters(jobDesc.getJobParameters())
             .extensibleParameters(jobDesc.getExtensibleParameters())
             .shardingCount(context.getShardingCount())

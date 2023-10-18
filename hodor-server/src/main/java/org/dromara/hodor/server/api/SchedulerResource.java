@@ -282,7 +282,7 @@ public class SchedulerResource {
                     return HodorResult.failure(StringUtils.format("execute job {} failure, current scheduler server {} is not leader",
                         JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName()), serverEndpoint));
                 }
-                if (jobInfo.getTimeType() == TimeType.NONE) {
+                if (jobInfo.getTimeType() == TimeType.NONE || jobInfo.getJobStatus() == JobStatus.STOP) {
                     HodorJobExecutionContext executionContext = new HodorJobExecutionContext(null, jobInfo, schedulerName, DateUtils.nowDate());
                     JobExecutor jobExecutor = executorTypeManager.getJobExecutor(jobInfo.getJobType());
                     jobExecutor.execute(executionContext);
@@ -364,7 +364,7 @@ public class SchedulerResource {
         };
         HodorResult<String> result = SerializeUtils.deserialize(hodorHttpResponse.getBody(), typeReference.getType());
         if (!result.isSuccess()) {
-            throw new OperateJobException(result.getData());
+            throw new OperateJobException(result.getMsg());
         }
     }
 
