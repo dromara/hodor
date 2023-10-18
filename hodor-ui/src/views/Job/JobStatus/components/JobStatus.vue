@@ -178,16 +178,16 @@ const getLogData = async (jobStatusInfo) => {
     offset,
     length,
   }
-  const {executeStatus} = jobStatusInfo;
   // console.log("调用了getLogData", params)
   if (actuatorEndpoint) {
-    while (logOpt.value.offset < logOpt.value.length) {
+    logRefresh = true;
+    while (logRefresh && logOpt.value.length > 0) {
       await getExecuteLog(params);
-      params.offset = logOpt.value.length;
+      params.offset = logOpt.value.offset + logOpt.value.length;
       if (logOpt.value.logData !== null) {
         logData.value += logOpt.value.logData;
       }
-      await sleep(1000)
+      await sleep(500)
     }
   } else {
     logOpt.value.logData = comments.replaceAll('\\r\\n\\tat', "\n")
@@ -236,7 +236,7 @@ const handleClickKillRunningJob = (job) => {
 const cancel = {}
 
 // 查看执行日志
-let timer = null;
+let logRefresh = false;
 const handleClickGetExecuteLog = (jobStatusInfo) => {
   visibleLog.value = true;
   logData.value = '';
@@ -249,7 +249,7 @@ const handleReady = (payload) => {
   view.value = payload.view
 }
 const handleCloseLog = () => {
-  if (timer) clearInterval(timer)
+  logRefresh = false;
 }
 
 const refreshTable=()=>{
@@ -279,9 +279,7 @@ onMounted(() => {
   queryJobStatusListPaging(paginationOpt, queryParam);
 })
 onBeforeUnmount(() => {
-  if (timer) {
-    clearInterval(timer);
-  }
+  logRefresh = false;
 })
 </script>
 
@@ -349,7 +347,7 @@ onBeforeUnmount(() => {
     </a-card>
     <a-drawer v-model:open="visibleLog" class="custom-class" root-class-name="root-class-name" size="large" title="查看执行日志"
         placement="right" closable @close="handleCloseLog">
-        <codemirror ref="codeMirrorRef" v-model="logData" :style="{ height: '400px' }" :autofocus="true"
+        <codemirror ref="codeMirrorRef" v-model="logData" :style="{ height: '100%' }" :autofocus="true"
             :indent-with-tab="true" :tab-size="2" :extensions="extensions" @ready="handleReady" />
     </a-drawer>
 </template>
