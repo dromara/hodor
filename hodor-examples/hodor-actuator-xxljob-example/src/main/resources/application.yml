@@ -8,7 +8,7 @@ hodor:
   commons:
     appName: hodor-xxljob-client
     appKey: 1234567
-    port: 46367
+    port: 46366
     registryAddress: http://localhost:8081,localhost:8082,localhost:8083/hodor
     queueSize: 5000
     poolSize: 500
@@ -23,6 +23,6 @@ hodor:
       dataSourceProperties:
         minimumIdle: 4
         maximumPoolSize: 16
-  java:
-    supportType: [java]
+    jobTypes:
+      - xxljob
 

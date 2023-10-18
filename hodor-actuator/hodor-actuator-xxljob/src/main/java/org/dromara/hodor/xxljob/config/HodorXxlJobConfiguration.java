@@ -16,12 +16,6 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(HodorActuatorJavaProperties.class)
 public class HodorXxlJobConfiguration {
 
-    private final HodorActuatorJavaProperties properties;
-
-    public HodorXxlJobConfiguration(final HodorActuatorJavaProperties properties) {
-        this.properties = properties;
-    }
-
     @Bean
     public XxlJobSpringExecutor xxlJobSpringExecutor() {
         return new XxlJobSpringExecutor();
