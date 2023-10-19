@@ -577,7 +577,7 @@ onMounted(() => {
                         <a-input v-model:value="formStateCreateJob.jobName"/>
                       </a-form-item>
                     </a-col>
-                    <a-col :span="12">
+                    <a-col :span="6">
                       <a-form-item label="自定义分类:" name="jobCategory">
                         <a-input v-model:value="formStateCreateJob.jobCategory"/>
                       </a-form-item>
@@ -867,20 +867,18 @@ onMounted(() => {
   <a-modal v-model:open="openUpdateModal" ok-text="确定" cancel-text="取消" @ok="saveJobInfo" width="80%">
     <a-form ref="formUpdateRef" :model="formStateUpdateJob" name="form_in_modal" :rules="rulesCreateJob">
       <a-row :gutter="24">
-        <a-col :span="12">
+        <a-col :span="6">
           <a-form-item label="任务组名称:" name="groupName">
             <a-select ref="select" v-model:value="formStateUpdateJob.groupName" :options="groupNameOptions">
             </a-select>
           </a-form-item>
         </a-col>
-        <a-col :span="12">
+        <a-col :span="6">
           <a-form-item label="任务名称:" name="jobName">
             <a-input v-model:value="formStateUpdateJob.jobName"/>
           </a-form-item>
         </a-col>
-      </a-row>
-      <a-row :gutter="24">
-        <a-col :span="12">
+        <a-col :span="6">
           <a-form-item label="自定义分类:" name="jobCategory">
             <a-input v-model:value="formStateUpdateJob.jobCategory"/>
           </a-form-item>

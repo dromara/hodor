@@ -55,7 +55,7 @@ export const menu = [
     },
     {
         router: "/workflow",
-        text: "DAG任务流",
+        text: "DAG任务管理",
         icon: ApartmentOutlined,
     },
 ]
