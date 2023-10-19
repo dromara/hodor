@@ -118,15 +118,10 @@ public class MapReduceJobExecutorManager {
                 final ConcurrentMap<Long, JobExecuteStatus> subJobMap = Maps.newConcurrentMap();
                 for (int i = 0; i < splitList.size(); i++) {
                     // 分发子任务
-                    final HodorJobExecutionContext parentContext = commandContextMap.get(jobKey);
-                    if (parentContext == null) {
-                        throw new JobScheduleException("The job [{}] has finished.", jobKey);
-                    }
-                    final HodorJobExecutionContext mapContext = Utils.Beans.copyProperties(parentContext, HodorJobExecutionContext.class);
-                    mapContext.setInstanceId(instanceId);
-                    mapContext.setRequestId(IdGenerator.defaultGenerator().nextId());
+                    HodorJobExecutionContext mapContext = getBaseContext(instanceId, jobKey);
                     mapContext.setParentJobData(splitList.get(i));
                     mapContext.setExecCommand(mapCommandMap.get(jobKey));
+                    mapContext.setShardingCount(splitList.size());
                     mapContext.setShardingId(i);
                     Host selected = hosts.get(i % hosts.size());
                     mapContext.refreshHosts(selected);
@@ -143,6 +138,17 @@ public class MapReduceJobExecutorManager {
                 log.error("Job [{}] split stage execute failed, msg {}", data.getJobKey(), errMsg);
             }
         }, Constants.JobConstants.SPLIT_STAGE);
+    }
+
+    private HodorJobExecutionContext getBaseContext(Long instanceId, JobKey jobKey) {
+        final HodorJobExecutionContext parentContext = commandContextMap.get(jobKey);
+        if (parentContext == null) {
+            throw new JobScheduleException("The job [{}] has finished.", jobKey);
+        }
+        final HodorJobExecutionContext subContext = Utils.Beans.copyProperties(parentContext, HodorJobExecutionContext.class);
+        subContext.setInstanceId(instanceId);
+        subContext.setRequestId(IdGenerator.defaultGenerator().nextId());
+        return subContext;
     }
 
     private void registerMapStageListener() {
@@ -187,13 +193,7 @@ public class MapReduceJobExecutorManager {
                     if (hosts.isEmpty()) {
                         throw new JobScheduleException("The job [{}] has no available actuator nodes", jobKey);
                     }
-                    final HodorJobExecutionContext parentContext = commandContextMap.get(jobKey);
-                    if (parentContext == null) {
-                        throw new JobScheduleException("The job [{}] has finished.", jobKey);
-                    }
-                    final HodorJobExecutionContext reduceContext = Utils.Beans.copyProperties(parentContext, HodorJobExecutionContext.class);
-                    reduceContext.setInstanceId(instanceId);
-                    reduceContext.setRequestId(IdGenerator.defaultGenerator().nextId());
+                    HodorJobExecutionContext reduceContext = getBaseContext(instanceId, jobKey);
                     reduceContext.setExecCommand(reduceCommandMap.get(jobKey));
                     reduceContext.setParentJobExecuteStatuses(mapJobExecuteStatusMap);
                     reduceContext.setParentJobExecuteResults(mapJobExecuteResult);
@@ -218,7 +218,6 @@ public class MapReduceJobExecutorManager {
             RemotingResponse<JobExecuteResponse> remotingResponse = event.getValue();
             final JobExecuteResponse data = remotingResponse.getData();
             final JobKey jobKey = data.getJobKey();
-            final Long instanceId = data.getInstanceId();
             if (remotingResponse.isSuccess()) {
                 // split stage
                 if (JobExecuteStatus.isFinished(data.getStatus())) {
