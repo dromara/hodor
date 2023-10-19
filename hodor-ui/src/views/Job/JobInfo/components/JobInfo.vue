@@ -660,7 +660,7 @@ onMounted(() => {
                       </a-col>
                     </div>
                   </a-row>
-                  <a-row :gutter="24">
+                  <!-- <a-row :gutter="24">
                     <a-col :span="5">
                       <a-form-item label="任务资源类型:" name="jobDataType">
                         <a-input v-model:value="formStateCreateJob.jobDataType"/>
@@ -671,7 +671,7 @@ onMounted(() => {
                         <a-input v-model:value="formStateCreateJob.jobDataPath"/>
                       </a-form-item>
                     </a-col>
-                  </a-row>
+                  </a-row>-->
                   <a-row :gutter="24">
                     <a-col :span="24">
                       <a-form-item label="任务参数:" name="jobParameters">
@@ -944,6 +944,25 @@ onMounted(() => {
         </a-col>
       </a-row>
       <a-row :gutter="24">
+        <a-col :span="5">
+          <a-form-item label="任务调度策略:" name="scheduleStrategy" placeholder="任务调度策略">
+            <a-select ref="select" v-model:value="formStateUpdateJob.scheduleStrategy">
+              <a-select-option value="RANDOM"></a-select-option>
+              <a-select-option value="ROUND_ROBIN"></a-select-option>
+              <a-select-option value="LOWEST_LOAD"></a-select-option>
+              <a-select-option value="SPECIFY"></a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-col>
+        <div class="flexDisplay" v-show="formStateUpdateJob.scheduleStrategy === 'SPECIFY'">
+          <a-col :span="12" style="flex: 1;max-width: 100%;">
+            <a-form-item label="调度策略表达式:" name="scheduleExp" placeholder="任务调度策略表达式">
+              <a-input v-model:value="formStateUpdateJob.scheduleExp"/>
+            </a-form-item>
+          </a-col>
+        </div>
+      </a-row>
+      <!--<a-row :gutter="24">
         <a-col :span="12">
           <a-form-item label="任务资源类型:" name="jobDataType">
             <a-input v-model:value="formStateUpdateJob.jobDataType"/>
@@ -954,7 +973,7 @@ onMounted(() => {
             <a-input v-model:value="formStateUpdateJob.jobDataPath"/>
           </a-form-item>
         </a-col>
-      </a-row>
+      </a-row>-->
       <a-row :gutter="24">
         <a-col :span="24">
           <a-form-item label="任务参数:" name="jobParameters">
