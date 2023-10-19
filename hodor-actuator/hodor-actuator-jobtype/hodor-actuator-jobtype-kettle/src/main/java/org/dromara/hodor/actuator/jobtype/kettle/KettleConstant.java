@@ -27,7 +27,7 @@ public interface KettleConstant {
 
     String REPOSITORY_TYPE = "kettle.repositoryType";
 
-    String REPOSITORY_PATH = "kettle.repositoryPath";
+    String REPOSITORY_PATH = "kettle.repository";
 
     String NAME = "kettle.name";
 

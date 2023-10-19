@@ -18,6 +18,7 @@
 package org.dromara.hodor.actuator.agent.job;
 
 import cn.hutool.core.io.FileTypeUtil;
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ZipUtil;
 import com.google.common.collect.Sets;
 import java.io.File;
@@ -120,19 +121,24 @@ public class AgentJobRegister implements JobRegister {
         if (!executionsFile.exists()) {
             FileUtils.forceMkdir(executionsFile);
         }
+
         // ${data_path}/resources/${job_key}/${version}
         File resourceFileDir = executableJobContext.getResourcesPath(dataPath).toFile();
         if (!resourceFileDir.exists()) {
             //download job file from storage
             File sourceFile = new File(executeRequest.getJobCommand());
-            File zipFile = new File(resourceFileDir, sourceFile.getName());
+            if (!FileUtil.isFile(sourceFile)) {
+                return;
+            }
+
+            File targetFile = new File(resourceFileDir, sourceFile.getName());
             InputStream fileStream = fileStorage.fetchFile(sourceFile.toPath());
-            FileUtils.copyInputStreamToFile(fileStream, zipFile);
-            if ("zip".equals(FileTypeUtil.getType(zipFile))) {
+            FileUtils.copyInputStreamToFile(fileStream, targetFile);
+            if ("zip".equals(FileTypeUtil.getType(targetFile))) {
                 // unzip file
-                ZipUtil.unzip(zipFile, resourceFileDir);
+                ZipUtil.unzip(targetFile, resourceFileDir);
                 // del zip file
-                FileUtils.forceDelete(zipFile);
+                FileUtils.forceDelete(targetFile);
             }
 
             // create link
