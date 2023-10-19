@@ -25,24 +25,24 @@ package org.dromara.hodor.actuator.jobtype.kettle;
  */
 public interface KettleConstant {
 
-    String REPOSITORY_TYPE = "repositoryType";
+    String REPOSITORY_TYPE = "kettle.repositoryType";
 
-    String REPOSITORY_PATH = "repositoryPath";
+    String REPOSITORY_PATH = "kettle.repositoryPath";
 
-    String NAME = "name";
+    String NAME = "kettle.name";
 
-    String PATH = "path";
+    String PATH = "kettle.path";
 
-    String LOG_LEVEL = "logLevel";
+    String LOG_LEVEL = "kettle.logLevel";
 
-    String PLUGINS = "plugins";
+    String PLUGINS = "kettle.plugins";
 
-    String FILE_TYPE = "file";
+    String FILE_TYPE = "kettle.file";
 
-    String DATABASE_TYPE = "database";
+    String DATABASE_TYPE = "kettle.database";
 
-    String JOB_TYPE = "job";
+    String JOB_TYPE = "kettle.job";
 
-    String TRANS_TYPE = "trans";
+    String TRANS_TYPE = "kettle.trans";
 
 }
