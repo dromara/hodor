@@ -71,7 +71,6 @@ public class BigdataExecutableJobTest {
             .requestId(requestId)
             .jobKey(jobKey)
             .jobCommandType("noop")
-            .dataPath(dataPath)
             .requestContext(requestContext)
             .executeRequest(jobExecuteRequest)
             .jobLogger(jobLogger)
