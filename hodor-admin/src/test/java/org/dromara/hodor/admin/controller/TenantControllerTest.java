@@ -3,7 +3,7 @@ package org.dromara.hodor.admin.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.admin.BaseWebTest;
 import org.dromara.hodor.admin.entity.Tenant;
-import org.dromara.hodor.common.utils.DateUtils;
+import org.dromara.hodor.common.utils.Utils;
 import org.junit.jupiter.api.Test;
 
 @Slf4j
@@ -34,8 +34,8 @@ class TenantControllerTest extends BaseWebTest {
         tenant.setTenantName("tomgs");
         tenant.setEmail("123@qq.com");
         tenant.setCorpName("tomgs corp");
-        tenant.setCreatedAt(DateUtils.nowDate());
-        tenant.setUpdatedAt(DateUtils.nowDate());
+        tenant.setCreatedAt(Utils.Dates.date());
+        tenant.setUpdatedAt(Utils.Dates.date());
         postJson("/tenant", tenant);
     }
 
@@ -46,7 +46,7 @@ class TenantControllerTest extends BaseWebTest {
         tenant.setTenantName("tomgs1");
         tenant.setEmail("12356@qq.com");
         tenant.setCorpName("tomgs corp1");
-        tenant.setUpdatedAt(DateUtils.nowDate());
+        tenant.setUpdatedAt(Utils.Dates.date());
         putRequest("/tenant", tenant);
     }
 

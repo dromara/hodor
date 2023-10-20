@@ -19,6 +19,7 @@ package org.dromara.hodor.common.utils;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -30,8 +31,13 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.math.RoundingMode;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.function.Supplier;
+import org.apache.commons.lang3.StringUtils;
 import oshi.hardware.GlobalMemory;
 
 /**
@@ -133,6 +139,50 @@ public class Utils {
             df.setRoundingMode(RoundingMode.HALF_UP);
             return Double.parseDouble(df.format(rawValue));
         }
+    }
+
+    /**
+     * date utils
+     */
+    public static class Dates extends DateUtil {
+        public static String PATTEN = "yyyy-MM-dd HH:mm:ss";
+
+        public static String SIMPLE_PATTEN = "yyyyMMddHHmmss";
+
+        public static long betweenMs(String startTime, String endTime) {
+            if (org.apache.commons.lang3.StringUtils.isEmpty(endTime) || org.apache.commons.lang3.StringUtils.isEmpty(startTime)) {
+                return 0;
+            }
+            if (endTime.equals(startTime)) {
+                return 0;
+            }
+
+            SimpleDateFormat sdf = new SimpleDateFormat(PATTEN);
+            long processTime = 0;
+            if (!(org.apache.commons.lang3.StringUtils.isNotEmpty(endTime) && org.apache.commons.lang3.StringUtils.isNotEmpty(startTime))) {
+                return processTime;
+            }
+            try {
+                java.util.Date end = sdf.parse(endTime);
+                java.util.Date start = sdf.parse(startTime);
+                processTime = (end.getTime() - start.getTime()) / 1000;
+            } catch (ParseException e) {
+                // ignore
+            }
+            if (processTime > 1400000000) {
+                processTime = 0;
+            }
+            return processTime;
+        }
+
+        public static Date parseByYYYYMMDDPatten(String date) throws ParseException {
+            if (StringUtils.isEmpty(date)) {
+                return null;
+            }
+            DateFormat df = new SimpleDateFormat(SIMPLE_PATTEN);
+            return df.parse(date);
+        }
+
     }
 
 }

@@ -3,10 +3,10 @@ package org.dromara.hodor.server.api;
 import cn.hutool.core.lang.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.Host;
-import org.dromara.hodor.common.utils.DateUtils;
 import org.dromara.hodor.common.utils.HashUtils;
 import org.dromara.hodor.common.utils.SerializeUtils;
 import org.dromara.hodor.common.utils.StringUtils;
+import org.dromara.hodor.common.utils.Utils.Dates;
 import org.dromara.hodor.common.utils.Utils.Assert;
 import org.dromara.hodor.common.utils.Utils.Jsons;
 import org.dromara.hodor.core.entity.JobInfo;
@@ -283,7 +283,7 @@ public class SchedulerResource {
                         JobKey.of(jobInfo.getGroupName(), jobInfo.getJobName()), serverEndpoint));
                 }
                 if (jobInfo.getTimeType() == TimeType.NONE || jobInfo.getJobStatus() == JobStatus.STOP) {
-                    HodorJobExecutionContext executionContext = new HodorJobExecutionContext(null, jobInfo, schedulerName, DateUtils.nowDate());
+                    HodorJobExecutionContext executionContext = new HodorJobExecutionContext(null, jobInfo, schedulerName, Dates.date());
                     JobExecutor jobExecutor = executorTypeManager.getJobExecutor(jobInfo.getJobType());
                     jobExecutor.execute(executionContext);
                 } else {
@@ -321,7 +321,7 @@ public class SchedulerResource {
         jobInfo.setFireNow(jobInfo.getFireNow() != null && jobInfo.getFireNow());
         jobInfo.setFailover(jobInfo.getFailover() != null && jobInfo.getFailover());
         jobInfo.setMisfire(jobInfo.getMisfire() != null && jobInfo.getMisfire());
-        jobInfo.setCreateTime(DateUtils.nowDate());
+        jobInfo.setCreateTime(Dates.date());
     }
 
     private void checkJobInfo(JobInfo jobInfo) {

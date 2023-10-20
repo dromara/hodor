@@ -27,8 +27,8 @@ import org.dromara.hodor.admin.dto.user.UserInfo;
 import org.dromara.hodor.admin.exception.ServiceException;
 import org.dromara.hodor.admin.service.ActuatorOperatorService;
 import org.dromara.hodor.admin.service.JobGroupService;
-import org.dromara.hodor.common.utils.DateUtils;
 import org.dromara.hodor.common.utils.StringUtils;
+import org.dromara.hodor.common.utils.Utils.Dates;
 import org.dromara.hodor.core.PageInfo;
 import org.dromara.hodor.core.entity.JobGroup;
 import org.dromara.hodor.core.entity.JobInfo;
@@ -72,7 +72,7 @@ public class JobGroupServiceImpl implements JobGroupService {
     @Transactional
     public JobGroup createGroup(UserInfo user, JobGroup group) {
         setGroupInfo(user, group);
-        group.setCreatedAt(DateUtils.nowDate());
+        group.setCreatedAt(Dates.date());
         jobGroupMapper.insert(group);
 
         try {
@@ -122,7 +122,7 @@ public class JobGroupServiceImpl implements JobGroupService {
         group.setCreateUser(user.getUsername());
         group.setUserId(user.getId());
         group.setTenantId(user.getTenantId());
-        group.setUpdatedAt(DateUtils.nowDate());
+        group.setUpdatedAt(Dates.date());
     }
 
 }

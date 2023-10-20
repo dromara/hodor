@@ -20,7 +20,6 @@ package org.dromara.hodor.scheduler.quartz;
 import cn.hutool.core.date.DateTime;
 import java.util.Date;
 import org.dromara.hodor.common.cron.CronUtils;
-import org.dromara.hodor.common.utils.DateUtils;
 import org.dromara.hodor.common.utils.Utils;
 import org.dromara.hodor.model.enums.TimeType;
 import org.dromara.hodor.model.job.JobDesc;
@@ -128,7 +127,7 @@ public class QuartzTrigger {
         // "yyyy-MM-dd HH:mm:ss"
         String cron;
         try {
-            final DateTime dateTime = DateUtils.parseDateTime(onceTime);
+            final DateTime dateTime = Utils.Dates.parseDateTime(onceTime);
             cron = CronUtils.parseCron(dateTime);
         } catch (Exception e) {
             throw new IllegalArgumentException("time expression is invalid, " + onceTime);

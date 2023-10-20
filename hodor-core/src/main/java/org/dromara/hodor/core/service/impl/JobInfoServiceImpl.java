@@ -7,8 +7,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.common.utils.DateUtils;
 import org.dromara.hodor.common.utils.StringUtils;
+import org.dromara.hodor.common.utils.Utils.Dates;
 import org.dromara.hodor.core.PageInfo;
 import org.dromara.hodor.core.entity.JobInfo;
 import org.dromara.hodor.core.mapper.JobInfoMapper;
@@ -34,7 +34,7 @@ public class JobInfoServiceImpl implements JobInfoService {
 
     @Override
     public JobInfo addJob(JobInfo jobInfo) {
-        jobInfo.setCreateTime(DateUtils.date());
+        jobInfo.setCreateTime(Dates.date());
         jobInfoMapper.insert(jobInfo);
         return jobInfo;
     }
@@ -133,7 +133,7 @@ public class JobInfoServiceImpl implements JobInfoService {
 
     @Override
     public JobInfo updateById(JobInfo jobInfo) {
-        jobInfo.setUpdateTime(DateUtils.date());
+        jobInfo.setUpdateTime(Dates.date());
         final int result = jobInfoMapper.updateById(jobInfo);
         if (result > 0) {
             return queryById(jobInfo.getId());
