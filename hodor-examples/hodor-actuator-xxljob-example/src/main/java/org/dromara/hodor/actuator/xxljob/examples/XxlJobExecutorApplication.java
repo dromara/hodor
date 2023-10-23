@@ -1,4 +1,4 @@
-package org.dromara.actuator.xxljob.examples;
+package org.dromara.hodor.actuator.xxljob.examples;
 
 import org.dromara.hodor.xxljob.annotation.EnableXxlJobScheduler;
 import org.springframework.boot.SpringApplication;

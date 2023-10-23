@@ -24,6 +24,12 @@ import org.springframework.core.annotation.AnnotatedElementUtils;
 @Slf4j
 public class XxlJobSpringExecutor implements SmartInitializingSingleton, DisposableBean {
 
+    private final JobRegister jobRegister;
+
+    public XxlJobSpringExecutor(final JobRegister jobRegister) {
+        this.jobRegister = jobRegister;
+    }
+
     @Override
     public void afterSingletonsInstantiated() {
         initJobHandlerRepository();
@@ -39,8 +45,6 @@ public class XxlJobSpringExecutor implements SmartInitializingSingleton, Disposa
     }
 
     private void initJobHandlerRepository() {
-        final JobRegister jobRegister = ServiceProvider.getInstance().getBean(JobRegister.class);
-        String groupName = "xxl-job-group";
         // init job handler action
         Map<String, Object> serviceBeanMap = ServiceProvider.getInstance().getBeansWithAnnotation(JobHandler.class);
         if (serviceBeanMap.size() == 0) {
@@ -48,6 +52,7 @@ public class XxlJobSpringExecutor implements SmartInitializingSingleton, Disposa
         }
         for (Object serviceBean : serviceBeanMap.values()) {
             if (serviceBean instanceof IJobHandler) {
+                String groupName = serviceBean.getClass().getSimpleName();
                 String jobName = serviceBean.getClass().getAnnotation(JobHandler.class).value();
                 IJobHandler handler = (IJobHandler) serviceBean;
 
@@ -60,6 +65,7 @@ public class XxlJobSpringExecutor implements SmartInitializingSingleton, Disposa
                     .jobName(jobName)
                     .timeType(TimeType.NONE)
                     .jobCommandType("java")
+                    .jobCommand(groupName + "#" + jobName)
                     .build();
                 JobInstance jobInstance = JobInstance.builder()
                     .jobDesc(jobDesc)
@@ -145,6 +151,7 @@ public class XxlJobSpringExecutor implements SmartInitializingSingleton, Disposa
             .timeType(TimeType.NONE)
             .jobName(jobName)
             .jobCommandType("java")
+            .jobCommand(beanName + "#" + methodName)
             .build();
         JobInstance jobInstance = JobInstance.builder()
             .jobDesc(jobDesc)
