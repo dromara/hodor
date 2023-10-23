@@ -7,16 +7,15 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hodor.actuator.api.JobExecutionContext;
 import org.dromara.hodor.actuator.api.JobRegister;
 import org.dromara.hodor.actuator.api.core.JobInstance;
 import org.dromara.hodor.actuator.java.core.ScheduledMethodRunnable;
+import org.dromara.hodor.actuator.java.core.ScheduledMethods;
 import org.dromara.hodor.actuator.java.job.JavaJob;
 import org.dromara.hodor.model.enums.TimeType;
 import org.dromara.hodor.model.job.JobDesc;
 import org.springframework.aop.framework.AopInfrastructureBean;
 import org.springframework.aop.framework.AopProxyUtils;
-import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.EmbeddedValueResolverAware;
@@ -75,11 +74,6 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
 
         Class<?> targetClass = AopProxyUtils.ultimateTargetClass(bean);
         if (!this.nonAnnotatedClasses.contains(targetClass)) {
-            //Map<Method, Set<Scheduled>> annotatedMethods = MethodIntrospector.selectMethods(targetClass, (MethodIntrospector.MetadataLookup<Set<Scheduled>>) method -> {
-            //    Set<Scheduled> scheduledMethods = AnnotatedElementUtils.getMergedRepeatableAnnotations(method, Scheduled.class, Schedules.class);
-            //    return (!scheduledMethods.isEmpty() ? scheduledMethods : null);
-            //});
-
             Map<Method, Set<Job>> annotatedMethods = MethodIntrospector.selectMethods(targetClass, (MethodIntrospector.MetadataLookup<Set<Job>>) method -> {
                 Set<Job> jobMethods = AnnotatedElementUtils.getAllMergedAnnotations(method, Job.class);
                 return (!jobMethods.isEmpty() ? jobMethods : null);
@@ -103,20 +97,8 @@ public class HodorSchedulerAnnotationBeanPostProcessor implements BeanPostProces
         return bean;
     }
 
-    protected ScheduledMethodRunnable createRunnable(Object target, Method method) {
-        Assert.isTrue(method.getParameterCount() == 0 || method.getParameterCount() == 1, "A method annotated by @Job has at most one parameter");
-        if (method.getParameterCount() == 1) {
-            Class<?> parameterType = method.getParameterTypes()[0];
-            if (!JobExecutionContext.class.isAssignableFrom(parameterType)) {
-                throw new IllegalArgumentException("arg must be class JobExecutionContext");
-            }
-        }
-        Method invocableMethod = AopUtils.selectInvocableMethod(method, target.getClass());
-        return new ScheduledMethodRunnable(target, invocableMethod, method.getParameterCount() == 1);
-    }
-
     protected void processJob(Job job, Method method, Object bean) {
-        ScheduledMethodRunnable runnable = createRunnable(bean, method);
+        ScheduledMethodRunnable runnable = ScheduledMethods.createRunnable(bean, method);
         String groupName = job.group();
         String jobName = job.jobName();
         // check cron expresion

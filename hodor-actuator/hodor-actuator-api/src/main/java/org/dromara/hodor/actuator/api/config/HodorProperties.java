@@ -79,4 +79,9 @@ public class HodorProperties {
      */
     private List<String> jobTypes;
 
+    /**
+     * 是否自动注册任务
+     */
+    private Boolean autoRegistry = true;
+
 }

@@ -64,7 +64,10 @@ public class DefaultJobRegister implements JobRegister {
     @Override
     public List<JobDesc> registerJobs() {
         log.info("register jobs.");
-        return new ArrayList<>(jobCache.values());
+        if (properties.getAutoRegistry()) {
+            return new ArrayList<>(jobCache.values());
+        }
+        return new ArrayList<>();
     }
 
     @Override
