@@ -16,6 +16,7 @@
         <module>hodor-actuator-jobtype-all</module>
         <module>hodor-actuator-jobtype-kettle</module>
         <module>hodor-actuator-jobtype-bigdata</module>
+        <module>hodor-actuator-jobtype-flink</module>
     </modules>
 
     <properties>
