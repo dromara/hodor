@@ -17,7 +17,6 @@
 
 package org.dromara.hodor.scheduler.quartz;
 
-import cn.hutool.core.date.DateTime;
 import java.util.Date;
 import org.dromara.hodor.common.cron.CronUtils;
 import org.dromara.hodor.common.utils.Utils;
@@ -66,13 +65,14 @@ public class QuartzTrigger {
         return buildCronTrigger(jobDesc, jobDetail, cron);
     }
 
+    // TODO: 待实现
     private Trigger buildFixedDelayTrigger(JobDesc jobDesc, JobDetail jobDetail) {
         final TimeType timeType = jobDesc.getTimeType();
         if (!TimeType.FIXED_DELAY.equals(timeType)) {
             throw new IllegalArgumentException("current time type not FIXED_DELAY type, " + timeType.getDescription());
         }
         final String fixedDelay = jobDesc.getTimeExp();
-        final Integer fixedDelayInt = Utils.Assert.validParse(() -> Integer.parseInt(fixedDelay),
+        final Integer fixedDelayInt = Utils.Assert.validParse(() -> Integer.parseInt(fixedDelay) / 1000,
             "The fixedDelay {} expression is invalid", fixedDelay);
 
         SimpleScheduleBuilder simpleScheduleBuilder = SimpleScheduleBuilder.repeatSecondlyForever(fixedDelayInt)
@@ -101,10 +101,10 @@ public class QuartzTrigger {
         final Integer fixedRateSecond = Utils.Assert.validParse(() -> Integer.parseInt(fixedRate) / 1000,
             "The fixedDelay {} expression is invalid", fixedRate);
 
-        SimpleScheduleBuilder simpleScheduleBuilder = SimpleScheduleBuilder.repeatSecondlyForTotalCount(1, fixedRateSecond)
+        SimpleScheduleBuilder simpleScheduleBuilder = SimpleScheduleBuilder.repeatSecondlyForever(fixedRateSecond)
             .withMisfireHandlingInstructionIgnoreMisfires();
         if (jobDesc.getMisfire()) {
-            simpleScheduleBuilder = SimpleScheduleBuilder.repeatSecondlyForTotalCount(1, fixedRateSecond)
+            simpleScheduleBuilder = SimpleScheduleBuilder.repeatSecondlyForever(fixedRateSecond)
                 .withMisfireHandlingInstructionFireNow();
         }
 
@@ -127,7 +127,7 @@ public class QuartzTrigger {
         // "yyyy-MM-dd HH:mm:ss"
         String cron;
         try {
-            final DateTime dateTime = Utils.Dates.parseDateTime(onceTime);
+            final Date dateTime = Utils.Dates.parseDateTime(onceTime);
             cron = CronUtils.parseCron(dateTime);
         } catch (Exception e) {
             throw new IllegalArgumentException("time expression is invalid, " + onceTime);
