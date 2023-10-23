@@ -7,7 +7,7 @@ spring:
 hodor:
   clusterName: hodor
   clusterNodes: 1
-  logDir: E:\\data\\hodor-scheduler\\recordset
+  logDir: E:\\data\\hodor-scheduler\\journal
   netServer:
     host: 0.0.0.0
     port: 8081
