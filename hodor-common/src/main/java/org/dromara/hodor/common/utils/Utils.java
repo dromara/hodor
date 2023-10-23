@@ -150,7 +150,7 @@ public class Utils {
         public static String SIMPLE_PATTEN = "yyyyMMddHHmmss";
 
         public static long betweenMs(String startTime, String endTime) {
-            if (org.apache.commons.lang3.StringUtils.isEmpty(endTime) || org.apache.commons.lang3.StringUtils.isEmpty(startTime)) {
+            if (StringUtils.isEmpty(endTime) || StringUtils.isEmpty(startTime)) {
                 return 0;
             }
             if (endTime.equals(startTime)) {
@@ -159,7 +159,7 @@ public class Utils {
 
             SimpleDateFormat sdf = new SimpleDateFormat(PATTEN);
             long processTime = 0;
-            if (!(org.apache.commons.lang3.StringUtils.isNotEmpty(endTime) && org.apache.commons.lang3.StringUtils.isNotEmpty(startTime))) {
+            if (!(StringUtils.isNotEmpty(endTime) && StringUtils.isNotEmpty(startTime))) {
                 return processTime;
             }
             try {
