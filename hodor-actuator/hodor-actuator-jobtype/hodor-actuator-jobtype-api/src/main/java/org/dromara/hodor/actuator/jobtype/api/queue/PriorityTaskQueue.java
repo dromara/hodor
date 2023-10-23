@@ -24,7 +24,9 @@ public class PriorityTaskQueue {
     public void start() {
         shutdown();
         for (TaskExecutor executor : executors) {
-            executor = new TaskExecutor(queue);
+            if (executor == null) {
+                executor = new TaskExecutor(queue);
+            }
             executor.start();
         }
     }
@@ -37,13 +39,12 @@ public class PriorityTaskQueue {
         }
     }
 
-    public int addTask(AsyncTask task) {
+    public void addTask(AsyncTask task) {
         if (!queue.contains(task)) {
             int i = seqInteger.incrementAndGet();
             task.setSeq(i);
             queue.add(task);
         }
-        return queue.size();
     }
 
     public int size() {

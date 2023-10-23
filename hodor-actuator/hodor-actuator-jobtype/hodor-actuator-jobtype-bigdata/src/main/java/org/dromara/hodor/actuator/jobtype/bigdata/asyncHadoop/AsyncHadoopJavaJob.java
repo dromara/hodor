@@ -56,7 +56,8 @@ public class AsyncHadoopJavaJob extends HadoopJavaJob {
         task.setRequestId(requestId);
         task.setProps(props);
         AsyncTaskStateChecker stateCheckHandler = AsyncTaskStateChecker.getInstance();
-        return stateCheckHandler.addTask(task);
+        stateCheckHandler.addTask(task);
+        return stateCheckHandler.queueSize();
     }
 
 }

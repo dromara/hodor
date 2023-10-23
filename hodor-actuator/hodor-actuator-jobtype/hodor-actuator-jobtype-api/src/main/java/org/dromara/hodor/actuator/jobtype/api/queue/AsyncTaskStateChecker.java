@@ -28,12 +28,16 @@ public class AsyncTaskStateChecker {
         return instance;
     }
 
-    public int addTask(AsyncTask task) {
-        return queue.addTask(task);
+    public void addTask(AsyncTask task) {
+        queue.addTask(task);
     }
 
     public int queueSize() {
         return queue.size();
+    }
+
+    public void shutdown() {
+        queue.shutdown();
     }
 
 }

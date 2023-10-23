@@ -1,18 +1,18 @@
 package org.dromara.hodor.actuator.jobtype.bigdata.javautils;
 
 import cn.hutool.core.date.DateUtil;
-import java.io.IOException;
-import java.util.Objects;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.hadoop.yarn.api.records.ApplicationReport;
 import org.apache.hadoop.yarn.api.records.YarnApplicationState;
 import org.apache.hadoop.yarn.exceptions.YarnException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.actuator.jobtype.api.executor.CommonJobProperties;
 import org.dromara.hodor.actuator.jobtype.api.queue.AbstractAsyncTask;
 import org.dromara.hodor.actuator.jobtype.api.queue.AsyncTask;
 import org.dromara.hodor.actuator.jobtype.bigdata.HadoopJobUtils;
+import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
 import org.dromara.hodor.remoting.api.message.Header;
@@ -21,9 +21,9 @@ import org.dromara.hodor.remoting.api.message.RemotingResponse;
 import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteResponse;
 
-import static org.apache.hadoop.yarn.api.records.YarnApplicationState.FAILED;
-import static org.apache.hadoop.yarn.api.records.YarnApplicationState.FINISHED;
-import static org.apache.hadoop.yarn.api.records.YarnApplicationState.KILLED;
+import java.io.IOException;
+
+import static org.apache.hadoop.yarn.api.records.YarnApplicationState.*;
 
 /**
  * AsyncJobStateTask
@@ -31,6 +31,8 @@ import static org.apache.hadoop.yarn.api.records.YarnApplicationState.KILLED;
  * @author tomgs
  * @since 1.0
  **/
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class AsyncJobStateTask extends AbstractAsyncTask {
 
     private final Logger logger = LogManager.getLogger(AsyncJobStateTask.class);
@@ -95,47 +97,6 @@ public class AsyncJobStateTask extends AbstractAsyncTask {
                 break;
         }
         return status;
-    }
-
-    public String getAppId() {
-        return appId;
-    }
-
-    public void setAppId(String appId) {
-        this.appId = appId;
-    }
-
-    public Long getRequestId() {
-        return requestId;
-    }
-
-    public void setRequestId(Long requestId) {
-        this.requestId = requestId;
-    }
-
-    public Props getProps() {
-        return props;
-    }
-
-    public void setProps(Props props) {
-        this.props = props;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        AsyncJobStateTask that = (AsyncJobStateTask) o;
-        return appId.equals(that.appId) && requestId.equals(that.requestId) && props.equals(that.props);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(appId, requestId, props);
     }
 }
 

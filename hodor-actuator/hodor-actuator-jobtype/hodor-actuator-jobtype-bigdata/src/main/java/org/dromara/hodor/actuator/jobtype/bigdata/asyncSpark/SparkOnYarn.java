@@ -1,15 +1,12 @@
 package org.dromara.hodor.actuator.jobtype.bigdata.asyncSpark;
 
 import com.google.common.collect.Lists;
-import java.util.List;
-import java.util.Objects;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
 import org.apache.hadoop.yarn.api.records.ApplicationReport;
 import org.apache.hadoop.yarn.api.records.FinalApplicationStatus;
 import org.apache.hadoop.yarn.api.records.YarnApplicationState;
 import org.apache.hadoop.yarn.client.api.YarnClient;
-import org.apache.hadoop.yarn.util.ConverterUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.spark.SparkConf;
@@ -19,6 +16,9 @@ import org.dromara.hodor.actuator.jobtype.api.exception.JobExecutionException;
 import org.dromara.hodor.actuator.jobtype.api.utils.JSONUtils;
 import org.dromara.hodor.actuator.jobtype.bigdata.javautils.JobUtils;
 import org.dromara.hodor.common.utils.StringUtils;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * 用于spark 提交到yarn
@@ -50,10 +50,10 @@ public class SparkOnYarn {
         logger.info("初始化spark on yarn客户端");
         List<String> args = Lists.newArrayList("--jar", conditions.getApplicationJar(), "--class",
             conditions.getMainClass());
-        if (conditions.getOtherArgs() != null && conditions.getOtherArgs().size() > 0) {
+        if (conditions.getOtherArgs() != null && !conditions.getOtherArgs().isEmpty()) {
             for (String arg : conditions.getOtherArgs()) {
                 args.add("--arg");
-                args.add(StringUtils.join(new String[] {arg}, ","));
+                args.add(StringUtils.join(new String[]{arg}, ","));
             }
         }
 
@@ -81,54 +81,48 @@ public class SparkOnYarn {
     /**
      * 停止spark任务
      *
-     * @param yarnResourcemanagerAddress yarn资源管理器地址， 例如：master:8032，查看yarn集群获取具体地址
+     * @param yarnResourceManagerAddress yarn资源管理器地址， 例如：master:8032，查看yarn集群获取具体地址
      * @param appIdStr                   需要取消的任务id
      */
-    public void killJob(String yarnResourcemanagerAddress, String appIdStr) {
+    public void killJob(String yarnResourceManagerAddress, String appIdStr) {
         logger.info(StringUtils.format("取消spark任务,任务id：{}", appIdStr));
         // 初始化 yarn的配置
         Configuration cf = new Configuration();
         String os = System.getProperty("os.name");
-        boolean cross_platform = false;
-        if (os.contains("Windows")) {
-            cross_platform = true;
-        }
+        boolean cross_platform = os.contains("Windows");
         cf.setBoolean("mapreduce.app-submission.cross-platform", cross_platform);// 配置使用跨平台提交任务
         // 设置yarn资源，不然会使用localhost:8032
         // 启用yarn的高可用，默认关闭
         cf.setBoolean("yarn.resourcemanager.ha.enabled", true);
         cf.set("yarn.resourcemanager.ha.rm-ids", "rm1,rm2");
         // 设置yarn资源，不然会使用localhost:8032
-        String[] hostPort = RegexUtil.getResourceHostPort(yarnResourcemanagerAddress);
-        cf.set("yarn.resourcemanager.address.rm1", hostPort[0]);
+        String[] hostPort = RegexUtil.getResourceHostPort(yarnResourceManagerAddress);
+        cf.set("yarn.resourcemanager.address.rm1",
+            Objects.requireNonNull(hostPort, "yarn resource manager address illegal")[0]);
         // 设置yarn资源，不然会使用localhost:8032
         if (hostPort.length >= 2) {
             cf.set("yarn.resourcemanager.address.rm2", hostPort[1]);
         }
-        // 创建yarn的客户端，此类中有杀死任务的方法
-        YarnClient yarnClient = YarnClient.createYarnClient();
-        // 初始化yarn的客户端
-        yarnClient.init(cf);
-        // yarn客户端启动
-        yarnClient.start();
-        try {
+        try (YarnClient yarnClient = YarnClient.createYarnClient()) {
+            // 创建yarn的客户端，此类中有杀死任务的方法
+            // 初始化yarn的客户端
+            yarnClient.init(cf);
+            // yarn客户端启动
+            yarnClient.start();
             // 根据应用id，杀死应用
             yarnClient.killApplication(getAppId(appIdStr));
         } catch (Exception e) {
             logger.error("取消spark任务失败", e);
         }
-        // 关闭yarn客户端
-        yarnClient.stop();
-
     }
 
     /**
      * 获取spark任务状态
      *
-     * @param yarnResourcemanagerAddress yarn资源管理器地址， 例如：master:8032，查看yarn集群获取具体地址
+     * @param yarnResourceManagerAddress yarn资源管理器地址， 例如：master:8032，查看yarn集群获取具体地址
      * @param appIdStr                   需要取消的任务id
      */
-    public SparkTaskState getStatus(String yarnResourcemanagerAddress, String appIdStr) {
+    public SparkTaskState getStatus(String yarnResourceManagerAddress, String appIdStr) {
         logger.info(StringUtils.format("获取任务状态启动，任务id：{}", appIdStr));
         // 初始化 yarn的配置
         Configuration cf = new Configuration();
@@ -140,7 +134,7 @@ public class SparkOnYarn {
         cf.setBoolean("yarn.resourcemanager.ha.enabled", true);
         cf.set("yarn.resourcemanager.ha.rm-ids", "rm1,rm2");
         // 设置yarn资源，不然会使用localhost:8032
-        String[] hostPort = RegexUtil.getResourceHostPort(yarnResourcemanagerAddress);
+        String[] hostPort = RegexUtil.getResourceHostPort(yarnResourceManagerAddress);
         cf.set("yarn.resourcemanager.address.rm1", Objects.requireNonNull(hostPort)[0]);
         // 设置yarn资源，不然会使用localhost:8032
         if (hostPort.length >= 2) {
@@ -151,36 +145,37 @@ public class SparkOnYarn {
         SparkTaskState taskState = new SparkTaskState();
         // 设置任务id
         taskState.setAppId(appIdStr);
-        YarnClient yarnClient = YarnClient.createYarnClient();
-        // 初始化yarn的客户端
-        yarnClient.init(cf);
-        // yarn客户端启动
-        yarnClient.start();
-        ApplicationReport report = null;
-        try {
-            report = yarnClient.getApplicationReport(getAppId(appIdStr));
+
+        try (YarnClient yarnClient = YarnClient.createYarnClient()) {
+            // 初始化yarn的客户端
+            yarnClient.init(cf);
+            // yarn客户端启动
+            yarnClient.start();
+            ApplicationReport report = null;
+            try {
+                report = yarnClient.getApplicationReport(getAppId(appIdStr));
+            } catch (Exception e) {
+                logger.error("获取spark任务状态失败", e);
+            }
+
+            if (report != null) {
+                YarnApplicationState state = report.getYarnApplicationState();
+                taskState.setState(state);
+                // 任务执行进度
+                float progress = report.getProgress();
+                taskState.setProgress(progress);
+                // 最终状态
+                FinalApplicationStatus status = report.getFinalApplicationStatus();
+                taskState.setFinalStatus(status);
+            } else {
+                taskState.setState(YarnApplicationState.FAILED);
+                taskState.setProgress(0.0f);
+                taskState.setFinalStatus(FinalApplicationStatus.FAILED);
+            }
+            logger.info(StringUtils.format("获取任务状态结束，任务状态： {}", JSONUtils.toJSON(taskState)));
         } catch (Exception e) {
-            logger.error("获取spark任务状态失败", e);
+            logger.error("取消spark任务失败", e);
         }
-
-        if (report != null) {
-            YarnApplicationState state = report.getYarnApplicationState();
-            taskState.setState(state);
-            // 任务执行进度
-            float progress = report.getProgress();
-            taskState.setProgress(progress);
-            // 最终状态
-            FinalApplicationStatus status = report.getFinalApplicationStatus();
-            taskState.setFinalStatus(status);
-        } else {
-            taskState.setState(YarnApplicationState.FAILED);
-            taskState.setProgress(0.0f);
-            taskState.setFinalStatus(FinalApplicationStatus.FAILED);
-        }
-
-        // 关闭yarn客户端
-        yarnClient.stop();
-        logger.info(StringUtils.format("获取任务状态结束，任务状态： {}", JSONUtils.toJSON(taskState)));
         return taskState;
     }
 
@@ -191,7 +186,8 @@ public class SparkOnYarn {
      * @return 应用id的对象
      */
     public ApplicationId getAppId(String appIdStr) {
-        return ConverterUtils.toApplicationId(appIdStr);
+        //return ConverterUtils.toApplicationId(appIdStr);
+        return ApplicationId.fromString(appIdStr);
     }
 
 }

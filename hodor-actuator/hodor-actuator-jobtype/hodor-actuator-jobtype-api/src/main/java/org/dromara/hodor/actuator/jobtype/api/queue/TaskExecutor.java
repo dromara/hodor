@@ -1,5 +1,7 @@
 package org.dromara.hodor.actuator.jobtype.api.queue;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -9,6 +11,7 @@ import java.util.concurrent.TimeUnit;
  * @author tomgs
  * @since 1.0
  **/
+@Slf4j
 public class TaskExecutor extends Thread {
 
     private final BlockingQueue<AsyncTask> taskQueue;
@@ -45,7 +48,9 @@ public class TaskExecutor extends Thread {
         if (task != null) {
             AsyncTask currentTask = task.run();
             if (currentTask != null) {
-                taskQueue.offer(currentTask);
+                if (!taskQueue.offer(currentTask)) {
+                    log.warn("task executor queue offer false");
+                }
             }
         }
     }

@@ -1,19 +1,18 @@
 package org.dromara.hodor.actuator.jobtype.bigdata.asyncSpark;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
 import org.apache.hadoop.yarn.api.records.ApplicationReport;
 import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.api.exceptions.JobExecutionException;
-import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.actuator.jobtype.api.executor.JavaProcessJob;
 import org.dromara.hodor.actuator.jobtype.api.queue.AsyncTaskStateChecker;
 import org.dromara.hodor.actuator.jobtype.bigdata.HadoopJobUtils;
 import org.dromara.hodor.actuator.jobtype.bigdata.javautils.AsyncJobStateTask;
+import org.dromara.hodor.common.utils.Props;
+import org.dromara.hodor.common.utils.StringUtils;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.*;
 
 /**
  * 异步提交spark任务入口
@@ -67,9 +66,7 @@ public class AsyncSparkJob extends JavaProcessJob {
 
         if (jobProps.containsKey("job.executor.args")) {
             String[] applicationArgs = jobProps.getString("job.executor.args").split(",");
-            for (String applicationArg : applicationArgs) {
-                args.add(applicationArg);
-            }
+            args.addAll(Arrays.asList(applicationArgs));
             conditions.setOtherArgs(args);
         }
 
@@ -125,9 +122,9 @@ public class AsyncSparkJob extends JavaProcessJob {
         task.setRequestId(requestId);
         task.setProps(jobProps);
         AsyncTaskStateChecker stateCheckHandler = AsyncTaskStateChecker.getInstance();
-        int queueSize = stateCheckHandler.addTask(task);
+        stateCheckHandler.addTask(task);
 
-        logger.info("current queue size : " + queueSize);
+        logger.info("current queue size : " + stateCheckHandler.queueSize());
     }
 
     private void resolverJars() throws FileNotFoundException {
@@ -140,16 +137,13 @@ public class AsyncSparkJob extends JavaProcessJob {
         if (!workingFiles.exists()) {
             throw new FileNotFoundException(workingDir + "## this file is not found!");
         }
-        File[] files = workingFiles.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                if (name.endsWith(".jar") || "lib".equalsIgnoreCase(name)
-                    || "conf".equalsIgnoreCase(name)) {
-                    return true;
-                }
-                return false;
-            }
-        });
+        File[] files = workingFiles.listFiles((dir, name) -> name.endsWith(".jar")
+            || "lib".equalsIgnoreCase(name)
+            || "conf".equalsIgnoreCase(name));
+
+        if (files == null) {
+            throw new FileNotFoundException(workingDir + " not found files");
+        }
         StringBuilder dependJarSb = new StringBuilder();
         StringBuilder filesSb = new StringBuilder();
         for (File file : files) {
@@ -160,13 +154,13 @@ public class AsyncSparkJob extends JavaProcessJob {
                     dependJarSb.append(file.getAbsolutePath()).append(",");
                 }
             }
-            if (file.getName().equalsIgnoreCase("lib")) {
-                for (File libFile : file.listFiles()) {
+            if (StringUtils.equalsIgnoreCase(file.getName(), "lib")) {
+                for (File libFile : Objects.requireNonNull(file.listFiles())) {
                     dependJarSb.append(libFile.getAbsolutePath()).append(",");
                 }
             }
-            if (file.getName().equalsIgnoreCase("conf")) {
-                for (File confFile : file.listFiles()) {
+            if (StringUtils.equalsIgnoreCase(file.getName(), "conf")) {
+                for (File confFile : Objects.requireNonNull(file.listFiles())) {
                     filesSb.append(confFile.getAbsoluteFile()).append(",");
                 }
             }
