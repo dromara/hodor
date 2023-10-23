@@ -15,6 +15,8 @@
         <module>hodor-actuator-java-dist</module>
         <module>hodor-actuator-examples-dist</module>
         <module>hodor-actuator-agent-dist</module>
+        <module>hodor-actuator-xxljob-dist</module>
+        <module>hodor-actuator-springtask-dist</module>
     </modules>
 
     <properties>

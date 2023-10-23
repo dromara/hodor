@@ -193,16 +193,6 @@
                 <artifactId>hodor-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.dromara</groupId>
-                <artifactId>hodor-actuator-java</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.dromara</groupId>
-                <artifactId>hodor-actuator-xxljob</artifactId>
-                <version>${project.version}</version>
-            </dependency>
 
             <!-- base tools -->
             <dependency>

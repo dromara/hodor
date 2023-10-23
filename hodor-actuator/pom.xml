@@ -17,6 +17,7 @@
         <module>hodor-actuator-agent</module>
         <module>hodor-actuator-jobtype</module>
         <module>hodor-actuator-xxljob</module>
+        <module>hodor-actuator-springtask</module>
     </modules>
 
     <properties>
@@ -29,6 +30,11 @@
             <dependency>
                 <groupId>org.dromara</groupId>
                 <artifactId>hodor-actuator-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>hodor-actuator-java</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
