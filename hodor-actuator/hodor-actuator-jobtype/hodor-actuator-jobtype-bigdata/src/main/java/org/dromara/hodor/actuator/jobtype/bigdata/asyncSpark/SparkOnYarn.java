@@ -15,6 +15,8 @@ import org.apache.spark.deploy.yarn.ClientArguments;
 import org.dromara.hodor.actuator.jobtype.api.exception.JobExecutionException;
 import org.dromara.hodor.actuator.jobtype.api.utils.JSONUtils;
 import org.dromara.hodor.actuator.jobtype.bigdata.javautils.JobUtils;
+import org.dromara.hodor.actuator.jobtype.bigdata.javautils.RegexUtil;
+import org.dromara.hodor.actuator.jobtype.bigdata.javautils.YarnSubmitArguments;
 import org.dromara.hodor.common.utils.StringUtils;
 
 import java.util.List;
@@ -43,15 +45,15 @@ public class SparkOnYarn {
         return sparkOnYarn;
     }
 
-    public String submitSpark(YarnSubmitConditions conditions) {
+    public String submitSpark(YarnSubmitArguments conditions) {
         logger.info(StringUtils.format("请求参数:{}.", conditions));
 
         // 初始化yarn客户端
         logger.info("初始化spark on yarn客户端");
         List<String> args = Lists.newArrayList("--jar", conditions.getApplicationJar(), "--class",
             conditions.getMainClass());
-        if (conditions.getOtherArgs() != null && !conditions.getOtherArgs().isEmpty()) {
-            for (String arg : conditions.getOtherArgs()) {
+        if (conditions.getAppArgs() != null && !conditions.getAppArgs().isEmpty()) {
+            for (String arg : conditions.getAppArgs()) {
                 args.add("--arg");
                 args.add(StringUtils.join(new String[]{arg}, ","));
             }
@@ -60,7 +62,7 @@ public class SparkOnYarn {
         // identify that you will be using Spark as YARN mode
         System.setProperty("SPARK_YARN_MODE", "true");
         // 初始化 spark的配置
-        SparkConf sparkConf = JobUtils.getSparkConf(conditions);
+        SparkConf sparkConf = SparkConfUtils.getSparkConf(conditions);
         // 初始化 yarn的配置
         Configuration conf = JobUtils.getHadoopConfiguration(conditions);
         ClientArguments cArgs = new ClientArguments(args.toArray(new String[0]));

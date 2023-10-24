@@ -1,5 +1,12 @@
 package org.dromara.hodor.actuator.jobtype.bigdata.asyncSpark;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Properties;
 import org.apache.hadoop.yarn.api.records.ApplicationReport;
 import org.apache.logging.log4j.Logger;
 import org.dromara.hodor.actuator.api.exceptions.JobExecutionException;
@@ -7,12 +14,9 @@ import org.dromara.hodor.actuator.jobtype.api.executor.JavaProcessJob;
 import org.dromara.hodor.actuator.jobtype.api.queue.AsyncTaskStateChecker;
 import org.dromara.hodor.actuator.jobtype.bigdata.HadoopJobUtils;
 import org.dromara.hodor.actuator.jobtype.bigdata.javautils.AsyncJobStateTask;
+import org.dromara.hodor.actuator.jobtype.bigdata.javautils.YarnSubmitArguments;
 import org.dromara.hodor.common.utils.Props;
 import org.dromara.hodor.common.utils.StringUtils;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.*;
 
 /**
  * 异步提交spark任务入口
@@ -55,33 +59,32 @@ public class AsyncSparkJob extends JavaProcessJob {
         }
 
         SparkOnYarn instance = SparkOnYarn.getInstance();
-        YarnSubmitConditions conditions = new YarnSubmitConditions();
-
+        YarnSubmitArguments arguments = new YarnSubmitArguments();
         //set application config
-        conditions.setJobName(jobProps.getString("job.name", jobid));
-        conditions.setMainClass(jobProps.getString("job.class"));
-        conditions.setApplicationJar(jobProps.getString("job.executor.jar"));
-        conditions.setQueue(jobProps.getString("queue", "default"));
-        List<String> args = new ArrayList<>();
+        arguments.setJobName(jobProps.getString("job.name", jobid));
+        arguments.setMainClass(jobProps.getString("job.class"));
+        arguments.setApplicationJar(jobProps.getString("job.executor.jar"));
+        arguments.setQueue(jobProps.getString("yarn.queue", "default"));
 
+        List<String> args = new ArrayList<>();
         if (jobProps.containsKey("job.executor.args")) {
             String[] applicationArgs = jobProps.getString("job.executor.args").split(",");
             args.addAll(Arrays.asList(applicationArgs));
-            conditions.setOtherArgs(args);
+            arguments.setAppArgs(args);
         }
 
         //set yarn config
-        conditions.setYarnJars(jobProps.getString("yarn.jars", sysProps.getString("yarn.jars")));
+        arguments.setYarnJars(jobProps.getString("yarn.jars", sysProps.getString("yarn.jars")));
         String resourceManagerAddress = jobProps.getString("resourceManagerAddress",
             sysProps.getString("yarn.resource.manager.address"));
-        conditions.setYarnResourcemanagerAddress(resourceManagerAddress);
+        arguments.setYarnResourcemanagerAddress(resourceManagerAddress);
 
         if (jobProps.containsKey("job.execution.dependJars")) {
-            conditions.setDependJars(jobProps.getString("job.execution.dependJars").split(","));
+            arguments.setDependJars(jobProps.getString("job.execution.dependJars").split(","));
         }
         if (jobProps.containsKey("spark.files")) {
             String files = jobProps.getString("spark.files");
-            conditions.setFiles(files.split(","));
+            arguments.setFiles(files.split(","));
         }
 
         Properties properties = new Properties();
@@ -99,14 +102,14 @@ public class AsyncSparkJob extends JavaProcessJob {
         properties.put("spark.eventLog.dir", sysProps.getString("spark.eventLog.dir"));
         properties.put("spark.history.fs.logDirectory", sysProps.getString("spark.history.fs.logDirectory"));
 
-        conditions.setProperties(properties);
+        arguments.setProperties(properties);
         //set hdfs config
-        conditions.setDefaultFS(jobProps.getString("hdfs.defalutFS", sysProps.getString("hdfs.defalutFS")));
-        conditions.setNameservices(jobProps.getString("hdfs.nameservices", sysProps.getString("hdfs.nameservices")));
-        conditions.setNamenodes(jobProps.getString("hdfs.namenodes", sysProps.getString("hdfs.namenodes")));
-        conditions.setNamenodeRpcAddress(jobProps.getString("hdfs.rpc-address", sysProps.getString("hdfs.rpc-address")));
+        arguments.setDefaultFS(jobProps.getString("hdfs.defalutFS", sysProps.getString("hdfs.defalutFS")));
+        arguments.setNameservices(jobProps.getString("hdfs.nameservices", sysProps.getString("hdfs.nameservices")));
+        arguments.setNamenodes(jobProps.getString("hdfs.namenodes", sysProps.getString("hdfs.namenodes")));
+        arguments.setNamenodeRpcAddress(jobProps.getString("hdfs.rpc-address", sysProps.getString("hdfs.rpc-address")));
 
-        String applicationId = instance.submitSpark(conditions);
+        String applicationId = instance.submitSpark(arguments);
         logger.info("jobid:" + jobid + " submit result : applicationId: " + applicationId);
 
         if (applicationId == null) {
@@ -117,13 +120,9 @@ public class AsyncSparkJob extends JavaProcessJob {
         logger.info("详细情况请查看tracking url :" + trackingUrl);
 
         Long requestId = jobProps.getLong("requestId");
-        AsyncJobStateTask task = new AsyncJobStateTask();
-        task.setAppId(applicationId);
-        task.setRequestId(requestId);
-        task.setProps(jobProps);
+        AsyncJobStateTask task = new AsyncJobStateTask(applicationId, requestId, jobProps, logger);
         AsyncTaskStateChecker stateCheckHandler = AsyncTaskStateChecker.getInstance();
         stateCheckHandler.addTask(task);
-
         logger.info("current queue size : " + stateCheckHandler.queueSize());
     }
 

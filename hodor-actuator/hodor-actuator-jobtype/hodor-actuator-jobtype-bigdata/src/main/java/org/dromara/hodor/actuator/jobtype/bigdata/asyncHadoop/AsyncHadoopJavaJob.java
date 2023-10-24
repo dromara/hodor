@@ -51,10 +51,7 @@ public class AsyncHadoopJavaJob extends HadoopJavaJob {
     }
 
     private int getQueueSize(String applicationId, Long requestId) {
-        AsyncJobStateTask task = new AsyncJobStateTask();
-        task.setAppId(applicationId);
-        task.setRequestId(requestId);
-        task.setProps(props);
+        AsyncJobStateTask task = new AsyncJobStateTask(applicationId, requestId, props, logger);
         AsyncTaskStateChecker stateCheckHandler = AsyncTaskStateChecker.getInstance();
         stateCheckHandler.addTask(task);
         return stateCheckHandler.queueSize();

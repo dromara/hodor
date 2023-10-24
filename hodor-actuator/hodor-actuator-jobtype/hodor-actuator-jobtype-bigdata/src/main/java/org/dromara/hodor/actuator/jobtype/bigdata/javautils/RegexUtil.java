@@ -1,4 +1,4 @@
-package org.dromara.hodor.actuator.jobtype.bigdata.asyncSpark;
+package org.dromara.hodor.actuator.jobtype.bigdata.javautils;
 
 import java.util.ArrayList;
 import java.util.List;

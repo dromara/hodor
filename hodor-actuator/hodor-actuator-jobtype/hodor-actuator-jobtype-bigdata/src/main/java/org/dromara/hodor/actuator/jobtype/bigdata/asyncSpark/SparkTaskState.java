@@ -1,5 +1,6 @@
 package org.dromara.hodor.actuator.jobtype.bigdata.asyncSpark;
 
+import lombok.Data;
 import org.apache.hadoop.yarn.api.records.FinalApplicationStatus;
 import org.apache.hadoop.yarn.api.records.YarnApplicationState;
 
@@ -9,45 +10,14 @@ import org.apache.hadoop.yarn.api.records.YarnApplicationState;
  * @author tomgs
  * @since 1.0
  **/
+@Data
 public class SparkTaskState {
 
     private String appId;
 
-    private YarnApplicationState state;
-
     private float progress;
 
+    private YarnApplicationState state;
+
     private FinalApplicationStatus finalStatus;
-
-    public String getAppId() {
-        return appId;
-    }
-
-    public void setAppId(String appId) {
-        this.appId = appId;
-    }
-
-    public YarnApplicationState getState() {
-        return state;
-    }
-
-    public void setState(YarnApplicationState state) {
-        this.state = state;
-    }
-
-    public float getProgress() {
-        return progress;
-    }
-
-    public void setProgress(float progress) {
-        this.progress = progress;
-    }
-
-    public FinalApplicationStatus getFinalStatus() {
-        return finalStatus;
-    }
-
-    public void setFinalStatus(FinalApplicationStatus finalStatus) {
-        this.finalStatus = finalStatus;
-    }
 }

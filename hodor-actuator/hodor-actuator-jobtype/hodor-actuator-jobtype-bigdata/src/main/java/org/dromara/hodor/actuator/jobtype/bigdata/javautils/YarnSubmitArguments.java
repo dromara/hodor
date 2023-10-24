@@ -1,20 +1,18 @@
-package org.dromara.hodor.actuator.jobtype.flink;
-
-import lombok.Data;
+package org.dromara.hodor.actuator.jobtype.bigdata.javautils;
 
 import java.util.List;
 import java.util.Properties;
+import lombok.Data;
 
 /**
  * 提交到yarn的实体类
- *
  * @since 1.0
  **/
 @Data
-public class FlinkSubmitArguments {
+public class YarnSubmitArguments {
 
     /**
-     * Flink本地配置目录
+     * 本地配置目录
      */
     String localConfDir;
 
@@ -37,6 +35,11 @@ public class FlinkSubmitArguments {
      * 应用依赖jar包
      */
     private String[] dependJars;
+
+    /**
+     * 依赖的jar包目录
+     */
+    private String[] libs;
 
     /**
      * yarn 依赖jar包
@@ -81,11 +84,10 @@ public class FlinkSubmitArguments {
     /**
      * 应用参数
      */
-    private List<String> otherArgs;
+    private List<String> appArgs;
 
     /**
      * 其他属性
      */
     private Properties properties;
-
 }
