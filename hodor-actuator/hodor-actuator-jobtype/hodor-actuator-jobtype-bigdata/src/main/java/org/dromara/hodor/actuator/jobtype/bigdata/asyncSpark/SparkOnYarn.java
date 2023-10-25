@@ -1,13 +1,14 @@
 package org.dromara.hodor.actuator.jobtype.bigdata.asyncSpark;
 
 import com.google.common.collect.Lists;
+import java.util.List;
+import java.util.Objects;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
 import org.apache.hadoop.yarn.api.records.ApplicationReport;
 import org.apache.hadoop.yarn.api.records.FinalApplicationStatus;
 import org.apache.hadoop.yarn.api.records.YarnApplicationState;
 import org.apache.hadoop.yarn.client.api.YarnClient;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.deploy.yarn.Client;
@@ -19,9 +20,6 @@ import org.dromara.hodor.actuator.jobtype.bigdata.javautils.RegexUtil;
 import org.dromara.hodor.actuator.jobtype.bigdata.javautils.YarnSubmitArguments;
 import org.dromara.hodor.common.utils.StringUtils;
 
-import java.util.List;
-import java.util.Objects;
-
 /**
  * 用于spark 提交到yarn
  *
@@ -30,19 +28,10 @@ import java.util.Objects;
  **/
 public class SparkOnYarn {
 
-    private static final Logger logger = LogManager.getLogger(SparkOnYarn.class);
+    private final Logger logger;
 
-    private static volatile SparkOnYarn sparkOnYarn = null;
-
-    private SparkOnYarn() {
-
-    }
-
-    public static synchronized SparkOnYarn getInstance() {
-        if (sparkOnYarn == null) {
-            sparkOnYarn = new SparkOnYarn();
-        }
-        return sparkOnYarn;
+    public SparkOnYarn(Logger logger) {
+        this.logger = logger;
     }
 
     public String submitSpark(YarnSubmitArguments conditions) {

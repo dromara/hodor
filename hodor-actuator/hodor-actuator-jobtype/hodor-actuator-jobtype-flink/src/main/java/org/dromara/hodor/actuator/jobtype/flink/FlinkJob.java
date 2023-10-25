@@ -39,7 +39,7 @@ public class FlinkJob extends AbstractJob {
         this.sysProps = sysProps;
         this.jobProps = jobProps;
         this.logger = logger;
-        flinkOnYarn = new FlinkOnYarn(logger);
+        this.flinkOnYarn = new FlinkOnYarn(logger);
     }
 
     @Override

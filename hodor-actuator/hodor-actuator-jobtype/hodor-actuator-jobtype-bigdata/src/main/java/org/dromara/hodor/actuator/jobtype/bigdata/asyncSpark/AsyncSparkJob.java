@@ -42,11 +42,14 @@ public class AsyncSparkJob extends JavaProcessJob {
 
     private final Props jobProps;
 
+    private final SparkOnYarn sparkOnYarn;
+
     public AsyncSparkJob(String jobid, Props sysProps, Props jobProps, Logger logger) {
         super(jobid, sysProps, jobProps, logger);
         this.logger = logger;
         this.jobid = jobid;
         this.jobProps = jobProps;
+        this.sparkOnYarn = new SparkOnYarn(logger);
     }
 
     @Override
@@ -58,7 +61,6 @@ public class AsyncSparkJob extends JavaProcessJob {
             handleError("Bad property definition! " + e.getMessage(), e);
         }
 
-        SparkOnYarn instance = SparkOnYarn.getInstance();
         YarnSubmitArguments arguments = new YarnSubmitArguments();
         //set application config
         arguments.setJobName(jobProps.getString("job.name", jobid));
@@ -109,7 +111,7 @@ public class AsyncSparkJob extends JavaProcessJob {
         arguments.setNamenodes(jobProps.getString("hdfs.namenodes", sysProps.getString("hdfs.namenodes")));
         arguments.setNamenodeRpcAddress(jobProps.getString("hdfs.rpc-address", sysProps.getString("hdfs.rpc-address")));
 
-        String applicationId = instance.submitSpark(arguments);
+        String applicationId = sparkOnYarn.submitSpark(arguments);
         logger.info("jobid:" + jobid + " submit result : applicationId: " + applicationId);
 
         if (applicationId == null) {
