@@ -69,7 +69,7 @@ const rules = {
         <a-form :model="formState" name="normal_login" class="form" @finish="onFinish" @finishFailed="onFinishFailed"
             :label-col="{ span: 5 }" :wrapper-col="{ span: 16 }">
             <a-form-item label="Username" name="username" :rules="rules.username">
-                <a-input v-model:value="formState.username" placeholder="admin" size="large">
+                <a-input v-model:value="formState.username" placeholder="" size="large">
                     <template #prefix>
                         <UserOutlined class="site-form-item-icon" />
                     </template>
@@ -77,7 +77,7 @@ const rules = {
             </a-form-item>
 
             <a-form-item label="Password" name="password" :rules="rules.password">
-                <a-input-password v-model:value="formState.password" placeholder="hodor@2023" size="large">
+                <a-input-password v-model:value="formState.password" placeholder="" size="large">
                     <template #prefix>
                         <LockOutlined class="site-form-item-icon" />
                     </template>
