@@ -19,9 +19,12 @@ package org.dromara.hodor.admin.config;
 
 import lombok.RequiredArgsConstructor;
 import org.dromara.hodor.admin.interceptor.LoginInterceptor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -42,6 +45,15 @@ public class AdminConfig implements WebMvcConfigurer {
     }
 
     @Override
+    public void addViewControllers(@NotNull ViewControllerRegistry registry) {
+        registry.addViewController("/")
+            .setViewName("forward:/index.html");
+        registry.addViewController("/hodor")
+            .setViewName("forward:/index.html");
+        registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
+    }
+
+    @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(loginInterceptor())
             .addPathPatterns("/**")
@@ -52,7 +64,13 @@ public class AdminConfig implements WebMvcConfigurer {
                 "/webjars/**",
                 "/swagger-resources/**",
                 "/swagger-ui.html",
-                "/doc.html");
+                "/doc.html",
+                "/static/**",
+                "/assets/**",
+                "/**.ico",
+                "/**.html",
+                "/**.css",
+                "/**.js");
     }
 
 }
