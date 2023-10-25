@@ -14,6 +14,7 @@ export default defineConfig({
     //   localEnabled: true,
     // }),
   ],
+  base: './',
   // 路径映射
   resolve: {
     alias: {
