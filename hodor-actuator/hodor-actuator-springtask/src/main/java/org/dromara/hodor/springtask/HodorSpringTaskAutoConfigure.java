@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableHodorScheduler
-@ConditionalOnProperty(prefix = "hodor", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "hodor", name = "enabled", havingValue = "true", matchIfMissing = true)
 @EnableConfigurationProperties(HodorActuatorJavaProperties.class)
 public class HodorSpringTaskAutoConfigure {
 
