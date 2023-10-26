@@ -1,0 +1,3 @@
+s3=org.dromara.hodor.storage.xfile.S3FileStorage
+ftp=org.dromara.hodor.storage.xfile.FtpFileStorage
+sftp=org.dromara.hodor.storage.xfile.SftpFileStorage

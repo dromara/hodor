@@ -1,7 +1,7 @@
 package org.dromara.hodor.server.config;
 
 import lombok.Data;
-import org.dromara.hodor.common.storage.cache.CacheSourceConfig;
+import org.dromara.hodor.cache.api.CacheSourceConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
  *  hodor server properties
  *
  * @author tomgs
- * @version 2020/6/29 1.0 
+ * @version 2020/6/29 1.0
  */
 @Data
 @Configuration

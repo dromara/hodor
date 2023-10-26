@@ -19,9 +19,10 @@
         <module>hodor-scheduler</module>
         <module>hodor-examples</module>
         <module>hodor-model</module>
-        <module>hodor-extension</module>
+        <module>hodor-cache</module>
         <module>hodor-actuator</module>
         <module>hodor-dist</module>
+        <module>hodor-storage</module>
     </modules>
 
     <organization>
@@ -170,12 +171,17 @@
             </dependency>
             <dependency>
                 <groupId>org.dromara</groupId>
-                <artifactId>hodor-extension-cache-embedded-impl</artifactId>
+                <artifactId>hodor-cache-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.dromara</groupId>
-                <artifactId>hodor-extension-cache-redis-impl</artifactId>
+                <artifactId>hodor-cache-all</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>hodor-cache-embedded</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -191,6 +197,16 @@
             <dependency>
                 <groupId>org.dromara</groupId>
                 <artifactId>hodor-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>hodor-storage-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>hodor-storage-all</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
