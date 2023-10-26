@@ -41,17 +41,18 @@ hodor-scheduler
 │  ├─hodor-actuator-java                        # jar包方式任务执行器
 │  ├─hodor-actuator-agent                       # 独立进程方式任务执行器
 │  ├─hodor-actuator-xxljob                      # 支持xxl-job执行器
-│  └─hodor-actuator-schedulerx                  # 支持scheduleX2.0执行器（TODO）
+│  └─hodor-actuator-springtask                  # 支持spring task执行器
 ├─hodor-admin                                   # hodor管理控制台（TODO）
 ├─hodor-client                                  # 提供与hodor server的交互sdk
 ├─hodor-common                                  # hodor公共依赖
 ├─hodor-core                                    # hodor核心业务
 ├─hodor-examples                                # hodor测试用例
-├─hodor-extension                               # hodor扩展
-│  ├─hodor-extension-cache-redis-impl
-│  ├─hodor-extension-cache-register-impl
-│  └─hodor-extension-cache-zk-impl
+├─hodor-cache                                   # hodor扩展
+│  ├─hodor-cache-local                          # 基于本地内存的缓存
+│  ├─hodor-cache-embedded                       # 基于embedded的分布式缓存
+│  └─hodor-cache-redis                          # 基于redis的分布式缓存
 ├─hodor-model                                   # hodor公共数据模型
+├─hodor-storage                                 # hodor storage模块
 ├─hodor-register                                # hodor注册中心
 │  ├─hodor-register-api
 │  ├─hodor-register-embedded                    # 基于Raft实现注册中心
@@ -65,7 +66,6 @@ hodor-scheduler
 └─hodor-server                                  # hodor入口
 
 ```
-
 ## 本地源码运行方式
 1. 在mysql下执行docs目录下面的hodor_ddl.sql。
 2. 在项目根目录下通过mvn package -DskipTests=true命令编译整个项目，因为涉及到一些代码的自动生成。

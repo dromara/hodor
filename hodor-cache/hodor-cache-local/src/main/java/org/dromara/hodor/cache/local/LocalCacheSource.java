@@ -1,0 +1,44 @@
+package org.dromara.hodor.cache.local;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import org.dromara.hodor.cache.api.CacheClient;
+import org.dromara.hodor.cache.api.CacheSourceConfig;
+import org.dromara.hodor.cache.api.HodorCacheSource;
+import org.dromara.hodor.common.extension.Join;
+
+/**
+ * LocalCacheSource
+ *
+ * @author tomgs
+ * @since 1.0
+ */
+@Join
+public class LocalCacheSource implements HodorCacheSource {
+
+    private final CacheSourceConfig cacheSourceConfig;
+
+    private final Map<String, CacheClient<Object, Object>> groupCacheClientMap;
+
+    public LocalCacheSource(final CacheSourceConfig cacheSourceConfig) {
+        this.cacheSourceConfig = cacheSourceConfig;
+        this.groupCacheClientMap = new ConcurrentHashMap<>();
+    }
+
+    @Override
+    public String getCacheType() {
+        return "local";
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <K, V> CacheClient<K, V> getCacheClient(String group) {
+        return (CacheClient<K, V>) groupCacheClientMap.computeIfAbsent(group, k -> new LocalRawCacheClient<>(cacheSourceConfig));
+    }
+
+    @Override
+    public <K, V> CacheClient<K, V> getCacheClient() {
+        return getCacheClient("default");
+    }
+
+}

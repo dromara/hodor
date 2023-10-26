@@ -33,7 +33,11 @@
         </dependency>
         <dependency>
             <groupId>org.dromara</groupId>
-            <artifactId>hodor-extension-cache-embedded-impl</artifactId>
+            <artifactId>hodor-cache-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.dromara</groupId>
+            <artifactId>hodor-cache-embedded</artifactId>
         </dependency>
         <dependency>
             <groupId>org.dromara</groupId>

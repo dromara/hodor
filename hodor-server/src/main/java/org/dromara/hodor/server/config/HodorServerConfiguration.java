@@ -1,9 +1,10 @@
 package org.dromara.hodor.server.config;
 
 import java.util.Optional;
+
+import org.dromara.hodor.cache.api.CacheSourceConfig;
+import org.dromara.hodor.cache.api.HodorCacheSource;
 import org.dromara.hodor.common.extension.ExtensionLoader;
-import org.dromara.hodor.common.storage.cache.CacheSourceConfig;
-import org.dromara.hodor.common.storage.cache.HodorCacheSource;
 import org.dromara.hodor.core.recoder.JobExecuteRecorder;
 import org.dromara.hodor.core.recoder.LogJobExecuteRecorder;
 import org.dromara.hodor.core.service.JobExecDetailService;
