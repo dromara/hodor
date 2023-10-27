@@ -298,6 +298,27 @@ public class Props {
         }
     }
 
+    public void putIfAbsent(final Properties properties) {
+        for (final String propName : properties.stringPropertyNames()) {
+            if (!containsKey(propName)) {
+                this._current.put(propName, StringUtils.trim(properties.getProperty(propName)));
+            }
+        }
+    }
+
+    public void putIfAbsent(final File propertiesFile) {
+        if (propertiesFile == null || !propertiesFile.exists() || !propertiesFile.canRead()) {
+            return;
+        }
+        Properties properties = new Properties();
+        try (FileInputStream inputStream = new FileInputStream(propertiesFile);) {
+            properties.load(inputStream);
+            this.putIfAbsent(properties);
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
     /**
      * Put integer
      */
