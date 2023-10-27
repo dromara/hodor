@@ -29,6 +29,7 @@ import org.apache.commons.io.FileUtils;
 import org.dromara.hodor.common.extension.Join;
 import org.dromara.hodor.common.utils.Utils.Assert;
 import org.dromara.hodor.storage.api.FileStorage;
+import org.dromara.hodor.storage.api.StorageConfig;
 import org.dromara.hodor.storage.api.StorageMetadata;
 import org.dromara.hodor.storage.exception.StorageException;
 
@@ -41,6 +42,12 @@ import org.dromara.hodor.storage.exception.StorageException;
 @Join
 @Slf4j
 public class LocalFileStorage implements FileStorage {
+
+    private final StorageConfig storageConfig;
+
+    public LocalFileStorage(StorageConfig storageConfig) {
+        this.storageConfig = storageConfig;
+    }
 
     @Override
     public InputStream fetchFile(Path path) {

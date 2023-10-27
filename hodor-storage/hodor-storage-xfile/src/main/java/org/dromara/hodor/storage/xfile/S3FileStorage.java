@@ -37,7 +37,7 @@ public class S3FileStorage extends AbstractXFileStorage {
         s3Config.setAccessKey(config.getAccessKey());
         s3Config.setSecretKey(config.getSecretKey());
         s3Config.setRegion(config.getRegion());
-        s3Config.setEndPoint(config.getEndPoint());
+        s3Config.setEndPoint(config.getEndpoint());
         s3Config.setBucketName(config.getBucketName());
         s3Config.setDefaultAcl(config.getDefaultAcl());
         s3Config.setDomain(config.getDomain());
