@@ -1,9 +1,11 @@
 package org.dromara.hodor.scheduler.quartz;
 
 import cn.hutool.core.util.ReflectUtil;
+
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
+
 import org.dromara.hodor.common.extension.Join;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.model.enums.TimeType;
@@ -23,7 +25,7 @@ import org.quartz.core.QuartzSchedulerResources;
 import org.quartz.impl.StdSchedulerFactory;
 
 /**
- *  implements scheduler by quartz
+ * implements scheduler by quartz
  *
  * @author tomgs
  * @since 1.0
@@ -81,6 +83,8 @@ public class QuartzScheduler implements HodorScheduler {
         lock.lock();
         try {
             scheduler.start();
+            scheduler.getListenerManager()
+                .addJobListener(new TimeDelayedListener());
         } catch (SchedulerException e) {
             throw new HodorSchedulerException(e);
         } finally {
@@ -127,7 +131,7 @@ public class QuartzScheduler implements HodorScheduler {
             JobKey jobKey = JobKey.jobKey(jobDesc.getJobName(), jobDesc.getGroupName());
             try {
                 JobDetail jobDetail = scheduler.getJobDetail(jobKey);
-                JobDesc oldJobDesc = (JobDesc)jobDetail.getJobDataMap().get("jobDesc");
+                JobDesc oldJobDesc = (JobDesc) jobDetail.getJobDataMap().get("jobDesc");
                 jobDetail.getJobDataMap().put("jobExecutor", jobExecutor);
                 jobDetail.getJobDataMap().put("jobDesc", jobDesc);
 
@@ -149,9 +153,9 @@ public class QuartzScheduler implements HodorScheduler {
         }
 
         JobDetail jobDetail = JobBuilder.newJob(HodorJob.class)
-                .withIdentity(jobDesc.getJobName(), jobDesc.getGroupName())
-                .requestRecovery(true)
-                .build();
+            .withIdentity(jobDesc.getJobName(), jobDesc.getGroupName())
+            .requestRecovery(true)
+            .build();
         jobDetail.getJobDataMap().put("schedulerName", schedulerName);
         jobDetail.getJobDataMap().put("jobExecutor", jobExecutor);
         jobDetail.getJobDataMap().put("jobDesc", jobDesc);

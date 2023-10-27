@@ -23,13 +23,8 @@ import org.dromara.hodor.common.utils.Utils;
 import org.dromara.hodor.model.enums.TimeType;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.scheduler.api.exception.HodorSchedulerException;
-import org.quartz.CronScheduleBuilder;
-import org.quartz.CronTrigger;
-import org.quartz.JobDetail;
-import org.quartz.SimpleScheduleBuilder;
-import org.quartz.SimpleTrigger;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
+import org.quartz.*;
+import org.quartz.spi.MutableTrigger;
 
 /**
  * QuartzTrigger
@@ -72,24 +67,23 @@ public class QuartzTrigger {
             throw new IllegalArgumentException("current time type not FIXED_DELAY type, " + timeType.getDescription());
         }
         final String fixedDelay = jobDesc.getTimeExp();
-        final Integer fixedDelayInt = Utils.Assert.validParse(() -> Integer.parseInt(fixedDelay) / 1000,
+        // ms
+        final Integer fixedDelayInt = Utils.Assert.validParse(() -> Integer.parseInt(fixedDelay),
             "The fixedDelay {} expression is invalid", fixedDelay);
 
-        SimpleScheduleBuilder simpleScheduleBuilder = SimpleScheduleBuilder.repeatSecondlyForever(fixedDelayInt)
-            .withMisfireHandlingInstructionIgnoreMisfires();
-        if (jobDesc.getMisfire()) {
-            simpleScheduleBuilder = SimpleScheduleBuilder.repeatSecondlyForever(fixedDelayInt)
-                .withMisfireHandlingInstructionFireNow();
+        JobKey jobKey = new JobKey(jobDesc.getJobName(), jobDesc.getGroupName());
+        final TriggerKey triggerKey = new TriggerKey(jobDesc.getJobName(), jobDesc.getGroupName());
+        MutableTrigger trigger = SimpleScheduleBuilder.simpleSchedule().build();
+        Date nextFireTime = new Date(System.currentTimeMillis() + fixedDelayInt); // 当前时间加上10秒的延迟
+        trigger.setJobKey(jobKey);
+        trigger.setKey(triggerKey);
+        trigger.setPriority(jobDesc.getPriority().getValue());
+        trigger.setStartTime(nextFireTime);
+        if (jobDesc.getEndTime() != null) {
+            trigger.setEndTime(jobDesc.getEndTime());
         }
-
-        TriggerBuilder<SimpleTrigger> triggerBuilder = TriggerBuilder.newTrigger()
-            .withIdentity(jobDesc.getJobName(), jobDesc.getGroupName())
-            .withSchedule(simpleScheduleBuilder)
-            .withPriority(jobDesc.getPriority().getValue())
-            .forJob(jobDetail);
-
-        triggerBuilder = configTriggerTimeBuilder(jobDesc, triggerBuilder);
-        return triggerBuilder.build();
+        trigger.setJobDataMap(jobDetail.getJobDataMap());
+        return trigger;
     }
 
     private Trigger buildFixedRateTrigger(JobDesc jobDesc, JobDetail jobDetail) {
