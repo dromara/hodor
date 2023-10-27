@@ -29,14 +29,10 @@ public class HodorServerConfiguration {
 
     private final JobExecDetailService jobExecDetailService;
 
-    private final RegistryService registryService;
-
     public HodorServerConfiguration(HodorServerProperties properties,
-                                    JobExecDetailService jobExecDetailService,
-                                    RegistryService registryService) {
+                                    JobExecDetailService jobExecDetailService) {
         this.properties = properties;
         this.jobExecDetailService = jobExecDetailService;
-        this.registryService = registryService;
     }
 
     @Bean
@@ -63,7 +59,7 @@ public class HodorServerConfiguration {
     }
 
     @Bean
-    public JobOperatorManager jobOperatorManager() {
+    public JobOperatorManager jobOperatorManager(RegistryService registryService) {
         return new JobOperatorManager(
             JobExecutorTypeManager.getInstance(),
             SchedulerManager.getInstance(),
