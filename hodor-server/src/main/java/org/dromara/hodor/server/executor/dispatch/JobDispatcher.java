@@ -20,6 +20,7 @@ import org.dromara.hodor.common.loadbalance.LoadBalanceFactory;
 import org.dromara.hodor.common.queue.DiscardOldestElementPolicy;
 import org.dromara.hodor.core.Constants;
 import org.dromara.hodor.model.enums.ScheduleStrategy;
+import org.dromara.hodor.model.enums.TimeType;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.model.job.JobKey;
 import org.dromara.hodor.remoting.api.RemotingClient;
@@ -216,13 +217,15 @@ public class JobDispatcher {
 
     private Header buildHeader(int bodyLength, HodorJobExecutionContext context) {
         Map<String, Object> attachment = new HashMap<>();
-        attachment.put("schedulerName", context.getSchedulerName());
+        attachment.put(Constants.SCHEDULER_NAME, context.getSchedulerName());
+        attachment.put(Constants.JobConstants.TIME_TYPE_KEY, TimeType.FIXED_DELAY.name());
         if (context.getRootJobKey() != null) {
             attachment.put(Constants.FlowNodeConstants.ROOT_JOB_KEY, context.getRootJobKey().getKeyName());
         }
         if (context.getStage() != null) {
             attachment.put(Constants.JobConstants.JOB_STAGE_KEY, context.getStage());
         }
+
         return Header.builder()
             .id(context.getRequestId())
             .version(RemotingConst.DEFAULT_VERSION)

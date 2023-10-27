@@ -25,6 +25,8 @@ package org.dromara.hodor.core;
  */
 public interface Constants {
 
+    String SCHEDULER_NAME = "schedulerName";
+
     class JobConstants {
 
         public static final String TIME_TYPE_KEY = "timeType";

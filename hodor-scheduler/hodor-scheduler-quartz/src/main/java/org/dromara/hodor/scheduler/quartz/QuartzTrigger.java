@@ -60,7 +60,6 @@ public class QuartzTrigger {
         return buildCronTrigger(jobDesc, jobDetail, cron);
     }
 
-    // TODO: 待实现
     private Trigger buildFixedDelayTrigger(JobDesc jobDesc, JobDetail jobDetail) {
         final TimeType timeType = jobDesc.getTimeType();
         if (!TimeType.FIXED_DELAY.equals(timeType)) {
@@ -72,7 +71,7 @@ public class QuartzTrigger {
             "The fixedDelay {} expression is invalid", fixedDelay);
 
         JobKey jobKey = new JobKey(jobDesc.getJobName(), jobDesc.getGroupName());
-        final TriggerKey triggerKey = new TriggerKey(jobDesc.getJobName(), jobDesc.getGroupName());
+        TriggerKey triggerKey = new TriggerKey(jobDesc.getJobName(), jobDesc.getGroupName());
         MutableTrigger trigger = SimpleScheduleBuilder.simpleSchedule().build();
         Date nextFireTime = new Date(System.currentTimeMillis() + fixedDelayInt); // 当前时间加上10秒的延迟
         trigger.setJobKey(jobKey);

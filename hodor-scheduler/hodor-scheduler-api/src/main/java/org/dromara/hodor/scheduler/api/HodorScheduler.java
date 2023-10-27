@@ -31,7 +31,7 @@ public interface HodorScheduler {
 
     void putJob(JobDesc jobInfo, JobExecutor jobExecutor);
 
-    void resumeJob(JobDesc jobInfo);
+    void rescheduleJob(JobDesc jobInfo);
 
     void triggerJob(JobDesc jobInfo);
 

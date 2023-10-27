@@ -1,11 +1,14 @@
 package org.dromara.hodor.server.common;
 
+import lombok.Getter;
+
 /**
  * job command type
  *
  * @author tomgs
  * @version 1.0
  */
+@Getter
 public enum JobCommandType {
 
     /**
@@ -29,9 +32,9 @@ public enum JobCommandType {
     JOB_EXECUTE_CMD("jobExecute"),
 
     /**
-     * 恢复任务
+     * 恢复调度
      */
-    JOB_RESUME_CMD("jobResume");
+    JOB_RESCHEDULE_CMD("jobReschedule");
 
     private final String name;
 
@@ -39,7 +42,4 @@ public enum JobCommandType {
         this.name = name;
     }
 
-    public String getName() {
-        return name;
-    }
 }

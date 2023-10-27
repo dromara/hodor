@@ -1,11 +1,6 @@
 package org.dromara.hodor.scheduler.quartz;
 
 import cn.hutool.core.util.ReflectUtil;
-
-import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.locks.ReentrantLock;
-
 import org.dromara.hodor.common.extension.Join;
 import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.model.enums.TimeType;
@@ -14,15 +9,13 @@ import org.dromara.hodor.scheduler.api.HodorScheduler;
 import org.dromara.hodor.scheduler.api.JobExecutor;
 import org.dromara.hodor.scheduler.api.common.SchedulerConfig;
 import org.dromara.hodor.scheduler.api.exception.HodorSchedulerException;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
-import org.quartz.TriggerKey;
+import org.quartz.*;
 import org.quartz.core.QuartzSchedulerResources;
 import org.quartz.impl.StdSchedulerFactory;
+
+import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * implements scheduler by quartz
@@ -137,7 +130,7 @@ public class QuartzScheduler implements HodorScheduler {
 
                 TriggerKey triggerKey = new TriggerKey(jobDesc.getJobName(), jobDesc.getGroupName());
                 if (scheduler.checkExists(triggerKey)) {
-                    if (!StringUtils.equalsIgnoreCase(jobDesc.getTimeExp(), oldJobDesc.getTimeExp())) {
+                    if (canReschedule(jobDesc, oldJobDesc)) {
                         Trigger trigger = quartzTrigger.buildTrigger(jobDesc, jobDetail);
                         scheduler.rescheduleJob(triggerKey, trigger);
                     }
@@ -169,6 +162,11 @@ public class QuartzScheduler implements HodorScheduler {
         } catch (SchedulerException e) {
             throw new HodorSchedulerException(e);
         }
+    }
+
+    private static boolean canReschedule(JobDesc jobDesc, JobDesc oldJobDesc) {
+        return !StringUtils.equalsIgnoreCase(jobDesc.getTimeExp(), oldJobDesc.getTimeExp())
+            || jobDesc.getTimeType() == TimeType.FIXED_DELAY;
     }
 
     @Override
@@ -229,9 +227,16 @@ public class QuartzScheduler implements HodorScheduler {
     }
 
     @Override
-    public void resumeJob(JobDesc jobDesc) {
+    public void rescheduleJob(JobDesc jobDesc) {
+        JobKey jobKey = JobKey.jobKey(jobDesc.getJobName(), jobDesc.getGroupName());
         try {
-            scheduler.resumeJob(JobKey.jobKey(jobDesc.getJobName(), jobDesc.getGroupName()));
+            if (!scheduler.checkExists(jobKey)) {
+                throw new IllegalArgumentException("reschedule failed, scheduler not found job");
+            }
+            JobDetail jobDetail = scheduler.getJobDetail(jobKey);
+            JobDesc rawJobDesc = (JobDesc) jobDetail.getJobDataMap().get("jobDesc");
+            Trigger trigger = quartzTrigger.buildTrigger(rawJobDesc, jobDetail);
+            scheduler.rescheduleJob(trigger.getKey(), trigger);
         } catch (SchedulerException e) {
             throw new HodorSchedulerException(e);
         }

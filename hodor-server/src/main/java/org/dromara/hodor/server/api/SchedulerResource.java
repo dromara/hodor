@@ -48,13 +48,13 @@ public class SchedulerResource {
 
     private final JobOperatorManager jobOperatorManager;
 
-    public SchedulerResource(final RegistryService registryService, final JobInfoService jobInfoService) {
+    public SchedulerResource(final RegistryService registryService,
+                             final JobInfoService jobInfoService,
+                             final JobOperatorManager jobOperatorManager) {
         this.registryService = registryService;
         this.jobInfoService = jobInfoService;
         this.schedulerManager = SchedulerManager.getInstance();
-        this.jobOperatorManager = new JobOperatorManager(JobExecutorTypeManager.getInstance(),
-            schedulerManager,
-            registryService);
+        this.jobOperatorManager = jobOperatorManager;
     }
 
     @RestMethod("isAlive")
@@ -192,7 +192,7 @@ public class SchedulerResource {
     }
 
     @RestMethod("doJobCommand")
-    public HodorResult<String> doJobCommand(JobCommand<JobInfo> jobCommand) {
+    public HodorResult<String> doJobCommand(JobCommand<JobDesc> jobCommand) {
         return jobOperatorManager.doJobCommand(jobCommand);
     }
 

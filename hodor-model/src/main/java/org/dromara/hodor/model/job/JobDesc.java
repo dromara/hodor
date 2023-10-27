@@ -5,10 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.dromara.hodor.model.enums.JobType;
-import org.dromara.hodor.model.enums.Priority;
-import org.dromara.hodor.model.enums.ScheduleStrategy;
-import org.dromara.hodor.model.enums.TimeType;
+import org.dromara.hodor.model.enums.*;
 
 /**
  * job info describe
@@ -31,6 +28,8 @@ public class JobDesc {
     private String groupName;
 
     private String jobName;
+
+    private JobStatus jobStatus;
 
     /**
      * 任务类型：普通任务、工作流任务、分片任务
