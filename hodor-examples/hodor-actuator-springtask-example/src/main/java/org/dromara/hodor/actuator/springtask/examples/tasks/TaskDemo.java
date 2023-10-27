@@ -39,7 +39,7 @@ public class TaskDemo {
 
     @Scheduled(fixedDelay = 4000)
     public void task2() throws InterruptedException {
-        TimeUnit.SECONDS.sleep(2);
+        TimeUnit.SECONDS.sleep(7);
         System.out.println("执行 fixedDelay 任务的时间：" + new Date(System.currentTimeMillis()));
     }
 
