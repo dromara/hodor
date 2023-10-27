@@ -40,7 +40,6 @@ public class StorageConfig {
     private String storagePath;
 
     // custom config
-    @Builder.Default
     private Map<String,Object> attr = new LinkedHashMap<>();
 
     // ftp/sftp

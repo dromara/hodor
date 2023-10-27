@@ -19,19 +19,21 @@ package org.dromara.hodor.storage.local;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.HexUtil;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.dromara.hodor.common.extension.Join;
+import org.dromara.hodor.common.utils.StringUtils;
 import org.dromara.hodor.common.utils.Utils.Assert;
 import org.dromara.hodor.storage.api.FileStorage;
 import org.dromara.hodor.storage.api.StorageConfig;
 import org.dromara.hodor.storage.api.StorageMetadata;
 import org.dromara.hodor.storage.exception.StorageException;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * LocalFileStorage
@@ -43,35 +45,41 @@ import org.dromara.hodor.storage.exception.StorageException;
 @Slf4j
 public class LocalFileStorage implements FileStorage {
 
-    private final StorageConfig storageConfig;
+    private final String basePath;
 
     public LocalFileStorage(StorageConfig storageConfig) {
-        this.storageConfig = storageConfig;
+        this.basePath = Assert.notNull(storageConfig.getBasePath(),
+            "local storage base-path config must be not null.");
     }
 
     @Override
     public InputStream fetchFile(Path path) {
-        Assert.notNull(path, "file path must be not null.");
-        return FileUtil.getInputStream(path);
+        Assert.notNull(path, "file path must be not null");
+        final Path filePath = Paths.get(basePath, path.toString());
+        final File file = filePath.toFile();
+        if (!file.isFile()) {
+            throw new IllegalArgumentException(StringUtils.format("{} is illegal file path, may be not found in base-path config", path));
+        }
+        return FileUtil.getInputStream(filePath);
     }
 
     @Override
     public void pushFile(StorageMetadata metadata, File localFile) {
         // // ${data_path}/resources/${job_key}/${version}
         Path jobResourcePath = Paths.get(metadata.getResourcesDirectory().getPath(),
-                String.valueOf(metadata.getJobId()), String.valueOf(metadata.getVersion()));
+            String.valueOf(metadata.getJobId()), String.valueOf(metadata.getVersion()));
         final File resourcesDir = jobResourcePath.toFile();
         if (resourcesDir.mkdir()) {
             log.info("Created job resources dir: " + resourcesDir.getAbsolutePath());
         }
 
         final File targetFile = new File(resourcesDir, String.format("%s-%s.zip",
-                metadata.getJobId(),
-                new String(HexUtil.encodeHex(metadata.getHash()))));
+            metadata.getJobId(),
+            new String(HexUtil.encodeHex(metadata.getHash()))));
 
         if (targetFile.exists()) {
             log.info(String.format("Duplicate found: meta: %s, targetFile: %s, ", metadata,
-                    targetFile.getAbsolutePath()));
+                targetFile.getAbsolutePath()));
             return;
         }
 
