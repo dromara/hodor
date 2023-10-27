@@ -1,14 +1,19 @@
 {
   "properties": [
     {
-      "name": "hodor.bigdata",
+      "name": "hodor.agentConfig",
       "type": "java.util.Map",
-      "description": "bigdata type job configurations."
+      "description": "agent type job configurations."
     },
     {
-      "name": "hodor.bigdata.supportType",
+      "name": "hodor.agentConfig.supportType",
       "type": "java.util.List",
-      "description": "supported bigdata type."
+      "description": "agent support type."
+    },
+    {
+      "name": "hodor.storageConfig",
+      "type": "java.util.Map",
+      "description": "agent support storage."
     }
   ]
 }
