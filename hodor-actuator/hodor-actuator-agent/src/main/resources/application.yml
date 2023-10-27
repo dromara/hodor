@@ -24,31 +24,28 @@ hodor:
         maximumPoolSize: 16
   storageConfig:
     local:
-      basePath: /data/jobs/
-      storagePath: /
+      basePath: E:\\data\\hodor-actuator\\job-resources\\
     hdfs:
       user: test
       url: hdfs://testcluster
       nameServices: testcluster
       nameNodes: nn1,nn2
       rpcAddress: bigdata-hdp-nodename-1:8020,bigdata-hdp-nodename-2:8020
-      basePath: /hodor
+      basePath: /hodor-fs
     ftp:
       host: 192.168.3.100
       port: 2121
       user: root
       password: 123456
       domain: ftp://127.0.0.1:2121/
-      basePath: ftp/
-      storagePath: /
+      basePath: hodor-ftp/
     sftp:
       host: 127.0.0.1
       port: 2121
       user: root
       password: 123456
       domain: ftp://127.0.0.1:2121/
-      basePath: ftp/
-      storagePath: /
+      basePath: hodor-sftp/
       privateKeyPath: /private.key
     s3:
       accessKey: xxx
@@ -59,7 +56,7 @@ hodor:
       endpoint: xxx
       bucketName: xxx
       domain: xxxx
-      basePath: /hodor/
+      basePath: hodor-s3/
 
 logging:
   level:

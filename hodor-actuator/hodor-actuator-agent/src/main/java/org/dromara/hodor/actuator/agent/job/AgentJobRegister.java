@@ -18,7 +18,6 @@
 package org.dromara.hodor.actuator.agent.job;
 
 import cn.hutool.core.io.FileTypeUtil;
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ZipUtil;
 import com.google.common.collect.Sets;
 import org.apache.commons.io.FileUtils;
@@ -45,6 +44,8 @@ import org.dromara.hodor.storage.api.StorageConfig;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +71,10 @@ public class AgentJobRegister implements JobRegister {
     private final String dataPath;
 
     private static final String JOB_CONFIG_FILE = "job.properties";
+
     private static final String JOB_STORAGE_TYPE = "job.storage.type";
+
+    private static final String JOB_STORAGE_PATH = "job.storage.path";
 
     public AgentJobRegister(HodorActuatorAgentProperties properties) {
         this.properties = properties;
@@ -140,13 +144,10 @@ public class AgentJobRegister implements JobRegister {
         File resourceFileDir = context.getResourcesPath(dataPath).toFile();
         if (!resourceFileDir.exists()) {
             //download job file from storage
-            File sourceFile = new File(executeRequest.getJobCommand());
-            if (!FileUtil.isFile(sourceFile)) {
-                return;
-            }
-            File targetFile = new File(resourceFileDir, sourceFile.getName());
+            Path sourcePath = Paths.get(executeRequest.getJobCommand());
+            File targetFile = new File(resourceFileDir, sourcePath.getFileName().toString());
             FileStorage fileStorage = fileStorageLoader.getProtoJoin(storageType, storageConfig);
-            InputStream fileStream = fileStorage.fetchFile(sourceFile.toPath());
+            InputStream fileStream = fileStorage.fetchFile(sourcePath);
             FileUtils.copyInputStreamToFile(fileStream, targetFile);
             if ("zip".equals(FileTypeUtil.getType(targetFile))) {
                 // unzip file
