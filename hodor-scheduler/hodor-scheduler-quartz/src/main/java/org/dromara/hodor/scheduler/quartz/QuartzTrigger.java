@@ -24,6 +24,7 @@ import org.dromara.hodor.model.enums.TimeType;
 import org.dromara.hodor.model.job.JobDesc;
 import org.dromara.hodor.scheduler.api.exception.HodorSchedulerException;
 import org.quartz.*;
+import org.quartz.impl.JobDetailImpl;
 import org.quartz.spi.MutableTrigger;
 
 /**
@@ -70,6 +71,7 @@ public class QuartzTrigger {
         final Integer fixedDelayInt = Utils.Assert.validParse(() -> Integer.parseInt(fixedDelay),
             "The fixedDelay {} expression is invalid", fixedDelay);
 
+        ((JobDetailImpl) jobDetail).setDurability(true);
         JobKey jobKey = new JobKey(jobDesc.getJobName(), jobDesc.getGroupName());
         TriggerKey triggerKey = new TriggerKey(jobDesc.getJobName(), jobDesc.getGroupName());
         MutableTrigger trigger = SimpleScheduleBuilder.simpleSchedule().build();

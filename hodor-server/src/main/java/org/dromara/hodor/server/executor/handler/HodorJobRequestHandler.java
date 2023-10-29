@@ -32,6 +32,9 @@ public class HodorJobRequestHandler implements RequestHandler {
     public void resultHandle(Map<String, Object> attachment, final RemotingResponse<JobExecuteResponse> remotingResponse) {
         HodorJobResponseHandler.INSTANCE.fireJobResponseHandler(remotingResponse);
         JobExecuteResponse responseData = remotingResponse.getData();
+        if (!JobExecuteStatus.isFinished(responseData.getStatus())) {
+            return;
+        }
         Optional.ofNullable(attachment.get(Constants.JobConstants.TIME_TYPE_KEY))
             .ifPresent(e ->
                 rescheduleJob(TimeType.ofName(e.toString()), responseData.getJobKey()));

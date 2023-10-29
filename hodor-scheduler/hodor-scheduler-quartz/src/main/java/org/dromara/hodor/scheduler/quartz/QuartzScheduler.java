@@ -236,7 +236,7 @@ public class QuartzScheduler implements HodorScheduler {
             JobDetail jobDetail = scheduler.getJobDetail(jobKey);
             JobDesc rawJobDesc = (JobDesc) jobDetail.getJobDataMap().get("jobDesc");
             Trigger trigger = quartzTrigger.buildTrigger(rawJobDesc, jobDetail);
-            scheduler.rescheduleJob(trigger.getKey(), trigger);
+            scheduler.scheduleJob(trigger);
         } catch (SchedulerException e) {
             throw new HodorSchedulerException(e);
         }
