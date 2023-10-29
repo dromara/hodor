@@ -1,10 +1,11 @@
 package org.dromara.hodor.actuator.api.action;
 
-import cn.hutool.core.date.DateUtil;
+import org.dromara.hodor.actuator.api.core.ExecutableJobContext;
 import org.dromara.hodor.actuator.api.core.HodorJobExecution;
 import org.dromara.hodor.actuator.api.executor.JobExecutionPersistence;
 import org.dromara.hodor.actuator.api.executor.RequestHandleManager;
-import org.dromara.hodor.common.utils.StringUtils;
+import org.dromara.hodor.common.utils.Utils.Assert;
+import org.dromara.hodor.common.utils.Utils.Dates;
 import org.dromara.hodor.remoting.api.message.RequestContext;
 import org.dromara.hodor.remoting.api.message.request.JobExecuteStatusRequest;
 import org.dromara.hodor.remoting.api.message.response.JobExecuteStatusResponse;
@@ -28,14 +29,18 @@ public class JobExecuteStatusAction extends AbstractAction<JobExecuteStatusReque
 
     @Override
     public JobExecuteStatusResponse executeRequest(JobExecuteStatusRequest request) throws Exception {
+        JobExecuteStatusResponse response = new JobExecuteStatusResponse();
         HodorJobExecution jobExecution = jobExecutionPersistence.fetchJobExecution(request.getRequestId());
         if (jobExecution == null) {
-            throw new IllegalArgumentException(StringUtils.format("not found status info with requestId {}", request.getRequestId()));
+            ExecutableJobContext context = getRequestHandleManager().getExecutableJobContext(request.getRequestId());
+            Assert.notNull(context, "not found status info with requestId {}", request.getRequestId());
+            response.setRequestId(context.getRequestId());
+            response.setStatus(context.getExecuteStatus());
+            return response;
         }
-        JobExecuteStatusResponse response = new JobExecuteStatusResponse();
         response.setStatus(jobExecution.getStatus());
-        response.setStartTime(DateUtil.formatDateTime(jobExecution.getStartTime()));
-        response.setCompleteTime(DateUtil.formatDateTime(jobExecution.getCompleteTime()));
+        response.setStartTime(Dates.formatDateTime(jobExecution.getStartTime()));
+        response.setCompleteTime(Dates.formatDateTime(jobExecution.getCompleteTime()));
         response.setComments(jobExecution.getComments());
         response.setResult(jobExecution.getResult());
         return response;
