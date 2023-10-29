@@ -7,6 +7,7 @@ server:
 hodor:
   enabled: true
   commons:
+    autoRegistry: true
     appName: hodor-client
     appKey: 1234567
     port: 46368
