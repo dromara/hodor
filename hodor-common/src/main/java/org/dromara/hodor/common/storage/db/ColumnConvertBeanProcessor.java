@@ -18,6 +18,12 @@ public class ColumnConvertBeanProcessor extends GenerousBeanProcessor {
             || Byte[].class.isAssignableFrom(propType)) {
             return rs.getBytes(index);
         }
+
+        if (propType.isEnum()) {
+            Class cz = propType;
+            return Enum.valueOf(cz, rs.getString(index));
+        }
+
         return super.processColumn(rs, index, propType);
     }
 
