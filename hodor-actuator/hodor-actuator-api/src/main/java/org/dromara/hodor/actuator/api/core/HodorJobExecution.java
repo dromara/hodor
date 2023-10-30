@@ -1,10 +1,13 @@
 package org.dromara.hodor.actuator.api.core;
 
-import java.util.Date;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.dromara.hodor.common.utils.HostUtils;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
+
+import java.util.Date;
 
 /**
  * hodor_job_execution table entity
@@ -14,6 +17,8 @@ import org.dromara.hodor.model.enums.JobExecuteStatus;
  */
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class HodorJobExecution {
 
     private Long requestId;

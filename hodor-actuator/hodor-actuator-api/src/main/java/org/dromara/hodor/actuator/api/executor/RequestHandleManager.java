@@ -138,7 +138,6 @@ public class RequestHandleManager extends AbstractEventPublisher<RequestContext>
         RemotingMessage message = buildResponseMessage(context, response);
         sendMessage(context, message).operationComplete(future -> {
             if (!future.isSuccess() || future.cause() != null) {
-                log.warn("response failed.", future.cause());
                 final SocketAddress socketAddress = future.channel().remoteAddress();
                 if (socketAddress != null) {
                     addRetrySendMessage(socketAddress, message);

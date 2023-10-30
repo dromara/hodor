@@ -1,12 +1,13 @@
 package org.dromara.hodor.actuator.api.executor;
 
-import java.sql.SQLException;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.actuator.api.core.HodorJobExecution;
-import org.dromara.hodor.common.event.AbstractAsyncEventPublisher;
+import org.dromara.hodor.common.event.AbstractEventPublisher;
 import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.storage.db.DBOperator;
 import org.dromara.hodor.model.enums.JobExecuteStatus;
+
+import java.sql.SQLException;
 
 /**
  * Job persistence
@@ -15,7 +16,7 @@ import org.dromara.hodor.model.enums.JobExecuteStatus;
  * @since 1.0
  */
 @Slf4j
-public class JobExecutionPersistence extends AbstractAsyncEventPublisher<HodorJobExecution> {
+public class JobExecutionPersistence extends AbstractEventPublisher<HodorJobExecution> {
 
     private final DBOperator dbOperator;
 
@@ -39,7 +40,7 @@ public class JobExecutionPersistence extends AbstractAsyncEventPublisher<HodorJo
             try {
                 dbOperator.update(insertJobExecution, jobExecution.getRequestId(), jobExecution.getGroupName(), jobExecution.getJobName(),
                     jobExecution.getParameters(), jobExecution.getSchedulerTag(), jobExecution.getClientHostname(), jobExecution.getClientIp(),
-                    jobExecution.getStartTime(), jobExecution.getStatus().getStatus());
+                    jobExecution.getStartTime(), jobExecution.getStatus().name());
             } catch (SQLException ex) {
                 log.error("insert job execution message exception, {}", ex.getMessage(), ex);
             }

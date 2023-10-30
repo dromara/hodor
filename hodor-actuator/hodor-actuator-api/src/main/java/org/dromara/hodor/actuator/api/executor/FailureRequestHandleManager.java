@@ -70,7 +70,7 @@ public class FailureRequestHandleManager extends AbstractAsyncEventPublisher<Ret
             RetryableMessage retryableMessage = e.getValue();
             try {
                 dbOperator.update(insertSql, retryableMessage.getRequestId(), retryableMessage.getRemoteIp(), retryableMessage.getRawMessage(),
-                    retryableMessage.getCreateTime(), retryableMessage.getStatus());
+                    retryableMessage.getCreateTime(), retryableMessage.getStatus(), retryableMessage.getRetryCount());
             } catch (SQLException ex) {
                 log.error("insert retry message exception, {}", ex.getMessage(), ex);
             }
@@ -138,7 +138,7 @@ public class FailureRequestHandleManager extends AbstractAsyncEventPublisher<Ret
         publish(Event.create(retryableMessage, MESSAGE_INSERT_EVENT)); // RESEND_EVENT
     }
 
-    private final String insertSql = "INSERT INTO hodor_retryable_message (request_id, remote_ip, raw_message, create_time, status) VALUES (?, ?, ?, ?, ?)";
+    private final String insertSql = "INSERT INTO hodor_retryable_message (request_id, remote_ip, raw_message, create_time, status, retry_count) VALUES (?, ?, ?, ?, ?, ?)";
 
     private final String updateSql = "UPDATE hodor_retryable_message SET status = ?, update_time = ?, retry_count = retry_count + 1 WHERE id = ?";
 

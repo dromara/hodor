@@ -77,7 +77,7 @@ public class HodorDatabaseSetup {
                 "\tclient_ip VARCHAR2 NOT NULL,\n" +
                 "\tstart_time TIMESTAMP NOT NULL,\n" +
                 "\tcomplete_time TIMESTAMP,\n" +
-                "\tstatus INT NOT NULL,\n" +
+                "\tstatus VARCHAR2 NOT NULL,\n" +
                 "\tcomments VARCHAR2,\n" +
                 "\tresult LONGBLOB,\n" +
                 "\tCONSTRAINT {0}_pk PRIMARY KEY (request_id)\n" +
