@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class TaskDemo {
 
-    @Scheduled(fixedRate = 3000)
+    @Scheduled(fixedRate = 10000)
     public void task1() throws InterruptedException {
         TimeUnit.SECONDS.sleep(2);
         System.out.println("执行 fixedRate 任务的时间：" + new Date(System.currentTimeMillis()));
