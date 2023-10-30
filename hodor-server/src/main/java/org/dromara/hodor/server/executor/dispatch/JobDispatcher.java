@@ -218,7 +218,7 @@ public class JobDispatcher {
     private Header buildHeader(int bodyLength, HodorJobExecutionContext context) {
         Map<String, Object> attachment = new HashMap<>();
         attachment.put(Constants.SCHEDULER_NAME, context.getSchedulerName());
-        attachment.put(Constants.JobConstants.TIME_TYPE_KEY, TimeType.FIXED_DELAY.name());
+        attachment.put(Constants.JobConstants.TIME_TYPE_KEY, context.getJobDesc().getTimeType().name());
         if (context.getRootJobKey() != null) {
             attachment.put(Constants.FlowNodeConstants.ROOT_JOB_KEY, context.getRootJobKey().getKeyName());
         }
