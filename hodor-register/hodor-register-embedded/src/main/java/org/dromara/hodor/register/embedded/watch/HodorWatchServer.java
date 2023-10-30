@@ -1,17 +1,14 @@
 package org.dromara.hodor.register.embedded.watch;
 
-import java.util.HashMap;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hodor.common.raft.HodorRaftGroup;
 import org.dromara.hodor.common.raft.HodorRaftStateMachine;
 import org.dromara.hodor.common.raft.RaftOptions;
-import org.dromara.hodor.common.raft.kv.core.HodorKVOptions;
-import org.dromara.hodor.common.raft.kv.core.HodorKVServer;
-import org.dromara.hodor.common.raft.kv.core.KVConstant;
-import org.dromara.hodor.common.raft.kv.core.RequestHandler;
-import org.dromara.hodor.common.raft.kv.storage.DBColumnFamily;
+import org.dromara.hodor.common.raft.kv.core.*;
 import org.dromara.hodor.register.embedded.core.WatchManager;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * HodorWatchServer
@@ -35,7 +32,11 @@ public class HodorWatchServer extends HodorKVServer {
             .build();
         raftOptions.getParameters().put(WatchManager.class.getName(), watchManager, WatchManager.class);
         RequestHandler requestHandler = new HodorWatchRequestHandler(this.storageEngine, watchManager);
-        stateMachineMap.putIfAbsent(hodorRaftGroup, new HodorWatchStateMachine(requestHandler, watchManager));
+        HodorKVSnapshotInfo snapshotInfo = new HodorKVSnapshotInfo();
+        DBStoreHAManager dbStoreHAManager = new HodorKvManager(storageEngine);
+
+        stateMachineMap.putIfAbsent(hodorRaftGroup, new HodorWatchStateMachine(requestHandler, snapshotInfo,
+            dbStoreHAManager, watchManager));
         raftOptions.setStateMachineMap(stateMachineMap);
     }
 

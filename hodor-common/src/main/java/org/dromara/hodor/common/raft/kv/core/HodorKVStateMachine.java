@@ -1,22 +1,32 @@
 package org.dromara.hodor.common.raft.kv.core;
 
-import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ratis.proto.RaftProtos;
 import org.apache.ratis.protocol.Message;
 import org.apache.ratis.protocol.RaftGroupId;
+import org.apache.ratis.protocol.RaftPeerId;
 import org.apache.ratis.server.RaftServer;
 import org.apache.ratis.server.protocol.TermIndex;
+import org.apache.ratis.server.raftlog.RaftLog;
 import org.apache.ratis.server.storage.RaftStorage;
+import org.apache.ratis.statemachine.SnapshotInfo;
 import org.apache.ratis.statemachine.StateMachineStorage;
 import org.apache.ratis.statemachine.TransactionContext;
 import org.apache.ratis.statemachine.impl.SimpleStateMachineStorage;
 import org.apache.ratis.thirdparty.com.google.protobuf.ByteString;
 import org.apache.ratis.thirdparty.io.netty.handler.codec.CodecException;
+import org.apache.ratis.util.LifeCycle;
 import org.dromara.hodor.common.raft.HodorRaftStateMachine;
 import org.dromara.hodor.common.raft.kv.protocol.HodorKVRequest;
 import org.dromara.hodor.common.raft.kv.protocol.HodorKVResponse;
+import org.dromara.hodor.common.raft.kv.storage.Table;
+import org.dromara.hodor.common.utils.BytesUtil;
 import org.dromara.hodor.common.utils.ProtostuffUtils;
+
+import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+
+import static org.dromara.hodor.common.raft.kv.core.KVConstant.TRANSACTION_INFO_KEY;
 
 /**
  * RatisServerStateMachine
@@ -33,8 +43,17 @@ public class HodorKVStateMachine extends HodorRaftStateMachine {
 
     private final RequestHandler requestHandler;
 
-    public HodorKVStateMachine(final RequestHandler requestHandler) {
+    private final HodorKVSnapshotInfo snapshotInfo;
+
+    private final DBStoreHAManager dbStoreHAManager;
+
+    public HodorKVStateMachine(final RequestHandler requestHandler,
+                               final HodorKVSnapshotInfo snapshotInfo,
+                               final DBStoreHAManager dbStoreHAManager) throws IOException {
         this.requestHandler = requestHandler;
+        this.snapshotInfo = snapshotInfo;
+        this.dbStoreHAManager = dbStoreHAManager;
+        loadSnapshotInfoFromDB();
     }
 
     @Override
@@ -48,24 +67,76 @@ public class HodorKVStateMachine extends HodorRaftStateMachine {
 
     @Override
     public void reinitialize() throws IOException {
-        super.reinitialize();
-        /*getLifeCycle().startAndTransition(() -> {
-            loadSnapshotInfoFromDB();
-            this.ozoneManagerDoubleBuffer = buildDoubleBufferForRatis();
-            handler.updateDoubleBuffer(ozoneManagerDoubleBuffer);
-        });*/
+        if (getLifeCycleState() == LifeCycle.State.PAUSED) {
+            getLifeCycle().startAndTransition(() -> {
+                loadSnapshotInfoFromDB();
+                this.setLastAppliedTermIndex(getLastAppliedTermIndex());
+            });
+        }
+    }
+
+    @Override
+    public SnapshotInfo getLatestSnapshot() {
+        LOG.debug("Latest Snapshot Info {}", snapshotInfo);
+        return snapshotInfo;
     }
 
     @Override
     public long takeSnapshot() throws IOException {
-        final TermIndex lastAppliedTermIndex = getLastAppliedTermIndex();
-        return lastAppliedTermIndex.getIndex();
-        //return super.takeSnapshot();
+        final TermIndex lastTermIndex = getLastAppliedTermIndex();
+
+        if (lastTermIndex == null || lastTermIndex.getIndex() == RaftLog.INVALID_LOG_INDEX) {
+            return -1;
+        }
+        long lastAppliedIndex = lastTermIndex.getIndex();
+        // 更新快照信息
+        snapshotInfo.updateTermIndex(lastTermIndex.getTerm(), lastAppliedIndex);
+        // 将快照数据写入rocksdb
+        TransactionInfo build = new TransactionInfo.Builder()
+            .setTransactionIndex(lastAppliedIndex)
+            .setCurrentTerm(lastTermIndex.getTerm()).build();
+        Table<byte[], byte[]> txnInfoTable = dbStoreHAManager.getTransactionInfoTable();
+        txnInfoTable.put(BytesUtil.writeUtf8(TRANSACTION_INFO_KEY), ProtostuffUtils.serialize(build));
+        dbStoreHAManager.flushDB();
+        return lastTermIndex.getIndex();
     }
 
     @Override
     public StateMachineStorage getStateMachineStorage() {
         return storage;
+    }
+
+    public void loadSnapshotInfoFromDB() throws IOException {
+        // This is done, as we have a check in Ratis for not throwing
+        // LeaderNotReadyException, it checks stateMachineIndex >= raftLog
+        // nextIndex (placeHolderIndex).
+        TransactionInfo transactionInfo =
+            TransactionInfo.readTransactionInfo(dbStoreHAManager);
+        if (transactionInfo != null) {
+            setLastAppliedTermIndex(TermIndex.valueOf(
+                transactionInfo.getTerm(),
+                transactionInfo.getTransactionIndex()));
+            snapshotInfo.updateTermIndex(transactionInfo.getTerm(),
+                transactionInfo.getTransactionIndex());
+        }
+        LOG.info("LastAppliedIndex is set from TransactionInfo from OM DB as {}",
+            getLastAppliedTermIndex());
+    }
+
+    @Override
+    public CompletableFuture<TermIndex> notifyInstallSnapshotFromLeader(
+        RaftProtos.RoleInfoProto roleInfoProto, TermIndex firstTermIndexInLog) {
+        String leaderNodeId = RaftPeerId.valueOf(roleInfoProto.getFollowerInfo()
+            .getLeaderInfo().getId().getId()).toString();
+        LOG.info("Received install snapshot notification from OM leader: {} with " +
+            "term index: {}", leaderNodeId, firstTermIndexInLog);
+
+        // TODO: download snapshot from leader
+        //CompletableFuture<TermIndex> future = CompletableFuture.supplyAsync(
+        //    () -> ozoneManager.installSnapshotFromLeader(leaderNodeId),
+        //    installSnapshotExecutor);
+        //return future;
+        return super.notifyInstallSnapshotFromLeader(roleInfoProto, firstTermIndexInLog);
     }
 
     @Override

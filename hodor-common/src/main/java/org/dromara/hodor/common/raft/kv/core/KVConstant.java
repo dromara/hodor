@@ -29,4 +29,9 @@ public interface KVConstant {
 
     String HODOR_CLIENT_ID = "hodor.client.id";
 
+    // Transaction Info
+    String TRANSACTION_INFO_KEY = "#TRANSACTIONINFO";
+
+    String TRANSACTION_INFO_SPLIT_KEY = "#";
+
 }

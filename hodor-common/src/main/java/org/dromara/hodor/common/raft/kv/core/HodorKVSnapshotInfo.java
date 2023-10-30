@@ -17,12 +17,13 @@
 
 package org.dromara.hodor.common.raft.kv.core;
 
-import java.util.List;
 import org.apache.ratis.server.protocol.TermIndex;
 import org.apache.ratis.server.storage.FileInfo;
 import org.apache.ratis.statemachine.SnapshotInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * This class captures the snapshotIndex and term of the latest snapshot in
@@ -33,55 +34,54 @@ import org.slf4j.LoggerFactory;
  */
 public class HodorKVSnapshotInfo implements SnapshotInfo {
 
-  private static final Logger LOG = LoggerFactory.getLogger(HodorKVSnapshotInfo.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HodorKVSnapshotInfo.class);
 
-  public static final String TRANSACTION_INFO_SPLIT_KEY = "#";
+    private volatile long term = 0;
+    private volatile long snapshotIndex = -1;
 
-  private volatile long term = 0;
-  private volatile long snapshotIndex = -1;
+    public void updateTerm(long newTerm) {
+        term = newTerm;
+    }
 
-  public void updateTerm(long newTerm) {
-    term = newTerm;
-  }
+    public void updateTermIndex(long newTerm, long newIndex) {
+        this.term = newTerm;
+        this.snapshotIndex = newIndex;
+    }
 
-  public void updateTermIndex(long newTerm, long newIndex) {
-    this.term = newTerm;
-    this.snapshotIndex = newIndex;
-  }
+    public HodorKVSnapshotInfo() {
+    }
 
-  public HodorKVSnapshotInfo() { }
+    public HodorKVSnapshotInfo(long term, long index) {
+        this.term = term;
+        this.snapshotIndex = index;
+    }
 
-  public HodorKVSnapshotInfo(long term, long index) {
-    this.term = term;
-    this.snapshotIndex = index;
-  }
+    @Override
+    public TermIndex getTermIndex() {
+        return TermIndex.valueOf(term, snapshotIndex);
+    }
 
-  @Override
-  public TermIndex getTermIndex() {
-    return TermIndex.valueOf(term, snapshotIndex);
-  }
+    @Override
+    public long getTerm() {
+        return term;
+    }
 
-  @Override
-  public long getTerm() {
-    return term;
-  }
+    @Override
+    public long getIndex() {
+        return snapshotIndex;
+    }
 
-  @Override
-  public long getIndex() {
-    return snapshotIndex;
-  }
+    @Override
+    public List<FileInfo> getFiles() {
+        return null;
+    }
 
-  @Override
-  public List<FileInfo> getFiles() {
-    return null;
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder stringBuilder = new StringBuilder();
-    stringBuilder.append(term);
-    stringBuilder.append(TRANSACTION_INFO_SPLIT_KEY);
-    stringBuilder.append(snapshotIndex);
-    return stringBuilder.toString();
-  }
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(term);
+        stringBuilder.append(KVConstant.TRANSACTION_INFO_SPLIT_KEY);
+        stringBuilder.append(snapshotIndex);
+        return stringBuilder.toString();
+    }
 }

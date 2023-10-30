@@ -17,6 +17,7 @@
 
 package org.dromara.hodor.register.embedded.watch;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,8 @@ import org.apache.ratis.statemachine.TransactionContext;
 import org.apache.ratis.thirdparty.com.google.protobuf.ByteString;
 import org.dromara.hodor.common.event.Event;
 import org.dromara.hodor.common.proto.DataChangeEvent;
+import org.dromara.hodor.common.raft.kv.core.DBStoreHAManager;
+import org.dromara.hodor.common.raft.kv.core.HodorKVSnapshotInfo;
 import org.dromara.hodor.common.raft.kv.core.HodorKVStateMachine;
 import org.dromara.hodor.common.raft.kv.core.RequestHandler;
 import org.dromara.hodor.register.api.node.SchedulerNode;
@@ -43,8 +46,9 @@ public class HodorWatchStateMachine extends HodorKVStateMachine {
 
     private final WatchManager watchManager;
 
-    public HodorWatchStateMachine(final RequestHandler requestHandler, final WatchManager watchManager) {
-        super(requestHandler);
+    public HodorWatchStateMachine(final RequestHandler requestHandler, final HodorKVSnapshotInfo snapshotInfo,
+                                  final DBStoreHAManager dbStoreHAManager, final WatchManager watchManager) throws IOException {
+        super(requestHandler, snapshotInfo, dbStoreHAManager);
         this.watchManager = watchManager;
     }
 
