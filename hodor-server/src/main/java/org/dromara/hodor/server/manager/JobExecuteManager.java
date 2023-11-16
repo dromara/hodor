@@ -121,6 +121,7 @@ public class JobExecuteManager {
         jobExecDetail.setShardingId(context.getShardingId());
         jobExecDetail.setShardingParams(context.getShardingParams());
         jobExecDetail.setComments(ThreadUtils.getStackTraceInfo(e));
+        jobExecDetail.setExecuteCommand(context.getExecCommand());
         jobExecuteRecorder.recordJobExecDetail(JobExecuteRecorder.OP_INSERT, jobExecDetail);
         removeRunningJob(context.getJobKey());
     }
@@ -150,7 +151,7 @@ public class JobExecuteManager {
         jobExecDetail.setShardingCount(context.getShardingCount());
         jobExecDetail.setShardingId(context.getShardingId());
         jobExecDetail.setShardingParams(context.getShardingParams());
-        jobExecDetail.setExecCommand(context.getExecCommand());
+        jobExecDetail.setExecuteCommand(context.getExecCommand());
         return jobExecDetail;
     }
 

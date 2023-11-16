@@ -80,7 +80,7 @@ public interface JobExecuteRecorder {
         StringUtils.ofBlankable(isTimeout).ifPresent(e -> jobExecDetail.setIsTimeout(Boolean.parseBoolean(e)));
         StringUtils.ofBlankable(comments).ifPresent(jobExecDetail::setComments);
         StringUtils.ofBlankable(jobExecData).ifPresent(e -> jobExecDetail.setJobExecData(e.getBytes(StandardCharsets.UTF_8)));
-        StringUtils.ofBlankable(execCommand).ifPresent(e -> jobExecDetail.setExecCommand(e));
+        StringUtils.ofBlankable(execCommand).ifPresent(jobExecDetail::setExecuteCommand);
         return jobExecDetail;
     }
 
@@ -112,7 +112,7 @@ public interface JobExecuteRecorder {
         sb.append(detail.getIsTimeout()).append("|");
         sb.append(StringEscapeUtils.ESCAPE_JAVA.translate(detail.getComments())).append("|");
         sb.append(new String(Optional.ofNullable(detail.getJobExecData()).orElse(new byte[0]), StandardCharsets.UTF_8)).append("|");
-        sb.append(detail.getExecCommand());
+        sb.append(detail.getExecuteCommand());
         return sb.toString();
     }
 

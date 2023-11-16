@@ -51,7 +51,7 @@ CREATE TABLE `hodor_job_exec_detail` (
     `instance_id` bigint NOT NULL COMMENT '任务执行实例唯一标识',
     `group_name` varchar(100) NOT NULL COMMENT '任务组名称',
     `job_name` varchar(100) NOT NULL COMMENT '任务名称',
-    `exec_command` varchar(255) NOT NULL DEFAULT '' COMMENT '任务执行的命令，Java任务即执行的方法',
+    `execute_command` varchar(255) NOT NULL DEFAULT '' COMMENT '任务执行的命令，Java任务即执行的方法',
     `sharding_count` int NOT NULL DEFAULT '1' COMMENT '分片数量',
     `sharding_id` int NOT NULL DEFAULT '0' COMMENT '分片id',
     `sharding_params` varchar(256) COMMENT '分片参数',
