@@ -59,6 +59,7 @@ public interface JobExecuteRecorder {
         final String isTimeout = strings.get(16);
         final String comments = strings.get(17);
         final String jobExecData = strings.get(18);
+        final String execCommand = strings.get(19);
 
         jobExecDetail.setId(Long.parseLong(requestId));
         StringUtils.ofBlankable(instanceId).ifPresent(e -> jobExecDetail.setInstanceId(Long.parseLong(e)));
@@ -79,6 +80,7 @@ public interface JobExecuteRecorder {
         StringUtils.ofBlankable(isTimeout).ifPresent(e -> jobExecDetail.setIsTimeout(Boolean.parseBoolean(e)));
         StringUtils.ofBlankable(comments).ifPresent(jobExecDetail::setComments);
         StringUtils.ofBlankable(jobExecData).ifPresent(e -> jobExecDetail.setJobExecData(e.getBytes(StandardCharsets.UTF_8)));
+        StringUtils.ofBlankable(execCommand).ifPresent(e -> jobExecDetail.setExecCommand(e));
         return jobExecDetail;
     }
 
@@ -109,7 +111,8 @@ public interface JobExecuteRecorder {
         sb.append(detail.getElapsedTime()).append("|");
         sb.append(detail.getIsTimeout()).append("|");
         sb.append(StringEscapeUtils.ESCAPE_JAVA.translate(detail.getComments())).append("|");
-        sb.append(new String(Optional.ofNullable(detail.getJobExecData()).orElse(new byte[0]), StandardCharsets.UTF_8));
+        sb.append(new String(Optional.ofNullable(detail.getJobExecData()).orElse(new byte[0]), StandardCharsets.UTF_8)).append("|");
+        sb.append(detail.getExecCommand());
         return sb.toString();
     }
 

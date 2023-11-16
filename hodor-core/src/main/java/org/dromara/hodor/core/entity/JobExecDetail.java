@@ -51,4 +51,6 @@ public class JobExecDetail {
 
     private byte[] jobExecData;
 
+    private String execCommand;
+
 }

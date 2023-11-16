@@ -150,6 +150,7 @@ public class JobExecuteManager {
         jobExecDetail.setShardingCount(context.getShardingCount());
         jobExecDetail.setShardingId(context.getShardingId());
         jobExecDetail.setShardingParams(context.getShardingParams());
+        jobExecDetail.setExecCommand(context.getExecCommand());
         return jobExecDetail;
     }
 
