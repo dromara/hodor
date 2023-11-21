@@ -1,19 +1,61 @@
+import {defineConfig} from 'vite';
+import vue from "@vitejs/plugin-vue";
+import visualizer from "rollup-plugin-visualizer";
+import path from 'path'
+import themePreprocessorPlugin from "@zougt/vite-plugin-theme-preprocessor";
 import {fileURLToPath, URL} from 'node:url'
 
-import {defineConfig} from 'vite'
-import vue from '@vitejs/plugin-vue'
-import {viteMockServe} from "vite-plugin-mock"  // 引入mock插件
+const plugins = [vue(),
+themePreprocessorPlugin({
+  less: {
+    // 各个主题文件的位置
+    multipleScopeVars: [
+      {
+        scopeName: "theme-blue",
+        path: path.resolve("src/assets/theme/blue.less")
+      },{
+        scopeName: "theme-green",
+        path: path.resolve("src/assets/theme/green.less")
+      }, {
+        scopeName: "theme-yellow",
+        path: path.resolve("src/assets/theme/yellow.less")
+      }, {
+        scopeName: "theme-red",
+        path: path.resolve("src/assets/theme/red.less")
+      }, {
+        scopeName: "theme-purple",
+        path: path.resolve("src/assets/theme/purple.less")
+      }
+    ]
+  }
+})
+];
 
-// https://vitejs.dev/config/
+if (process.env.vis) {
+  plugins.push(
+    visualizer({
+      open: true,
+      gzipSize: true,
+      brotliSize: true
+    })
+  );
+}
+
 export default defineConfig({
-  plugins: [
-    vue(),
-    // mock插件配置
-    // viteMockServe({
-    //   mockPath: "./src/mock",
-    //   localEnabled: true,
-    // }),
-  ],
+  plugins,
+  server: {
+    port: 8080,
+    open: false,  // 自动弹出浏览器
+    https: false,  // 是否是https请求
+    proxy: {
+      '/api/hodor/admin': {
+        target: 'http://106.55.104.216:8089',  // 代理目标地址
+        // target: 'http://127.0.0.1:8089',
+        changeOrigin: true,  // 允许跨域
+        rewrite:path => path.replace(/^\/api/,'')
+      }
+    }
+  },
   base: './',
   // 路径映射
   resolve: {
@@ -21,19 +63,18 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  // 代理配置
-  server: {
-    open: false,  // 自动弹出浏览器
-    https: false,  // 是否是https请求
-    proxy: {
-      '/hodor/admin': {
-        // target: 'http://106.55.104.216:8089',  // 代理目标地址
-        target: 'http://127.0.0.1:8089',
-        changeOrigin: true,  // 允许跨域
-        pathRewrite: {
-          '^/hodor/admin': '/hodor/admin' //路径的替换规则
-        }
+  // 开启less支持
+  css: {
+    preprocessorOptions: {
+      less: {
+        javascriptEnabled: true
       }
-    },
+    }
   },
+  hmr: {
+    overlay: false
+  },
+  build: {
+    sourcemap: true,
+  }
 })

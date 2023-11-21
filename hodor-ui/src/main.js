@@ -1,22 +1,36 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import Antd from 'ant-design-vue';
-import router from './router/router.js'
-import { createPinia } from 'pinia'  // 导入pinia
-import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'  // pinia持久化
+import { createApp } from "vue";
+import App from "./App.vue";
+import Router from "./route";
+import Store from "./store/index.js";
+import Stores from "./stores/index.js";
+import Pear from "./component/index.js";
+import Antd from "ant-design-vue/es";
+import i18n from './locale/index.js';
+import directives from "./directive/index.js"
+import * as antIcons from '@ant-design/icons-vue';
 
-import '@/assets/style/global.scss'
+import "./mock";
+import "./assets/css/index.less";
+import "ant-design-vue/dist/antd.less";
 
-import Table from '@/components/Table.vue'
 
-const app = createApp(App)
-// pinia持久化
-const pinia = createPinia()
-pinia.use(piniaPluginPersistedstate)
-app.use(pinia)
+const app = createApp(App);
+app.use(Antd);
+app.use(Pear);
+app.use(i18n);
+app.use(Store);
+app.use(Stores);
+app.use(Router);
+app.mount("#app");
 
-app.use(Antd)
-app.use(router)
-// 注册全局组件
-app.component('Table',Table)
-app.mount('#app')
+
+Object.keys(directives).forEach(directive => {
+  app.directive(directive, directives[directive])
+})
+
+Object.keys(antIcons).forEach(key => {
+  app.component(key, antIcons[key])
+})
+
+app.config.globalProperties.$antIcons = antIcons
+export default app

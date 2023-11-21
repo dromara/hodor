@@ -1,0 +1,108 @@
+#nprogress .bar {
+  background: @primary-color!important;
+}
+#nprogress .peg {
+  box-shadow: @primary-color!important;
+}
+
+.fade-right-enter-active {
+  transition: all .90s;
+}
+.fade-right-leave-active{
+  transition: all .90s;
+}
+.fade-right-enter-from {
+  opacity: 0;
+  transform: translateX(-35px);
+}
+.fade-right-leave-to {
+  opacity: 0;
+  transform: translateX(35px);
+  display: none;
+}
+
+.fade-top-enter-active {
+  transition: all .90s;
+}
+.fade-top-leave-active{
+  transition: all .90s;
+}
+.fade-top-enter-from {
+  opacity: 0;
+  transform: translateY(35px);
+}
+.fade-top-leave-to {
+  opacity: 0;
+  transform: translateY(-35px);
+  display: none;
+}
+
+.ant-btn.ant-btn-primary:hover,
+.ant-btn.ant-btn-primary:focus {
+  color: white!important;
+}
+
+.ant-card {
+  border-radius: 4px !important;
+}
+.ant-card-bordered {
+  border: none !important;
+}
+.ant-divider {
+  background-color: whitesmoke !important;
+}
+.ant-layout-content {
+  flex: 1 !important;
+}
+
+.ant-menu-dark,
+.ant-menu-dark {
+  background: #191a23 !important;
+}
+.ant-menu-dark .ant-menu-inline.ant-menu-sub {
+  background-color: #101117 !important;
+}
+.ant-menu-vertical .ant-menu-item,
+.ant-menu-vertical-left .ant-menu-item,
+.ant-menu-vertical-right .ant-menu-item,
+.ant-menu-inline .ant-menu-item,
+.ant-menu-vertical .ant-menu-submenu-title,
+.ant-menu-vertical-left .ant-menu-submenu-title,
+.ant-menu-vertical-right .ant-menu-submenu-title,
+.ant-menu-inline .ant-menu-submenu-title {
+  margin-top: 5px !important;
+  margin-bottom: 5px !important;
+}
+.ant-menu-dark,
+.ant-menu-dark .ant-menu-sub {
+  background-color: #191a23 !important;
+}
+.ant-menu-horizontal > .ant-menu-item,
+.ant-menu-horizontal > .ant-menu-submenu {
+  border-bottom: none;
+  top: 0px;
+}
+.ant-menu-horizontal > .ant-menu-item,
+.ant-menu-horizontal > .ant-menu-submenu:hover {
+  border-bottom: none;
+  top: 0px;
+}
+
+.ant-menu-inline-collapsed {
+  width: auto;
+}
+@ant-menu-hieht: 48px;
+.ant-menu-vertical > .ant-menu-item,
+.ant-menu-vertical-left > .ant-menu-item,
+.ant-menu-vertical-right > .ant-menu-item,
+.ant-menu-inline > .ant-menu-item,
+.ant-menu-vertical > .ant-menu-submenu > .ant-menu-submenu-title,
+.ant-menu-vertical-left > .ant-menu-submenu > .ant-menu-submenu-title,
+.ant-menu-vertical-right > .ant-menu-submenu > .ant-menu-submenu-title,
+.ant-menu-inline > .ant-menu-submenu > .ant-menu-submenu-title {
+  height: @ant-menu-hieht !important;
+  line-height: @ant-menu-hieht !important;
+}
+.ant-menu-submenu-title>span{
+  font-size: 13.8px!important;
+}
