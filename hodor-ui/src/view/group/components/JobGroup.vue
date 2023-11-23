@@ -189,7 +189,7 @@ const cancelEditGroup = name => {
 
 const onDelete = async id => {
   deleteGroup(id).then((res) => {
-    if (res.successful === true) {
+    if (res.success === true) {
       groupList.value = groupList.value.filter(item => item.id !== id);
       message.success(res.msg)
     }

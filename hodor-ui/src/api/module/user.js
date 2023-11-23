@@ -8,12 +8,17 @@ const Api = {
   save: '/user',
   edit: '/user',
   list: '/user',
+  remove: '/user',
   give: '/user/give',
   role: '/user/role',
   power: '/user/power',
-  remove: '/user/remove',
   removeBatch: '/user/removeBatch',
   resetPassword: '/user/password/reset',
+}
+
+const FakerRes = {
+  success: false,
+  msg: '暂不支持该操作'
 }
 
 /// 登录
@@ -117,18 +122,20 @@ export const remove = data => {
 
 /** 批量删除 */
 export const removeBatch = data => {
-  return http.request({
-    url: Api.removeBatch,
-    params: data,
-    method: 'DELETE'
-  })
+  return Promise.resolve(FakerRes);
+  // return http.request({
+  //   url: Api.removeBatch,
+  //   params: data,
+  //   method: 'DELETE'
+  // })
 }
 
 /** 重置密码 */
 export const resetPassword = data => {
-  return http.request({
-    url: Api.resetPassword,
-    params: data,
-    method: 'PUT'
-  })
+  return Promise.resolve(FakerRes);
+  // return http.request({
+  //   url: Api.resetPassword,
+  //   params: data,
+  //   method: 'PUT'
+  // })
 }

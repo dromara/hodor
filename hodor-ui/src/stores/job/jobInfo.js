@@ -62,7 +62,7 @@ export const useJobInfoStore = defineStore('jobInfo', () => {
   const createJob = async (jobInfo) => {
     const res = await createJobAPI(jobInfo)
     const newJobInfo = res.data;
-    if (res.successful === true) {
+    if (res.success === true) {
       const {defaultCurrent} = paginationOpt;
       // 如果当前显示的是最后一页则重新分页查询
       if (defaultCurrent === totalPageOpt.value) {
@@ -76,7 +76,7 @@ export const useJobInfoStore = defineStore('jobInfo', () => {
   }
   const deleteJob = async (id) => {
     const res = await deleteGroupAPI(id);
-    if (res.successful !== true) {
+    if (res.success !== true) {
       message.error(res.msg);
     } else {
       message.success("删除成功")
@@ -84,7 +84,7 @@ export const useJobInfoStore = defineStore('jobInfo', () => {
   }
   const stopJob = async (id) => {
     const res = await stopJobAPI(id)
-    if (res.successful === true) {
+    if (res.success === true) {
       let job = jobInfoList.value.find((jobInfo) => jobInfo.id === id)
       job.jobStatus = "STOP";
       message.success("停止任务成功")
@@ -94,7 +94,7 @@ export const useJobInfoStore = defineStore('jobInfo', () => {
   }
   const resumeJob = async (id) => {
     const res = await resumeJobAPI(id)
-    if (res.successful === true) {
+    if (res.success === true) {
       let job = jobInfoList.value.find((jobInfo) => jobInfo.id === id)
       job.jobStatus = "RUNNING";
       message.success("恢复任务成功")
@@ -104,7 +104,7 @@ export const useJobInfoStore = defineStore('jobInfo', () => {
   }
   const updateJob = async (jobInfo) => {
     const res = await updateJobAPI(jobInfo);
-    if (res.successful === true) {
+    if (res.success === true) {
       // let job = jobInfoList.value.find((job) => job.id === id)
       // Object.assign(job,jobInfo);
       const {defaultCurrent, defaultPageSize} = paginationOpt
@@ -117,7 +117,7 @@ export const useJobInfoStore = defineStore('jobInfo', () => {
   const executeJob = async (jobId) => {
     const res = await executeJobAPI(jobId);
     // console.log("execute",res);
-    if (res.successful === true) {
+    if (res.success === true) {
       message.success("执行任务成功")
     } else {
       message.error("执行任务失败")

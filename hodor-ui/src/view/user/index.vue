@@ -106,6 +106,10 @@ const removeBatchMethod = (ids) => {
     okText: '确定',
     cancelText: '取消',
     onOk() {
+      if (ids.length <= 0) {
+        message.error({content: "请选择要删除的行", key: removeBatchKey, duration: 1})
+        return
+      }
       message.loading({ content: "提交中...", key: removeBatchKey });
       removeBatch({"ids":ids}).then((response) => {
         if(response.success){
@@ -113,7 +117,7 @@ const removeBatchMethod = (ids) => {
             tableRef.value.reload()
           )
         }else{
-          message.error({content: "删除失败", key: removeBatchKey, duration: 1})
+          message.error({content: "删除失败，" + response.msg,  key: removeBatchKey, duration: 1})
         }
       })
     }
@@ -154,10 +158,10 @@ const columns = [
   //{ dataIndex: "nickname", key: "nickname", title: "名称" },
   { dataIndex: "username", key: "username", title: "账号" },
   //{ dataIndex: "gender", key: "gender", title: "性别", conver: converFormat},
-  { dataIndex: "enable", key: "enable", title: "状态", switch: switchFormat},
+  //{ dataIndex: "enable", key: "enable", title: "状态", switch: switchFormat},
   { dataIndex: "email", key: "email", title: "邮箱" },
   { dataIndex: "phone", key: "phone", title: "电话" },
-  { dataIndex: "createdAt", key: "createdAt", title: "注册时间" }
+  { dataIndex: "createdAt", key: "createdAt", title: "创建时间" }
 ];
 
 /// 分页参数

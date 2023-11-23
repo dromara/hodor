@@ -13,9 +13,9 @@
       :rules="formRules"
       :label-col="labelCol"
       :wrapper-col="wrapperCol">
-      <a-form-item ref="nickname" label="昵称" name="nickname">
+<!--      <a-form-item ref="nickname" label="昵称" name="nickname">
         <a-input v-model:value="formState.nickname" />
-      </a-form-item>
+      </a-form-item>-->
       <a-form-item ref="username" label="账户" name="username">
         <a-input v-model:value="formState.username" />
       </a-form-item>
@@ -28,7 +28,7 @@
       <a-form-item ref="phone" label="电话" name="phone">
         <a-input v-model:value="formState.phone" />
       </a-form-item>
-      <a-form-item label="性别" name="gender">
+<!--      <a-form-item label="性别" name="gender">
         <a-radio-group v-model:value="formState.gender">
           <a-radio value="0">男</a-radio>
           <a-radio value="1">女</a-radio>
@@ -53,7 +53,7 @@
             :replaceFields="replaceFields"
           >
           </a-tree-select>
-      </a-form-item>
+      </a-form-item>-->
       <a-form-item label="备注" name="remark">
         <a-textarea v-model:value="formState.remark" />
       </a-form-item>

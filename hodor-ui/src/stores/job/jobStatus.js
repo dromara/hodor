@@ -59,7 +59,7 @@ export const useJobStatusStore = defineStore('jobStatus', () => {
   const killRunningJob = async (params) => {
     const res = await killRunningJobAPI(params);
     // console.log("killRunningJob",res);
-    if (res && res.successful === true) {
+    if (res && res.success === true) {
       message.success("成功杀死正在执行的任务")
     } else {
       message.error("杀死任务失败")
@@ -77,7 +77,7 @@ export const useJobStatusStore = defineStore('jobStatus', () => {
     }
     const res = await queryExecuteLogAPI(queryString);
     const {offset, length, logData} = res.data;
-    if (res.successful === true) {
+    if (res.success === true) {
       // console.log("logOpt",res)
       logOpt.logData = logData;
       logOpt.offset += length;
