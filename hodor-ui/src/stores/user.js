@@ -1,7 +1,7 @@
 // 管理用户数据相关
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { loginAPI } from '@/apis/login'
+import { loginAPI } from '@/api/login'
 
 export const useUserStore = defineStore('user', () => {
     // 定义管理用户数据的state

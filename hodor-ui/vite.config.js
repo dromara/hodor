@@ -1,4 +1,4 @@
-import {defineConfig} from 'vite';
+import {defineConfig, loadEnv} from 'vite';
 import vue from "@vitejs/plugin-vue";
 import visualizer from "rollup-plugin-visualizer";
 import path from 'path'
@@ -49,8 +49,7 @@ export default defineConfig({
     https: false,  // 是否是https请求
     proxy: {
       '/api/hodor/admin': {
-        target: 'http://106.55.104.216:8089',  // 代理目标地址
-        // target: 'http://127.0.0.1:8089',
+        target: loadEnv(process.cwd()).VITE_PROXY,
         changeOrigin: true,  // 允许跨域
         rewrite:path => path.replace(/^\/api/,'')
       }

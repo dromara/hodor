@@ -21,7 +21,7 @@ export default {
   'error-404': () => import('@/view/error/404.vue'),
   'error-500': () => import('@/view/error/500.vue'),
   'permission-test': () => import('@/view/permission/permission.vue'),
-  'userInfo': () => import('@/view/systemManager/userInfo.vue'),
+  'userInfo': () => import('@/view/user/index.vue'),
   'actuator-list': () => import('@/view/actuator/index.vue'),
   'scheduler-list': () => import('@/view/scheduler/index.vue'),
   'group-list': () => import('@/view/group/index.vue'),

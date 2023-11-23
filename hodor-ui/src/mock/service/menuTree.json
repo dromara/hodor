@@ -20,7 +20,7 @@
         "title": "个人中心",
         "sort": 0,
         "link": "",
-        "hidden": false,
+        "hidden": true,
         "status": true
       }
     ]

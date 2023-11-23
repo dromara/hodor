@@ -330,7 +330,7 @@ export default defineComponent({
     const fetchData = async (pagination) => {
       /// 分页处理
       if (pagination != undefined) {
-        state.pagination.pageNum = pagination.current;
+        state.pagination.pageNo = pagination.current;
       }
       /// 开启加载
       state.loading = true;

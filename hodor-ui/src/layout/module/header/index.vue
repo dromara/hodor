@@ -87,10 +87,12 @@
         ></a-avatar>
         <template #overlay>
           <a-menu class="avatar-dropdown">
+            <!--
             <a-menu-item key="0">
               <a-menu-item @click="go"> 个人中心</a-menu-item>
             </a-menu-item>
             <a-menu-divider/>
+            -->
             <a-menu-item key="3">
               <a-menu-item @click="logout"> 注销登录</a-menu-item>
             </a-menu-item>
