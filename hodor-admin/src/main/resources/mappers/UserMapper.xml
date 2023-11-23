@@ -24,7 +24,7 @@
     <!--查询指定行数据-->
     <select id="queryAllByLimit" resultMap="UserMap">
         select
-          id, username, password, email, phone, tenant_id, created_at, updated_at
+          id, username, email, phone, tenant_id, created_at, updated_at
         from hodor_user
         <where>
             <if test="user.id != null">
@@ -32,9 +32,6 @@
             </if>
             <if test="user.username != null and user.username != ''">
                 and username = #{user.username}
-            </if>
-            <if test="user.password != null and user.password != ''">
-                and password = #{user.password}
             </if>
             <if test="user.email != null and user.email != ''">
                 and email = #{user.email}

@@ -5,6 +5,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.hodor.common.utils.Utils;
 import org.dromara.hodor.core.PageInfo;
 import org.dromara.hodor.admin.entity.User;
 import org.dromara.hodor.admin.mapper.UserMapper;
@@ -32,7 +33,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public PageInfo<User> queryByPage(User user, Integer pageNo, Integer pageSize) {
         long total = userMapper.count(user);
-        List<User> result = userMapper.queryAllByLimit(user, pageNo, pageSize);
+        int current = (pageNo - 1) * pageSize;
+        List<User> result = userMapper.queryAllByLimit(user, current, pageSize);
         PageInfo<User> pageInfo = new PageInfo<>();
         return pageInfo.setRows(result)
             .setTotal(total)
@@ -42,13 +44,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User insert(User user) {
+        user.setTenantId(0L);
         userMapper.insert(user);
         return user;
     }
 
     @Override
     public User update(User user) {
-        userMapper.update(user);
+        user.setUpdatedAt(Utils.Dates.date());
+        userMapper.updateById(user);
         return queryById(user.getId());
     }
 
