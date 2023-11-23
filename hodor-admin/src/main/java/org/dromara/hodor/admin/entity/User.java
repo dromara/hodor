@@ -2,6 +2,7 @@ package org.dromara.hodor.admin.entity;
 
 import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import java.io.Serializable;
 
@@ -25,6 +26,7 @@ public class User implements Serializable {
     /**
      * 密码
      */
+    @JsonIgnore
     private String password;
     /**
      * 联系邮箱
