@@ -1,0 +1,366 @@
+[
+  {
+    "parent": "",
+    "path": "/account",
+    "name": "account",
+    "type": "dir",
+    "icon": "DashboardOutlined",
+    "title": "",
+    "sort": 0,
+    "link": "",
+    "hidden": true,
+    "status": true,
+    "children": [
+      {
+        "parent": "account",
+        "path": "center",
+        "name": "account-center",
+        "type": "menu",
+        "icon": "DashboardOutlined",
+        "title": "个人中心",
+        "sort": 0,
+        "link": "",
+        "hidden": true,
+        "status": true
+      }
+    ]
+  },
+  {
+    "parent": "",
+    "path": "/dashboard",
+    "name": "dashboard",
+    "type": "dir",
+    "icon": "HomeOutlined",
+    "title": "工作空间",
+    "sort": 1,
+    "link": "",
+    "hidden": false,
+    "status": true,
+    "children": [
+      {
+        "parent": "dashboard",
+        "path": "console",
+        "name": "dashboard-console",
+        "type": "menu",
+        "icon": "DashboardOutlined",
+        "title": "分析页",
+        "sort": 0,
+        "link": "",
+        "hidden": false,
+        "status": true
+      },
+      {
+        "parent": "dashboard",
+        "path": "workspace",
+        "name": "dashboard-workspace",
+        "type": "menu",
+        "icon": "DashboardOutlined",
+        "title": "工作台",
+        "sort": 0,
+        "link": "",
+        "hidden": false,
+        "status": true
+      }
+    ]
+  },
+  {
+    "parent": "",
+    "path": "/form",
+    "name": "form",
+    "type": "dir",
+    "icon": "FormOutlined",
+    "title": "表单页面",
+    "sort": 2,
+    "link": "",
+    "hidden": false,
+    "status": true,
+    "children": [
+      {
+        "parent": "form",
+        "path": "baseForm",
+        "name": "base-form",
+        "type": "menu",
+        "icon": "DatabaseOutlined",
+        "title": "基础表单",
+        "sort": 0,
+        "link": "",
+        "hidden": false,
+        "status": true
+      },
+      {
+        "parent": "form",
+        "path": "moreForm",
+        "name": "more-form",
+        "type": "menu",
+        "icon": "DatabaseOutlined",
+        "title": "高级表单",
+        "sort": 0,
+        "link": "",
+        "hidden": false,
+        "status": true
+      },
+      {
+        "parent": "form",
+        "path": "stepForm",
+        "name": "step-form",
+        "type": "menu",
+        "icon": "DatabaseOutlined",
+        "title": "分步表单",
+        "sort": 1,
+        "link": "",
+        "hidden": false,
+        "status": true
+      }
+    ]
+  },
+  {
+    "parent": "",
+    "path": "/list",
+    "name": "list",
+    "type": "dir",
+    "icon": "UnorderedListOutlined",
+    "title": "列表页面",
+    "sort": 3,
+    "link": "",
+    "hidden": false,
+    "status": true,
+    "children": [
+      {
+        "parent": "list",
+        "path": "baseList",
+        "name": "base-list",
+        "type": "menu",
+        "icon": "DatabaseOutlined",
+        "title": "基础列表",
+        "sort": 0,
+        "link": "",
+        "hidden": false,
+        "status": true
+      },
+      {
+        "parent": "list",
+        "path": "cardList",
+        "name": "card-list",
+        "type": "menu",
+        "icon": "DatabaseOutlined",
+        "title": "卡片列表",
+        "sort": 1,
+        "link": "",
+        "hidden": false,
+        "status": true
+      },
+      {
+        "parent": "list",
+        "path": "newsList",
+        "name": "news-list",
+        "type": "menu",
+        "icon": "DatabaseOutlined",
+        "title": "图文列表",
+        "sort": 2,
+        "link": "",
+        "hidden": false,
+        "status": true
+      },
+      {
+        "parent": "list",
+        "path": "tableList",
+        "name": "table-list",
+        "type": "menu",
+        "icon": "DatabaseOutlined",
+        "title": "查询表格",
+        "sort": 3,
+        "link": "",
+        "hidden": false,
+        "status": true
+      }
+    ]
+  },
+  {
+    "parent": "",
+    "path": "/result",
+    "name": "result-menu",
+    "type": "dir",
+    "icon": "TagOutlined",
+    "title": "结果页面",
+    "sort": 4,
+    "link": "",
+    "hidden": false,
+    "status": true,
+    "children": [
+      {
+        "parent": "result-menu",
+        "path": "success",
+        "name": "result-success",
+        "type": "menu",
+        "icon": "DatabaseOutlined",
+        "title": "成功",
+        "sort": 0,
+        "link": "",
+        "hidden": false,
+        "status": true
+      },
+      {
+        "parent": "result-menu",
+        "path": "failure",
+        "name": "result-failure",
+        "type": "menu",
+        "icon": "DatabaseOutlined",
+        "title": "失败",
+        "sort": 1,
+        "link": "",
+        "hidden": false,
+        "status": true
+      },{
+        "parent": "result-menu",
+        "path": "warning",
+        "name": "result-warning",
+        "type": "menu",
+        "icon": "DatabaseOutlined",
+        "title": "警告",
+        "sort": 1,
+        "link": "",
+        "hidden": false,
+        "status": true
+      },{
+        "parent": "result-menu",
+        "path": "info",
+        "name": "result-info",
+        "type": "menu",
+        "icon": "DatabaseOutlined",
+        "title": "详情",
+        "sort": 1,
+        "link": "",
+        "hidden": false,
+        "status": true
+      }
+    ]
+  },
+  {
+    "parent": "",
+    "path": "/error",
+    "name": "error",
+    "type": "dir",
+    "icon": "StopOutlined",
+    "title": "错误页面",
+    "sort": 5,
+    "link": "",
+    "hidden": false,
+    "status": true,
+    "children": [
+      {
+        "parent": "error",
+        "path": "403",
+        "name": "error-403",
+        "type": "menu",
+        "icon": "DatabaseOutlined",
+        "title": "403",
+        "sort": 0,
+        "link": "",
+        "hidden": false,
+        "status": true
+      },
+      {
+        "parent": "error",
+        "path": "404",
+        "name": "error-404",
+        "type": "menu",
+        "icon": "DatabaseOutlined",
+        "title": "404",
+        "sort": 1,
+        "link": "",
+        "hidden": false,
+        "status": true
+      },
+      {
+        "parent": "error",
+        "path": "500",
+        "name": "error-500",
+        "type": "menu",
+        "icon": "DatabaseOutlined",
+        "title": "500",
+        "sort": 2,
+        "link": "",
+        "hidden": false,
+        "status": true
+      }
+    ]
+  },
+  {
+    "parent": "",
+    "path": "/permission",
+    "name": "permission",
+    "type": "dir",
+    "icon": "DatabaseOutlined",
+    "title": "权限",
+    "sort": 6,
+    "link": "",
+    "hidden": false,
+    "status": true,
+    "children": [
+      {
+        "parent": "permission",
+        "path": "permissionTest",
+        "name": "permissionTest",
+        "type": "menu",
+        "icon": "DatabaseOutlined",
+        "title": "权限测试",
+        "sort": 0,
+        "link": "",
+        "hidden": false,
+        "status": true
+      }
+    ]
+  },
+  {
+    "parent": "",
+    "path": "/actuator",
+    "name": "actuator",
+    "type": "dir",
+    "icon": "DatabaseOutlined",
+    "title": "执行器管理",
+    "sort": 7,
+    "link": "",
+    "hidden": false,
+    "status": true,
+    "children": [
+      {
+        "parent": "actuator",
+        "path": "list",
+        "name": "actuator-list",
+        "type": "menu",
+        "icon": "DatabaseOutlined",
+        "title": "执行器列表",
+        "sort": 0,
+        "link": "",
+        "hidden": false,
+        "status": true
+      }
+    ]
+  },
+  {
+    "parent": "",
+    "path": "/actuator",
+    "name": "actuator",
+    "type": "dir",
+    "icon": "DatabaseOutlined",
+    "title": "执行器管理",
+    "sort": 7,
+    "link": "",
+    "hidden": false,
+    "status": true,
+    "children": [
+      {
+        "parent": "actuator",
+        "path": "list",
+        "name": "actuator-list",
+        "type": "menu",
+        "icon": "DatabaseOutlined",
+        "title": "执行器列表",
+        "sort": 0,
+        "link": "",
+        "hidden": false,
+        "status": true
+      }
+    ]
+  }
+]

@@ -49,7 +49,7 @@ hodor-scheduler
 │  ├─hodor-cache-embedded                       # 基于embedded的分布式缓存
 │  └─hodor-cache-redis                          # 基于redis的分布式缓存
 ├─hodor-model                                   # hodor公共数据模型
-├─hodor-storage                                 # hodor storage模块
+├─hodor-storage                                 # hodor storage模块，任务资源管理
 ├─hodor-register                                # hodor注册中心
 │  ├─hodor-register-api
 │  ├─hodor-register-embedded                    # 基于Raft实现注册中心
@@ -57,10 +57,10 @@ hodor-scheduler
 ├─hodor-remoting                                # hodor通信框架
 │  ├─hodor-remoting-api
 │  └─hodor-remoting-netty
-├─hodor-scheduler                               # hodor调度核心
+├─hodor-scheduler                               # hodor调度器实现
 │  ├─hodor-scheduler-api
 │  └─hodor-scheduler-quartz
-└─hodor-server                                  # hodor入口
+└─hodor-server                                  # hodor调度服务
 
 ```
 ## 本地源码运行方式

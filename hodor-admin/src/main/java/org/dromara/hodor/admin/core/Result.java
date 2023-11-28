@@ -31,9 +31,9 @@ public class Result<T> implements Serializable {
     private static final long serialVersionUID = -6567814428394143641L;
 
     /**
-     * successful
+     * success
      */
-    private boolean successful;
+    private boolean success;
 
     /**
      * status
@@ -53,22 +53,22 @@ public class Result<T> implements Serializable {
     public Result() {
     }
 
-    public Result(Boolean successful, Integer code, String msg) {
-        this.successful = successful;
+    public Result(Boolean success, Integer code, String msg) {
+        this.success = success;
         this.code = code;
         this.msg = msg;
     }
 
-    public Result(Boolean successful, MsgCode msgCode) {
-        this.successful = successful;
+    public Result(Boolean success, MsgCode msgCode) {
+        this.success = success;
         if (msgCode != null) {
             this.code = msgCode.getCode();
             this.msg = msgCode.getMsg();
         }
     }
 
-    public Result(Boolean successful, Integer code, String msg, T data) {
-        this.successful = successful;
+    public Result(Boolean success, Integer code, String msg, T data) {
+        this.success = success;
         this.code = code;
         this.msg = msg;
         this.data = data;

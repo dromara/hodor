@@ -1,9 +1,11 @@
 package org.dromara.hodor.admin.entity;
 
-import java.util.Date;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * (User)实体类
@@ -21,6 +23,7 @@ public class User implements Serializable {
     /**
      * 用户名
      */
+    @TableField("username")
     private String username;
     /**
      * 密码
@@ -46,6 +49,7 @@ public class User implements Serializable {
      * 更新时间
      */
     private Date updatedAt;
+
 
 }
 
