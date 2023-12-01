@@ -18,9 +18,10 @@
 package org.dromara.hodor.admin.dto.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.Date;
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import java.util.Date;
 
 /**
  * UserInfo
@@ -61,5 +62,11 @@ public class UserInfo {
      */
     @Schema(name = "user create time")
     private Date createdAt;
+
+    @Schema(name = "token")
+    private String token;
+
+    //@Schema(name = "permission info list")
+    //private List<PermissionInfo> permissionInfoList;
 
 }

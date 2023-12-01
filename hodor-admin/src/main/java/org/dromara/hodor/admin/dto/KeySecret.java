@@ -1,32 +1,14 @@
 package org.dromara.hodor.admin.dto;
 
-import java.io.Serializable;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
-public class KeySecret implements Serializable {
+@Data
+@Accessors(chain = true)
+public class KeySecret {
 
-    private static final long serialVersionUID = 4533794352731465965L;
     private String appKey;
+
     private String appSecret;
-
-    public String getAppKey() {
-        return appKey;
-    }
-
-    public void setAppKey(String appKey) {
-        this.appKey = appKey;
-    }
-
-    public String getAppSecret() {
-        return appSecret;
-    }
-
-    public void setAppSecret(String appSecret) {
-        this.appSecret = appSecret;
-    }
-
-    @Override
-    public String toString() {
-        return "KeySecret [appKey=" + appKey + ", appSecret=" + appSecret + "]";
-    }
 
 }

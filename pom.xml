@@ -99,6 +99,7 @@
         <knife4j.version>4.1.0</knife4j.version>
         <oshi-core.version>6.1.1</oshi-core.version>
         <jna.version>5.10.0</jna.version>
+        <jose4j.version>0.9.3</jose4j.version>
         <!-- test -->
         <junit.version>4.13.2</junit.version>
         <mockito.version>4.11.0</mockito.version>
@@ -209,7 +210,6 @@
                 <artifactId>hodor-storage-all</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
             <!-- base tools -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
@@ -508,6 +508,12 @@
                 <groupId>net.java.dev.jna</groupId>
                 <artifactId>jna-platform</artifactId>
                 <version>${jna.version}</version>
+            </dependency>
+            <!-- jwt -->
+            <dependency>
+                <groupId>org.bitbucket.b_c</groupId>
+                <artifactId>jose4j</artifactId>
+                <version>${jose4j.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

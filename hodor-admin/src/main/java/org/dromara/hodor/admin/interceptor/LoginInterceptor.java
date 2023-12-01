@@ -19,6 +19,7 @@ package org.dromara.hodor.admin.interceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.dromara.hodor.admin.config.AdminProperties;
 import org.dromara.hodor.admin.core.ServerConfigKeys;
 import org.dromara.hodor.admin.core.UserContext;
@@ -30,6 +31,7 @@ import org.dromara.hodor.common.utils.Utils.Beans;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
@@ -51,6 +53,9 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws Exception {
+        if (!(handler instanceof HandlerMethod)) {
+            return true;
+        }
         // check api-key
         final String key = request.getHeader("API-KEY");
         if (StringUtils.equals(adminProperties.getApiKey(), key)) {
@@ -61,7 +66,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         }
 
         // check session
-        User userSession = (User)request.getSession().getAttribute(ServerConfigKeys.USER_SESSION);
+        User userSession = (User) request.getSession().getAttribute(ServerConfigKeys.USER_SESSION);
         if (userSession == null) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.getWriter()

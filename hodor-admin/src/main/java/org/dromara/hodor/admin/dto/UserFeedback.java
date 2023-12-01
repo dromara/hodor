@@ -1,7 +1,7 @@
 package org.dromara.hodor.admin.dto;
 
-import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 用户信息反馈
@@ -10,7 +10,7 @@ import lombok.Data;
  * @since 1.0
  **/
 @Data
-@Builder
+@Accessors(chain = true)
 public class UserFeedback {
 
     private int id;
