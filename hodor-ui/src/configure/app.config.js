@@ -8,7 +8,7 @@ export default {
   /**
    * 参数 : 网站图标
    */
-  image: "@/assets/image/logo.png",
+  image: "src/assets/image/logo.png",
 
   /**
    * 参数 : 网站名称

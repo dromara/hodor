@@ -1,5 +1,5 @@
 <script setup>
-import { reactive } from 'vue';
+import { ref, reactive } from 'vue';
 const props = defineProps(['columns', 'dataSource', 'pagination', 'rowSelection'])
 
 const staticPagination = reactive({
@@ -18,7 +18,7 @@ const paginationOpt = reactive(
 
 <template>
     <a-table :columns="props.columns" :data-source="props.dataSource" bordered :scroll="{ x: true }"
-        :pagination="paginationOpt" :row-selection="props.rowSelection" :rowKey="row => row.id">
+        :pagination="props.pagination" :row-selection="props.rowSelection" :rowKey="row => row.id">
         <template #bodyCell="{ column, text, record }">
             <template v-if="column.dataIndex === 'action'">
                 <slot :column="column" :record="record"></slot>

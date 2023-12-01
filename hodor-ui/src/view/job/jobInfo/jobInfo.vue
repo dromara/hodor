@@ -37,6 +37,10 @@ const {getAllClusters} = actuatorStore;
 
 const {toClipboard} = useClipboard()
 
+const state = reactive({
+  pagination: paginationOpt
+});
+
 // 暂停、恢复、删除任务modal
 const visibleModal = ref(false);
 const eventType = ref('');
@@ -1109,7 +1113,7 @@ onMounted(() => {
         <Table
           :columns="jobInfoColumns"
           :data-source="jobInfoList"
-          :pagination="paginationOpt"
+          :pagination="state.pagination"
           :row-selection="rowSelection"
         >
           <template #default="{ record }">

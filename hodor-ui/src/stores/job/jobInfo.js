@@ -19,6 +19,7 @@ export const useJobInfoStore = defineStore('jobInfo', () => {
     defaultCurrent: 1, // 默认当前页数
     defaultPageSize: 10, // 默认当前页显示数据的大小
     total: 0, // 总数
+    showSizeChanger: true,
     // 改变每页数量时更新显示
     onChange: (current, size) => {
       paginationOpt.defaultCurrent = current;

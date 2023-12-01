@@ -8,11 +8,11 @@
           <div class="desc">一 站 式 分 布 式 任 务 调 度 平 台</div>
         </a-form-item>
         <a-form-item>
-          <a-input placeholder="账 户 : admin" v-model:value="formState.username" />
+          <a-input placeholder="请 输 入 账 户 " v-model:value="formState.username" />
         </a-form-item>
         <a-form-item>
           <a-input
-            placeholder="密 码 : admin"
+            placeholder="请 输 入 密 码 "
             v-model:value="formState.password"
             type="password"
             @keyup.enter="onSubmit"
