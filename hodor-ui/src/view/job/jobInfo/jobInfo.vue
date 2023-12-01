@@ -515,32 +515,32 @@ watch(
     if (editorMode.value === 'YAML') {
       formEditor.content =
         `groupName: ''
-            jobName: ''
-            config: {}
-            dependsOn: []
-            nodes:
-              - groupName: ''
-                jobName: ''
-                config: {}
-                dependsOn: []
-                nodes: []`
+          jobName: ''
+          config: {}
+          dependsOn: []
+          nodes:
+            - groupName: ''
+              jobName: ''
+              config: {}
+              dependsOn: []
+              nodes: []`
     } else {
       formEditor.content =
         `{
-                "groupName": "",
-                "jobName": "",
-                "config": {},
-                "dependsOn": [],
-                "nodes": [
-                    {
-                        "groupName": "",
-                        "jobName": "",
-                        "config": {},
-                        "dependsOn": [],
-                        "nodes": []
-                    }
-                ]
-            }`;
+          "groupName": "",
+          "jobName": "",
+          "config": {},
+          "dependsOn": [],
+          "nodes": [
+              {
+                  "groupName": "",
+                  "jobName": "",
+                  "config": {},
+                  "dependsOn": [],
+                  "nodes": []
+              }
+          ]
+      }`;
     }
   }
 );
